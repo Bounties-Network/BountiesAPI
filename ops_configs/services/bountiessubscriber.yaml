@@ -1,0 +1,156 @@
+{
+  "kind": "Deployment",
+  "apiVersion": "extensions/v1beta1",
+  "metadata": {
+    "name": "bountiessubscriber",
+    "namespace": "default",
+    "selfLink": "/apis/extensions/v1beta1/namespaces/default/deployments/bountiessubscriber",
+    "uid": "e7d17100-18e4-11e8-98ed-02122fce8e26",
+    "resourceVersion": "2730332",
+    "generation": 14,
+    "creationTimestamp": "2018-02-23T22:00:05Z",
+    "labels": {
+      "run": "bountiessubscriber"
+    },
+    "annotations": {
+      "deployment.kubernetes.io/revision": "6"
+    }
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "matchLabels": {
+        "run": "bountiessubscriber"
+      }
+    },
+    "template": {
+      "metadata": {
+        "creationTimestamp": null,
+        "labels": {
+          "run": "bountiessubscriber"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "bountiessubscriber",
+            "image": "docker.io/consensysbounties/bounties_subscriber:11",
+            "ports": [
+              {
+                "containerPort": 8888,
+                "protocol": "TCP"
+              }
+            ],
+            "env": [
+              {
+                "name": "redis_location",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "cacheprod",
+                    "key": "redis_location"
+                  }
+                }
+              },
+              {
+                "name": "psql_host",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "psqlprod",
+                    "key": "psql_host"
+                  }
+                }
+              },
+              {
+                "name": "psql_password",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "psqlprod",
+                    "key": "psql_password"
+                  }
+                }
+              },
+              {
+                "name": "psql_port",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "psqlprod",
+                    "key": "psql_port"
+                  }
+                }
+              },
+              {
+                "name": "psql_user",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "psqlprod",
+                    "key": "psql_user"
+                  }
+                }
+              },
+              {
+                "name": "AWS_ACCESS_KEY_ID",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "awscreds",
+                    "key": "AWS_ACCESS_KEY_ID"
+                  }
+                }
+              },
+              {
+                "name": "AWS_SECRET_ACCESS_KEY",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "awscreds",
+                    "key": "AWS_SECRET_ACCESS_KEY"
+                  }
+                }
+              },
+              {
+                "name": "django_secret",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "djangosecretprod",
+                    "key": "django_secret"
+                  }
+                }
+              }
+            ],
+            "resources": {},
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "imagePullPolicy": "Always"
+          }
+        ],
+        "restartPolicy": "Always",
+        "terminationGracePeriodSeconds": 30,
+        "dnsPolicy": "ClusterFirst",
+        "securityContext": {},
+        "schedulerName": "default-scheduler"
+      }
+    },
+    "strategy": {
+      "type": "RollingUpdate",
+      "rollingUpdate": {
+        "maxUnavailable": 1,
+        "maxSurge": 1
+      }
+    }
+  },
+  "status": {
+    "observedGeneration": 14,
+    "replicas": 1,
+    "updatedReplicas": 1,
+    "readyReplicas": 1,
+    "availableReplicas": 1,
+    "conditions": [
+      {
+        "type": "Available",
+        "status": "True",
+        "lastUpdateTime": "2018-02-23T22:00:05Z",
+        "lastTransitionTime": "2018-02-23T22:00:05Z",
+        "reason": "MinimumReplicasAvailable",
+        "message": "Deployment has minimum availability."
+      }
+    ]
+  }
+}

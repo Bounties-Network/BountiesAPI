@@ -5,3 +5,4 @@
  web3==3.16.5
  ipfsapi==0.4.2
  boto3==1.5.35
+ rollbar==0.13.18

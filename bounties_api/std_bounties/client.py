@@ -12,7 +12,7 @@ import ipfsapi
 web3 = Web3(HTTPProvider('https://mainnet.infura.io/'))
 RawFulfillmentData = namedtuple('RawFulfillmentData', ['accepted', 'fulfiller', 'data'])
 RawBountyData = namedtuple('RawBountyData', [
-    'issuer', 'deadline', 'fulfillmentAmount', 'paysTokens', 'bountyStage'
+    'issuer', 'deadline', 'fulfillmentAmount', 'paysTokens', 'bountyStage', 'balance',
 ])
 bounties_json = json.loads(data)
 StandardBounties = web3.eth.contract(

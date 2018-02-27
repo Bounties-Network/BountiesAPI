@@ -10,6 +10,9 @@ import logging
 
 logger = logging.getLogger('django')
 
+# redis transaction gets frozen for 5 days
+cache_period = 432000
+
 class Command(BaseCommand):
     help = 'Listen for contract events'
 
@@ -75,9 +78,9 @@ class Command(BaseCommand):
                     bounty_client.increase_payout(bounty_id)
 
                 sc.api_call('chat.postMessage', channel='#bounty_notifs',
-                    text='Event ${:d} passed for bounty ${:d}'.format(event, bount_id)
+                    text='Event {} passed for bounty {}'.format(event, str(bounty_id))
                 )
-                cache.set(transaction_id, True)
+                cache.set(transaction_id, True, cache_period)
                 sqs.delete_message(
                     QueueUrl=settings.QUEUE_URL,
                     ReceiptHandle=receipt_handle,

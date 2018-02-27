@@ -16,12 +16,11 @@ class Bounty(models.Model):
     arbiter = models.CharField(max_length=128, null=True)
     fulfillmentAmount = models.DecimalField(decimal_places=18, max_digits=64)
     paysTokens = models.BooleanField()
-    bountystage = models.CharField(max_length=128, choices=STAGE_CHOICES, default=DRAFT_STAGE)
+    bountyStage = models.IntegerField(choices=STAGE_CHOICES, default=DRAFT_STAGE)
     old_balance = models.DecimalField(decimal_places=18, max_digits=64, null=True)
     balance = models.DecimalField(decimal_places=18, max_digits=64)
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField(blank=True)
-    data_issuer = JSONField(null=True)
     funders = JSONField(null=True)
     categories = JSONField(null=True)
     bounty_created = models.DateTimeField(null=True)
@@ -34,6 +33,7 @@ class Bounty(models.Model):
     platform = models.CharField(max_length=128, blank=True)
     schemaVersion = models.CharField(max_length=64, blank=True)
     schemaName = models.CharField(max_length=128, null=True)
+    data_issuer = JSONField(null=True)
     data_json = JSONField(null=True)
 
 
@@ -49,9 +49,8 @@ class Fulfillment(models.Model):
     sourceFileName = models.CharField(max_length=256, blank=True)
     sourceFileHash = models.CharField(max_length=256, blank=True)
     sourceDirectoryHash = models.CharField(max_length=256, blank=True)
-    fulfiller = JSONField(null=True)
     platform = models.CharField(max_length=128, blank=True)
     schemaVersion = models.CharField(max_length=64, blank=True)
     schemaName = models.CharField(max_length=128, blank=True)
+    data_fulfiller = JSONField(null=True)
     data_json = JSONField(null=True)
-

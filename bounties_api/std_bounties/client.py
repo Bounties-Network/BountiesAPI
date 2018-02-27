@@ -11,11 +11,14 @@ import ipfsapi
 
 web3 = Web3(HTTPProvider('https://mainnet.infura.io/'))
 RawFulfillmentData = namedtuple('RawFulfillmentData', ['accepted', 'fulfiller', 'data'])
+RawBountyData = namedtuple('RawBountyData', [
+    'issuer', 'deadline', 'fulfillmentAmount', 'paysTokens', 'bountyStage'
+])
 bounties_json = json.loads(data)
 StandardBounties = web3.eth.contract(
-	bounties_json['interfaces']['StandardBounties'],
-	bounties_json['mainNet']['standardBountiesAddress']['v1'],
-	ContractFactoryClass=ConciseContract
+    bounties_json['interfaces']['StandardBounties'],
+    bounties_json['mainNet']['standardBountiesAddress']['v1'],
+    ContractFactoryClass=ConciseContract
 )
 ipfs = ipfsapi.connect(host='https://ipfs.infura.io')
 
@@ -70,6 +73,8 @@ class BountyClient:
         data_hash = fulfillment_data.get('data')
         data_json = ipfs.cat(data_hash)
         data = json.loads(data_json)
+        data['data_fulfiller'] = data.get('fulfiller', None)
+        data.pop('fulfiller', None)
         if 'payload' in data:
             data = data.get('payload')
         extra_data = {
@@ -87,6 +92,8 @@ class BountyClient:
         data_hash = fulfillment_data.data
         data_json = ipfs.cat(data_hash)
         data = json.loads(data_json)
+        data['data_fulfiller'] = data.get('fulfiller', None)
+        data.pop('fulfiller', None)
         fulfillment = Fulfillment.objects.get(fulfillment_id=fulfillment_id)
         fulfillment_serializer = FulfillmentSerializer(fulfillment, data={**data, **fulfillment_data, **{data_json: data_json}}, partial=True)
         fulfillment_serializer.save()
@@ -143,11 +150,15 @@ class BountyClient:
         bounty_serializer.save()
 
     def transfer_issuer(self, bounty_id):
-        bounty_response = StandardBounties.getBounty(bounty_id)
-        raw_bounty = RawBountyData(*bounty_response)
+        bounty_response = StandardBounties.getBounty(id)
+        raw_bounty = RawBountyData(*bounty_response)._asdict()
+        data_hash = StandardBounties.getBountyData(id)
+        data_JSON = ipfs.cat(data_hash)
+        data = json.loads(data_JSON)
 
         bounty = Bounty.objects.get(bounty_id=bounty_id)
         bounty.issuer = raw_bounty.issuer
+        bounty.data_issuer = data.get('issuer', None)
         bounty.save()
 
     def increase_payout(self, bounty_id):

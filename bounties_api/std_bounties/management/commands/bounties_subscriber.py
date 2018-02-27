@@ -1,9 +1,11 @@
+import os
 from django.core.management.base import BaseCommand
 import boto3
 import time
 from django.core.cache import cache
 from std_bounties.client import BountyClient
 from django.conf import settings
+from slackclient import SlackClient
 import logging
 
 logger = logging.getLogger('django')
@@ -15,6 +17,7 @@ class Command(BaseCommand):
         try:
             bounty_client = BountyClient()
             sqs = boto3.client('sqs', region_name='us-east-1')
+            sc = SlackClient(settings.SLACK_TOKEN)
 
             while True:
                 # poll by the second
@@ -71,6 +74,9 @@ class Command(BaseCommand):
                 if event == 'PayoutIncreased':
                     bounty_client.increase_payout(bounty_id)
 
+                sc.api_call('chat.postMessage', channel='#bounty_notifs',
+                    text='Event ${:d} passed for bounty ${:d}'.format(event, bount_id)
+                )
                 cache.set(transaction_id, True)
                 sqs.delete_message(
                     QueueUrl=settings.QUEUE_URL,

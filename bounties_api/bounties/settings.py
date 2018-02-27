@@ -168,3 +168,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 QUEUE_URL = 'https://sqs.us-east-1.amazonaws.com/802922962628/Bounties.fifo'
+SLACK_TOKEN = os.environ.get('slack_token')

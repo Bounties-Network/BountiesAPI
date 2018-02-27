@@ -2,9 +2,9 @@
 
 const delay = require('delay'),
 	  StandardBounties = require('./web3_config'),
+	  rollbar = require('./rollbar'),
 	{ getAsync, writeAsync } = require('./redis_config'),
 	{ sendEvents } = require('./eventsRetriever');
-
 
 async function handler() {
 	while (true) {
@@ -24,7 +24,7 @@ async function handler() {
 
 		} catch (err) {
 			// include rollbar error message soon
-			console.log(err)
+			rollbar.error(err);
 
 			// exit with error so kubernettes will automatically restart the job
 			process.exit(1);

@@ -1,5 +1,5 @@
 # Bounties-API
-The caching layer of the Bounties Network
+The caching layer of the Bounties Network - available here http://a2e716ea2144911e898ed02122fce8e2-236283655.us-east-1.elb.amazonaws.com:83/
 
 BETA submitted and deployed
 ## TODO
@@ -8,7 +8,7 @@ BETA submitted and deployed
 - [ ] Ops Documentation
 - [ ] Manage Staging, Production, Local environments (for now just has one env)
 - [ ] Setup Linters
-- [ ] Rollbar Integration 
+- [x] Rollbar Integration 
 - [ ] API Filters
 - [ ] API expansion to fit [bounties explorer](https://github.com/ConsenSys/BountiesFactory) usecases
 - [ ] Events API to track diffs/events in the contract

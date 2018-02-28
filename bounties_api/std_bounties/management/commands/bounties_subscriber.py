@@ -84,7 +84,7 @@ class Command(BaseCommand):
                 )
         except Exception as e:
             # goes to rollbar
-            logger.error(e)
+            logger.exception(e)
             raise e
 
 

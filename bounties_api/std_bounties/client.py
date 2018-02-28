@@ -65,8 +65,11 @@ class BountyClient:
         bounty.save()
 
     def fulfill_bounty(self, bounty_id, fulfillment_id):
-        fulfillment = Fulfillment.objects.filter(fulfillment_id=fulfillment_id).exists()
+        fulfillment = Fulfillment.objects.filter(
+            fulfillment_id=fulfillment_id, bounty_id=bounty_id
+        ).exists()
         if fulfillment:
+            print('uhoh')
             return
         fulfillment_response = StandardBounties.getFulfillment(bounty_id, fulfillment_id)
         fulfillment_data = RawFulfillmentData(*fulfillment_response)._asdict()

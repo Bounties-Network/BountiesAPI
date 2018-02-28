@@ -6,7 +6,7 @@ from std_bounties import views
 router = DefaultRouter()
 
 router.register(r'bounty', views.BountyViewSet)
-router.register(r'fulfiller', views.FulfillmentViewSet)
+router.register(r'fulfillment', views.FulfillmentViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [

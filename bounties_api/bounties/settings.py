@@ -84,15 +84,6 @@ DATABASES = {
         'PORT': os.environ.get('psql_port', 5432),
     }
 }
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': os.environ.get('redis_location', 'redis://127.0.0.1:6379'),
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -169,3 +160,4 @@ STATIC_URL = '/static/'
 
 QUEUE_URL = 'https://sqs.us-east-1.amazonaws.com/802922962628/Bounties.fifo'
 SLACK_TOKEN = os.environ.get('slack_token')
+REDIS_LOCATION = os.environ.get('redis_location', 'redis://127.0.0.1:6379')

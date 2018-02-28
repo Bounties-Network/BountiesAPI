@@ -2,16 +2,13 @@ import os
 from django.core.management.base import BaseCommand
 import boto3
 import time
-from django.core.cache import cache
 from std_bounties.client import BountyClient
 from django.conf import settings
 from slackclient import SlackClient
+from bounties.redis_client import redis_client
 import logging
 
 logger = logging.getLogger('django')
-
-# redis transaction gets frozen for 5 days
-cache_period = 432000
 
 class Command(BaseCommand):
     help = 'Listen for contract events'
@@ -80,7 +77,7 @@ class Command(BaseCommand):
                 sc.api_call('chat.postMessage', channel='#bounty_notifs',
                     text='Event {} passed for bounty {}'.format(event, str(bounty_id))
                 )
-                cache.set(transaction_id, True, cache_period)
+                redis_client.set(transaction_id, True)
                 sqs.delete_message(
                     QueueUrl=settings.QUEUE_URL,
                     ReceiptHandle=receipt_handle,

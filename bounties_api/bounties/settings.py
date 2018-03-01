@@ -158,6 +158,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-QUEUE_URL = 'https://sqs.us-east-1.amazonaws.com/802922962628/Bounties.fifo'
+QUEUE_URL = os.environ.get('queue_url', 'https://sqs.us-east-1.amazonaws.com/802922962628/bounties_development.fifo')
 SLACK_TOKEN = os.environ.get('slack_token')
 REDIS_LOCATION = os.environ.get('redis_location', 'redis://127.0.0.1:6379')

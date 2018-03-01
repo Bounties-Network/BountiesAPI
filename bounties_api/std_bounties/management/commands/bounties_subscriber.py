@@ -24,10 +24,9 @@ class Command(BaseCommand):
                 time.sleep(1)
 
                 response = sqs.receive_message(
-                    QueueUrl = settings.QUEUE_URL,
+                    QueueUrl=settings.QUEUE_URL,
                     AttributeNames=['MessageDeduplicationId'],
                     MessageAttributeNames=['All'],
-
                 )
 
                 messages = response.get('Messages')

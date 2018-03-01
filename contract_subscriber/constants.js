@@ -14,7 +14,7 @@ exports.SQS_PARAMS = {
    },
  },
  MessageBody: 'Event Subscription',
- QueueUrl: 'https://sqs.us-east-1.amazonaws.com/802922962628/Bounties.fifo',
+ QueueUrl: process.env['queue_url'] || 'https://sqs.us-east-1.amazonaws.com/802922962628/bounties_development.fifo',
  MessageDeduplicationId: '',
  MessageGroupId: 'Event_Subscriber',
 };

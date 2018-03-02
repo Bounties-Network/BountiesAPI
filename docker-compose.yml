@@ -1,6 +1,13 @@
 version: '3'
 
 services:
+  sqs:
+    build:
+      context: ./local_queue
+    volumes:
+      - ./local_queue/elasticmq.conf:/elasticmq.conf
+    ports:
+      - 9324:9324
   db:
     image: postgres
     environment:
@@ -23,6 +30,7 @@ services:
       dockerfile: Dockerfile.api
       args:
         auto_build: 'false'
+    restart: always
     env_file:
       - .env
     command: python3 manage.py migrate
@@ -40,12 +48,14 @@ services:
       dockerfile: Dockerfile.subscriber
       args:
         auto_build: 'false'
+    restart: always
     env_file:
       - .env
     command: python3 manage.py bounties_subscriber
     volumes:
       - ./bounties_api:/code
     depends_on:
+      - sqs
       - db
       - redis
       - bounties_api
@@ -54,12 +64,15 @@ services:
       context: ./contract_subscriber
       args:
         auto_build: 'false'
+    restart: always
     env_file:
       - .env
     command: npm start
     volumes:
-      - ./contract_subscriber:/code
+      - ./contract_subscriber:/usr/src/app
+      - /usr/src/app/node_modules
     depends_on:
+      - sqs
       - redis
 volumes:
   psql_bounties:

@@ -1,3 +1,4 @@
+
 FROM mhart/alpine-node:9.6.1
 
 ARG auto_build="true"

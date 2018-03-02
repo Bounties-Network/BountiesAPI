@@ -25,6 +25,7 @@ async function handler() {
 		} catch (err) {
 			// include rollbar error message soon
 			rollbar.error(err);
+			console.log(err);
 
 			// exit with error so kubernettes will automatically restart the job
 			process.exit(1);

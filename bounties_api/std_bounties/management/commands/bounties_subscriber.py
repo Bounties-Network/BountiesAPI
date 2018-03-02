@@ -1,11 +1,11 @@
 import os
 from django.core.management.base import BaseCommand
-import boto3
 import time
 from std_bounties.client import BountyClient
 from django.conf import settings
 from slackclient import SlackClient
 from bounties.redis_client import redis_client
+from bounties.sqs_client import sqs_client
 import logging
 
 logger = logging.getLogger('django')
@@ -16,14 +16,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             bounty_client = BountyClient()
-            sqs = boto3.client('sqs', region_name='us-east-1')
             sc = SlackClient(settings.SLACK_TOKEN)
 
             while True:
                 # poll by the second
                 time.sleep(1)
 
-                response = sqs.receive_message(
+                response = sqs_client.receive_message(
                     QueueUrl=settings.QUEUE_URL,
                     AttributeNames=['MessageDeduplicationId'],
                     MessageAttributeNames=['All'],
@@ -36,12 +35,12 @@ class Command(BaseCommand):
 
                 message = messages[0]
                 receipt_handle = message['ReceiptHandle']
-                transaction_id = message['Attributes']['MessageDeduplicationId']
                 message_attributes = message['MessageAttributes']
 
                 event = message_attributes['Event']['StringValue']
                 bounty_id = int(message_attributes['BountyId']['StringValue'])
                 fulfillment_id = int(message_attributes['FulfillmentId']['StringValue'])
+                transaction_id =  message_attributes['TransactionHash']['StringValue']
 
                 if event == 'BountyIssued':
                     bounty_client.issue_bounty(bounty_id)
@@ -77,7 +76,7 @@ class Command(BaseCommand):
                     text='Event {} passed for bounty {}'.format(event, str(bounty_id))
                 )
                 redis_client.set(transaction_id, True)
-                sqs.delete_message(
+                sqs_client.delete_message(
                     QueueUrl=settings.QUEUE_URL,
                     ReceiptHandle=receipt_handle,
                 )

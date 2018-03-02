@@ -36,6 +36,7 @@ async function sendEvents(events) {
 			messageParams.MessageAttributes.Event.StringValue = eventName;
 			messageParams.MessageAttributes.BountyId.StringValue = bountyId;
 			messageParams.MessageAttributes.FulfillmentId.StringValue = fulfillmentId;
+			messageParams.MessageAttributes.TransactionHash.StringValue = transactionHash;
 			messageParams.MessageDeduplicationId = transactionHash;
 
 			await sqs.sendMessage(messageParams).promise();

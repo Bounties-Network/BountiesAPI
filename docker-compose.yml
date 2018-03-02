@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: psql_bounties12312
+      POSTGRES_USER: postgres
+      POSTGRES_DB: bounties
+    volumes:
+      - psql_bounties:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  redis:
+    image: "redis"
+    volumes:
+      - redis_bounties:/data
+    ports:
+      - "6379:6379"
+  bounties_api:
+    build:
+      context: ./bounties_api
+      dockerfile: Dockerfile.api
+      args:
+        auto_build: 'false'
+    env_file:
+      - .env
+    command: python3 manage.py migrate
+    command: python3 manage.py runserver 0.0.0.0:83
+    volumes:
+      - ./bounties_api:/code
+    ports:
+      - "8000:83"
+    depends_on:
+      - db
+      - redis
+  bounties_subscriber:
+    build:
+      context: ./bounties_api
+      dockerfile: Dockerfile.subscriber
+      args:
+        auto_build: 'false'
+    env_file:
+      - .env
+    command: python3 manage.py bounties_subscriber
+    volumes:
+      - ./bounties_api:/code
+    depends_on:
+      - db
+      - redis
+      - bounties_api
+  contract_subscriber:
+    build:
+      context: ./contract_subscriber
+      args:
+        auto_build: 'false'
+    env_file:
+      - .env
+    command: npm start
+    volumes:
+      - ./contract_subscriber:/code
+    depends_on:
+      - redis
+volumes:
+  psql_bounties:
+    external: true
+  redis_bounties:
+    external: true

@@ -1,5 +1,8 @@
 FROM mhart/alpine-node:9.6.1
 
+ARG auto_build="true"
+ENV auto_build=$auto_build
+
 # Create app directory
 WORKDIR /usr/src/app
 
@@ -23,4 +26,4 @@ RUN npm install
 COPY . .
 
 EXPOSE 8080
-CMD [ "npm", "start" ]
+RUN if [ "${auto_build}" = "true" ]; then npm start ; fi

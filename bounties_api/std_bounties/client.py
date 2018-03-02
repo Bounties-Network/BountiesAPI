@@ -69,7 +69,6 @@ class BountyClient:
             fulfillment_id=fulfillment_id, bounty_id=bounty_id
         ).exists()
         if fulfillment:
-            print('uhoh')
             return
         fulfillment_response = StandardBounties.getFulfillment(bounty_id, fulfillment_id)
         fulfillment_data = RawFulfillmentData(*fulfillment_response)._asdict()

@@ -12,7 +12,7 @@ async function handler() {
 			// I use past events vs. subscribe in order to preserve ordering - FIFO
 			// Also, subscribe is just polling - the socket connection does not provide the additional behavior, so these
 			// are essentially accomplishing the same thing
-			let fromBlock = await getAsync('currentBlock');
+			let fromBlock = await getAsync('currentBlock') || 0;
 			let events = await StandardBounties.getPastEvents({fromBlock, toBlock: 'latest'});
 			let eventBlock = await sendEvents(events);
 

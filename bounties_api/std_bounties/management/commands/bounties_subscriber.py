@@ -20,7 +20,8 @@ class Command(BaseCommand):
 
             while True:
                 # poll by the second
-                time.sleep(1)
+                if not settings.LOCAL:
+                    time.sleep(1)
 
                 response = sqs_client.receive_message(
                     QueueUrl=settings.QUEUE_URL,

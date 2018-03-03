@@ -6,10 +6,11 @@ from web3.contract import ConciseContract
 from std_bounties.contract import data
 from std_bounties.models import Bounty, Fulfillment
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer
+from django.conf import settings
 import ipfsapi
 
 
-web3 = Web3(HTTPProvider('https://mainnet.infura.io/'))
+web3 = Web3(HTTPProvider(settings.ETH_NETWORK_URL))
 RawFulfillmentData = namedtuple('RawFulfillmentData', ['accepted', 'fulfiller', 'data'])
 RawBountyData = namedtuple('RawBountyData', [
     'issuer', 'deadline', 'fulfillmentAmount', 'paysTokens', 'bountyStage', 'balance',
@@ -17,7 +18,7 @@ RawBountyData = namedtuple('RawBountyData', [
 bounties_json = json.loads(data)
 StandardBounties = web3.eth.contract(
     bounties_json['interfaces']['StandardBounties'],
-    bounties_json['mainNet']['standardBountiesAddress']['v1'],
+    bounties_json[settings.ETH_NETWORK]['standardBountiesAddress']['v1'],
     ContractFactoryClass=ConciseContract
 )
 ipfs = ipfsapi.connect(host='https://ipfs.infura.io')

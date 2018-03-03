@@ -22,3 +22,14 @@ exports.SQS_PARAMS = {
  MessageDeduplicationId: '',
  MessageGroupId: 'Event_Subscriber',
 };
+
+const networks = {
+    'mainNet': 'https://mainnet.infura.io/',
+    'rinkeby':  'https://rinkeby.infura.io/',
+    'localhost': 'localhost:8545',
+}
+
+const ethNetwork = process.env['eth_network'] || 'mainNet';
+
+exports.ETH_NETWORK = ethNetwork;
+exports.ETH_NETWORK_URL = networks[ethNetwork];

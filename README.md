@@ -6,7 +6,7 @@ BETA submitted and deployed
 - [ ] Comments & General Documentation
 - [ ] Contribution Guidelines
 - [ ] Ops Documentation
-- [ ] Manage Staging, Production, Local environments (for now just has one env)
+- [x] Manage Staging, Production, Local environments (for now just has one env)
 - [ ] Setup Linters
 - [x] Rollbar Integration 
 - [ ] API Filters

@@ -162,5 +162,12 @@ QUEUE_URL = os.environ.get('queue_url', 'https://sqs.us-east-1.amazonaws.com/802
 SLACK_TOKEN = os.environ.get('slack_token')
 REDIS_LOCATION = os.environ.get('redis_location', 'redis://127.0.0.1:6379')
 LOCAL = os.environ.get('local') == 'true'
+ETH_NETWORK = os.environ.get('eth_network', 'mainNet')
 
-print(LOCAL)
+networks = {
+    'mainNet': 'https://mainnet.infura.io/',
+    'rinkeby':  'https://rinkeby.infura.io/',
+    'localhost': 'localhost:8545',
+}
+
+ETH_NETWORK_URL = networks[ETH_NETWORK]

@@ -138,6 +138,8 @@ LOGGING = {
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'rollbar.contrib.django_rest_framework.post_exception_handler',
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 25,
 }
 
 # Internationalization

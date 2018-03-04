@@ -7,7 +7,7 @@ from web3.contract import ConciseContract
 from std_bounties.contract import data
 from std_bounties.models import Bounty, Fulfillment
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer
-from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE
+from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE
 from django.conf import settings
 from django.db import transaction
 import ipfsapi
@@ -117,6 +117,8 @@ class BountyClient:
     def accept_fulfillment(self, bounty_id, fulfillment_id):
         bounty = Bounty.objects.get(bounty_id=bounty_id)
         bounty.balance = bounty.balance - bounty.fulfillmentAmount
+        if bounty.balance < bounty.fulfillmentAmount:
+            bounty.bountyStage = COMPLETED_STAGE
         bounty.save()
 
         fulfillment = Fulfillment.objects.get(bounty_id=bounty_id, fulfillment_id=fulfillment_id)
@@ -133,6 +135,8 @@ class BountyClient:
     def add_contribution(self, bounty_id, inputs):
         bounty = Bounty.objects.get(bounty_id=bounty_id)
         bounty.balance = Decimal(inputs.get('value'))
+        if bounty.balance >= bounty.fulfillmentAmount and bounty.bountyStage == EXPIRED_STAGE:
+            bounty.bountyStage = ACTIVE_STAGE
         bounty.save()
 
     def extend_deadline(self, bounty_id, inputs):

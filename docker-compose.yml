@@ -58,6 +58,21 @@ services:
       - db
       - redis
       - bounties_api
+  track_bounty_expirations:
+    build:
+      context: ./bounties_api
+      dockerfile: Dockerfile.expirations
+      args:
+        auto_build: 'false'
+    restart: always
+    env_file:
+      - .env
+    command: python3 manage.py track_bounty_expirations
+    volumes:
+      - ./bounties_api:/code
+    depends_on:
+      - db
+      - bounties_api
   contract_subscriber:
     build:
       context: ./contract_subscriber

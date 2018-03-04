@@ -1,7 +1,7 @@
 const { cloneDeep, chain } = require('lodash'),
 	  { getAsync } = require('./redis_config'),
 	  { SQS_PARAMS } = require('./constants'),
-	  { abiDecoder, getTransaction } = require('./web3_config'),
+	  { abiDecoder, getTransaction, getBlock } = require('./web3_config'),
 	   sqs = require('./sqs_config');
 
 
@@ -39,6 +39,8 @@ async function sendEvents(events) {
 				.mapValues('value')
 				.mapKeys((value, key) => key.substring(1))
 				.value();
+			const blockData = await getBlock(blockNumber);
+			const eventTimestamp = blockData.timestamp.toString();
 
 			// Set Up SQS Params
 			messageParams = cloneDeep(SQS_PARAMS);
@@ -47,6 +49,7 @@ async function sendEvents(events) {
 			messageParams.MessageAttributes.FulfillmentId.StringValue = fulfillmentId;
 			messageParams.MessageAttributes.MessageDeduplicationId.StringValue = messageDeduplicationId;
 			messageParams.MessageAttributes.ContractMethodInputs.StringValue = JSON.stringify(contractMethodInputs);
+			messageParams.MessageAttributes.TimeStamp.StringValue = eventTimestamp;
 			messageParams.MessageDeduplicationId = messageDeduplicationId;
 
 			await sqs.sendMessage(messageParams).promise();

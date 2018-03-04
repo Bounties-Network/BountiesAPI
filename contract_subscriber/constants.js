@@ -2,11 +2,11 @@ exports.SQS_PARAMS = {
  MessageAttributes: {
   'Event': {
     DataType: 'String',
-    StringValue: ''
+    StringValue: '',
    },
    'BountyId': {
     DataType: 'Number',
-    StringValue: ''
+    StringValue: '',
    },
    'FulfillmentId': {
    	DataType: 'Number',
@@ -18,6 +18,10 @@ exports.SQS_PARAMS = {
    },
    'ContractMethodInputs': {
     DataType: 'String',
+    StringValue: '',
+   },
+   'TimeStamp': {
+    DataType: 'Number',
     StringValue: '',
    },
  },

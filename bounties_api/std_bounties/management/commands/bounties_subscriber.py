@@ -43,16 +43,17 @@ class Command(BaseCommand):
                 bounty_id = int(message_attributes['BountyId']['StringValue'])
                 fulfillment_id = int(message_attributes['FulfillmentId']['StringValue'])
                 message_deduplication_id =  message_attributes['MessageDeduplicationId']['StringValue']
-                contract_method_inputs = json.loads(message_attributes['ContractMethodInputs']['StringValue']);
+                event_timestamp = message_attributes['TimeStamp']['StringValue']
+                contract_method_inputs = json.loads(message_attributes['ContractMethodInputs']['StringValue'])
 
                 if event == 'BountyIssued':
-                    bounty_client.issue_bounty(bounty_id, contract_method_inputs)
+                    bounty_client.issue_bounty(bounty_id, contract_method_inputs, event_timestamp)
 
                 if event == 'BountyActivated':
                     bounty_client.activate_bounty(bounty_id, contract_method_inputs)
 
                 if event == 'BountyFulfilled':
-                    bounty_client.fulfill_bounty(bounty_id, fulfillment_id, contract_method_inputs)
+                    bounty_client.fulfill_bounty(bounty_id, fulfillment_id, contract_method_inputs, event_timestamp)
 
                 if event == 'FulfillmentUpdated':
                     bounty_client.update_fulfillment(bounty_id, fulfillment_id, contract_method_inputs)

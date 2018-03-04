@@ -68,6 +68,7 @@ class Fulfillment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     fulfillment_id = models.IntegerField()
+    fulfillment_created = models.DateTimeField(null=True)
     data = models.CharField(max_length=128)
     accepted = models.BooleanField()
     fulfiller = models.CharField(max_length=128)

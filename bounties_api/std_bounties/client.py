@@ -15,9 +15,6 @@ import ipfsapi
 
 web3 = Web3(HTTPProvider(settings.ETH_NETWORK_URL))
 RawFulfillmentData = namedtuple('RawFulfillmentData', ['accepted', 'fulfiller', 'data'])
-RawBountyData = namedtuple('RawBountyData', [
-    'issuer', 'deadline', 'fulfillmentAmount', 'paysTokens', 'bountyStage', 'balance',
-])
 bounties_json = json.loads(data)
 StandardBounties = web3.eth.contract(
     bounties_json['interfaces']['StandardBounties'],
@@ -32,7 +29,7 @@ class BountyClient:
         pass
 
     @transaction.atomic
-    def issue_bounty(self, id, inputs):
+    def issue_bounty(self, id, inputs, event_timestamp):
         bounty = Bounty.objects.filter(bounty_id=id).exists()
         if bounty:
             return
@@ -45,6 +42,10 @@ class BountyClient:
 
         data['data_issuer'] = data.get('issuer', None)
         data.pop('issuer', None)
+        data['bounty_created'] = datetime.datetime.fromtimestamp(
+            int(data.get('created', None) or event_timestamp)
+        )
+        data.pop('created', None)
         data['data_categories'] = data.get('categories', None)
         categories = data.pop('categories', None)
 
@@ -52,9 +53,9 @@ class BountyClient:
         bounty_data.pop('value', None)
 
         extra_data = {
-            "bounty_id": id,
-            "data_json": str(data_JSON),
-            "bountyStage": DRAFT_STAGE,
+            'bounty_id': id,
+            'data_json': str(data_JSON),
+            'bountyStage': DRAFT_STAGE,
         }
 
         bounty_serializer = BountySerializer(data={**data, **bounty_data, **extra_data})
@@ -68,7 +69,7 @@ class BountyClient:
         bounty.bountystage = ACTIVE_STAGE
         bounty.save()
 
-    def fulfill_bounty(self, bounty_id, fulfillment_id, inputs):
+    def fulfill_bounty(self, bounty_id, fulfillment_id, inputs, event_timestamp):
         fulfillment = Fulfillment.objects.filter(
             fulfillment_id=fulfillment_id, bounty_id=bounty_id
         ).exists()
@@ -93,6 +94,7 @@ class BountyClient:
             'bounty': bounty_id,
             'data': data_hash,
             'accepted': False,
+            'fulfillment_created':  datetime.datetime.fromtimestamp(int(event_timestamp)),
         }
 
         fulfillment_serializer = FulfillmentSerializer(data={**data, **extra_data})

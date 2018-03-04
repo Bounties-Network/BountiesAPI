@@ -1,14 +1,26 @@
-import django_filters
-from django_filters import CharFilter, BaseInFilter
-from std_bounties.models import Bounty
+import rest_framework_filters as filters
+from std_bounties.models import Bounty, Category
 
-class CharInFilter(BaseInFilter, CharFilter):
-    pass
 
-class CategoriesFilter(django_filters.FilterSet):
-    has_categories = CharInFilter(name='categories__normalized_name', lookup_expr='in')
-    issuer__ne = CharFilter(name='issuer', exclude=True)
+class CategoriesFilter(filters.FilterSet):
+    class Meta:
+        model = Category
+        fields = {
+            'normalized_name': ['exact', 'contains', 'startswith', 'endswith', 'in']
+        }
+
+
+
+class BountiesFilter(filters.FilterSet):
+    categories = filters.RelatedFilter(CategoriesFilter, name='categories', queryset=Category.objects.all())
+    bounty_created = filters.DateFilter(name='bounty_created')
 
     class Meta:
         model = Bounty
-        fields = ['issuer', 'fulfillmentAmount', 'bountyStage', 'has_categories', 'issuer__ne']
+        fields = {
+            'issuer': ['exact'],
+            'fulfillmentAmount': ['exact', 'lt', 'gt', 'lte'],
+            'bountyStage': ['exact'],
+            'bounty_created': ['lt', 'gt', 'exact'],
+            'deadline': ['lt', 'gt', 'exact'],
+        }

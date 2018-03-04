@@ -1,5 +1,6 @@
 const json = require('./contract.json'),
 	  Web3 = require('web3'),
+	  abiDecoder = require('abi-decoder'),
 	  { ETH_NETWORK, ETH_NETWORK_URL } = require('./constants');
 
 // web3 setup
@@ -10,4 +11,8 @@ const StandardBounties = new web3.eth.Contract(
 	json[ETH_NETWORK].standardBountiesAddress
 );
 
-module.exports = StandardBounties;
+abiDecoder.addABI(json.interfaces.StandardBounties);
+
+exports.getTransaction = web3.eth.getTransaction;
+exports.abiDecoder = abiDecoder;
+exports.StandardBounties = StandardBounties;

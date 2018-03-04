@@ -12,7 +12,11 @@ exports.SQS_PARAMS = {
    	DataType: 'Number',
    	StringValue: '',
    },
-   'TransactionHash': {
+   'MessageDeduplicationId': {
+    DataType: 'String',
+    StringValue: '',
+   },
+   'ContractMethodInputs': {
     DataType: 'String',
     StringValue: '',
    },

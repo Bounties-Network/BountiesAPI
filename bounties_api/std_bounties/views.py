@@ -1,6 +1,10 @@
 from rest_framework import viewsets
 from std_bounties.models import Bounty, Fulfillment
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer
+from std_bounties.filters import CategoriesFilter
+from django_filters import rest_framework as filters
+from rest_framework.filters import OrderingFilter
+
 
 class BountyViewSet(viewsets.ModelViewSet):
     """
@@ -8,7 +12,8 @@ class BountyViewSet(viewsets.ModelViewSet):
     """
     serializer_class = BountySerializer
     queryset = Bounty.objects.all()
-    filter_fields = ('deadline', 'issuer', 'fulfillmentAmount', 'bountyStage', 'bounty_created')
+    filter_class = CategoriesFilter
+    filter_backends = (OrderingFilter, filters.DjangoFilterBackend,)
     ordering_fields = ('fulfillmentAmount', 'deadline', 'bounty_created')
 
 class FulfillmentViewSet(viewsets.ModelViewSet):

@@ -1,8 +1,8 @@
 'use strict';
 
 const delay = require('delay'),
-	  StandardBounties = require('./web3_config'),
 	  rollbar = require('./rollbar'),
+	{ StandardBounties } = require('./web3_config'),
 	{ getAsync, writeAsync } = require('./redis_config'),
 	{ sendEvents } = require('./eventsRetriever');
 

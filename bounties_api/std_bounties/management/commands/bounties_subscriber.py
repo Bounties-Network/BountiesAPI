@@ -1,6 +1,7 @@
 import os
-from django.core.management.base import BaseCommand
+import json
 import time
+from django.core.management.base import BaseCommand
 from std_bounties.client import BountyClient
 from django.conf import settings
 from slackclient import SlackClient
@@ -41,42 +42,46 @@ class Command(BaseCommand):
                 event = message_attributes['Event']['StringValue']
                 bounty_id = int(message_attributes['BountyId']['StringValue'])
                 fulfillment_id = int(message_attributes['FulfillmentId']['StringValue'])
-                transaction_id =  message_attributes['TransactionHash']['StringValue']
+                message_deduplication_id =  message_attributes['MessageDeduplicationId']['StringValue']
+                contract_method_inputs = json.loads(message_attributes['ContractMethodInputs']['StringValue']);
 
                 if event == 'BountyIssued':
-                    bounty_client.issue_bounty(bounty_id)
+                    bounty_client.issue_bounty(bounty_id, contract_method_inputs)
 
                 if event == 'BountyActivated':
-                    bounty_client.activate_bounty(bounty_id)
+                    bounty_client.activate_bounty(bounty_id, contract_method_inputs)
 
                 if event == 'BountyFulfilled':
-                    bounty_client.fulfill_bounty(bounty_id, fulfillment_id)
+                    bounty_client.fulfill_bounty(bounty_id, fulfillment_id, contract_method_inputs)
 
                 if event == 'FulfillmentUpdated':
-                    bounty_client.update_fulfillment(bounty_id, fulfillment_id)
+                    bounty_client.update_fulfillment(bounty_id, fulfillment_id, contract_method_inputs)
+
+                if event == 'FulfillmentAccepted':
+                    bounty_client.accept_fulfillment(bounty_id, fulfillment_id)
 
                 if event == 'BountyKilled':
                     bounty_client.kill_bounty(bounty_id)
 
                 if event == 'ContributionAdded':
-                    bounty_client.add_contribution(bounty_id)
+                    bounty_client.add_contribution(bounty_id, contract_method_inputs)
 
                 if event == 'DeadlineExtended':
-                    bounty_client.extend_deadline(bounty_id)
+                    bounty_client.extend_deadline(bounty_id, contract_method_inputs)
 
                 if event == 'BountyChanged':
-                    bounty_client.change_bounty(bounty_id)
+                    bounty_client.change_bounty(bounty_id, contract_method_inputs)
 
                 if event == 'IssuerTransferred':
-                    bounty_client.transfer_issuer(bounty_id)
+                    bounty_client.transfer_issuer(bounty_id, contract_method_inputs)
 
                 if event == 'PayoutIncreased':
-                    bounty_client.increase_payout(bounty_id)
+                    bounty_client.increase_payout(bounty_id, contract_method_inputs)
 
                 sc.api_call('chat.postMessage', channel='#bounty_notifs',
                     text='Event {} passed for bounty {}'.format(event, str(bounty_id))
                 )
-                redis_client.set(transaction_id, True)
+                redis_client.set(message_deduplication_id, True)
                 sqs_client.delete_message(
                     QueueUrl=settings.QUEUE_URL,
                     ReceiptHandle=receipt_handle,

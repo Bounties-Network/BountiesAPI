@@ -1,7 +1,8 @@
-const { cloneDeep } = require('lodash'),
+const { cloneDeep, chain } = require('lodash'),
 	  { getAsync } = require('./redis_config'),
 	  { SQS_PARAMS } = require('./constants'),
-	    sqs = require('./sqs_config');
+	  { abiDecoder, getTransaction } = require('./web3_config'),
+	   sqs = require('./sqs_config');
 
 
 async function sendEvents(events) {
@@ -19,7 +20,8 @@ async function sendEvents(events) {
 				},
 			} = event, messageParams;
 
-			const existingHash = await getAsync(transactionHash);
+			const messageDeduplicationId = transactionHash + eventName;
+			const existingHash = await getAsync(messageDeduplicationId);
 
 			// this means we already synced this hash
 			// I do it this way since we keep subscribing to the same block. SQS provides de-duping, but
@@ -28,16 +30,24 @@ async function sendEvents(events) {
 				continue;
 			}
 
-
 			bountyId = bountyId === '-1' ? _bountyId : bountyId;
+
+			const rawTransaction = await getTransaction(transactionHash);
+			const rawContractMethodInputs = abiDecoder.decodeMethod(rawTransaction.input);
+			const contractMethodInputs = chain(rawContractMethodInputs.params)
+				.keyBy('name')
+				.mapValues('value')
+				.mapKeys((value, key) => key.substring(1))
+				.value();
 
 			// Set Up SQS Params
 			messageParams = cloneDeep(SQS_PARAMS);
 			messageParams.MessageAttributes.Event.StringValue = eventName;
 			messageParams.MessageAttributes.BountyId.StringValue = bountyId;
 			messageParams.MessageAttributes.FulfillmentId.StringValue = fulfillmentId;
-			messageParams.MessageAttributes.TransactionHash.StringValue = transactionHash;
-			messageParams.MessageDeduplicationId = transactionHash;
+			messageParams.MessageAttributes.MessageDeduplicationId.StringValue = messageDeduplicationId;
+			messageParams.MessageAttributes.ContractMethodInputs.StringValue = JSON.stringify(contractMethodInputs);
+			messageParams.MessageDeduplicationId = messageDeduplicationId;
 
 			await sqs.sendMessage(messageParams).promise();
 			highestBlock = blockNumber;

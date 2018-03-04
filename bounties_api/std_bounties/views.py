@@ -8,6 +8,8 @@ class BountyViewSet(viewsets.ModelViewSet):
     """
     serializer_class = BountySerializer
     queryset = Bounty.objects.all()
+    filter_fields = ('deadline', 'issuer', 'fulfillmentAmount', 'bountyStage', 'bounty_created')
+    ordering_fields = ('fulfillmentAmount', 'deadline', 'bounty_created')
 
 class FulfillmentViewSet(viewsets.ModelViewSet):
     """

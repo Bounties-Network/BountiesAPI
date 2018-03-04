@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'std_bounties',
 ]
 
@@ -135,7 +136,8 @@ LOGGING = {
 }
 
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'rollbar.contrib.django_rest_framework.post_exception_handler'
+    'EXCEPTION_HANDLER': 'rollbar.contrib.django_rest_framework.post_exception_handler',
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
 }
 
 # Internationalization

@@ -66,7 +66,7 @@ class BountyClient:
 
     def activate_bounty(self, bounty_id, inputs):
         bounty = Bounty.objects.get(bounty_id=bounty_id)
-        bounty.bountystage = ACTIVE_STAGE
+        bounty.bountyStage = ACTIVE_STAGE
         bounty.save()
 
     def fulfill_bounty(self, bounty_id, fulfillment_id, inputs, event_timestamp):

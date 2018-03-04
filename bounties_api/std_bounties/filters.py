@@ -23,4 +23,5 @@ class BountiesFilter(filters.FilterSet):
             'bountyStage': ['exact'],
             'bounty_created': ['lt', 'gt', 'exact'],
             'deadline': ['lt', 'gt', 'exact'],
+            'bounty_id': ['exact'],
         }

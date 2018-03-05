@@ -17,7 +17,7 @@ class Command(BaseCommand):
                     deadline__lt=datetime.now(timezone.utc),
                     bountyStage=ACTIVE_STAGE
                 )
-                expired_bounties.update(bountyStage=ACTIVE_STAGE)
+                expired_bounties.update(bountyStage=EXPIRED_STAGE)
                 time.sleep(60)
         except Exception as e:
             # goes to rollbar

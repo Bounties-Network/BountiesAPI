@@ -37,6 +37,7 @@ class BountyClient:
         bounty_data = inputs.copy()
         data_JSON = ipfs.cat(bounty_data.get('data'))
         data = json.loads(data_JSON)
+        metadata = data.get('meta', {})
         if 'payload' in data:
             data = data.get('payload')
 
@@ -46,8 +47,8 @@ class BountyClient:
             int(data.get('created', None) or event_timestamp)
         )
         data.pop('created', None)
-        data['data_categories'] = data.get('categories', None)
-        categories = data.pop('categories', None)
+        data['data_categories'] = data.get('categories', [])
+        categories = data.pop('categories', [])
 
         bounty_data['deadline'] = datetime.datetime.fromtimestamp(int(bounty_data.get('deadline', None)))
         bounty_data.pop('value', None)
@@ -58,7 +59,7 @@ class BountyClient:
             'bountyStage': DRAFT_STAGE,
         }
 
-        bounty_serializer = BountySerializer(data={**data, **bounty_data, **extra_data})
+        bounty_serializer = BountySerializer(data={**data, **bounty_data, **extra_data, **metadata})
         bounty_serializer.is_valid(raise_exception=True)
         saved_bounty = bounty_serializer.save()
         saved_bounty.save_and_clear_categories(categories)
@@ -84,6 +85,7 @@ class BountyClient:
         data = json.loads(data_json)
         data['data_fulfiller'] = data.get('fulfiller', None)
         data.pop('fulfiller', None)
+        metadata = data.pop('meta', {})
         if 'payload' in data:
             data = data.get('payload')
 
@@ -97,7 +99,7 @@ class BountyClient:
             'fulfillment_created':  datetime.datetime.fromtimestamp(int(event_timestamp)),
         }
 
-        fulfillment_serializer = FulfillmentSerializer(data={**data, **extra_data})
+        fulfillment_serializer = FulfillmentSerializer(data={**data, **extra_data, **metadata})
         fulfillment_serializer.is_valid(raise_exception=True)
         fulfillment_serializer.save()
 
@@ -107,10 +109,11 @@ class BountyClient:
         data = json.loads(data_json)
         data['data_fulfiller'] = data.get('fulfiller', None)
         data.pop('fulfiller', None)
+        metadata = data.pop('meta', {})
 
         fulfillment = Fulfillment.objects.get(fulfillment_id=fulfillment_id, bounty_id=bounty_id)
         fulfillment_serializer = FulfillmentSerializer(fulfillment,
-            data={**data, **{data_json: data_json, data: data_hash}}, partial=True
+            data={**data, **metadata, **{data_json: data_json, data: data_hash}}, partial=True
         )
         fulfillment_serializer.save()
 
@@ -148,6 +151,7 @@ class BountyClient:
     def change_bounty(self, bounty_id, inputs):
         data = {}
         updated_data = {}
+        metadata = {}
         data_hash = inputs.get('data', None)
         deadline = inputs.get('newDeadline', None)
         fulfillmentAmount = inputs.get('newFulfillmentAmount', None)
@@ -156,6 +160,9 @@ class BountyClient:
         if data_hash:
             data_JSON = ipfs.cat(data_hash)
             data = json.loads(data_JSON)
+            metadata = data.get('meta', {})
+            if 'payload' in data:
+                data = data.get('payload')
 
             data['data_issuer'] = data.get('issuer', None)
             data.pop('issuer', None)
@@ -174,7 +181,7 @@ class BountyClient:
             updated_data['arbiter'] = arbiter
 
         bounty = Bounty.objects.get(bounty_id=bounty_id)
-        bounty_serializer = BountySerializer(bounty, data={**data, **updated_data}, partial=True)
+        bounty_serializer = BountySerializer(bounty, data={**data, **updated_data, **metadata}, partial=True)
         bounty_serializer.is_valid(raise_exception=True)
         saved_bounty = bounty_serializer.save()
         if data_hash:

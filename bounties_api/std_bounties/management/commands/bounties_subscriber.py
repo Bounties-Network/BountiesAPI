@@ -46,6 +46,7 @@ class Command(BaseCommand):
                 event_timestamp = message_attributes['TimeStamp']['StringValue']
                 contract_method_inputs = json.loads(message_attributes['ContractMethodInputs']['StringValue'])
 
+                print(event)
                 if event == 'BountyIssued':
                     bounty_client.issue_bounty(bounty_id, contract_method_inputs, event_timestamp)
 
@@ -79,6 +80,7 @@ class Command(BaseCommand):
                 if event == 'PayoutIncreased':
                     bounty_client.increase_payout(bounty_id, contract_method_inputs)
 
+                logger.info(event)
                 sc.api_call('chat.postMessage', channel='#bounty_notifs',
                     text='Event {} passed for bounty {}'.format(event, str(bounty_id))
                 )

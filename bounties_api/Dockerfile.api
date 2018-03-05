@@ -8,5 +8,5 @@
  RUN pip install -r requirements.txt
  ADD . /code/
  EXPOSE 83
- RUN if [ "${auto_build}" = "true" ]; then python3 manage.py runserver 0.0.0.0:83 ; fi
+ CMD if [ "${auto_build}" = "true" ]; then python3 manage.py runserver 0.0.0.0:83 ; fi
  

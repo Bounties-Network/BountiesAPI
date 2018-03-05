@@ -27,4 +27,4 @@ RUN npm install
 COPY . .
 
 EXPOSE 8080
-RUN if [ "${auto_build}" = "true" ]; then npm start ; fi
+CMD if [ "${auto_build}" = "true" ]; then npm start ; fi

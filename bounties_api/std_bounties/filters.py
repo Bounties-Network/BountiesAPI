@@ -1,5 +1,5 @@
 import rest_framework_filters as filters
-from std_bounties.models import Bounty, Category
+from std_bounties.models import Bounty, Category, Fulfillment
 
 
 class CategoriesFilter(filters.FilterSet):
@@ -10,9 +10,17 @@ class CategoriesFilter(filters.FilterSet):
         }
 
 
+class FulfillmentsFilter(filters.FilterSet):
+    class Meta:
+        model = Fulfillment
+        fields = {
+            'fulfiller': ['exact']
+        }
+
 
 class BountiesFilter(filters.FilterSet):
     categories = filters.RelatedFilter(CategoriesFilter, name='categories', queryset=Category.objects.all())
+    fulfillments = filters.RelatedFilter(FulfillmentsFilter, name='fulfillments', queryset=Fulfillment.objects.all())
     bounty_created = filters.DateFilter(name='bounty_created')
 
     class Meta:
@@ -25,3 +33,4 @@ class BountiesFilter(filters.FilterSet):
             'deadline': ['lt', 'gt', 'exact'],
             'bounty_id': ['exact'],
         }
+

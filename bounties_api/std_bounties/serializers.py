@@ -10,6 +10,12 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class FulfillmentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Fulfillment
+        fields = '__all__'
+
 class BountySerializer(serializers.ModelSerializer):
     bountyStage = serializers.ChoiceField(choices=STAGE_CHOICES)
     categories = CategorySerializer(read_only=True, many=True)
@@ -20,8 +26,3 @@ class BountySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class FulfillmentSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Fulfillment
-        fields = '__all__'

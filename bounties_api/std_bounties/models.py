@@ -64,7 +64,7 @@ class Bounty(models.Model):
 
 
 class Fulfillment(models.Model):
-    bounty = models.ForeignKey(Bounty)
+    bounty = models.ForeignKey(Bounty, related_name='fulfillments')
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     fulfillment_id = models.IntegerField()

@@ -8,9 +8,13 @@ from std_bounties.contract import data
 from std_bounties.models import Bounty, Fulfillment
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer
 from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE
+from bounties.utils import getDateTimeFromTimestamp
 from django.conf import settings
 from django.db import transaction
 import ipfsapi
+import logging
+
+logger = logging.getLogger('django')
 
 
 web3 = Web3(HTTPProvider(settings.ETH_NETWORK_URL))
@@ -29,13 +33,21 @@ class BountyClient:
         pass
 
     @transaction.atomic
-    def issue_bounty(self, id, inputs, event_timestamp):
-        bounty = Bounty.objects.filter(bounty_id=id).exists()
+    def issue_bounty(self, bounty_id, inputs, event_timestamp):
+        bounty = Bounty.objects.filter(bounty_id=bounty_id).exists()
         if bounty:
             return
 
         bounty_data = inputs.copy()
-        data_JSON = ipfs.cat(bounty_data.get('data'))
+        data_hash = bounty_data.get('data', 'invalid')
+        if len(data_hash) != 46 or not data_hash.startswith('Qm'):
+            logger.error('Data Hash Incorrect for bounty: {:d}'.format(bounty_id))
+            data_JSON = "{}"
+        else:
+            data_JSON = ipfs.cat(data_hash)
+        if len(data_hash) == 0:
+            bounty_data['data'] = 'invalid'
+
         data = json.loads(data_JSON)
         metadata = data.get('meta', {})
         if 'payload' in data:
@@ -43,18 +55,16 @@ class BountyClient:
 
         data['data_issuer'] = data.get('issuer', None)
         data.pop('issuer', None)
-        data['bounty_created'] = datetime.datetime.fromtimestamp(
-            int(data.get('created', None) or event_timestamp)
-        )
+        data['bounty_created'] = datetime.datetime.fromtimestamp(int(event_timestamp))
         data.pop('created', None)
         data['data_categories'] = data.get('categories', [])
         categories = data.pop('categories', [])
 
-        bounty_data['deadline'] = datetime.datetime.fromtimestamp(int(bounty_data.get('deadline', None)))
+        bounty_data['deadline'] = getDateTimeFromTimestamp(bounty_data.get('deadline', None))
         bounty_data.pop('value', None)
 
         extra_data = {
-            'bounty_id': id,
+            'bounty_id': bounty_id,
             'data_json': str(data_JSON),
             'bountyStage': DRAFT_STAGE,
         }
@@ -144,7 +154,7 @@ class BountyClient:
 
     def extend_deadline(self, bounty_id, inputs):
         bounty = Bounty.objects.get(bounty_id=bounty_id)
-        bounty.deadline = datetime.datetime.fromtimestamp(int(inputs.get('newDeadline')))
+        bounty.deadline = getDateTimeFromTimestamp(inputs.get('newDeadline', None))
         bounty.save()
 
     @transaction.atomic

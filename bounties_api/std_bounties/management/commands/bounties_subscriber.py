@@ -46,7 +46,6 @@ class Command(BaseCommand):
                 event_timestamp = message_attributes['TimeStamp']['StringValue']
                 contract_method_inputs = json.loads(message_attributes['ContractMethodInputs']['StringValue'])
 
-                print(event)
                 if event == 'BountyIssued':
                     bounty_client.issue_bounty(bounty_id, contract_method_inputs, event_timestamp)
 

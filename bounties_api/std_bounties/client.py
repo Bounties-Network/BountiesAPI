@@ -53,7 +53,8 @@ class BountyClient:
         if 'payload' in data:
             data = data.get('payload')
 
-        data['data_issuer'] = data.get('issuer', None)
+        data_issuer =  data.get('issuer', {})
+        data['data_issuer'] = data_issuer
         data.pop('issuer', None)
         data['bounty_created'] = datetime.datetime.fromtimestamp(int(event_timestamp))
         data.pop('created', None)
@@ -67,9 +68,13 @@ class BountyClient:
             'bounty_id': bounty_id,
             'data_json': str(data_JSON),
             'bountyStage': DRAFT_STAGE,
+            'issuer_name': data_issuer.get('name', ''),
+            'issuer_email': data_issuer.get('email', ''),
+            'issuer_githubUsername': data_issuer.get('githubUsername', ''),
+            'issuer_address': data_issuer.get('address', ''),
         }
 
-        bounty_serializer = BountySerializer(data={**data, **bounty_data, **extra_data, **metadata})
+        bounty_serializer = BountySerializer(data={**data, **bounty_data, **extra_data, **metadata, **data_issuer})
         bounty_serializer.is_valid(raise_exception=True)
         saved_bounty = bounty_serializer.save()
         saved_bounty.save_and_clear_categories(categories)
@@ -93,11 +98,12 @@ class BountyClient:
         data_hash = inputs.get('data')
         data_json = ipfs.cat(data_hash)
         data = json.loads(data_json)
-        data['data_fulfiller'] = data.get('fulfiller', None)
-        data.pop('fulfiller', None)
         metadata = data.pop('meta', {})
         if 'payload' in data:
             data = data.get('payload')
+        data_fulfiller = data.get('fulfiller', {})
+        data['data_fulfiller'] = data_fulfiller
+        data.pop('fulfiller', None)
 
         extra_data = {
             'data_json': str(data_json),
@@ -107,9 +113,13 @@ class BountyClient:
             'data': data_hash,
             'accepted': False,
             'fulfillment_created':  datetime.datetime.fromtimestamp(int(event_timestamp)),
+            'fulfiller_name': data_fulfiller.get('name', ''),
+            'fulfiller_email': data_fulfiller.get('email', ''),
+            'fulfiller_githubUsername': data_fulfiller.get('githubUsername', ''),
+            'fulfiller_address': data_fulfiller.get('address', ''),
         }
 
-        fulfillment_serializer = FulfillmentSerializer(data={**data, **extra_data, **metadata})
+        fulfillment_serializer = FulfillmentSerializer(data={**data, **extra_data, **metadata, **data_fulfiller})
         fulfillment_serializer.is_valid(raise_exception=True)
         fulfillment_serializer.save()
 
@@ -117,13 +127,23 @@ class BountyClient:
         data_hash = inputs.get('data')
         data_json = ipfs.cat(data_hash)
         data = json.loads(data_json)
-        data['data_fulfiller'] = data.get('fulfiller', None)
-        data.pop('fulfiller', None)
         metadata = data.pop('meta', {})
+        if 'payload' in data:
+            data = data.get('payload')
+        data_fulfiller = data.get('fulfiller', {})
+        data['data_fulfiller'] = data_fulfiller
+        data.pop('fulfiller', None)
+
+        extra_data = {
+            'fulfiller_name': data_fulfiller.get('name', ''),
+            'fulfiller_email': data_fulfiller.get('email', ''),
+            'fulfiller_githubUsername': data_fulfiller.get('githubUsername', ''),
+            'fulfiller_address': data_fulfiller.get('address', ''),
+        }
 
         fulfillment = Fulfillment.objects.get(fulfillment_id=fulfillment_id, bounty_id=bounty_id)
         fulfillment_serializer = FulfillmentSerializer(fulfillment,
-            data={**data, **metadata, **{data_json: data_json, data: data_hash}}, partial=True
+            data={**data, **metadata, **{data_json: data_json, data: data_hash} **extra_data}, partial=True
         )
         fulfillment_serializer.save()
 
@@ -174,12 +194,17 @@ class BountyClient:
             if 'payload' in data:
                 data = data.get('payload')
 
-            data['data_issuer'] = data.get('issuer', None)
+            data_issuer = data.get('issuer', None)
+            data['data_issuer'] = data_issuer
             data.pop('issuer', None)
             data['data_categories'] = data.get('categories', None)
             categories = data.pop('categories', None)
             updated_data['data'] = data_hash
             updated_data['data_json'] = str(data_JSON)
+            updated_data['fulfiller_name'] = data_fulfiller.get('name', '')
+            updated_data['fulfiller_email'] = data_fulfiller.get('email', '')
+            updated_data['fulfiller_githubUsername'] = data_fulfiller.get('githubUsername', '')
+            updated_data['fulfiller_address'] = data_fulfiller.get('address', '')
 
         if deadline:
             updated_data['deadline'] = datetime.datetime.fromtimestamp(int(new_deadline))

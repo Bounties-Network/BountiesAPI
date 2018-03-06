@@ -14,7 +14,8 @@ class FulfillmentsFilter(filters.FilterSet):
     class Meta:
         model = Fulfillment
         fields = {
-            'fulfiller': ['exact']
+            'fulfiller': ['exact'],
+            'fulfillment_id': ['exact'],
         }
 
 

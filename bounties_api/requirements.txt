@@ -8,4 +8,4 @@
  rollbar==0.13.18
  slackclient==1.1.2
  djangorestframework-filters==0.10.2
- 
+ django-cors-headers==2.2.0

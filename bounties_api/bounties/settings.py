@@ -26,6 +26,8 @@ SECRET_KEY = os.environ.get('django_secret', 'secret')
 DEBUG = os.environ.get('DEBUG', True)
 
 ALLOWED_HOSTS = ['*']
+CORS_ORIGIN_ALLOW_ALL = True
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -35,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'django_filters',
     'rest_framework',
     'rest_framework_filters',
@@ -44,6 +47,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -126,11 +130,14 @@ LOGGING = {
             'class': 'rollbar.logger.RollbarHandler',
             'level': 'WARNING',
         },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'level': 'INFO',
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['rollbar'],
-            'level': 'WARNING',
+            'handlers': ['rollbar', 'console'],
             'propagate': True,
         },
     },

@@ -24,6 +24,15 @@ services:
       - redis_bounties:/data
     ports:
       - "6379:6379"
+  sql_jobs:
+    build:
+      context: ./sql_jobs
+      dockerfile: Dockerfile
+    command: bash -c "./local.sh"
+    env_file:
+      - .env
+    volumes:
+      - ./sql_jobs:/usr/src/app
   bounties_api:
     build:
       context: ./bounties_api

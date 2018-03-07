@@ -89,3 +89,11 @@ class Fulfillment(models.Model):
     schemaName = models.CharField(max_length=128, blank=True)
     data_fulfiller = JSONField(null=True)
     data_json = JSONField(null=True)
+
+class RankedCategory(models.Model):
+    name = models.CharField(max_length=128)
+    normalized_name = models.CharField(max_length=128)
+    total_count = models.IntegerField()
+    class Meta:
+       managed = False
+       db_table = 'category_ranks'

@@ -1,6 +1,13 @@
 from rest_framework import serializers
-from std_bounties.models import Bounty, Fulfillment, Category
+from std_bounties.models import Bounty, Fulfillment, Category, RankedCategory
 from std_bounties.constants import STAGE_CHOICES
+
+
+class RankedCategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RankedCategory
+        fields = '__all__'
 
 
 class CategorySerializer(serializers.ModelSerializer):

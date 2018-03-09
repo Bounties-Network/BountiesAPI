@@ -14,8 +14,9 @@ class BountyViewSet(viewsets.ModelViewSet):
     queryset = Bounty.objects.all()
     filter_class = BountiesFilter
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
-    ordering_fields = ('fulfillmentAmount', 'deadline', 'bounty_created')
+    ordering_fields = ('fulfillmentAmount', 'deadline', 'bounty_created', 'usd_price')
     search_fields = ('title', 'description', 'categories__normalized_name')
+
 
 class FulfillmentViewSet(viewsets.ModelViewSet):
     """

@@ -9,3 +9,4 @@
  slackclient==1.1.2
  djangorestframework-filters==0.10.2
  django-cors-headers==2.2.0
+ requests==2.18.4

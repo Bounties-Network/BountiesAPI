@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from std_bounties.models import Bounty, Fulfillment, Category, RankedCategory
+from std_bounties.models import Bounty, Fulfillment, Category, RankedCategory, Token
 from std_bounties.constants import STAGE_CHOICES
 
 
@@ -23,9 +23,17 @@ class FulfillmentSerializer(serializers.ModelSerializer):
         model = Fulfillment
         fields = '__all__'
 
+
+class TokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Token
+        fields = '__all__'
+
+
 class BountySerializer(serializers.ModelSerializer):
     bountyStage = serializers.ChoiceField(choices=STAGE_CHOICES)
     categories = CategorySerializer(read_only=True, many=True)
+    current_market_token_data = TokenSerializer(read_only=True, source='token')
     fulfillment_count = serializers.ReadOnlyField(source='fulfillment_set.count')
 
     class Meta:

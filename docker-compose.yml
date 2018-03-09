@@ -11,7 +11,6 @@ services:
   db:
     image: postgres
     environment:
-      POSTGRES_PASSWORD: psql_bounties12312
       POSTGRES_USER: postgres
       POSTGRES_DB: bounties
     volumes:
@@ -42,7 +41,7 @@ services:
     restart: always
     env_file:
       - .env
-    command: bash -c "sleep 5 && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:83"
+    command: bash -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:83"
     volumes:
       - ./bounties_api:/code
     ports:
@@ -77,6 +76,21 @@ services:
     env_file:
       - .env
     command: python3 manage.py track_bounty_expirations
+    volumes:
+      - ./bounties_api:/code
+    depends_on:
+      - db
+      - bounties_api
+  get_token_values:
+    build:
+      context: ./bounties_api
+      dockerfile: Dockerfile.tokens
+      args:
+        auto_build: 'false'
+    restart: always
+    env_file:
+      - .env
+    command: bash -c "./local.sh"
     volumes:
       - ./bounties_api:/code
     depends_on:

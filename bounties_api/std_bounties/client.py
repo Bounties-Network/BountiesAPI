@@ -5,7 +5,7 @@ from collections import namedtuple
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from std_bounties.contract import data
-from std_bounties.models import Bounty, Fulfillment
+from std_bounties.models import Bounty, Fulfillment, Token
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer
 from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE
 from bounties.utils import getDateTimeFromTimestamp
@@ -48,6 +48,17 @@ class BountyClient:
         if len(data_hash) == 0:
             bounty_data['data'] = 'invalid'
 
+        token_symbol = 'ETH'
+        token_decimals = 18
+        if inputs['paysTokens']:
+            HumanStandardToken = web3.eth.contract(
+                bounties_json['interfaces']['HumanStandardToken'],
+                inputs['tokenContract'],
+                ContractFactoryClass=ConciseContract
+            )
+            token_symbol = HumanStandardToken.symbol()
+            token_decimals = HumanStandardToken.decimals()
+
         data = json.loads(data_JSON)
         metadata = data.get('meta', {})
         if 'payload' in data:
@@ -59,26 +70,38 @@ class BountyClient:
         data['bounty_created'] = datetime.datetime.fromtimestamp(int(event_timestamp))
         data.pop('created', None)
         data['data_categories'] = data.get('categories', [])
+        data.pop('tokenSymbol', None)
         categories = data.pop('categories', [])
 
         bounty_data['deadline'] = getDateTimeFromTimestamp(bounty_data.get('deadline', None))
         bounty_data.pop('value', None)
+
+        token_price = 0
+        try:
+            token_model = Token.objects.get(symbol=token_symbol)
+            token_price = ((Decimal(bounty_data.get('fulfillmentAmount')) / Decimal(pow(10, token_decimals))) * Decimal(token_model.price_usd)).quantize(Decimal(10) ** -8)
+        except Token.DoesNotExist:
+            token_model = None
+            pass
 
         extra_data = {
             'bounty_id': bounty_id,
             'data_json': str(data_JSON),
             'bountyStage': DRAFT_STAGE,
             'issuer_name': data_issuer.get('name', ''),
-            'issuer_email': data_issuer.get('email', ''),
+            'issuer_email': data_issuer.get('email', '') or data.get('contact', ''),
             'issuer_githubUsername': data_issuer.get('githubUsername', ''),
             'issuer_address': data_issuer.get('address', ''),
+            'tokenSymbol': token_symbol,
+            'tokenDecimals': token_decimals,
+            'token': token_model.id if token_model else None,
+            'usd_price': token_price,
         }
 
         bounty_serializer = BountySerializer(data={**data, **bounty_data, **extra_data, **metadata, **data_issuer})
         bounty_serializer.is_valid(raise_exception=True)
         saved_bounty = bounty_serializer.save()
         saved_bounty.save_and_clear_categories(categories)
-
 
     def activate_bounty(self, bounty_id, inputs):
         bounty = Bounty.objects.get(bounty_id=bounty_id)
@@ -199,10 +222,11 @@ class BountyClient:
             data.pop('issuer', None)
             data['data_categories'] = data.get('categories', None)
             categories = data.pop('categories', None)
+            data.pop('tokenSymbol', None)
             updated_data['data'] = data_hash
             updated_data['data_json'] = str(data_JSON)
             updated_data['fulfiller_name'] = data_fulfiller.get('name', '')
-            updated_data['fulfiller_email'] = data_fulfiller.get('email', '')
+            updated_data['fulfiller_email'] = data_fulfiller.get('email', '') or data.get('contact', '')
             updated_data['fulfiller_githubUsername'] = data_fulfiller.get('githubUsername', '')
             updated_data['fulfiller_address'] = data_fulfiller.get('address', '')
 
@@ -221,6 +245,15 @@ class BountyClient:
         saved_bounty = bounty_serializer.save()
         if data_hash:
             saved_bounty.save_and_clear_categories(categories)
+
+        if fulfillmentAmount:
+            try:
+                token_model = Token.objects.get(symbol=saved_bounty.tokenSymbol)
+                fulfillment_price = ((Decimal(fulfillmentAmount) / Decimal(pow(10, saved_bounty.tokenDecimals))) * Decimal(token_model.price_usd)).quantize(Decimal(10) ** -8)
+                saved_bounty.usd_price = fulfillment_price
+            except Token.DoesNotExist:
+                token_price = 0
+                pass
 
 
     def transfer_issuer(self, bounty_id, inputs):

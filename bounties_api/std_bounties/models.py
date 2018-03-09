@@ -7,8 +7,6 @@ from std_bounties.constants import STAGE_CHOICES, DRAFT_STAGE
 from django.core.exceptions import ObjectDoesNotExist
 
 
-
-
 class Category(models.Model):
     name = models.CharField(max_length=128, unique=True)
     normalized_name = models.CharField(max_length=128)
@@ -16,6 +14,13 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         self.normalized_name = self.name.lower().strip();
         super(Category, self).save(*args, **kwargs)
+
+
+class Token(models.Model):
+    normalized_name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128)
+    symbol =  models.CharField(max_length=128)
+    price_usd = models.FloatField(default=0, null=True)
 
 
 class Bounty(models.Model):
@@ -27,18 +32,20 @@ class Bounty(models.Model):
     data = models.CharField(max_length=128)
     issuer = models.CharField(max_length=128)
     arbiter = models.CharField(max_length=128, null=True)
-    fulfillmentAmount =  models.DecimalField(decimal_places=18, max_digits=64)
+    fulfillmentAmount = models.DecimalField(decimal_places=0, max_digits=64)
     paysTokens = models.BooleanField()
     bountyStage = models.IntegerField(choices=STAGE_CHOICES, default=DRAFT_STAGE)
-    old_balance = models.DecimalField(decimal_places=18, max_digits=64, null=True)
-    balance =  models.DecimalField(decimal_places=18, max_digits=64, null=True, default=0)
+    old_balance = models.DecimalField(decimal_places=0, max_digits=64, null=True)
+    balance =  models.DecimalField(decimal_places=0, max_digits=70, null=True, default=0)
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField(blank=True)
     funders = JSONField(null=True)
     bounty_created = models.DateTimeField(null=True)
-    tokenSymbol = models.CharField(max_length=64, blank=True)
-    tokenContract = models.CharField(max_length=128, blank=True)
-    tokenAddress = models.CharField(max_length=128, blank=True)
+    token = models.ForeignKey(Token, null=True)
+    tokenSymbol = models.CharField(max_length=128, default='ETH')
+    tokenDecimals = models.IntegerField(default=18)
+    tokenContract = models.CharField(max_length=128, default='0x0000000000000000000000000000000000000000')
+    usd_price = models.FloatField(default=0)
     issuer_name = models.CharField(max_length=128, blank=True)
     issuer_email = models.CharField(max_length=128, blank=True)
     issuer_githubUsername = models.CharField(max_length=128, blank=True)
@@ -89,6 +96,7 @@ class Fulfillment(models.Model):
     schemaName = models.CharField(max_length=128, blank=True)
     data_fulfiller = JSONField(null=True)
     data_json = JSONField(null=True)
+
 
 class RankedCategory(models.Model):
     name = models.CharField(max_length=128)

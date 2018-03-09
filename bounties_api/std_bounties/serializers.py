@@ -31,7 +31,7 @@ class TokenSerializer(serializers.ModelSerializer):
 
 
 class BountySerializer(serializers.ModelSerializer):
-    bountyStage = serializers.ChoiceField(choices=STAGE_CHOICES)
+    bountyStage = serializers.CharField(source='get_bountyStage_display')
     categories = CategorySerializer(read_only=True, many=True)
     current_market_token_data = TokenSerializer(read_only=True, source='token')
     fulfillment_count = serializers.ReadOnlyField(source='fulfillment_set.count')

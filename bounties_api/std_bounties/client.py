@@ -39,6 +39,7 @@ class BountyClient:
             return
 
         bounty_data = inputs.copy()
+        bounty_data['issuer'] = bounty_data.get('issuer', '').lower()
         data_hash = bounty_data.get('data', 'invalid')
         if len(data_hash) != 46 or not data_hash.startswith('Qm'):
             logger.error('Data Hash Incorrect for bounty: {:d}'.format(bounty_id))
@@ -131,7 +132,7 @@ class BountyClient:
         extra_data = {
             'data_json': str(data_json),
             'fulfillment_id': fulfillment_id,
-            'fulfiller': fulfillment_data.get('fulfiller'),
+            'fulfiller': fulfillment_data.get('fulfiller').lower(),
             'bounty': bounty_id,
             'data': data_hash,
             'accepted': False,

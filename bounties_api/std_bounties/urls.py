@@ -11,5 +11,6 @@ router.register(r'category', views.CategoryViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [
-    url(r'^', include(router.urls))
+    url(r'^', include(router.urls)),
+    url(r'^stats/(?P<address>\w+)/', views.BountyStats.as_view()),
 ]

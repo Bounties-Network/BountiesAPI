@@ -44,6 +44,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     ordering = ('-total_count',)
     search_fields = ('normalized_name',)
 
+
 class BountyStats(APIView):
     def get(self, request, address=''):
         bounty_stats = {}
@@ -51,4 +52,26 @@ class BountyStats(APIView):
         for stage in STAGE_CHOICES:
             bounty_stats[stage[1]] = user_bounties.filter(bountyStage=stage[0]).count()
         return JsonResponse(bounty_stats)
+
+
+class ProfileStats(APIView):
+    def get(self, request, address=''):
+        user_bounties = Bounty.objects.filter(issuer=address)
+        bounties_count = user_bounties.count()
+        bounties_accepted_count = user_bounties.filter(fulfillments__accepted=True).count()
+        bounties_acceptance_rate = bounties_accepted_count/bounties_count if bounties_accepted_count > 0 else 0
+        user_submissions = Fulfillment.objects.filter(fulfiller=address)
+        submissions_count = user_submissions.count()
+        submissions_accepted_count = user_submissions.filter(accepted=True).count()
+        submissions_acceptance_rate = submissions_accepted_count/submissions_count if submissions_count > 0 else 0
+        profile_stats = {
+            'bounties': bounties_count,
+            'bounties_accepted': bounties_accepted_count,
+            'bounties_acceptance_rate': bounties_acceptance_rate,
+            'submissions': submissions_count,
+            'submissions_accepted_count': submissions_accepted_count,
+            'submissions_acceptance_rate': submissions_acceptance_rate,
+        }
+        print(profile_stats)
+        return JsonResponse(profile_stats)
 

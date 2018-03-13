@@ -4,9 +4,11 @@ from django.db import connection
 from django.db.models import Count
 from django.http import JsonResponse, Http404
 from rest_framework.views import APIView
+from bounties.utils import dictfetchall
 from std_bounties.constants import STAGE_CHOICES
 from std_bounties.models import Bounty, Fulfillment, RankedCategory
-from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer
+from std_bounties.queries import LEADERBOARD_QUERY
+from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardSerializer
 from std_bounties.filters import BountiesFilter, FulfillmentsFilter
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
@@ -61,6 +63,14 @@ class UserProfile(APIView):
         }
         return JsonResponse(user_profile)
 
+
+class Leaderboard(APIView):
+    def get(self, request):
+        cursor = connection.cursor()
+        cursor.execute(LEADERBOARD_QUERY)
+        query_result = dictfetchall(cursor)
+        serializer = LeaderboardSerializer(query_result, many=True)
+        return JsonResponse(serializer.data, safe=False)
 
 class BountyStats(APIView):
     def get(self, request, address=''):

@@ -3,6 +3,17 @@ from std_bounties.models import Bounty, Fulfillment, Category, RankedCategory, T
 from std_bounties.constants import STAGE_CHOICES
 
 
+class CustomSerializer(serializers.ModelSerializer):
+
+    def get_field_names(self, declared_fields, info):
+        expanded_fields = super(CustomSerializer, self).get_field_names(declared_fields, info)
+
+        if getattr(self.Meta, 'extra_fields', None):
+            return expanded_fields + self.Meta.extra_fields
+        else:
+            return expanded_fields
+
+
 class RankedCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -11,13 +22,20 @@ class RankedCategorySerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Category
         fields = '__all__'
 
 
-class FulfillmentSerializer(serializers.ModelSerializer):
+class BountyFulfillmentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Bounty
+        fields = ['id', 'bounty_id', 'title', 'tokenSymbol', 'tokenDecimals', 'fulfillmentAmount']
+
+
+class FulfillmentSerializer(CustomSerializer):
+    bounty_data = BountyFulfillmentSerializer(read_only=True, source='bounty')
 
     class Meta:
         model = Fulfillment
@@ -29,7 +47,8 @@ class TokenSerializer(serializers.ModelSerializer):
         model = Token
         fields = '__all__'
 
-class BountySerializer(serializers.ModelSerializer):
+
+class BountySerializer(CustomSerializer):
     bountyStage = serializers.ChoiceField(choices=STAGE_CHOICES)
     categories = CategorySerializer(read_only=True, many=True)
     current_market_token_data = TokenSerializer(read_only=True, source='token')
@@ -38,5 +57,6 @@ class BountySerializer(serializers.ModelSerializer):
     class Meta:
         model = Bounty
         fields = '__all__'
+        extra_fields = ['id']
 
 

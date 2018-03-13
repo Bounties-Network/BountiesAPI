@@ -24,10 +24,11 @@ class Token(models.Model):
 
 
 class Bounty(models.Model):
+    id = models.IntegerField(primary_key=True)
+    bounty_id = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField(Category, null=True)
-    bounty_id = models.IntegerField()
     deadline = models.DateTimeField()
     data = models.CharField(max_length=128)
     issuer = models.CharField(max_length=128)
@@ -75,10 +76,10 @@ class Bounty(models.Model):
 
 
 class Fulfillment(models.Model):
+    fulfillment_id = models.IntegerField()
     bounty = models.ForeignKey(Bounty, related_name='fulfillments')
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    fulfillment_id = models.IntegerField()
     fulfillment_created = models.DateTimeField(null=True)
     data = models.CharField(max_length=128)
     accepted = models.BooleanField()

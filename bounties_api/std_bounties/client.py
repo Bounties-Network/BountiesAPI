@@ -86,6 +86,7 @@ class BountyClient:
             pass
 
         extra_data = {
+            'id': bounty_id,
             'bounty_id': bounty_id,
             'data_json': str(data_JSON),
             'bountyStage': DRAFT_STAGE,

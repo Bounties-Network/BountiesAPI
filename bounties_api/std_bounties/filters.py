@@ -15,7 +15,7 @@ class FulfillmentsFilter(filters.FilterSet):
         model = Fulfillment
         fields = {
             'fulfiller': ['exact'],
-            'fulfillment_id': ['exact'],
+            'bounty': ['exact'],
         }
 
 

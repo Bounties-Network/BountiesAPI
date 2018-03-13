@@ -68,3 +68,5 @@ class LeaderboardSerializer(serializers.Serializer):
     total = serializers.DecimalField(decimal_places=0, max_digits=128)
     bounties_fulfilled = serializers.IntegerField(read_only=True)
     fulfillments_accepted = serializers.IntegerField(read_only=True)
+    decimals = serializers.IntegerField(read_only=True)
+    symbol = serializers.CharField(max_length=64)

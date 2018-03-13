@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
+from django.db import connection
 from django.db.models import Count
 from django.http import JsonResponse, Http404
 from rest_framework.views import APIView
@@ -11,7 +12,7 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
 
 
-class BountyViewSet(viewsets.ModelViewSet):
+class BountyViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A viewset for viewing and editing user instances.
     """
@@ -23,7 +24,7 @@ class BountyViewSet(viewsets.ModelViewSet):
     search_fields = ('title', 'description', 'categories__normalized_name')
 
 
-class FulfillmentViewSet(viewsets.ModelViewSet):
+class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A viewset for viewing and editing user instances.
     """
@@ -33,7 +34,7 @@ class FulfillmentViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A viewset for viewing and editing user instances.
     """
@@ -43,6 +44,22 @@ class CategoryViewSet(viewsets.ModelViewSet):
     ordering_fields = ('total_count',)
     ordering = ('-total_count',)
     search_fields = ('normalized_name',)
+
+
+class UserProfile(APIView):
+    def get(self, request, address=''):
+        ordered_fulfillments = Fulfillment.objects.filter(fulfiller=address).order_by('-created')
+        if not ordered_fulfillments.exists():
+            raise Http404("Address does not exist")
+
+        latest_fulfillment = ordered_fulfillments[0]
+        user_profile = {
+            "address": address,
+            "name": latest_fulfillment.fulfiller_name,
+            "email": latest_fulfillment.fulfiller_email,
+            "githubUsername": latest_fulfillment.fulfiller_githubUsername,
+        }
+        return JsonResponse(user_profile)
 
 
 class BountyStats(APIView):
@@ -72,6 +89,4 @@ class ProfileStats(APIView):
             'submissions_accepted_count': submissions_accepted_count,
             'submissions_acceptance_rate': submissions_acceptance_rate,
         }
-        print(profile_stats)
         return JsonResponse(profile_stats)
-

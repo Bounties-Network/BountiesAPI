@@ -26,9 +26,7 @@ services:
   bounties_api:
     build:
       context: ./bounties_api
-      dockerfile: Dockerfile.api
-      args:
-        auto_build: 'false'
+      dockerfile: Dockerfile
     restart: always
     env_file:
       - .env
@@ -43,9 +41,7 @@ services:
   bounties_subscriber:
     build:
       context: ./bounties_api
-      dockerfile: Dockerfile.subscriber
-      args:
-        auto_build: 'false'
+      dockerfile: Dockerfile
     restart: always
     env_file:
       - .env
@@ -69,9 +65,7 @@ services:
   track_bounty_expirations:
     build:
       context: ./bounties_api
-      dockerfile: Dockerfile.expirations
-      args:
-        auto_build: 'false'
+      dockerfile: Dockerfile
     restart: always
     env_file:
       - .env
@@ -84,9 +78,7 @@ services:
   get_token_values:
     build:
       context: ./bounties_api
-      dockerfile: Dockerfile.tokens
-      args:
-        auto_build: 'false'
+      dockerfile: Dockerfile
     restart: always
     env_file:
       - .env
@@ -99,8 +91,6 @@ services:
   contract_subscriber:
     build:
       context: ./contract_subscriber
-      args:
-        auto_build: 'false'
     restart: always
     env_file:
       - .env

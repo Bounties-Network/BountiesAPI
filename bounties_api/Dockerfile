@@ -7,5 +7,4 @@
  ADD requirements.txt /code/
  RUN pip install -r requirements.txt
  ADD . /code/
- CMD if [ "${auto_build}" = "true" ]; then python3 manage.py get_token_values ; fi
- 
+ EXPOSE 83 

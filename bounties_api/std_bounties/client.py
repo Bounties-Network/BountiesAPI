@@ -66,6 +66,9 @@ class BountyClient:
             data = data.get('payload')
 
         data_issuer =  data.get('issuer', {})
+        if type(data_issuer) == str:
+            logger.error('Issuer schema incorrect for: {:d}'.format(bounty_id))
+            data_issuer = {}
         data['data_issuer'] = data_issuer
         data.pop('issuer', None)
         data['bounty_created'] = datetime.datetime.fromtimestamp(int(event_timestamp))

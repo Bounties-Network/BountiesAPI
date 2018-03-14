@@ -32,10 +32,14 @@ class Command(BaseCommand):
             all_bounties = Bounty.objects.all()
             for bounty in all_bounties:
                 price = token_cache.get(bounty.tokenSymbol, None)
-                if price!= None:
+                if price != None:
                     decimals = bounty.tokenDecimals
                     fulfillmentAmount = bounty.fulfillmentAmount
                     bounty.usd_price = (fulfillmentAmount / Decimal(pow(10, decimals))) * Decimal(price)
+                    bounty.save()
+                if price != None and not bounty.token:
+                    token_model = Token.objects.get(symbol=bounty.tokenSymbol)
+                    bounty.token = token_model
                     bounty.save()
 
         except Exception as e:

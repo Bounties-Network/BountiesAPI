@@ -1,17 +1,62 @@
 # Bounties-API
-The caching layer of the Bounties Network - available here http://a2e716ea2144911e898ed02122fce8e2-236283655.us-east-1.elb.amazonaws.com:83/
-Rinkeby - http://afb256214274611e898ed02122fce8e2-504516521.us-east-1.elb.amazonaws.com:83/
+[Deployed Production API - Mainnet Contract](http://a2e716ea2144911e898ed02122fce8e2-236283655.us-east-1.elb.amazonaws.com:83/)
 
-BETA submitted and deployed
+[Deployed Staging API - Rinkeby Contract](http://afb256214274611e898ed02122fce8e2-504516521.us-east-1.elb.amazonaws.com:83/)
+
+## Setup
+[Download Docker stable version](https://docs.docker.com/docker-for-mac/install/#download-docker-for-mac)
+```
+docker volume create --name redis_bounties
+docker volume create --name psql_bounties
+docker-compose up
+```
+Locally, you will now be syncing directly from the contract. You may access the api at:
+
+http://locahost:8000
+
+The API will automatically restart if you make code changes. To turn off the services, run `docker-compose down`. Keep in mind, the volumes make it so your DB and redis cache will be in the same state if you start the services again with `docker-compose up`. If you would like to wipe out your databases and start again, then run:
+```
+docker-compose down
+docker volume rm --name redis_bounties
+docker volume rm --name psql_bounties
+docker volume create --name redis_bounties
+docker volume create --name psql_bounties
+docker-compose up
+```
+If you add additional packages to a package.json or to the requirements.txt file, you'll need to rebuild the individual service.  To rebuild all services, you may run:
+```
+docker-compose down
+docker-compose build
+docker-compose up
+```
+By default, the sync will connect to mainNet. To change to a rinkeby sync or other, you will need to adjust the eth_network key in the [environment file](https://github.com/Bounties-Network/BountiesAPI/blob/master/.env). As an example, it can be changed to `eth_network=rinkeby`. 
+
+## API Schema and Documentation
+Visit the [production](http://a2e716ea2144911e898ed02122fce8e2-236283655.us-east-1.elb.amazonaws.com:83/) or staging [endpoint](http://afb256214274611e898ed02122fce8e2-504516521.us-east-1.elb.amazonaws.com:83/). Both default to the swagger documentation ui. The local version also serves the documentation.
+
+## Architecture
+
+![Architecture Diagram](https://s3.amazonaws.com/bountiespublic/BountiesDiagram2.png)
+
+The **frontend or client** can be any third party service or collaborator that integrates with the [standard bounties ethereum contract](https://github.com/Bounties-Network/StandardBounties).  This API works as a caching and storage layer for what is input into the standard bounties contract. Due to storage costs, the contract puts the majority of the data into IPFS. To understand further, read the documentation on the [standard bounties contract](https://github.com/Bounties-Network/StandardBounties/blob/master/docs/documentation.md).
+
+The [**contract subscriber**](https://github.com/Bounties-Network/BountiesAPI/tree/master/contract_subscriber) listens for events from the contract. In the case a resync is occurring, it will listen to all historical events, starting from the genesis block. In order for the subscriber to know what it has already accessed, the redis cache stores a currentBlock key. Additionally, the redis cache stores the hashes for all transactions that have already been evaluated and stored to the db. The contract subscriber will ignore transactions that have already been written, and will not search through blocks prior to the currentBlock key. When the subscriber picks up on a new event, it looks up the original transaction via web3 and passes the event data along with the original contract function inputs to SQS.  An SQS fifo queue is used. This means we will never have duplication on keys and all events will be handled in the order they come through.
+
+The [**bounties subscriber**](https://github.com/Bounties-Network/BountiesAPI/blob/master/bounties_api/std_bounties/management/commands/bounties_subscriber.py) listens to events that have been passed into SQS by the contract subscriber.  The bounties subscriber uses the data from the event, the inputs to the original contract function, and the IPFS stored data to write the appropriate values to the DB via django.
+
+The [**bounties api**](https://github.com/Bounties-Network/BountiesAPI) is a django API that serves the data that has been written by the bounties subscriber and other running jobs.
+
+[**sql_jobs**](https://github.com/Bounties-Network/BountiesAPI/tree/master/sql_jobs) are scheduled jobs to help enrich the data. [category_ranks.sql](https://github.com/Bounties-Network/BountiesAPI/blob/master/sql_jobs/hourly/category_ranks.sql) produces a table that ranks the most commonly used categories and converges duplicated names.
+
+Other Jobs include:
+ - [track_bounty_expirations.py](https://github.com/Bounties-Network/BountiesAPI/blob/master/bounties_api/std_bounties/management/commands/track_bounty_expirations.py).
+ - [get_token_values.py](https://github.com/Bounties-Network/BountiesAPI/blob/master/bounties_api/std_bounties/management/commands/get_token_values.py). This syncs with coinmarketcap every 5 minutes and updates pricing on each of the bounties in USD.
+
 ## TODO
-- [ ] Comments & General Documentation
+- [ ] Code Comments
 - [ ] Contribution Guidelines
 - [ ] Ops Documentation
-- [x] Manage Staging, Production, Local environments (for now just has one env)
 - [ ] Setup Linters
-- [x] Rollbar Integration 
-- [ ] API Filters
-- [ ] API expansion to fit [bounties explorer](https://github.com/ConsenSys/BountiesFactory) usecases
 - [ ] Events API to track diffs/events in the contract
 - [ ] Circle Integration
 - [ ] Basic Tests

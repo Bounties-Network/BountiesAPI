@@ -142,7 +142,7 @@ class BountyClient:
             'accepted': False,
             'fulfillment_created':  datetime.datetime.fromtimestamp(int(event_timestamp)),
             'fulfiller_name': data_fulfiller.get('name', ''),
-            'fulfiller_email': data_fulfiller.get('email', ''),
+            'fulfiller_email': data_fulfiller.get('email', '') or data.get('contact', ''),
             'fulfiller_githubUsername': data_fulfiller.get('githubUsername', ''),
             'fulfiller_address': data_fulfiller.get('address', ''),
         }
@@ -164,7 +164,7 @@ class BountyClient:
 
         extra_data = {
             'fulfiller_name': data_fulfiller.get('name', ''),
-            'fulfiller_email': data_fulfiller.get('email', ''),
+            'fulfiller_email': data_fulfiller.get('email', '') or data.get('contact', ''),
             'fulfiller_githubUsername': data_fulfiller.get('githubUsername', ''),
             'fulfiller_address': data_fulfiller.get('address', ''),
         }

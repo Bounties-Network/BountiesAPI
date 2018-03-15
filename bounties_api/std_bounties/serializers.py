@@ -39,7 +39,11 @@ class FulfillmentSerializer(CustomSerializer):
 
     class Meta:
         model = Fulfillment
-        exclude = ('data_json', 'data_fulfiller')
+        fields = '__all__'
+        extra_kwargs = {
+            'data_json': {'write_only': True},
+            'data_fulfiller': {'write_only': True},
+        }
 
 
 class TokenSerializer(serializers.ModelSerializer):
@@ -56,8 +60,14 @@ class BountySerializer(CustomSerializer):
 
     class Meta:
         model = Bounty
+        fields = '__all__'
         extra_fields = ['id']
-        exclude = ('data_categories', 'data_issuer', 'data_json', 'funders')
+        extra_kwargs = {
+            'data_categories': {'write_only': True},
+            'data_issuer': {'write_only': True},
+            'data_json': {'write_only': True},
+            'funders': {'write_only': True},
+        }
 
 
 class LeaderboardSerializer(serializers.Serializer):

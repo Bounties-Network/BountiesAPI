@@ -1,5 +1,6 @@
 # Bounties-API
 The caching layer of the Bounties Network - available here http://a2e716ea2144911e898ed02122fce8e2-236283655.us-east-1.elb.amazonaws.com:83/
+Rinkeby - http://afb256214274611e898ed02122fce8e2-504516521.us-east-1.elb.amazonaws.com:83/
 
 BETA submitted and deployed
 ## TODO

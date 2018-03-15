@@ -39,7 +39,7 @@ class FulfillmentSerializer(CustomSerializer):
 
     class Meta:
         model = Fulfillment
-        fields = '__all__'
+        exclude = ('data_json', 'data_fulfiller')
 
 
 class TokenSerializer(serializers.ModelSerializer):
@@ -56,8 +56,8 @@ class BountySerializer(CustomSerializer):
 
     class Meta:
         model = Bounty
-        fields = '__all__'
         extra_fields = ['id']
+        exclude = ('data_categories', 'data_issuer', 'data_json', 'funders')
 
 
 class LeaderboardSerializer(serializers.Serializer):

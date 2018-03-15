@@ -19,7 +19,7 @@ class BountyViewSet(viewsets.ReadOnlyModelViewSet):
     A viewset for viewing and editing user instances.
     """
     serializer_class = BountySerializer
-    queryset = Bounty.objects.all()
+    queryset = Bounty.objects.all().prefetch_related('categories').select_related('token')
     filter_class = BountiesFilter
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
     ordering_fields = ('fulfillmentAmount', 'deadline', 'bounty_created', 'usd_price')
@@ -31,7 +31,7 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
     A viewset for viewing and editing user instances.
     """
     serializer_class = FulfillmentSerializer
-    queryset = Fulfillment.objects.all()
+    queryset = Fulfillment.objects.all().select_related('bounty')
     filter_class = FulfillmentsFilter
     filter_backends = (DjangoFilterBackend,)
 

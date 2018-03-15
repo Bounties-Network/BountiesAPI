@@ -1,0 +1,826 @@
+swagger: '2.0'
+info:
+  title: Standard Bounties API
+  description: API to quickly access standard bounties stored values
+  version: v1
+schemes:
+  - http
+basePath: /
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /bounty/:
+    get:
+      operationId: bounty_list
+      description: Get bounties list
+      parameters:
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
+          enum: [fulfillmentAmount, -fulfillmentAmount, deadline, -deadline, bounty_created, -bounty_created, usd_price, -usd_price]
+        - name: search
+          in: query
+          description: A search term. This checks for a match in the title, description, or categories.
+          required: false
+          type: string
+        - name: issuer
+          in: query
+          description: Address
+          required: false
+          type: string
+        - name: fulfillmentAmount
+          in: query
+          required: false
+          type: number
+        - name: fulfillmentAmount__lt
+          in: query
+          description: Less Than
+          required: false
+          type: number
+        - name: fulfillmentAmount__gt
+          in: query
+          description: Greater Than
+          required: false
+          type: number
+        - name: fulfillmentAmount__lte
+          in: query
+          description: Less than or equal to
+          required: false
+          type: number
+        - name: bountyStage
+          in: query
+          description: Numerical which represent the following, Draft, Active, Completed, Expired, Dead
+          required: false
+          type: number
+          enum: [0, 1, 2, 3, 4]
+        - name: bounty_created__lt
+          in: query
+          description: 'Less Than - Format = 2018-01-04T18:36:10Z'
+          required: false
+          type: string
+        - name: bounty_created__gt
+          in: query
+          description: 'Greater than - Format = 2018-01-04T18:36:10Z'
+          required: false
+          type: string
+        - name: deadline__lt
+          in: query
+          description: 'Greater than - Format = 2018-01-04T18:36:10Z'
+          required: false
+          type: string
+        - name: deadline__gt
+          in: query
+          description: 'Less than - Format = 2018-01-04T18:36:10Z'
+          required: false
+          type: string
+        - name: bounty_id
+          in: query
+          description: 'Will always match the id field. We keep both in order to make sure matching continues to exist.'
+          required: false
+          type: number
+        - name: categories__normalized_name
+          in: query
+          description: 'Exact Match'
+          required: false
+          type: string
+        - name: categories__normalized_name__contains
+          in: query
+          description: 'String Matching'
+          required: false
+          type: string
+        - name: categories__normalized_name__startswith
+          in: query
+          description: 'Starts With'
+          required: false
+          type: string
+        - name: categories__normalized_name__endswith
+          in: query
+          description: 'Ends With'
+          required: false
+          type: string
+        - name: categories__normalized_name__in
+          in: query
+          description: 'Category matches one of the listed. Format = gitcoin,javascript,html'
+          required: false
+          type: string
+        - name: fulfillments__fulfiller
+          in: query
+          description: 'Bounties that have had a fulfillment submitted by a particular address'
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Bounty'
+      tags:
+        - bounty
+    parameters: []
+  /bounty/{id}/:
+    get:
+      operationId: bounty_read
+      description: Get bounty by id
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Bounty'
+      tags:
+        - bounty
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this bounty.
+        required: true
+        type: integer
+  /category/:
+    get:
+      operationId: category_list
+      description: Get all categories sorted by categories most frequently used
+      parameters:
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
+          enum: [total_count, -total_count]
+        - name: search
+          in: query
+          description: Search via normalized_name - lowercase and trimmed
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/RankedCategory'
+      tags:
+        - category
+    parameters: []
+  /category/{id}/:
+    get:
+      operationId: category_read
+      description: Get a ranked category instance
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/RankedCategory'
+      tags:
+        - category
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this ranked category.
+        required: true
+        type: integer
+  /fulfillment/:
+    get:
+      operationId: fulfillment_list
+      description: Get fulfillments list
+      parameters:
+        - name: fulfiller
+          in: query
+          description: Fulfiller Address
+          required: false
+          type: string
+        - name: bounty
+          in: query
+          description: Bounty id
+          required: false
+          type: number
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Fulfillment'
+      tags:
+        - fulfillment
+    parameters: []
+  /fulfillment/{id}/:
+    get:
+      operationId: fulfillment_read
+      description: A viewset for viewing and editing user instances.
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Fulfillment'
+      tags:
+        - fulfillment
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this fulfillment.
+        required: true
+        type: integer
+  /leaderboard/:
+    get:
+      operationId: leaderboard_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: 'Get current leaderboard list'
+          schema:
+            $ref: '#/definitions/Leaderboard'
+      tags:
+        - leaderboard
+    parameters: []
+  /stats/profile/{address}/:
+    get:
+      operationId: stats_profile_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: 'Get stats on address pertaining to issued bounties and submitted fulfillments'
+          schema:
+            $ref: '#/definitions/ProfileStats'
+      tags:
+        - stats
+    parameters:
+      - name: address
+        in: path
+        required: true
+        type: string
+  /stats/{address}/:
+    get:
+      operationId: stats_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: 'Get stats on address pertaining to issued bounties and submitted fulfillments'
+          schema:
+            $ref: '#/definitions/BountyStats'
+      tags:
+        - stats
+    parameters:
+      - name: address
+        in: path
+        required: true
+        type: string
+  /user/{address}/:
+    get:
+      operationId: user_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: 'Get user information by address'
+          schema:
+            $ref: '#/definitions/UserProfile'
+      tags:
+        - user
+    parameters:
+      - name: address
+        in: path
+        required: true
+        type: string
+definitions:
+  UserProfile:
+    type: object
+    properties:
+      address:
+        title: Address
+        type: string
+        maxLength: 128
+      name:
+        title: Name
+        type: string
+        maxLength: 128
+      email:
+        title: Email
+        type: string
+        maxLength: 128
+      githubUsername:
+        title: Github Username
+        type: string
+        maxLength: 128
+  Leaderboard:
+    type: object
+    properties:
+      address:
+        title: Address
+        type: string
+        maxLength: 128
+      name:
+        title: Name
+        type: string
+        maxLength: 128
+      email:
+        title: Email
+        type: string
+        maxLength: 128
+      githubUsername:
+        title: Github Username
+        type: string
+        maxLength: 128
+      decimals:
+        title: Token Decimals
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      symbol:
+        title: Token Symbol
+        type: string
+        maxLength: 128
+      total:
+        title: Sum of all accepted fulfillments
+        type: string
+        format: decimal
+      bounties_fulfilled:
+        description: Quantity of bounties in which an accepted fulfillment was submitted for
+        title: Bounties Fulfilled
+        type: integer
+      fulfillments_accepted:
+        title: Fulfillments Accepted
+        type: integer
+  BountyStats:
+    type: object
+    properties:
+      Draft:
+        title: Bounties in Draft
+        type: integer
+      Active:
+        title: Bounties Active
+        type: integer
+      Dead:
+        title: Bounties Dead
+        type: integer
+      Completed:
+        title: Bounties Completed
+        type: integer
+      Expired:
+        title: Bounties Expired
+        type: integer
+  ProfileStats:
+    type: object
+    properties:
+      bounties:
+        title: Number of bounties issued
+        type: integer
+      bounties_accepted:
+        title: Number of bounties issued with an accepted fulfillment
+        type: integer
+      bounties_acceptance_rate:
+        title: Percentage of bounties issued with acceptance
+        type: number
+      submissions:
+        title: Number of fulfillment submitted
+        type: integer
+      submissions_accepted_count:
+        title: Number of fulfillments submitted with acceptance
+        type: integer
+      submissions_acceptance_rate:
+        title: Percentage of fulfillments submitted with acceptance
+        type: number
+  Category:
+    required:
+      - name
+      - normalized_name
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 128
+      normalized_name:
+        description: This field is a lowercase and trimmed version of name
+        title: Normalized name
+        type: string
+        maxLength: 128
+  Token:
+    title: Current market token data
+    required:
+      - normalized_name
+      - name
+      - symbol
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      normalized_name:
+        description: This field is a lowercase and trimmed version of name
+        title: Normalized name
+        type: string
+        maxLength: 128
+      name:
+        title: Name
+        type: string
+        maxLength: 128
+      symbol:
+        title: Symbol
+        type: string
+        maxLength: 128
+      price_usd:
+        title: Price usd
+        type: number
+    readOnly: true
+  Bounty:
+    required:
+      - id
+      - bountyStage
+      - bounty_id
+      - deadline
+      - data
+      - issuer
+      - fulfillmentAmount
+    type: object
+    properties:
+      id:
+        title: Id
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bountyStage:
+        title: Bountystage
+        type: integer
+        enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+      categories:
+        type: array
+        items:
+          $ref: '#/definitions/Category'
+        readOnly: true
+      current_market_token_data:
+        $ref: '#/definitions/Token'
+      fulfillment_count:
+        title: Fulfillment count
+        type: string
+        readOnly: true
+      bounty_id:
+        description: This field matches the id field. We keep both in case there is a situation where they may not be synced - this originally represented the id in the standard contract
+        title: Bounty id
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      created:
+        description: This is insertion date into our database. Use bounty_created to find transaction date.
+        title: Created
+        type: string
+        format: date-time
+        readOnly: true
+      modified:
+        description: This is modification date in our database. This does not represent a modified date in the contract.
+        title: Modified
+        type: string
+        format: date-time
+        readOnly: true
+      deadline:
+        title: Deadline
+        type: string
+        format: date-time
+      data:
+        description: IPFS hash
+        title: Data
+        type: string
+        maxLength: 128
+      issuer:
+        title: Issuer
+        type: string
+        maxLength: 128
+      arbiter:
+        title: Arbiter
+        type: string
+        maxLength: 128
+      fulfillmentAmount:
+        title: FulfillmentAmount
+        type: string
+        format: decimal
+      paysTokens:
+        title: PaysTokens
+        type: boolean
+      old_balance:
+        title: Old balance
+        type: string
+        format: decimal
+      balance:
+        title: Balance
+        type: string
+        format: decimal
+      title:
+        title: Title
+        type: string
+        maxLength: 256
+      description:
+        title: Description
+        type: string
+      bounty_created:
+        description: Contract transaction date of actual bounty creation.
+        title: Bounty created
+        type: string
+        format: date-time
+      tokenSymbol:
+        title: TokenSymbol
+        type: string
+        maxLength: 128
+      tokenDecimals:
+        title: TokenDecimals
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      tokenContract:
+        title: TokenContract
+        type: string
+        maxLength: 128
+      usd_price:
+        title: Usd price
+        type: number
+      issuer_name:
+        title: Issuer name
+        type: string
+        maxLength: 128
+      issuer_email:
+        title: Issuer email
+        type: string
+        maxLength: 128
+      issuer_githubUsername:
+        title: Issuer githubUsername
+        type: string
+        maxLength: 128
+      issuer_address:
+        title: Issuer address
+        type: string
+        maxLength: 128
+      sourceFileName:
+        title: SourceFileName
+        type: string
+        maxLength: 256
+      sourceFileHash:
+        title: SourceFileHash
+        type: string
+        maxLength: 256
+      sourceDirectoryHash:
+        title: SourceDirectoryHash
+        type: string
+        maxLength: 256
+      webReferenceUrl:
+        title: WebReferenceUrl
+        type: string
+        maxLength: 256
+      platform:
+        title: Platform
+        type: string
+        maxLength: 128
+      schemaVersion:
+        title: SchemaVersion
+        type: string
+        maxLength: 64
+      schemaName:
+        title: SchemaName
+        type: string
+        maxLength: 128
+      token:
+        title: Token
+        type: integer
+  RankedCategory:
+    description: This consolidates all category variations to match based on normalized names. Also contains total count of usage as a normalized name, even when there is a collision ie. (Javascript and JavaScript)
+    required:
+      - name
+      - normalized_name
+      - total_count
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 128
+      normalized_name:
+        title: Normalized name
+        type: string
+        maxLength: 128
+      total_count:
+        title: Total count
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+  BountyFulfillment:
+    description: bounty fields passed as the relationship in the fulfillment endpoints.
+    title: Bounty data
+    required:
+      - id
+      - bounty_id
+      - fulfillmentAmount
+    type: object
+    properties:
+      id:
+        title: Id
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bounty_id:
+        title: Bounty id
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      title:
+        title: Title
+        type: string
+        maxLength: 256
+      tokenSymbol:
+        title: TokenSymbol
+        type: string
+        maxLength: 128
+      tokenDecimals:
+        title: TokenDecimals
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      fulfillmentAmount:
+        title: FulfillmentAmount
+        type: string
+        format: decimal
+    readOnly: true
+  Fulfillment:
+    required:
+      - fulfillment_id
+      - data
+      - fulfiller
+      - bounty
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      bounty_data:
+        $ref: '#/definitions/BountyFulfillment'
+      fulfillment_id:
+        title: Fulfillment id
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      created:
+        description: 'Database insertion date. Does not match true creation date from the transaction. For transaciton creation date - see fulfillment_created'
+        title: Created
+        type: string
+        format: date-time
+        readOnly: true
+      modified:
+        description: 'Database modification date. Does not match true modification date in transaction'
+        title: Modified
+        type: string
+        format: date-time
+        readOnly: true
+      fulfillment_created:
+        title: Fulfillment created
+        type: string
+        format: date-time
+      data:
+        title: Data
+        type: string
+        maxLength: 128
+      accepted:
+        title: Accepted
+        type: boolean
+      fulfiller:
+        title: Fulfiller
+        type: string
+        maxLength: 128
+      fulfiller_name:
+        title: Fulfiller name
+        type: string
+        maxLength: 128
+      fulfiller_email:
+        title: Fulfiller email
+        type: string
+        maxLength: 128
+      fulfiller_githubUsername:
+        title: Fulfiller githubUsername
+        type: string
+        maxLength: 128
+      fulfiller_address:
+        title: Fulfiller address
+        type: string
+        maxLength: 128
+      description:
+        title: Description
+        type: string
+      sourceFileName:
+        title: SourceFileName
+        type: string
+        maxLength: 256
+      sourceFileHash:
+        title: SourceFileHash
+        type: string
+        maxLength: 256
+      sourceDirectoryHash:
+        title: SourceDirectoryHash
+        type: string
+        maxLength: 256
+      platform:
+        title: Platform
+        type: string
+        maxLength: 128
+      schemaVersion:
+        title: SchemaVersion
+        type: string
+        maxLength: 64
+      schemaName:
+        title: SchemaName
+        type: string
+        maxLength: 128
+      bounty:
+        title: Bounty
+        type: integer

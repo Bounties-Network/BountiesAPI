@@ -46,6 +46,15 @@ class Command(BaseCommand):
                 event_timestamp = message_attributes['TimeStamp']['StringValue']
                 contract_method_inputs = json.loads(message_attributes['ContractMethodInputs']['StringValue'])
 
+                if redis_client.get('blacklist:' + str(bounty_id)):
+                    redis_client.set(message_deduplication_id, True)
+                    sqs_client.delete_message(
+                        QueueUrl=settings.QUEUE_URL,
+                        ReceiptHandle=receipt_handle,
+                    )
+                    continue
+
+                logger.info('attempting: ' + event)
                 if event == 'BountyIssued':
                     bounty_client.issue_bounty(bounty_id, contract_method_inputs, event_timestamp)
 

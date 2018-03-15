@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -61,7 +62,7 @@ ROOT_URLCONF = 'bounties.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['bounties/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,6 +133,7 @@ LOGGING = {
         },
         'console': {
             'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
             'level': 'INFO',
         },
     },
@@ -170,6 +172,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 STATIC_URL = '/static/'
 
 QUEUE_URL = os.environ.get('queue_url', 'https://sqs.us-east-1.amazonaws.com/802922962628/bounties_development.fifo')

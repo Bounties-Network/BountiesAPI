@@ -271,5 +271,5 @@ class BountyClient:
         value = inputs.get('value')
         if value:
             bounty.balance = bounty.balance + Decimal(value)
-        bounty.fulfillmentAmount = Decimal(inputs.get('fulfillmentAmount'))
+        bounty.fulfillmentAmount = Decimal(inputs.get('newFulfillmentAmount'))
         bounty.save()

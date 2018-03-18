@@ -66,7 +66,6 @@ class BountySerializer(CustomSerializer):
             'data_categories': {'write_only': True},
             'data_issuer': {'write_only': True},
             'data_json': {'write_only': True},
-            'funders': {'write_only': True},
         }
 
 

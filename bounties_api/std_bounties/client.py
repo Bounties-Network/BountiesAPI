@@ -20,11 +20,49 @@ logger = logging.getLogger('django')
 web3 = Web3(HTTPProvider(settings.ETH_NETWORK_URL))
 bounties_json = json.loads(data)
 ipfs = ipfsapi.connect(host='https://ipfs.infura.io')
+data_keys = ['description', 'title', 'sourceFileName', 'sourceFileHash', 'sourceDirectoryHash', 'webReferenceUrl']
+input_keys = ['fulfillmentAmount', 'arbiter', 'paysTokens', 'tokenContract', 'value']
 
 class BountyClient:
 
     def __init__(self):
         pass
+
+    def _translate_data(self, data_hash):
+        ipfs_hash = data_hash
+        if len(ipfs_hash) != 46 or not ipfs_hash.startswith('Qm'):
+            logger.error('Data Hash Incorrect for bounty: {:d}'.format(bounty_id))
+            data_JSON = "{}"
+        else:
+            data_JSON = ipfs.cat(data_hash)
+        if len(ipfs_hash) == 0:
+            ipfs_hash = 'invalid'
+
+        data = json.loads(data_JSON)
+        metadata = data.get('meta', {})
+        if 'payload' in data:
+            data = data.get('payload')
+
+        data_issuer =  data.get('issuer', {})
+        if type(data_issuer) == str:
+            logger.error('Issuer schema incorrect for: {:d}'.format(bounty_id))
+            data_issuer = {}
+
+        categories = data.get('categories', [])
+        plucked_data = { key: data.get(key, '') for key in data_keys }
+
+        return {
+            **plucked_data,
+            **metadata,
+            'issuer_name': data_issuer.get('name', ''),
+            'issuer_email': data_issuer.get('email', '') or data.get('contact', ''),
+            'issuer_githubUsername': data_issuer.get('githubUsername', ''),
+            'issuer_address': data_issuer.get('address', ''),
+            'data_issuer': data_issuer,
+            'data': data_hash,
+            'data_json': str(data_JSON),
+            'data_categories': categories,
+        }
 
     @transaction.atomic
     def issue_bounty(self, bounty_id, inputs, event_timestamp):
@@ -32,16 +70,8 @@ class BountyClient:
         if bounty:
             return
 
-        bounty_data = inputs.copy()
-        bounty_data['issuer'] = bounty_data.get('issuer', '').lower()
-        data_hash = bounty_data.get('data', 'invalid')
-        if len(data_hash) != 46 or not data_hash.startswith('Qm'):
-            logger.error('Data Hash Incorrect for bounty: {:d}'.format(bounty_id))
-            data_JSON = "{}"
-        else:
-            data_JSON = ipfs.cat(data_hash)
-        if len(data_hash) == 0:
-            bounty_data['data'] = 'invalid'
+        data_hash = inputs.get('data', 'invalid')
+        ipfs_data = self._translate_data(data_hash)
 
         token_symbol = 'ETH'
         token_decimals = 18
@@ -54,53 +84,34 @@ class BountyClient:
             token_symbol = HumanStandardToken.symbol()
             token_decimals = HumanStandardToken.decimals()
 
-        data = json.loads(data_JSON)
-        metadata = data.get('meta', {})
-        if 'payload' in data:
-            data = data.get('payload')
-
-        data_issuer =  data.get('issuer', {})
-        if type(data_issuer) == str:
-            logger.error('Issuer schema incorrect for: {:d}'.format(bounty_id))
-            data_issuer = {}
-        data['data_issuer'] = data_issuer
-        data.pop('issuer', None)
-        data['bounty_created'] = datetime.datetime.fromtimestamp(int(event_timestamp))
-        data.pop('created', None)
-        data['data_categories'] = data.get('categories', [])
-        data.pop('tokenSymbol', None)
-        categories = data.pop('categories', [])
-
-        bounty_data['deadline'] = getDateTimeFromTimestamp(bounty_data.get('deadline', None))
-        bounty_data.pop('value', None)
 
         token_price = 0
         try:
             token_model = Token.objects.get(symbol=token_symbol)
-            token_price = ((Decimal(bounty_data.get('fulfillmentAmount')) / Decimal(pow(10, token_decimals))) * Decimal(token_model.price_usd)).quantize(Decimal(10) ** -8)
+            token_price = ((Decimal(inputs.get('fulfillmentAmount')) / Decimal(pow(10, token_decimals))) * Decimal(token_model.price_usd)).quantize(Decimal(10) ** -8)
         except Token.DoesNotExist:
             token_model = None
             pass
 
-        extra_data = {
+        plucked_inputs = { key: inputs.get(key) for key in input_keys }
+
+        bounty_data = {
             'id': bounty_id,
             'bounty_id': bounty_id,
-            'data_json': str(data_JSON),
+            'issuer':  inputs.get('issuer', '').lower(),
+            'deadline': getDateTimeFromTimestamp(inputs.get('deadline', None)),
             'bountyStage': DRAFT_STAGE,
-            'issuer_name': data_issuer.get('name', ''),
-            'issuer_email': data_issuer.get('email', '') or data.get('contact', ''),
-            'issuer_githubUsername': data_issuer.get('githubUsername', ''),
-            'issuer_address': data_issuer.get('address', ''),
             'tokenSymbol': token_symbol,
             'tokenDecimals': token_decimals,
             'token': token_model.id if token_model else None,
             'usd_price': token_price,
+            'bounty_created': datetime.datetime.fromtimestamp(int(event_timestamp)),
         }
 
-        bounty_serializer = BountySerializer(data={**data, **bounty_data, **extra_data, **metadata, **data_issuer})
+        bounty_serializer = BountySerializer(data={**bounty_data, **plucked_inputs, **ipfs_data})
         bounty_serializer.is_valid(raise_exception=True)
         saved_bounty = bounty_serializer.save()
-        saved_bounty.save_and_clear_categories(categories)
+        saved_bounty.save_and_clear_categories(ipfs_data.get('data_categories'))
 
     def activate_bounty(self, bounty_id, inputs):
         bounty = Bounty.objects.get(bounty_id=bounty_id)
@@ -114,6 +125,8 @@ class BountyClient:
         if fulfillment:
             return
 
+        print('fulfillment inputs')
+        print('inputs')
         data_hash = inputs.get('data')
         data_json = ipfs.cat(data_hash)
         data = json.loads(data_json)

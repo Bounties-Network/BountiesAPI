@@ -40,7 +40,6 @@ class Bounty(models.Model):
     balance =  models.DecimalField(decimal_places=0, max_digits=70, null=True, default=0)
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField(blank=True)
-    funders = JSONField(null=True)
     bounty_created = models.DateTimeField(null=True)
     token = models.ForeignKey(Token, null=True)
     tokenSymbol = models.CharField(max_length=128, default='ETH')

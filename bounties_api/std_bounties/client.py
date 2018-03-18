@@ -14,17 +14,11 @@ from django.db import transaction
 import ipfsapi
 import logging
 
+
 logger = logging.getLogger('django')
 
-
 web3 = Web3(HTTPProvider(settings.ETH_NETWORK_URL))
-RawFulfillmentData = namedtuple('RawFulfillmentData', ['accepted', 'fulfiller', 'data'])
 bounties_json = json.loads(data)
-StandardBounties = web3.eth.contract(
-    bounties_json['interfaces']['StandardBounties'],
-    bounties_json[settings.ETH_NETWORK]['standardBountiesAddress']['v1'],
-    ContractFactoryClass=ConciseContract
-)
 ipfs = ipfsapi.connect(host='https://ipfs.infura.io')
 
 class BountyClient:
@@ -113,15 +107,12 @@ class BountyClient:
         bounty.bountyStage = ACTIVE_STAGE
         bounty.save()
 
-    def fulfill_bounty(self, bounty_id, fulfillment_id, inputs, event_timestamp):
+    def fulfill_bounty(self, bounty_id, fulfillment_id, inputs, event_timestamp, transaction_issuer):
         fulfillment = Fulfillment.objects.filter(
             fulfillment_id=fulfillment_id, bounty_id=bounty_id
         ).exists()
         if fulfillment:
             return
-
-        fulfillment_response = StandardBounties.getFulfillment(bounty_id, fulfillment_id)
-        fulfillment_data = RawFulfillmentData(*fulfillment_response)._asdict()
 
         data_hash = inputs.get('data')
         data_json = ipfs.cat(data_hash)
@@ -136,7 +127,7 @@ class BountyClient:
         extra_data = {
             'data_json': str(data_json),
             'fulfillment_id': fulfillment_id,
-            'fulfiller': fulfillment_data.get('fulfiller').lower(),
+            'fulfiller': transaction_issuer.lower(),
             'bounty': bounty_id,
             'data': data_hash,
             'accepted': False,

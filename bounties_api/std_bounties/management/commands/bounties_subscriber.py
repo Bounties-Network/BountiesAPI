@@ -43,6 +43,7 @@ class Command(BaseCommand):
                 bounty_id = int(message_attributes['BountyId']['StringValue'])
                 fulfillment_id = int(message_attributes['FulfillmentId']['StringValue'])
                 message_deduplication_id =  message_attributes['MessageDeduplicationId']['StringValue']
+                transaction_from =  message_attributes['TransactionFrom']['StringValue']
                 event_timestamp = message_attributes['TimeStamp']['StringValue']
                 contract_method_inputs = json.loads(message_attributes['ContractMethodInputs']['StringValue'])
 
@@ -54,7 +55,7 @@ class Command(BaseCommand):
                     )
                     continue
 
-                logger.info('attempting: ' + event)
+                logger.info('attempting {}: for bounty id {}'.format(event, str(bounty_id)))
                 if event == 'BountyIssued':
                     bounty_client.issue_bounty(bounty_id, contract_method_inputs, event_timestamp)
 
@@ -62,7 +63,7 @@ class Command(BaseCommand):
                     bounty_client.activate_bounty(bounty_id, contract_method_inputs)
 
                 if event == 'BountyFulfilled':
-                    bounty_client.fulfill_bounty(bounty_id, fulfillment_id, contract_method_inputs, event_timestamp)
+                    bounty_client.fulfill_bounty(bounty_id, fulfillment_id, contract_method_inputs, event_timestamp, transaction_from)
 
                 if event == 'FulfillmentUpdated':
                     bounty_client.update_fulfillment(bounty_id, fulfillment_id, contract_method_inputs)

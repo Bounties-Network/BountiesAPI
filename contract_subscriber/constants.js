@@ -20,6 +20,10 @@ exports.SQS_PARAMS = {
     DataType: 'String',
     StringValue: '',
    },
+   'TransactionFrom': {
+    DataType: 'String',
+    StringValue: '',
+   },
    'TimeStamp': {
     DataType: 'Number',
     StringValue: '',

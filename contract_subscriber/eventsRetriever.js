@@ -33,6 +33,7 @@ async function sendEvents(events) {
 			bountyId = bountyId === '-1' ? _bountyId : bountyId;
 
 			const rawTransaction = await getTransaction(transactionHash);
+			const transactionFrom = rawTransaction.from;
 			const rawContractMethodInputs = abiDecoder.decodeMethod(rawTransaction.input);
 			const contractMethodInputs = chain(rawContractMethodInputs.params)
 				.keyBy('name')
@@ -50,6 +51,7 @@ async function sendEvents(events) {
 			messageParams.MessageAttributes.MessageDeduplicationId.StringValue = messageDeduplicationId;
 			messageParams.MessageAttributes.ContractMethodInputs.StringValue = JSON.stringify(contractMethodInputs);
 			messageParams.MessageAttributes.TimeStamp.StringValue = eventTimestamp;
+			messageParams.MessageAttributes.TransactionFrom.StringValue = transactionFrom || '0x';
 			messageParams.MessageDeduplicationId = messageDeduplicationId;
 
 			await sqs.sendMessage(messageParams).promise();

@@ -1,26 +1,16 @@
-import json
 import datetime
 from decimal import Decimal
-from web3 import Web3, HTTPProvider
-from web3.contract import ConciseContract
-from std_bounties.contract import data
-from std_bounties.models import Bounty, Fulfillment, Token
+from std_bounties.models import Bounty, Fulfillment
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer
 from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE
-from std_bounties.client_helpers import map_bounty_data, map_token_data, get_token_pricing
+from std_bounties.client_helpers import map_bounty_data, map_token_data, map_fulfillment_data, get_token_pricing
 from bounties.utils import getDateTimeFromTimestamp
-from django.conf import settings
 from django.db import transaction
-import ipfsapi
 import logging
 
 
 logger = logging.getLogger('django')
 
-web3 = Web3(HTTPProvider(settings.ETH_NETWORK_URL))
-bounties_json = json.loads(data)
-ipfs = ipfsapi.connect(host='https://ipfs.infura.io')
-data_keys = ['description', 'title', 'sourceFileName', 'sourceFileHash', 'sourceDirectoryHash', 'webReferenceUrl']
 issue_bounty_input_keys = ['fulfillmentAmount', 'arbiter', 'paysTokens', 'tokenContract', 'value']
 
 class BountyClient:
@@ -35,7 +25,7 @@ class BountyClient:
             return
 
         data_hash = inputs.get('data', 'invalid')
-        ipfs_data = map_bounty_data(data_hash)
+        ipfs_data = map_bounty_data(data_hash, bounty_id)
         token_data = map_token_data(inputs.get('paysTokens'), inputs.get('tokenContract'), inputs.get('fulfillmentAmount'))
 
         plucked_inputs = { key: inputs.get(key) for key in issue_bounty_input_keys }
@@ -68,59 +58,29 @@ class BountyClient:
         if fulfillment:
             return
 
-        print('hola')
-        print(inputs)
-
         data_hash = inputs.get('data')
-        data_json = ipfs.cat(data_hash)
-        data = json.loads(data_json)
-        metadata = data.pop('meta', {})
-        if 'payload' in data:
-            data = data.get('payload')
-        data_fulfiller = data.get('fulfiller', {})
-        data['data_fulfiller'] = data_fulfiller
-        data.pop('fulfiller', None)
+        ipfs_data = map_fulfillment_data(data_hash, bounty_id, fulfillment_id)
 
-        extra_data = {
-            'data_json': str(data_json),
+        fulfillment_data = {
             'fulfillment_id': fulfillment_id,
             'fulfiller': transaction_issuer.lower(),
             'bounty': bounty_id,
-            'data': data_hash,
             'accepted': False,
             'fulfillment_created':  datetime.datetime.fromtimestamp(int(event_timestamp)),
-            'fulfiller_name': data_fulfiller.get('name', ''),
-            'fulfiller_email': data_fulfiller.get('email', '') or data.get('contact', ''),
-            'fulfiller_githubUsername': data_fulfiller.get('githubUsername', ''),
-            'fulfiller_address': data_fulfiller.get('address', ''),
         }
 
-        fulfillment_serializer = FulfillmentSerializer(data={**data, **extra_data, **metadata, **data_fulfiller})
+        fulfillment_serializer = FulfillmentSerializer(data={**fulfillment_data, **ipfs_data})
         fulfillment_serializer.is_valid(raise_exception=True)
         fulfillment_serializer.save()
 
 
     def update_fulfillment(self, bounty_id, fulfillment_id, inputs):
         data_hash = inputs.get('data')
-        data_json = ipfs.cat(data_hash)
-        data = json.loads(data_json)
-        metadata = data.pop('meta', {})
-        if 'payload' in data:
-            data = data.get('payload')
-        data_fulfiller = data.get('fulfiller', {})
-        data['data_fulfiller'] = data_fulfiller
-        data.pop('fulfiller', None)
-
-        extra_data = {
-            'fulfiller_name': data_fulfiller.get('name', ''),
-            'fulfiller_email': data_fulfiller.get('email', '') or data.get('contact', ''),
-            'fulfiller_githubUsername': data_fulfiller.get('githubUsername', ''),
-            'fulfiller_address': data_fulfiller.get('address', ''),
-        }
+        ipfs_data = map_fulfillment_data(data_hash, bounty_id, fulfillment_id)
 
         fulfillment = Fulfillment.objects.get(fulfillment_id=fulfillment_id, bounty_id=bounty_id)
         fulfillment_serializer = FulfillmentSerializer(fulfillment,
-            data={**data, **metadata, **{data_json: data_json, data: data_hash} **extra_data}, partial=True
+            data={**ipfs_data}, partial=True
         )
         fulfillment_serializer.save()
 
@@ -168,7 +128,7 @@ class BountyClient:
         arbiter = inputs.get('newArbiter', None)
 
         if data_hash:
-            updated_data = map_bounty_data(data_hash)
+            updated_data = map_bounty_data(data_hash, bounty_id)
 
         if deadline:
             updated_data['deadline'] = datetime.datetime.fromtimestamp(int(new_deadline))

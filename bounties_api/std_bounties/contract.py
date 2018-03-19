@@ -10,7 +10,7 @@ data = """{
 		"userCommentsAddress": "0xd0a170ba138d1cfe95fd4aba5a897bc4a1b53379",
 		"standardBountiesAddress": {
 			"v0":"0x92f9d637355f96dc8c228827fe1b31f8e3477815",
-			"v1":"0xf209d2b723b6417cbf04c07e733bee776105a073"
+			"v1":"0x1784b3749b576342c836df3c330384b37ff8014b"
 			}
 	},
 	"localhost": {

@@ -162,7 +162,10 @@ class BountyClient:
     def increase_payout(self, bounty_id, inputs):
         bounty = Bounty.objects.get(bounty_id=bounty_id)
         value = inputs.get('value')
+        fulfillment_amount = inputs.get('newFulfillmentAmount')
         if value:
             bounty.balance = bounty.balance + Decimal(value)
-        bounty.fulfillmentAmount = Decimal(inputs.get('newFulfillmentAmount'))
+        usd_price = get_token_pricing(bounty.tokenSymbol, bounty.tokenDecimals, fulfillment_amount)[0]
+        bounty.fulfillmentAmount = Decimal(fulfillment_amount)
+        bounty.usd_price = usd_price
         bounty.save()

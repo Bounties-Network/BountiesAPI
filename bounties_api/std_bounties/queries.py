@@ -1,3 +1,5 @@
+# If we used django for this, it would be quite complicated and inefficient.
+# By inputting raw SQL - we get a very fast output
 LEADERBOARD_QUERY = """
 SELECT
 	fulfillment.fulfiller as address,

@@ -15,9 +15,6 @@ from rest_framework_filters.backends import DjangoFilterBackend
 
 
 class BountyViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    A viewset for viewing and editing user instances.
-    """
     serializer_class = BountySerializer
     queryset = Bounty.objects.all().prefetch_related('categories').select_related('token')
     filter_class = BountiesFilter
@@ -27,9 +24,6 @@ class BountyViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    A viewset for viewing and editing user instances.
-    """
     serializer_class = FulfillmentSerializer
     queryset = Fulfillment.objects.all().select_related('bounty')
     filter_class = FulfillmentsFilter
@@ -37,9 +31,6 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    A viewset for viewing and editing user instances.
-    """
     serializer_class = RankedCategorySerializer
     queryset = RankedCategory.objects.all()
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)

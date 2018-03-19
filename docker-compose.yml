@@ -54,6 +54,8 @@ services:
       - redis
       - bounties_api
   sql_jobs:
+    # In production, these run an as an hourly cronjob.
+    # Here, we use a local.sh to just run it more often
     build:
       context: ./sql_jobs
       dockerfile: Dockerfile
@@ -63,6 +65,7 @@ services:
     volumes:
       - ./sql_jobs:/usr/src/app
   track_bounty_expirations:
+    # TODO - just make this a cronjob. It does not need to be a long-running job
     build:
       context: ./bounties_api
       dockerfile: Dockerfile
@@ -76,6 +79,8 @@ services:
       - db
       - bounties_api
   get_token_values:
+    # In production, these run an as an every 5 minute cronjob.
+    # Here, we use a local.sh to just put it in a bash loop
     build:
       context: ./bounties_api
       dockerfile: Dockerfile

@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# In production, this is an every 5 minute cronjob. Locally, we just run it regularly using a bash script
 while :
 do
 	sleep 30

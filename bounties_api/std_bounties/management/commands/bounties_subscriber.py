@@ -12,7 +12,7 @@ import logging
 logger = logging.getLogger('django')
 
 class Command(BaseCommand):
-    help = 'Listen for contract events'
+    help = 'Listen to SQS queue for contract events'
 
     def handle(self, *args, **options):
         try:
@@ -47,6 +47,8 @@ class Command(BaseCommand):
                 event_timestamp = message_attributes['TimeStamp']['StringValue']
                 contract_method_inputs = json.loads(message_attributes['ContractMethodInputs']['StringValue'])
 
+                # If someone uploads a data hash that is faulty, then we want to blacklist all events around that
+                # bounty id. We manage this manually
                 if redis_client.get('blacklist:' + str(bounty_id)):
                     redis_client.set(message_deduplication_id, True)
                     sqs_client.delete_message(
@@ -90,9 +92,12 @@ class Command(BaseCommand):
                     bounty_client.increase_payout(bounty_id, contract_method_inputs)
 
                 logger.info(event)
+
+                # We should create a separate client to manage these notifications to slack
                 sc.api_call('chat.postMessage', channel='#bounty_notifs',
                     text='Event {} passed for bounty {}'.format(event, str(bounty_id))
                 )
+                # This means the contract subscriber will never send this event through to sqs again
                 redis_client.set(message_deduplication_id, True)
                 sqs_client.delete_message(
                     QueueUrl=settings.QUEUE_URL,

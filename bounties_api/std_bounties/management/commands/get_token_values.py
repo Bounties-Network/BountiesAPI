@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger('django')
 
 class Command(BaseCommand):
-    help = 'Listen for contract events'
+    help = 'Update current token values, and update usd_price on all bounties'
 
     def handle(self, *args, **options):
         try:
@@ -37,6 +37,7 @@ class Command(BaseCommand):
                     fulfillmentAmount = bounty.fulfillmentAmount
                     bounty.usd_price = (fulfillmentAmount / Decimal(pow(10, decimals))) * Decimal(price)
                     bounty.save()
+                # maybe a token was not added to coinmarketcap until later
                 if price != None and not bounty.token:
                     token_model = Token.objects.get(symbol=bounty.tokenSymbol)
                     bounty.token = token_model

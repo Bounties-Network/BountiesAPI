@@ -12,14 +12,14 @@ class Category(models.Model):
     normalized_name = models.CharField(max_length=128)
 
     def save(self, *args, **kwargs):
-        self.normalized_name = self.name.lower().strip();
+        self.normalized_name = self.name.lower().strip()
         super(Category, self).save(*args, **kwargs)
 
 
 class Token(models.Model):
     normalized_name = models.CharField(max_length=128)
     name = models.CharField(max_length=128)
-    symbol =  models.CharField(max_length=128)
+    symbol = models.CharField(max_length=128)
     price_usd = models.FloatField(default=0, null=True)
 
 
@@ -35,16 +35,24 @@ class Bounty(models.Model):
     arbiter = models.CharField(max_length=128, null=True)
     fulfillmentAmount = models.DecimalField(decimal_places=0, max_digits=64)
     paysTokens = models.BooleanField()
-    bountyStage = models.IntegerField(choices=STAGE_CHOICES, default=DRAFT_STAGE)
-    old_balance = models.DecimalField(decimal_places=0, max_digits=64, null=True)
-    balance =  models.DecimalField(decimal_places=0, max_digits=70, null=True, default=0)
+    bountyStage = models.IntegerField(
+        choices=STAGE_CHOICES, default=DRAFT_STAGE)
+    old_balance = models.DecimalField(
+        decimal_places=0, max_digits=64, null=True)
+    balance = models.DecimalField(
+        decimal_places=0,
+        max_digits=70,
+        null=True,
+        default=0)
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField(blank=True)
     bounty_created = models.DateTimeField(null=True)
     token = models.ForeignKey(Token, null=True)
     tokenSymbol = models.CharField(max_length=128, default='ETH')
     tokenDecimals = models.IntegerField(default=18)
-    tokenContract = models.CharField(max_length=128, default='0x0000000000000000000000000000000000000000')
+    tokenContract = models.CharField(
+        max_length=128,
+        default='0x0000000000000000000000000000000000000000')
     usd_price = models.FloatField(default=0)
     issuer_name = models.CharField(max_length=128, blank=True)
     issuer_email = models.CharField(max_length=128, blank=True)
@@ -68,7 +76,8 @@ class Bounty(models.Model):
             for category in categories:
                 if isinstance(category, str):
                     try:
-                        matching_category = Category.objects.get(name=category.strip())
+                        matching_category = Category.objects.get(
+                            name=category.strip())
                         self.categories.add(matching_category)
                     except ObjectDoesNotExist:
                         self.categories.create(name=category.strip())
@@ -102,6 +111,7 @@ class RankedCategory(models.Model):
     name = models.CharField(max_length=128)
     normalized_name = models.CharField(max_length=128)
     total_count = models.IntegerField()
+
     class Meta:
-       managed = False
-       db_table = 'category_ranks'
+        managed = False
+        db_table = 'category_ranks'

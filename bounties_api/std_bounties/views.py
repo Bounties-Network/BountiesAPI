@@ -16,10 +16,15 @@ from rest_framework_filters.backends import DjangoFilterBackend
 
 class BountyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = BountySerializer
-    queryset = Bounty.objects.all().prefetch_related('categories').select_related('token')
+    queryset = Bounty.objects.all().prefetch_related(
+        'categories').select_related('token')
     filter_class = BountiesFilter
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
-    ordering_fields = ('fulfillmentAmount', 'deadline', 'bounty_created', 'usd_price')
+    ordering_fields = (
+        'fulfillmentAmount',
+        'deadline',
+        'bounty_created',
+        'usd_price')
     search_fields = ('title', 'description', 'categories__normalized_name')
 
 
@@ -41,7 +46,8 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 class UserProfile(APIView):
     def get(self, request, address=''):
-        ordered_fulfillments = Fulfillment.objects.filter(fulfiller=address).order_by('-created')
+        ordered_fulfillments = Fulfillment.objects.filter(
+            fulfiller=address).order_by('-created')
         if not ordered_fulfillments.exists():
             raise Http404("Address does not exist")
 
@@ -63,12 +69,14 @@ class Leaderboard(APIView):
         serializer = LeaderboardSerializer(query_result, many=True)
         return JsonResponse(serializer.data, safe=False)
 
+
 class BountyStats(APIView):
     def get(self, request, address=''):
         bounty_stats = {}
         user_bounties = Bounty.objects.filter(issuer=address)
         for stage in STAGE_CHOICES:
-            bounty_stats[stage[1]] = user_bounties.filter(bountyStage=stage[0]).count()
+            bounty_stats[stage[1]] = user_bounties.filter(
+                bountyStage=stage[0]).count()
         return JsonResponse(bounty_stats)
 
 
@@ -76,12 +84,16 @@ class ProfileStats(APIView):
     def get(self, request, address=''):
         user_bounties = Bounty.objects.filter(issuer=address)
         bounties_count = user_bounties.count()
-        bounties_accepted_count = user_bounties.filter(fulfillments__accepted=True).count()
-        bounties_acceptance_rate = bounties_accepted_count/bounties_count if bounties_accepted_count > 0 else 0
+        bounties_accepted_count = user_bounties.filter(
+            fulfillments__accepted=True).count()
+        bounties_acceptance_rate = bounties_accepted_count / \
+            bounties_count if bounties_accepted_count > 0 else 0
         user_submissions = Fulfillment.objects.filter(fulfiller=address)
         submissions_count = user_submissions.count()
-        submissions_accepted_count = user_submissions.filter(accepted=True).count()
-        submissions_acceptance_rate = submissions_accepted_count/submissions_count if submissions_count > 0 else 0
+        submissions_accepted_count = user_submissions.filter(
+            accepted=True).count()
+        submissions_acceptance_rate = submissions_accepted_count / \
+            submissions_count if submissions_count > 0 else 0
         profile_stats = {
             'bounties': bounties_count,
             'bounties_accepted': bounties_accepted_count,

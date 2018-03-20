@@ -5,9 +5,9 @@ COMPLETED_STAGE = 3
 EXPIRED_STAGE = 4
 
 STAGE_CHOICES = (
-	(DRAFT_STAGE, 'Draft'),
-	(ACTIVE_STAGE, 'Active'),
-	(DEAD_STAGE, 'Dead'),
-	(COMPLETED_STAGE, 'Completed'),
-	(EXPIRED_STAGE, 'Expired'),
+    (DRAFT_STAGE, 'Draft'),
+    (ACTIVE_STAGE, 'Active'),
+    (DEAD_STAGE, 'Dead'),
+    (COMPLETED_STAGE, 'Completed'),
+    (EXPIRED_STAGE, 'Expired'),
 )

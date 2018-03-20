@@ -6,7 +6,11 @@ from std_bounties.constants import STAGE_CHOICES
 class CustomSerializer(serializers.ModelSerializer):
 
     def get_field_names(self, declared_fields, info):
-        expanded_fields = super(CustomSerializer, self).get_field_names(declared_fields, info)
+        expanded_fields = super(
+            CustomSerializer,
+            self).get_field_names(
+            declared_fields,
+            info)
 
         if getattr(self.Meta, 'extra_fields', None):
             return expanded_fields + self.Meta.extra_fields
@@ -31,7 +35,13 @@ class BountyFulfillmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bounty
-        fields = ['id', 'bounty_id', 'title', 'tokenSymbol', 'tokenDecimals', 'fulfillmentAmount']
+        fields = [
+            'id',
+            'bounty_id',
+            'title',
+            'tokenSymbol',
+            'tokenDecimals',
+            'fulfillmentAmount']
 
 
 class FulfillmentSerializer(CustomSerializer):

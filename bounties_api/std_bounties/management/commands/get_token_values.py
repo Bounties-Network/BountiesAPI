@@ -8,13 +8,15 @@ import logging
 
 logger = logging.getLogger('django')
 
+
 class Command(BaseCommand):
     help = 'Update current token values, and update usd_price on all bounties'
 
     def handle(self, *args, **options):
         try:
             token_cache = {}
-            r = requests.get('https://api.coinmarketcap.com/v1/ticker/?convert=USD&limit=1000000')
+            r = requests.get(
+                'https://api.coinmarketcap.com/v1/ticker/?convert=USD&limit=1000000')
             r.raise_for_status()
             coins = r.json()
             for coin in coins:
@@ -27,18 +29,20 @@ class Command(BaseCommand):
                 }
 
                 token_cache[symbol] = price_usd
-                Token.objects.update_or_create(**coin_data, defaults={'price_usd': price_usd})
+                Token.objects.update_or_create(
+                    **coin_data, defaults={'price_usd': price_usd})
 
             all_bounties = Bounty.objects.all()
             for bounty in all_bounties:
                 price = token_cache.get(bounty.tokenSymbol, None)
-                if price != None:
+                if price is not None:
                     decimals = bounty.tokenDecimals
                     fulfillmentAmount = bounty.fulfillmentAmount
-                    bounty.usd_price = (fulfillmentAmount / Decimal(pow(10, decimals))) * Decimal(price)
+                    bounty.usd_price = (
+                        fulfillmentAmount / Decimal(pow(10, decimals))) * Decimal(price)
                     bounty.save()
                 # maybe a token was not added to coinmarketcap until later
-                if price != None and not bounty.token:
+                if price is not None and not bounty.token:
                     token_model = Token.objects.get(symbol=bounty.tokenSymbol)
                     bounty.token = token_model
                     bounty.save()

@@ -9,6 +9,8 @@ logger = logging.getLogger('django')
 
 # TODO - This should just be a scheduled cronjob.
 # There is no need to have this as a long running job
+
+
 class Command(BaseCommand):
     help = 'Listen for contract events'
 

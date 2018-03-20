@@ -25,6 +25,7 @@ SECRET_KEY = os.environ.get('django_secret', 'secret')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', True)
+ENVIRONMENT = os.environ.get('environment', 'local')
 
 ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
@@ -117,7 +118,7 @@ rollbar_token = os.environ.get('rollbar_token', None)
 
 ROLLBAR = {
     'access_token': rollbar_token,
-    'environment': 'production',
+    'environment': ENVIRONMENT,
     'root': os.getcwd(),
     'enabled': True if rollbar_token else False,
 }
@@ -188,3 +189,5 @@ networks = {
 }
 
 ETH_NETWORK_URL = networks[ETH_NETWORK]
+
+NOTIFICATIONS_SLACK_CHANNEL = '#bounty_notifs' if ENVIRONMENT == 'production' else '#staging_bounty_notifs'

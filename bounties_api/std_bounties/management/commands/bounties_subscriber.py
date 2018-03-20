@@ -94,7 +94,7 @@ class Command(BaseCommand):
                 logger.info(event)
 
                 # We should create a separate client to manage these notifications to slack
-                sc.api_call('chat.postMessage', channel='#bounty_notifs',
+                sc.api_call('chat.postMessage', channel=settings.NOTIFICATIONS_SLACK_CHANNEL,
                     text='Event {} passed for bounty {}'.format(event, str(bounty_id))
                 )
                 # This means the contract subscriber will never send this event through to sqs again

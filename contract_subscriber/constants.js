@@ -38,6 +38,7 @@ exports.SQS_PARAMS = {
 const networks = {
     'mainNet': 'https://mainnet.infura.io/',
     'rinkeby':  'https://rinkeby.infura.io/',
+    'consensysrinkeby': 'https://rinkeby.infura.io/',
     'localhost': 'localhost:8545',
 }
 

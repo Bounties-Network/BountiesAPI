@@ -192,4 +192,4 @@ networks = {
 
 ETH_NETWORK_URL = networks[ETH_NETWORK]
 
-NOTIFICATIONS_SLACK_CHANNEL = '#bounty_notifs' if ENVIRONMENT == 'production' else '#staging_bounty_notifs'
+NOTIFICATIONS_SLACK_CHANNEL = '#bounty_notifs' if ENVIRONMENT == 'production' else ENVIRONMENT + '_bounty_notifs'

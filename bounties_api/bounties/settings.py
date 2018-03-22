@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('django_secret', 'secret')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', False)
+DEBUG = os.environ.get('local', False) == 'true'
 ENVIRONMENT = os.environ.get('environment', 'local')
 
 ALLOWED_HOSTS = ['*']

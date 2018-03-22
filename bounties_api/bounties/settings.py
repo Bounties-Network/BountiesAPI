@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_filters',
     'std_bounties',
+    'analytics',
 ]
 
 MIDDLEWARE = [

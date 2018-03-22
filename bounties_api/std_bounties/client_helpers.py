@@ -71,7 +71,7 @@ def map_bounty_data(data_hash, bounty_id):
             'address',
             ''),
         'data_issuer': data_issuer,
-        'data': data_hash,
+        'data': ipfs_hash,
         'data_json': str(data_JSON),
         'data_categories': categories,
     }
@@ -98,7 +98,7 @@ def map_fulfillment_data(data_hash, bounty_id, fulfillment_id):
 
     return {
         'data_json': str(data_JSON),
-        'data': data_hash,
+        'data': ipfs_hash,
         'data_fulfiller': data_fulfiller,
         'fulfiller_name': data_fulfiller.get(
             'name',

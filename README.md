@@ -1,7 +1,7 @@
 # Bounties-API
 [Deployed Production API - Mainnet Contract](https://api.bounties.network)
 
-[Deployed Staging API - Rinkeby Contract](https://staging.api.bounties.network)
+[Deployed Staging API - Rinkeby Contract great for testing](https://staging.api.bounties.network)
 
 ## Setup
 [Download Docker stable version](https://docs.docker.com/docker-for-mac/install/#download-docker-for-mac)
@@ -53,7 +53,6 @@ Other Jobs include:
  - [get_token_values.py](https://github.com/Bounties-Network/BountiesAPI/blob/master/bounties_api/std_bounties/management/commands/get_token_values.py). This syncs with coinmarketcap every 5 minutes and updates pricing on each of the bounties in USD.
 
 ## TODO
-- [ ] Use gunicorn to run server in production and s3 to serve static assets on swagger (currently debug=True on server which is not ideal)
 - [ ] Setup Linters
 - [ ] Events API to track diffs/events in the contract
 - [ ] Circle Integration

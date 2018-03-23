@@ -132,7 +132,7 @@ class BountyClient:
 
     def add_contribution(self, bounty_id, inputs):
         bounty = Bounty.objects.get(bounty_id=bounty_id)
-        bounty.balance = Decimal(inputs.get('value'))
+        bounty.balance = Decimal(bounty.balance) + Decimal(inputs.get('value'))
         if bounty.balance >= bounty.fulfillmentAmount and bounty.bountyStage == EXPIRED_STAGE:
             bounty.bountyStage = ACTIVE_STAGE
         bounty.save()

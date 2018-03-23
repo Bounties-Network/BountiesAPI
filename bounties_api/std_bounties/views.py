@@ -103,3 +103,7 @@ class ProfileStats(APIView):
             'submissions_acceptance_rate': submissions_acceptance_rate,
         }
         return JsonResponse(profile_stats)
+
+class Token(APIView):
+    def get(self, request):
+        return JsonResponse("serializer.data", safe=False)

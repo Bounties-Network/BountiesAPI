@@ -107,15 +107,15 @@ class ProfileStats(APIView):
 
 class Token(APIView):
     def get(self, request):
-        tokens = []
+        token_qs = {}
+        result = []
         token_to_append = {}
-        all_tokens = models.Token.objects.all()
-        for token in all_tokens:
-            bounties_of_token = Bounty.objects.filter(token=token)
-            if bounties_of_token.count() > 0:
-                token_to_append = {
-                    'count': bounties_of_token.count(),
-                    'token': serializers.serialize("json", models.Token.objects.filter(id=token.id))
-                }
-                tokens.append(token_to_append)
-        return JsonResponse(tokens, safe=False)
+        token_count_agg = {}
+        token_count_agg = Bounty.objects.values('tokenSymbol','tokenContract','tokenDecimals','token').annotate(count=Count('tokenSymbol')).order_by('-count')
+        for bounty in token_count_agg:
+            token_qs = models.Token.objects.filter(id=bounty['token'])
+            if token_qs.count() > 0:
+                token_to_append.update(bounty)
+                token_to_append['token'] = serializers.serialize("json", token_qs)            
+                result.append(token_to_append)
+        return JsonResponse(result, safe=False)

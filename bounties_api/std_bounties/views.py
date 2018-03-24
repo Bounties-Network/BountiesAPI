@@ -12,7 +12,8 @@ from std_bounties.serializers import BountySerializer, FulfillmentSerializer, Ra
 from std_bounties.filters import BountiesFilter, FulfillmentsFilter
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
-
+from std_bounties import models
+from django.core import serializers
 
 class BountyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = BountySerializer
@@ -106,4 +107,15 @@ class ProfileStats(APIView):
 
 class Token(APIView):
     def get(self, request):
-        return JsonResponse("serializer.data", safe=False)
+        tokens = []
+        token_to_append = {}
+        all_tokens = models.Token.objects.all()
+        for token in all_tokens:
+            bounties_of_token = Bounty.objects.filter(token=token)
+            if bounties_of_token.count() > 0:
+                token_to_append = {
+                    'count': bounties_of_token.count(),
+                    'token': serializers.serialize("json", models.Token.objects.filter(id=token.id))
+                }
+                tokens.append(token_to_append)
+        return JsonResponse(tokens, safe=False)

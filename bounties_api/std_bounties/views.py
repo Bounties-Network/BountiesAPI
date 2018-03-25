@@ -6,14 +6,13 @@ from django.http import JsonResponse, Http404
 from rest_framework.views import APIView
 from bounties.utils import dictfetchall
 from std_bounties.constants import STAGE_CHOICES
-from std_bounties.models import Bounty, Fulfillment, RankedCategory
+from std_bounties.models import Bounty, Fulfillment, RankedCategory, Token
 from std_bounties.queries import LEADERBOARD_QUERY
-from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardSerializer
+from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardSerializer, TokenSerializer
 from std_bounties.filters import BountiesFilter, FulfillmentsFilter
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
-from std_bounties import models
-from django.core import serializers
+
 
 class BountyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = BountySerializer
@@ -105,17 +104,20 @@ class ProfileStats(APIView):
         }
         return JsonResponse(profile_stats)
 
-class Token(APIView):
+
+class Tokens(APIView):
     def get(self, request):
         token_qs = {}
         result = []
         token_to_append = {}
         token_count_agg = {}
-        token_count_agg = Bounty.objects.values('tokenSymbol','tokenContract','tokenDecimals','token').annotate(count=Count('tokenSymbol')).order_by('-count')
+        token_count_agg = Bounty.objects.values('tokenSymbol','tokenContract',
+        'tokenDecimals','token').annotate(count=Count('tokenSymbol')).order_by('-count')
         for bounty in token_count_agg:
-            token_qs = models.Token.objects.filter(id=bounty['token'])
+            token_qs = Token.objects.filter(id=bounty['token'])
             if token_qs.count() > 0:
                 token_to_append.update(bounty)
-                token_to_append['token'] = serializers.serialize("json", token_qs)            
+                serializer = TokenSerializer(token_qs, many=True)
+                token_to_append['token'] = serializer.data
                 result.append(token_to_append)
         return JsonResponse(result, safe=False)

@@ -363,6 +363,32 @@ paths:
         in: path
         required: true
         type: string
+  /token/:        
+    get:
+      operationId: token_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: 'Get list of tokens that have been used at least once in a contract'
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                tokenSymbol:
+                  type: string
+                tokenContract:
+                  type: string
+                tokenDecimals:
+                  type: integer
+                token:
+                  $ref: '#/definitions/Token'
+                count:
+                  type: integer
+      tags:
+        - token
+    parameters: []        
 definitions:
   UserProfile:
     type: object

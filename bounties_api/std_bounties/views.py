@@ -110,14 +110,17 @@ class Tokens(APIView):
         token_qs = {}
         result = []
         token_to_append = {}
-        token_count_agg = {}
-        token_count_agg = Bounty.objects.values('tokenSymbol','tokenContract',
-        'tokenDecimals','token').annotate(count=Count('tokenSymbol')).order_by('-count')
-        for bounty in token_count_agg:
-            token_qs = Token.objects.filter(id=bounty['token'])
+        token_count = {}
+        token_count = Bounty.objects.values('tokenSymbol','tokenContract',
+        'tokenDecimals').annotate(count=Count('tokenSymbol')).order_by('-count')
+        for bounty in token_count:
+            token_to_append = {}
+            token_to_append.update(bounty)
+            token_qs = Token.objects.filter(symbol=bounty['tokenSymbol'])
             if token_qs.count() > 0:
-                token_to_append.update(bounty)
                 serializer = TokenSerializer(token_qs, many=True)
                 token_to_append['token'] = serializer.data
-                result.append(token_to_append)
+            else:
+                token_to_append['token'] = []
+            result.append(token_to_append)
         return JsonResponse(result, safe=False)

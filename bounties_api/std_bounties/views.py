@@ -17,7 +17,7 @@ from rest_framework_filters.backends import DjangoFilterBackend
 class BountyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = BountySerializer
     queryset = Bounty.objects.all().prefetch_related(
-        'categories').select_related('token')
+        'categories').select_related('token').distinct()
     filter_class = BountiesFilter
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
     ordering_fields = (

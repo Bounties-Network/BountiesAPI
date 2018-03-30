@@ -141,7 +141,11 @@ def map_token_data(pays_tokens, token_contract, amount):
             token_contract,
             ContractFactoryClass=ConciseContract
         )
-        token_symbol = HumanStandardToken.symbol()
+        # putting up a bounty to solve this. This is a weird bug on the DAI symbol call 
+        if token_contract == '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359':
+            token_symbol = 'DAI'
+        else:
+            token_symbol = token_symbol = HumanStandardToken.symbol()
         token_decimals = HumanStandardToken.decimals()
 
     usd_price, token_model = get_token_pricing(

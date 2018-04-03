@@ -1,6 +1,8 @@
 import json
-import datetime
+from rest_framework import serializers
 from decimal import Decimal
+from functools import partial, update_wrapper
+
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from std_bounties.contract import data
@@ -153,3 +155,71 @@ def map_token_data(pays_tokens, token_contract, amount):
         'token': token_model.id if token_model else None,
         'usd_price': usd_price,
     }
+
+
+def narrower(obj, fields):
+    narrowed_fields = {}
+    for field in fields:
+        attr = field
+        key = field
+        current_obj = obj
+
+        if type(field) is tuple:
+            attr = field[0]
+            key = field[1]
+
+        try:
+            for nested_attr in attr.split('__'):
+                value = getattr(current_obj, nested_attr)
+                current_obj = value
+
+            narrowed_fields[key] = value
+        except AttributeError as e:
+            logger.error(str(e), exc_info=True)
+            return
+
+    return narrowed_fields
+
+
+def formatter(msg, values):
+    return msg.format(**values)
+
+
+def merge(source1, source2):
+    return {**source1, **source2}
+
+
+def wrapped_partial(func, *args, **kwargs):
+    partial_func = partial(func, *args, **kwargs)
+    update_wrapper(partial_func, func)
+    return partial_func
+
+
+def pipe(initial_value, functions):
+    current_result = initial_value
+    for f in functions:
+        try:
+            current_result = f(current_result)
+            # logger.warning("--- {} -> {}".format(f.__name__, current_result))
+
+            if current_result is None:
+                logger.warning("{} returns None with the given arg: {}".format(f.__name__, current_result))
+                return
+        except serializers.ValidationError:
+            raise
+        except Exception as e:
+            logger.error("{} - {} raised exception with the given arg: {}, ".format(str(e), f.__name__, current_result), exc_info=True)
+            return
+
+    return current_result
+
+
+def notify_slack(sc, channel, event, msg):
+    sc.api_call(
+        'chat.postMessage',
+        channel=channel,
+        text='Event {}: {}'.format(
+            event,
+            msg))
+
+    return True

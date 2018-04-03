@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^stats/(?P<address>\w+)/$', views.BountyStats.as_view()),
     url(r'^user/(?P<address>\w+)/$', views.UserProfile.as_view()),
     url(r'^leaderboard/$', views.Leaderboard.as_view()),
+    url(r'^token/$', views.Tokens.as_view())
 ]

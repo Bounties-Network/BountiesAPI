@@ -1,6 +1,7 @@
 import os
 import json
 import time
+
 from django.core.management.base import BaseCommand
 from std_bounties.client import BountyClient
 from django.conf import settings
@@ -8,6 +9,10 @@ from slackclient import SlackClient
 from bounties.redis_client import redis_client
 from bounties.sqs_client import sqs_client
 import logging
+
+from std_bounties.client_helpers import narrower, notify_slack, formatter, merge, pipe, wrapped_partial
+from std_bounties.models import Bounty
+
 
 logger = logging.getLogger('django')
 
@@ -64,61 +69,221 @@ class Command(BaseCommand):
                     'attempting {}: for bounty id {}'.format(
                         event, str(bounty_id)))
                 if event == 'BountyIssued':
-                    bounty_client.issue_bounty(
-                        bounty_id, contract_method_inputs, event_timestamp)
+                    msg = "{title}, {bounty_id}, {tokenSymbol} @ {tokenDecimals}, {fulfillmentAmount}, {usd_price}, {deadline}"
+                    bounty = Bounty.objects.filter(bounty_id=bounty_id)
+
+                    if not bounty.exists():
+                        res = pipe(bounty_id, [
+                            wrapped_partial(bounty_client.issue_bounty,
+                                    inputs=contract_method_inputs,
+                                    event_timestamp=event_timestamp),
+                            wrapped_partial(narrower,
+                                     fields=['title', 'bounty_id', 'tokenSymbol', 'tokenDecimals', 'fulfillmentAmount',
+                                      'usd_price', 'deadline']),
+                            wrapped_partial(formatter, msg),
+                            wrapped_partial(notify_slack,
+                                    sc,
+                                    settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                    'Bounty Issued')
+                        ])
 
                 if event == 'BountyActivated':
-                    bounty_client.activate_bounty(
-                        bounty_id, contract_method_inputs)
+                    bounty = Bounty.objects.get(bounty_id=bounty_id)
+                    msg = "{title} {bounty_id} {tokenSymbol} {usd_price}"
+
+                    res = pipe(bounty, [
+                        wrapped_partial(bounty_client.activate_bounty, inputs=contract_method_inputs),
+                        wrapped_partial(narrower, fields=['title', 'bounty_id', 'tokenSymbol', 'usd_price']),
+                        wrapped_partial(formatter, msg),
+                        wrapped_partial(notify_slack,
+                                sc,
+                                settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                'Bounty Activated')
+                        ])
+
 
                 if event == 'BountyFulfilled':
-                    bounty_client.fulfill_bounty(
-                        bounty_id,
-                        fulfillment_id,
-                        contract_method_inputs,
-                        event_timestamp,
-                        transaction_from)
+                    bounty = Bounty.objects.get(bounty_id=bounty_id)
+                    msg = "{title}, {bounty_id}, {fulfillment_id},  {tokenSymbol} @ {tokenDecimals}, {fulfillmentAmount}, {usd_price}, {deadline}"
+
+                    res = pipe(bounty, [
+                        wrapped_partial(bounty_client.fulfill_bounty,
+                                        fulfillment_id=fulfillment_id,
+                                        inputs=contract_method_inputs,
+                                        event_timestamp=event_timestamp,
+                                        transaction_issuer=transaction_from),
+                        wrapped_partial(narrower,
+                                        fields=[('bounty__title', 'title'),
+                                         ('bounty__bounty_id', 'bounty_id'),
+                                         'fulfillment_id',
+                                         ('bounty__tokenSymbol', 'tokenSymbol'),
+                                         ('bounty__tokenDecimals', 'tokenDecimals'),
+                                         ('bounty__fulfillmentAmount', 'fulfillmentAmount'),
+                                         ('bounty__usd_price', 'usd_price'),
+                                         ('bounty__deadline', 'deadline')]),
+                        wrapped_partial(formatter, msg),
+                        wrapped_partial(notify_slack,
+                                        sc,
+                                        settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                        'Bounty Fullfilled')
+                    ])
 
                 if event == 'FulfillmentUpdated':
-                    bounty_client.update_fulfillment(
-                        bounty_id, fulfillment_id, contract_method_inputs)
+                    bounty = Bounty.objects.get(bounty_id=bounty_id)
+                    msg = "{title}, {bounty_id}, {fulfillment_id}"
+
+                    res = pipe(bounty, [
+                        wrapped_partial(bounty_client.update_fulfillment,
+                                        fulfillment_id=fulfillment_id,
+                                        inputs=contract_method_inputs),
+                        wrapped_partial(narrower,
+                                        fields=[('bounty__title', 'title'),
+                                         ('bounty__bounty_id', 'bounty_id'),
+                                         'fulfillment_id'
+                                         ]),
+                        wrapped_partial(formatter, msg),
+                        wrapped_partial(notify_slack,
+                                        sc,
+                                        settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                        'Fulfillment Updated')
+                    ])
 
                 if event == 'FulfillmentAccepted':
-                    bounty_client.accept_fulfillment(bounty_id, fulfillment_id)
+                    bounty = Bounty.objects.get(bounty_id=bounty_id)
+                    msg = "{title}, {bounty_id}, {fulfillment_id},  {tokenSymbol} @ {tokenDecimals}, {fulfillmentAmount}, {usd_price}, {deadline}"
+
+                    res = pipe(bounty, [
+                        wrapped_partial(bounty_client.accept_fulfillment, fulfillment_id=fulfillment_id),
+                        wrapped_partial(narrower,
+                                        fields=[('bounty__title', 'title'),
+                                         ('bounty__bounty_id', 'bounty_id'),
+                                         'fulfillment_id',
+                                         ('bounty__tokenSymbol', 'tokenSymbol'),
+                                         ('bounty__tokenDecimals', 'tokenDecimals'),
+                                         ('bounty__fulfillmentAmount', 'fulfillmentAmount'),
+                                         ('bounty__usd_price', 'usd_price'),
+                                         ('bounty__deadline', 'deadline')]),
+                        wrapped_partial(formatter, msg),
+                        wrapped_partial(notify_slack,
+                                        sc,
+                                        settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                        'Bounty Accepted')
+                    ])
 
                 if event == 'BountyKilled':
-                    bounty_client.kill_bounty(bounty_id)
+                    bounty = Bounty.objects.get(bounty_id=bounty_id)
+                    msg = "{title}, {bounty_id}"
+
+                    res = pipe(bounty, [
+                        bounty_client.kill_bounty,
+                        wrapped_partial(narrower,
+                                        fields=['title',
+                                         'bounty_id'
+                                         ]
+                                        ),
+                        wrapped_partial(formatter, msg),
+                        wrapped_partial(notify_slack,
+                                        sc,
+                                        settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                        'Bounty Killed')
+                    ])
 
                 if event == 'ContributionAdded':
-                    bounty_client.add_contribution(
-                        bounty_id, contract_method_inputs)
+                    bounty = Bounty.objects.get(bounty_id=bounty_id)
+                    msg = "{title}, {bounty_id}, {tokenDecimals}, {balance}, {usd_price}, {tokenDecimals}, {old_balance}"
+
+                    res = pipe(bounty, [
+                        wrapped_partial(bounty_client.add_contribution, inputs=contract_method_inputs),
+                        wrapped_partial(narrower,
+                                        fields=['title',
+                                         'bounty_id',
+                                         'tokenDecimals',
+                                         'balance',
+                                         'usd_price',
+                                         'tokenDecimals',
+                                         'old_balance'
+                                         ]
+                                        ),
+                        wrapped_partial(formatter, msg),
+                        wrapped_partial(notify_slack,
+                                        sc,
+                                        settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                        'Contribution Added')
+                    ])
 
                 if event == 'DeadlineExtended':
-                    bounty_client.extend_deadline(
-                        bounty_id, contract_method_inputs)
+                    bounty = Bounty.objects.get(bounty_id=bounty_id)
+                    previous_deadline = narrower(bounty, [('deadline', 'previous_deadline')])
+                    msg = "{title}, {bounty_id}, {previous_deadline}, {deadline}"
+
+                    res = pipe(bounty, [
+                        wrapped_partial(bounty_client.extend_deadline, inputs=contract_method_inputs),
+                        wrapped_partial(narrower,
+                                        fields=['title',
+                                                'bounty_id',
+                                                'deadline'
+                                                ]),
+                        wrapped_partial(merge, source2=previous_deadline),
+                        wrapped_partial(formatter, msg),
+                        wrapped_partial(notify_slack,
+                                        sc,
+                                        settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                        'Deadline Extended')
+                    ])
 
                 if event == 'BountyChanged':
-                    bounty_client.change_bounty(
-                        bounty_id, contract_method_inputs)
+                    bounty = Bounty.objects.get(bounty_id=bounty_id)
+                    msg = "{title}, {bounty_id}"
+
+                    res = pipe(bounty, [
+                        wrapped_partial(bounty_client.change_bounty, inputs=contract_method_inputs),
+                        wrapped_partial(narrower,
+                                        fields=['title',
+                                                'bounty_id',
+                                                ]),
+                        wrapped_partial(formatter, msg),
+                        wrapped_partial(notify_slack,
+                                        sc,
+                                        settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                        'Bounty Changed')
+                    ])
 
                 if event == 'IssuerTransferred':
-                    bounty_client.transfer_issuer(
-                        bounty_id, contract_method_inputs)
+                    bounty = Bounty.objects.get(bounty_id=bounty_id)
+                    msg = "{title}, {bounty_id}"
+
+                    res = pipe(bounty, [
+                        wrapped_partial(bounty_client.transfer_issuer, inputs=contract_method_inputs),
+                        wrapped_partial(narrower,
+                                        fields=['title',
+                                                'bounty_id',
+                                                ]),
+                        wrapped_partial(formatter, msg),
+                        wrapped_partial(notify_slack,
+                                        sc,
+                                        settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                        'Issuer Transferred')
+                    ])
 
                 if event == 'PayoutIncreased':
-                    bounty_client.increase_payout(
-                        bounty_id, contract_method_inputs)
+                    bounty = Bounty.objects.get(bounty_id=bounty_id)
+                    msg = "{title}, {bounty_id}"
+
+                    res = pipe(bounty, [
+                        wrapped_partial(bounty_client.increase_payout, inputs=contract_method_inputs),
+                        wrapped_partial(narrower,
+                                        fields=['title',
+                                                'bounty_id',
+                                                ]),
+                        wrapped_partial(formatter, msg),
+                        wrapped_partial(notify_slack,
+                                        sc,
+                                        settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                        'Payout Increased')
+                    ])
 
                 logger.info(event)
 
-                # We should create a separate client to manage these
-                # notifications to slack
-                sc.api_call(
-                    'chat.postMessage',
-                    channel=settings.NOTIFICATIONS_SLACK_CHANNEL,
-                    text='Event {} passed for bounty {}'.format(
-                        event,
-                        str(bounty_id)))
                 # This means the contract subscriber will never send this event
                 # through to sqs again
                 redis_client.set(message_deduplication_id, True)

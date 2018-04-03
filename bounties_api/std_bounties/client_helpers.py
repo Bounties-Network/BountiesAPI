@@ -134,19 +134,28 @@ def get_token_pricing(token_symbol, token_decimals, value):
 def map_token_data(pays_tokens, token_contract, amount):
     token_symbol = 'ETH'
     token_decimals = 18
-    token_price = 0
+
     if pays_tokens:
-        HumanStandardToken = web3.eth.contract(
-            bounties_json['interfaces']['HumanStandardToken'],
-            token_contract,
-            ContractFactoryClass=ConciseContract
-        )
-        # putting up a bounty to solve this. This is a weird bug on the DAI symbol call 
-        if token_contract == '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359':
-            token_symbol = 'DAI'
-        else:
+        HumanStandardToken_abi = bounties_json['interfaces']['HumanStandardToken']
+        DSToken_abi = bounties_json['interfaces']['DSToken']
+
+        try:
+            HumanStandardToken = web3.eth.contract(
+                HumanStandardToken_abi,
+                token_contract,
+                ContractFactoryClass=ConciseContract
+            )
             token_symbol = token_symbol = HumanStandardToken.symbol()
-        token_decimals = HumanStandardToken.decimals()
+            token_decimals = HumanStandardToken.decimals()
+        except OverflowError:
+            DSToken = web3.eth.contract(
+                DSToken_abi,
+                token_contract,
+                ContractFactoryClass=ConciseContract
+            )
+            # Symbol in DSToken contract is bytes32 and unused chars are padded with '\x00'
+            token_symbol = DSToken.symbol().rstrip('\x00')
+            token_decimals = DSToken.decimals()
 
     usd_price, token_model = get_token_pricing(
         token_symbol, token_decimals, amount)

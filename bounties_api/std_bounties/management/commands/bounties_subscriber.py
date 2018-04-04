@@ -10,10 +10,9 @@ from bounties.redis_client import redis_client
 from bounties.sqs_client import sqs_client
 import logging
 
-from std_bounties.client_helpers import (narrower, notify_slack, formatter, merge, pipe,
-                                         wrapped_partial, apply_and_notify)
+from std_bounties.client_helpers import apply_and_notify
 from std_bounties.models import Bounty
-
+from std_bounties.utils import narrower, wrapped_partial, merge
 
 logger = logging.getLogger('django')
 

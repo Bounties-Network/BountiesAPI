@@ -1,6 +1,7 @@
 import os
 import json
 import time
+from functools import partial
 
 from django.core.management.base import BaseCommand
 from std_bounties.client import BountyClient
@@ -10,7 +11,7 @@ from bounties.redis_client import redis_client
 from bounties.sqs_client import sqs_client
 import logging
 
-from std_bounties.client_helpers import apply_and_notify
+from std_bounties.client_helpers import apply_and_notify, bounty_url_for
 from std_bounties.models import Bounty
 from std_bounties.utils import narrower, wrapped_partial, merge
 
@@ -70,8 +71,9 @@ class Command(BaseCommand):
                         event, str(bounty_id)))
                 if event == 'BountyIssued':
                     msg = "{title}, {bounty_id}, {tokenSymbol} @ {tokenDecimals}, {fulfillmentAmount}, "\
-                          "{usd_price}, {deadline}"
+                          "{usd_price}, {deadline} {link}"
                     bounty = Bounty.objects.filter(bounty_id=bounty_id)
+                    add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
                     if not bounty.exists():
                         apply_and_notify(bounty_id,
@@ -81,12 +83,14 @@ class Command(BaseCommand):
                                          fields=['title', 'bounty_id', 'tokenSymbol', 'tokenDecimals',
                                                  'fulfillmentAmount', 'usd_price', 'deadline'],
                                          msg=msg,
-                                         slack_client=sc
+                                         slack_client=sc,
+                                         before_formatter=[add_link]
                                          )
 
                 if event == 'BountyActivated':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
-                    msg = "{title} {bounty_id} {tokenSymbol} {usd_price}"
+                    msg = "{title} {bounty_id} {tokenSymbol} {usd_price} {link}"
+                    add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
                     apply_and_notify(bounty,
                                      event='Bounty Activated',
@@ -94,13 +98,15 @@ class Command(BaseCommand):
                                      inputs={'inputs': contract_method_inputs},
                                      fields=['title', 'bounty_id', 'tokenSymbol', 'usd_price'],
                                      msg=msg,
-                                     slack_client=sc
+                                     slack_client=sc,
+                                     before_formatter=[add_link]
                                      )
 
                 if event == 'BountyFulfilled':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
                     msg = "{title}, {bounty_id}, {fulfillment_id},  {tokenSymbol} @ {tokenDecimals},"\
-                          " {fulfillmentAmount}, {usd_price}, {deadline}"
+                          " {fulfillmentAmount}, {usd_price}, {deadline} {link}"
+                    add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
                     apply_and_notify(bounty,
                                      event='Bounty Fulfilled',
@@ -120,12 +126,14 @@ class Command(BaseCommand):
                                              ('bounty__usd_price', 'usd_price'),
                                              ('bounty__deadline', 'deadline')],
                                      msg=msg,
-                                     slack_client=sc
+                                     slack_client=sc,
+                                     before_formatter=[add_link]
                                      )
 
                 if event == 'FulfillmentUpdated':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
-                    msg = "{title}, {bounty_id}, {fulfillment_id}"
+                    msg = "{title}, {bounty_id}, {fulfillment_id} {link}"
+                    add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
                     apply_and_notify(bounty,
                                      event='Fulfillment Updated',
@@ -136,13 +144,15 @@ class Command(BaseCommand):
                                              'fulfillment_id'
                                              ],
                                      msg=msg,
-                                     slack_client=sc
+                                     slack_client=sc,
+                                     before_formatter=[add_link]
                                      )
 
                 if event == 'FulfillmentAccepted':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
                     msg = "{title}, {bounty_id}, {fulfillment_id},  {tokenSymbol} @ {tokenDecimals},"\
-                          " {fulfillmentAmount}, {usd_price}, {deadline}"
+                          " {fulfillmentAmount}, {usd_price}, {deadline} {link}"
+                    add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
                     apply_and_notify(bounty,
                                      event='Bounty Accepted',
@@ -157,12 +167,14 @@ class Command(BaseCommand):
                                              ('bounty__usd_price', 'usd_price'),
                                              ('bounty__deadline', 'deadline')],
                                      msg=msg,
-                                     slack_client=sc
+                                     slack_client=sc,
+                                     before_formatter=[add_link]
                                      )
 
                 if event == 'BountyKilled':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
-                    msg = "{title}, {bounty_id}"
+                    msg = "{title}, {bounty_id} {link}"
+                    add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
                     apply_and_notify(bounty,
                                      event='Bounty Killed',
@@ -170,13 +182,15 @@ class Command(BaseCommand):
                                      inputs={},
                                      fields=['title', 'bounty_id'],
                                      msg=msg,
-                                     slack_client=sc
+                                     slack_client=sc,
+                                     before_formatter=[add_link]
                                      )
 
                 if event == 'ContributionAdded':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
                     msg = "{title}, {bounty_id}, {tokenDecimals}, {balance}, {usd_price}, {tokenDecimals},"\
-                          "{old_balance}"
+                          "{old_balance} {link}"
+                    add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
                     apply_and_notify(bounty,
                                      event='Contribution Added',
@@ -191,14 +205,16 @@ class Command(BaseCommand):
                                              'old_balance'
                                              ],
                                      msg=msg,
-                                     slack_client=sc
+                                     slack_client=sc,
+                                     before_formatter=[add_link]
                                      )
 
                 if event == 'DeadlineExtended':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
                     previous_deadline = narrower(bounty, [('deadline', 'previous_deadline')])
-                    msg = "{title}, {bounty_id}, {previous_deadline}, {deadline}"
+                    msg = "{title}, {bounty_id}, {previous_deadline}, {deadline} {link}"
                     mix_previous_deadline = wrapped_partial(merge, source2=previous_deadline)
+                    add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
                     apply_and_notify(bounty,
                                      event='Deadline Extended',
@@ -207,12 +223,13 @@ class Command(BaseCommand):
                                      fields=['title', 'bounty_id', 'deadline'],
                                      msg=msg,
                                      slack_client=sc,
-                                     before_formatter=[mix_previous_deadline]
+                                     before_formatter=[mix_previous_deadline, add_link]
                                      )
 
                 if event == 'BountyChanged':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
-                    msg = "{title}, {bounty_id}"
+                    msg = "{title}, {bounty_id} {link}"
+                    add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
                     apply_and_notify(bounty,
                                      event='Bounty Changed',
@@ -220,12 +237,14 @@ class Command(BaseCommand):
                                      inputs={'inputs': contract_method_inputs},
                                      fields=['title', 'bounty_id'],
                                      msg=msg,
-                                     slack_client=sc
+                                     slack_client=sc,
+                                     before_formatter=[add_link]
                                      )
 
                 if event == 'IssuerTransferred':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
-                    msg = "{title}, {bounty_id}"
+                    msg = "{title}, {bounty_id} {link}"
+                    add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
                     apply_and_notify(bounty,
                                      event='Issuer Transferred',
@@ -233,12 +252,14 @@ class Command(BaseCommand):
                                      inputs={'inputs': contract_method_inputs},
                                      fields=['title', 'bounty_id'],
                                      msg=msg,
-                                     slack_client=sc
+                                     slack_client=sc,
+                                     before_formatter=[add_link]
                                      )
 
                 if event == 'PayoutIncreased':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
-                    msg = "{title}, {bounty_id}"
+                    msg = "{title}, {bounty_id} {link}"
+                    add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
                     apply_and_notify(bounty,
                                      event='Payout Increased',
@@ -248,7 +269,8 @@ class Command(BaseCommand):
                                              'bounty_id',
                                              ],
                                      msg=msg,
-                                     slack_client=sc
+                                     slack_client=sc,
+                                     before_formatter=[add_link]
                                      )
 
                 logger.info(event)

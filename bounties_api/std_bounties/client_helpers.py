@@ -8,6 +8,7 @@ from std_bounties.models import Token
 from bounties.utils import getDateTimeFromTimestamp
 from std_bounties.utils import wrapped_partial, narrower, formatter, flatten, pipe
 
+from rest_framework.reverse import reverse
 from django.conf import settings
 import ipfsapi
 import logging
@@ -167,6 +168,11 @@ def notify_slack(sc, channel, event, msg):
             msg))
 
     return True
+
+def bounty_url_for(bounty_id):
+    #url = reverse('std_bounties:bounty-detail', args=[bounty_id])
+    url = 'https://beta.bounties.network/bounty/v1/{}'.format(bounty_id)
+    return url
 
 
 def apply_and_notify(base_value, event, action, inputs, fields, msg, slack_client,

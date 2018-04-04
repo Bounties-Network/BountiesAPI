@@ -6,45 +6,39 @@ from functools import partial
 from django.test import TestCase
 
 # Create your tests here.
-from std_bounties.client_helpers import narrower, formatter, merge, pipe
-from std_bounties.models import Bounty
+from std_bounties.utils import narrower, formatter, merge, pipe
+from std_bounties.models import Bounty, Fulfillment
 
 
 class BountySubscriberTest(TestCase):
-    # narrower
-    def test_get_attributes_from_dict(self):
-        obj = {'bounty_id': 2222234234, 'bounty_name': 'Narrowed fields'}
-        narrowed_fieds = narrower(obj, ["bounty_name", "bounty_id"])
-
-        self.assertEquals(narrowed_fieds.keys(), obj.keys())
-        self.assertEquals(narrowed_fieds.values(), obj.values())
-
-    def test_get_attributes_from_bounty_model(self):
+    def setUp(self):
         title = 'Narrowed fields'
         description = 'Tets narrowed function with empty object'
         usd_price = 52.97
-        bounty = Bounty(title=title, description=description, usd_price=usd_price)
-        narrowed_fieds = narrower(bounty, ["title", "usd_price"])
+        bounty_id = 2222234234
+        self.obj = Bounty(title=title, description=description, usd_price=usd_price, bounty_id=bounty_id)
+        self.fullfillment = Fulfillment(bounty=self.obj)
 
-        self.assertEquals(narrowed_fieds['title'], title)
-        self.assertEquals(narrowed_fieds['usd_price'], usd_price)
+    # narrower
+    def test_get_attributes_from_bounty_model(self):
+        narrowed_fieds = narrower(self.obj, ["title", "usd_price"])
 
-    def test_get_attributes_with_alias_from_dict(self):
-        obj = {'bounty_id': 2222234234, 'bounty_name': 'Narrowed fields', 'other': 'Meh!'}
-        narrowed_fieds = narrower(obj, [("bounty_name", "title"), ("bounty_id", "id"), 'other'])
+        self.assertEquals(narrowed_fieds['title'], self.obj.title)
+        self.assertEquals(narrowed_fieds['usd_price'], self.obj.usd_price)
 
-        self.assertEquals(narrowed_fieds.keys(), ['title', 'id', 'other'])
-        self.assertEquals(narrowed_fieds.values(), obj.values())
+    def test_get_attributes_with_alias(self):
+        narrowed_fieds = narrower(self.obj, [("title", "bounty_name"), ("bounty_id", "id")])
+
+        self.assertEquals(sorted(narrowed_fieds.keys()), ['bounty_name', 'id'])
+        self.assertEquals(narrowed_fieds['bounty_name'], self.obj.title)
+        self.assertEquals(narrowed_fieds['id'], self.obj.bounty_id)
 
     def test_get_nested_attributes_using_double_underscore(self):
-        obj = {'bounty_id': 2222234234, 'bounty_name': 'Narrowed fields', 'nested': {
-            'key': "nested",
-            'value': True
-        }}
-        narrowed_fieds = narrower(obj, [("bounty_name", "title"), ("nested__key", "id"), "nested__value"])
+        narrowed_fieds = narrower(self.fullfillment, [("bounty__title", "title"), "bounty__usd_price"])
 
-        self.assertEquals(narrowed_fieds.keys(), ['title', 'id', 'nested__value'])
-        self.assertEquals(narrowed_fieds.values(), ['Narrowed fields', 'nested', True])
+        self.assertEquals(sorted(narrowed_fieds.keys()), sorted(['title', 'bounty__usd_price']))
+        self.assertEquals(narrowed_fieds['title'], self.obj.title)
+        self.assertEquals(narrowed_fieds['bounty__usd_price'], self.obj.usd_price)
 
     # formatter
     def test_format_msg_with_dict(self):
@@ -73,7 +67,7 @@ class BountySubscriberTest(TestCase):
         p2 = partial(sub, 3)
         p3 = partial(sub, -8)
 
-        self.assertEquals(pipe(0, [p1, p2, p3]), 6)
+        self.assertEquals(pipe(0, [p1, p2, p3]), -12)
 
     def test_pipe_return_immediately_if_one_function_returns_none(self):
         def sub(x, y):

@@ -110,7 +110,6 @@ class BountyClient:
         data_hash = inputs.get('data')
         ipfs_data = map_fulfillment_data(data_hash, bounty.bounty_id, fulfillment_id)
 
-
         fulfillment_serializer = FulfillmentSerializer(
             fulfillment, data={**ipfs_data}, partial=True)
         instance = fulfillment_serializer.save()

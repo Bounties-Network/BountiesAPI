@@ -208,7 +208,10 @@ def pipe(initial_value, functions):
         except serializers.ValidationError:
             raise
         except Exception as e:
-            logger.error("{} - {} raised exception with the given arg: {}, ".format(str(e), f.__name__, current_result), exc_info=True)
+            logger.error(
+                "{} - {} raised exception with the given arg: {}, ".format(str(e),
+                                                                           f.__name__, current_result),
+                exc_info=True)
             return
 
     return current_result

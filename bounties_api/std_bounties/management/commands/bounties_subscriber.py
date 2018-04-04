@@ -69,44 +69,45 @@ class Command(BaseCommand):
                     'attempting {}: for bounty id {}'.format(
                         event, str(bounty_id)))
                 if event == 'BountyIssued':
-                    msg = "{title}, {bounty_id}, {tokenSymbol} @ {tokenDecimals}, {fulfillmentAmount}, {usd_price}, {deadline}"
+                    msg = "{title}, {bounty_id}, {tokenSymbol} @ {tokenDecimals}, {fulfillmentAmount}, "\
+                          "{usd_price}, {deadline}"
                     bounty = Bounty.objects.filter(bounty_id=bounty_id)
 
                     if not bounty.exists():
-                        res = pipe(bounty_id, [
+                        pipe(bounty_id, [
                             wrapped_partial(bounty_client.issue_bounty,
-                                    inputs=contract_method_inputs,
-                                    event_timestamp=event_timestamp),
+                                            inputs=contract_method_inputs,
+                                            event_timestamp=event_timestamp),
                             wrapped_partial(narrower,
-                                     fields=['title', 'bounty_id', 'tokenSymbol', 'tokenDecimals', 'fulfillmentAmount',
-                                      'usd_price', 'deadline']),
+                                            fields=['title', 'bounty_id', 'tokenSymbol', 'tokenDecimals',
+                                                    'fulfillmentAmount', 'usd_price', 'deadline']),
                             wrapped_partial(formatter, msg),
                             wrapped_partial(notify_slack,
-                                    sc,
-                                    settings.NOTIFICATIONS_SLACK_CHANNEL,
-                                    'Bounty Issued')
+                                            sc,
+                                            settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                            'Bounty Issued')
                         ])
 
                 if event == 'BountyActivated':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
                     msg = "{title} {bounty_id} {tokenSymbol} {usd_price}"
 
-                    res = pipe(bounty, [
+                    pipe(bounty, [
                         wrapped_partial(bounty_client.activate_bounty, inputs=contract_method_inputs),
                         wrapped_partial(narrower, fields=['title', 'bounty_id', 'tokenSymbol', 'usd_price']),
                         wrapped_partial(formatter, msg),
                         wrapped_partial(notify_slack,
-                                sc,
-                                settings.NOTIFICATIONS_SLACK_CHANNEL,
-                                'Bounty Activated')
-                        ])
-
+                                        sc,
+                                        settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                        'Bounty Activated')
+                    ])
 
                 if event == 'BountyFulfilled':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
-                    msg = "{title}, {bounty_id}, {fulfillment_id},  {tokenSymbol} @ {tokenDecimals}, {fulfillmentAmount}, {usd_price}, {deadline}"
+                    msg = "{title}, {bounty_id}, {fulfillment_id},  {tokenSymbol} @ {tokenDecimals},"\
+                          " {fulfillmentAmount}, {usd_price}, {deadline}"
 
-                    res = pipe(bounty, [
+                    pipe(bounty, [
                         wrapped_partial(bounty_client.fulfill_bounty,
                                         fulfillment_id=fulfillment_id,
                                         inputs=contract_method_inputs,
@@ -114,13 +115,13 @@ class Command(BaseCommand):
                                         transaction_issuer=transaction_from),
                         wrapped_partial(narrower,
                                         fields=[('bounty__title', 'title'),
-                                         ('bounty__bounty_id', 'bounty_id'),
-                                         'fulfillment_id',
-                                         ('bounty__tokenSymbol', 'tokenSymbol'),
-                                         ('bounty__tokenDecimals', 'tokenDecimals'),
-                                         ('bounty__fulfillmentAmount', 'fulfillmentAmount'),
-                                         ('bounty__usd_price', 'usd_price'),
-                                         ('bounty__deadline', 'deadline')]),
+                                                ('bounty__bounty_id', 'bounty_id'),
+                                                'fulfillment_id',
+                                                ('bounty__tokenSymbol', 'tokenSymbol'),
+                                                ('bounty__tokenDecimals', 'tokenDecimals'),
+                                                ('bounty__fulfillmentAmount', 'fulfillmentAmount'),
+                                                ('bounty__usd_price', 'usd_price'),
+                                                ('bounty__deadline', 'deadline')]),
                         wrapped_partial(formatter, msg),
                         wrapped_partial(notify_slack,
                                         sc,
@@ -132,15 +133,15 @@ class Command(BaseCommand):
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
                     msg = "{title}, {bounty_id}, {fulfillment_id}"
 
-                    res = pipe(bounty, [
+                    pipe(bounty, [
                         wrapped_partial(bounty_client.update_fulfillment,
                                         fulfillment_id=fulfillment_id,
                                         inputs=contract_method_inputs),
                         wrapped_partial(narrower,
                                         fields=[('bounty__title', 'title'),
-                                         ('bounty__bounty_id', 'bounty_id'),
-                                         'fulfillment_id'
-                                         ]),
+                                                ('bounty__bounty_id', 'bounty_id'),
+                                                'fulfillment_id'
+                                                ]),
                         wrapped_partial(formatter, msg),
                         wrapped_partial(notify_slack,
                                         sc,
@@ -150,19 +151,20 @@ class Command(BaseCommand):
 
                 if event == 'FulfillmentAccepted':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
-                    msg = "{title}, {bounty_id}, {fulfillment_id},  {tokenSymbol} @ {tokenDecimals}, {fulfillmentAmount}, {usd_price}, {deadline}"
+                    msg = "{title}, {bounty_id}, {fulfillment_id},  {tokenSymbol} @ {tokenDecimals},"\
+                          " {fulfillmentAmount}, {usd_price}, {deadline}"
 
-                    res = pipe(bounty, [
+                    pipe(bounty, [
                         wrapped_partial(bounty_client.accept_fulfillment, fulfillment_id=fulfillment_id),
                         wrapped_partial(narrower,
                                         fields=[('bounty__title', 'title'),
-                                         ('bounty__bounty_id', 'bounty_id'),
-                                         'fulfillment_id',
-                                         ('bounty__tokenSymbol', 'tokenSymbol'),
-                                         ('bounty__tokenDecimals', 'tokenDecimals'),
-                                         ('bounty__fulfillmentAmount', 'fulfillmentAmount'),
-                                         ('bounty__usd_price', 'usd_price'),
-                                         ('bounty__deadline', 'deadline')]),
+                                                ('bounty__bounty_id', 'bounty_id'),
+                                                'fulfillment_id',
+                                                ('bounty__tokenSymbol', 'tokenSymbol'),
+                                                ('bounty__tokenDecimals', 'tokenDecimals'),
+                                                ('bounty__fulfillmentAmount', 'fulfillmentAmount'),
+                                                ('bounty__usd_price', 'usd_price'),
+                                                ('bounty__deadline', 'deadline')]),
                         wrapped_partial(formatter, msg),
                         wrapped_partial(notify_slack,
                                         sc,
@@ -174,12 +176,12 @@ class Command(BaseCommand):
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
                     msg = "{title}, {bounty_id}"
 
-                    res = pipe(bounty, [
+                    pipe(bounty, [
                         bounty_client.kill_bounty,
                         wrapped_partial(narrower,
                                         fields=['title',
-                                         'bounty_id'
-                                         ]
+                                                'bounty_id'
+                                                ]
                                         ),
                         wrapped_partial(formatter, msg),
                         wrapped_partial(notify_slack,
@@ -190,19 +192,20 @@ class Command(BaseCommand):
 
                 if event == 'ContributionAdded':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
-                    msg = "{title}, {bounty_id}, {tokenDecimals}, {balance}, {usd_price}, {tokenDecimals}, {old_balance}"
+                    msg = "{title}, {bounty_id}, {tokenDecimals}, {balance}, {usd_price}, {tokenDecimals},"\
+                          "{old_balance}"
 
-                    res = pipe(bounty, [
+                    pipe(bounty, [
                         wrapped_partial(bounty_client.add_contribution, inputs=contract_method_inputs),
                         wrapped_partial(narrower,
                                         fields=['title',
-                                         'bounty_id',
-                                         'tokenDecimals',
-                                         'balance',
-                                         'usd_price',
-                                         'tokenDecimals',
-                                         'old_balance'
-                                         ]
+                                                'bounty_id',
+                                                'tokenDecimals',
+                                                'balance',
+                                                'usd_price',
+                                                'tokenDecimals',
+                                                'old_balance'
+                                                ]
                                         ),
                         wrapped_partial(formatter, msg),
                         wrapped_partial(notify_slack,
@@ -216,7 +219,7 @@ class Command(BaseCommand):
                     previous_deadline = narrower(bounty, [('deadline', 'previous_deadline')])
                     msg = "{title}, {bounty_id}, {previous_deadline}, {deadline}"
 
-                    res = pipe(bounty, [
+                    pipe(bounty, [
                         wrapped_partial(bounty_client.extend_deadline, inputs=contract_method_inputs),
                         wrapped_partial(narrower,
                                         fields=['title',
@@ -235,7 +238,7 @@ class Command(BaseCommand):
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
                     msg = "{title}, {bounty_id}"
 
-                    res = pipe(bounty, [
+                    pipe(bounty, [
                         wrapped_partial(bounty_client.change_bounty, inputs=contract_method_inputs),
                         wrapped_partial(narrower,
                                         fields=['title',
@@ -252,7 +255,7 @@ class Command(BaseCommand):
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
                     msg = "{title}, {bounty_id}"
 
-                    res = pipe(bounty, [
+                    pipe(bounty, [
                         wrapped_partial(bounty_client.transfer_issuer, inputs=contract_method_inputs),
                         wrapped_partial(narrower,
                                         fields=['title',
@@ -269,7 +272,7 @@ class Command(BaseCommand):
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
                     msg = "{title}, {bounty_id}"
 
-                    res = pipe(bounty, [
+                    pipe(bounty, [
                         wrapped_partial(bounty_client.increase_payout, inputs=contract_method_inputs),
                         wrapped_partial(narrower,
                                         fields=['title',

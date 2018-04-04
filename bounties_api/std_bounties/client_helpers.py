@@ -1,6 +1,9 @@
 import json
 from decimal import Decimal
 
+import os
+from urllib.parse import urljoin
+
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from std_bounties.contract import data
@@ -169,9 +172,9 @@ def notify_slack(sc, channel, event, msg):
 
     return True
 
+
 def bounty_url_for(bounty_id):
-    #url = reverse('std_bounties:bounty-detail', args=[bounty_id])
-    url = 'https://beta.bounties.network/bounty/v1/{}'.format(bounty_id)
+    url = urljoin(settings.DEPLOY_URL, reverse('std_bounties:bounty-detail', args=[bounty_id]))
     return url
 
 

@@ -1,3 +1,4 @@
+import collections
 import json
 from rest_framework import serializers
 from decimal import Decimal
@@ -195,6 +196,15 @@ def wrapped_partial(func, *args, **kwargs):
     return partial_func
 
 
+def flatten(l):
+    """Credits to: https://stackoverflow.com/questions/2158395/flatten-an-irregular-list-of-lists"""
+    for el in l:
+        if isinstance(el, collections.Iterable) and not isinstance(el, (str, bytes)):
+            yield from flatten(el)
+        else:
+            yield el
+
+
 def pipe(initial_value, functions):
     current_result = initial_value
     for f in functions:
@@ -226,3 +236,22 @@ def notify_slack(sc, channel, event, msg):
             msg))
 
     return True
+
+
+def apply_and_notify(base_value, event, action, inputs, fields, msg, slack_client,
+                     before_narrower=[], before_formatter=[], before_notify=[], after_notify=[]):  # hooks
+    partial_action = wrapped_partial(action, **inputs)
+    partial_narrower = wrapped_partial(narrower,
+                                       fields=fields)
+    partial_formatter = wrapped_partial(formatter, msg)
+    partial_notify = wrapped_partial(notify_slack,
+                                     slack_client,
+                                     settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                     event)
+
+    actions = flatten([partial_action,
+                       before_narrower, partial_narrower,
+                       before_formatter, partial_formatter,
+                       before_notify, partial_notify, after_notify])
+
+    return pipe(base_value, actions)

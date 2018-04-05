@@ -91,6 +91,8 @@ class Fulfillment(models.Model):
     fulfillment_created = models.DateTimeField(null=True)
     data = models.CharField(max_length=128)
     accepted = models.BooleanField()
+    accepted_date = models.DateTimeField(null=True)
+    usd_price = models.FloatField(null=True)
     fulfiller = models.CharField(max_length=128)
     fulfiller_name = models.CharField(max_length=128, blank=True)
     fulfiller_email = models.CharField(max_length=128, blank=True)

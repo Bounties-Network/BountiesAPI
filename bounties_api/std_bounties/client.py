@@ -135,6 +135,8 @@ class BountyClient:
         bounty.balance = Decimal(bounty.balance) + Decimal(inputs.get('value'))
         if bounty.balance >= bounty.fulfillmentAmount and bounty.bountyStage == EXPIRED_STAGE:
             bounty.bountyStage = ACTIVE_STAGE
+        if bounty.balance >= bounty.fulfillmentAmount and bounty.bountyStage == COMPLETED_STAGE:
+            bounty.bountyStage = ACTIVE_STAGE
         bounty.save()
 
     def extend_deadline(self, bounty_id, inputs):

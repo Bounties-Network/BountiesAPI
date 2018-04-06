@@ -2,7 +2,7 @@ import requests
 from math import pow
 from decimal import Decimal
 from django.core.management.base import BaseCommand
-from requests.exceptions import RequestException
+from std_bounties.constants import DEAD_STAGE, COMPLETED_STAGE
 from std_bounties.models import Token, Bounty
 import logging
 
@@ -32,7 +32,8 @@ class Command(BaseCommand):
                 Token.objects.update_or_create(
                     **coin_data, defaults={'price_usd': price_usd})
 
-            all_bounties = Bounty.objects.all()
+            all_bounties = Bounty.objects.exclude(
+                bountyStage__in=[DEAD_STAGE, COMPLETED_STAGE])
             for bounty in all_bounties:
                 price = token_cache.get(bounty.tokenSymbol, None)
                 if price is not None:

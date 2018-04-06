@@ -84,10 +84,11 @@ class Command(BaseCommand):
                         bounty_id, fulfillment_id, contract_method_inputs)
 
                 if event == 'FulfillmentAccepted':
-                    bounty_client.accept_fulfillment(bounty_id, fulfillment_id)
+                    bounty_client.accept_fulfillment(
+                        bounty_id, fulfillment_id, event_timestamp)
 
                 if event == 'BountyKilled':
-                    bounty_client.kill_bounty(bounty_id)
+                    bounty_client.kill_bounty(bounty_id, event_timestamp)
 
                 if event == 'ContributionAdded':
                     bounty_client.add_contribution(

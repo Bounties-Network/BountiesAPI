@@ -3,7 +3,7 @@ from decimal import Decimal
 from std_bounties.models import Bounty, Fulfillment
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer
 from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE
-from std_bounties.client_helpers import map_bounty_data, map_token_data, map_fulfillment_data, get_token_pricing
+from std_bounties.client_helpers import map_bounty_data, map_token_data, map_fulfillment_data, get_token_pricing, get_historic_pricing
 from bounties.utils import getDateTimeFromTimestamp
 from django.db import transaction
 import logging
@@ -111,22 +111,36 @@ class BountyClient:
             fulfillment, data={**ipfs_data}, partial=True)
         fulfillment_serializer.save()
 
-    def accept_fulfillment(self, bounty_id, fulfillment_id):
+    @transaction.atomic
+    def accept_fulfillment(self, bounty_id, fulfillment_id, event_timestamp):
         bounty = Bounty.objects.get(bounty_id=bounty_id)
         bounty.balance = bounty.balance - bounty.fulfillmentAmount
+        usd_price = get_historic_pricing(
+            bounty.tokenSymbol,
+            bounty.tokenDecimals,
+            bounty.fulfillmentAmount,
+            event_timestamp)
         if bounty.balance < bounty.fulfillmentAmount:
             bounty.bountyStage = COMPLETED_STAGE
+            bounty.usd_price = usd_price
         bounty.save()
 
         fulfillment = Fulfillment.objects.get(
             bounty_id=bounty_id, fulfillment_id=fulfillment_id)
         fulfillment.accepted = True
+        fulfillment.usd_price = usd_price
+        fulfillment.accepted_date = getDateTimeFromTimestamp(event_timestamp)
         fulfillment.save()
 
-    def kill_bounty(self, bounty_id):
+    def kill_bounty(self, bounty_id, event_timestamp):
         bounty = Bounty.objects.get(bounty_id=bounty_id)
         bounty.old_balance = bounty.balance
         bounty.balance = 0
+        bounty.usd_price = get_historic_pricing(
+            bounty.tokenSymbol,
+            bounty.tokenDecimals,
+            bounty.fulfillmentAmount,
+            event_timestamp)
         bounty.bountyStage = DEAD_STAGE
         bounty.save()
 
@@ -137,12 +151,19 @@ class BountyClient:
             bounty.bountyStage = ACTIVE_STAGE
         if bounty.balance >= bounty.fulfillmentAmount and bounty.bountyStage == COMPLETED_STAGE:
             bounty.bountyStage = ACTIVE_STAGE
+            usd_price = get_token_pricing(
+                bounty.tokenSymbol,
+                bounty.tokenDecimals,
+                bounty.fulfillmentAmount)[0]
+            bounty.usd_price = usd_price
         bounty.save()
 
     def extend_deadline(self, bounty_id, inputs):
         bounty = Bounty.objects.get(bounty_id=bounty_id)
         bounty.deadline = getDateTimeFromTimestamp(
             inputs.get('newDeadline', None))
+        if bounty.deadline > datetime.datetime.now():
+            bounty.bountyStage = ACTIVE_STAGE
         bounty.save()
 
     @transaction.atomic

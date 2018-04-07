@@ -4,6 +4,10 @@ exports.SQS_PARAMS = {
     DataType: 'String',
     StringValue: '',
    },
+   'TransactionHash': {
+     DataType: 'String',
+     StringValue: '',
+    },
    'BountyId': {
     DataType: 'Number',
     StringValue: '',

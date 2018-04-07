@@ -38,21 +38,21 @@ services:
     depends_on:
       - db
       - redis
-  # bounties_subscriber:
-  #   build:
-  #     context: ./bounties_api
-  #     dockerfile: Dockerfile
-  #   restart: always
-  #   env_file:
-  #     - .env
-  #   command: bash -c "sleep 5 && python3 manage.py bounties_subscriber"
-  #   volumes:
-  #     - ./bounties_api:/code
-  #   depends_on:
-  #     - sqs
-  #     - db
-  #     - redis
-  #     - bounties_api
+  bounties_subscriber:
+    build:
+      context: ./bounties_api
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    command: bash -c "sleep 5 && python3 manage.py bounties_subscriber"
+    volumes:
+      - ./bounties_api:/code
+    depends_on:
+      - sqs
+      - db
+      - redis
+      - bounties_api
   sql_jobs:
     # In production, these run an as an hourly cronjob.
     # Here, we use a local.sh to just run it more often
@@ -93,19 +93,19 @@ services:
     depends_on:
       - db
       - bounties_api
-  # contract_subscriber:
-  #   build:
-  #     context: ./contract_subscriber
-  #   restart: always
-  #   env_file:
-  #     - .env
-  #   command: npm start
-  #   volumes:
-  #     - ./contract_subscriber:/usr/src/app
-  #     - /usr/src/app/node_modules
-  #   depends_on:
-  #     - sqs
-  #     - redis
+  contract_subscriber:
+    build:
+      context: ./contract_subscriber
+    restart: always
+    env_file:
+      - .env
+    command: npm start
+    volumes:
+      - ./contract_subscriber:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - sqs
+      - redis
 volumes:
   psql_bounties:
     external: true

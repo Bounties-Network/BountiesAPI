@@ -46,6 +46,7 @@ async function sendEvents(events) {
 			// Set Up SQS Params
 			messageParams = cloneDeep(SQS_PARAMS);
 			messageParams.MessageAttributes.Event.StringValue = eventName;
+			messageParams.MessageAttributes.TransactionHash.StringValue = transactionHash;
 			messageParams.MessageAttributes.BountyId.StringValue = bountyId;
 			messageParams.MessageAttributes.FulfillmentId.StringValue = fulfillmentId;
 			messageParams.MessageAttributes.MessageDeduplicationId.StringValue = messageDeduplicationId;

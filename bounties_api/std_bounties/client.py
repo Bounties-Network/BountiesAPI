@@ -142,7 +142,11 @@ class BountyClient:
             bounty.tokenDecimals,
             bounty.fulfillmentAmount,
             event_timestamp)
-        bounty.bountyStage = DEAD_STAGE
+        has_accepted_fulfillments = bounty.fulfillments.filter(accepted=True).exists()
+        if has_accepted_fulfillments:
+            bounty.bountyStage = COMPLETED_STAGE
+        else:
+            bounty.bountyStage = DEAD_STAGE
         bounty.usd_price = usd_price
         bounty.tokenLockPrice = token_price
         bounty.save()

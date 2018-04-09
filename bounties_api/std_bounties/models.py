@@ -50,6 +50,7 @@ class Bounty(models.Model):
     token = models.ForeignKey(Token, null=True)
     tokenSymbol = models.CharField(max_length=128, default='ETH')
     tokenDecimals = models.IntegerField(default=18)
+    tokenLockPrice = models.FloatField(null=True, blank=True)
     tokenContract = models.CharField(
         max_length=128,
         default='0x0000000000000000000000000000000000000000')

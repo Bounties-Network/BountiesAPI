@@ -145,11 +145,14 @@ def get_historic_pricing(token_symbol, token_decimals, value, timestamp):
     r.raise_for_status()
     coin_data = r.json()
     if coin_data.get('Response', None) == 'Error':
-        return get_token_pricing(token_symbol, token_decimals, value)[0]
+        usd_price, token_model = get_token_pricing(token_symbol, token_decimals, value)
+        token_price = token_model.price_usd if token_model else 0
+        return usd_price, token_price
+    token_price = coin_data[token_symbol]['USD']
     return calculate_usd_price(
         value,
         token_decimals,
-        coin_data[token_symbol]['USD'])
+        token_price), token_price
 
 
 def map_token_data(pays_tokens, token_contract, amount):

@@ -115,7 +115,7 @@ class BountyClient:
     def accept_fulfillment(self, bounty_id, fulfillment_id, event_timestamp):
         bounty = Bounty.objects.get(bounty_id=bounty_id)
         bounty.balance = bounty.balance - bounty.fulfillmentAmount
-        usd_price = get_historic_pricing(
+        usd_price, token_price = get_historic_pricing(
             bounty.tokenSymbol,
             bounty.tokenDecimals,
             bounty.fulfillmentAmount,
@@ -123,6 +123,7 @@ class BountyClient:
         if bounty.balance < bounty.fulfillmentAmount:
             bounty.bountyStage = COMPLETED_STAGE
             bounty.usd_price = usd_price
+            bounty.tokenLockPrice = token_price
         bounty.save()
 
         fulfillment = Fulfillment.objects.get(
@@ -136,12 +137,14 @@ class BountyClient:
         bounty = Bounty.objects.get(bounty_id=bounty_id)
         bounty.old_balance = bounty.balance
         bounty.balance = 0
-        bounty.usd_price = get_historic_pricing(
+        usd_price, token_price = get_historic_pricing(
             bounty.tokenSymbol,
             bounty.tokenDecimals,
             bounty.fulfillmentAmount,
             event_timestamp)
         bounty.bountyStage = DEAD_STAGE
+        bounty.usd_price = usd_price
+        bounty.tokenLockPrice = token_price
         bounty.save()
 
     def add_contribution(self, bounty_id, inputs):

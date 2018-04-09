@@ -41,6 +41,7 @@ class Command(BaseCommand):
                     fulfillmentAmount = bounty.fulfillmentAmount
                     bounty.usd_price = (
                         fulfillmentAmount / Decimal(pow(10, decimals))) * Decimal(price)
+                    bounty.tokenLockPrice = None
                     bounty.save()
                 # maybe a token was not added to coinmarketcap until later
                 if price is not None and not bounty.token:

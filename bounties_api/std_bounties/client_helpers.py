@@ -1,5 +1,6 @@
 import json
 import datetime
+import requests
 from decimal import Decimal
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
@@ -119,16 +120,39 @@ def map_fulfillment_data(data_hash, bounty_id, fulfillment_id):
     }
 
 
+def calculate_usd_price(value, decimals, usd_rate):
+    return ((Decimal(value) / Decimal(pow(10, decimals)))
+            * Decimal(usd_rate)).quantize(Decimal(10) ** -8)
+
+
 def get_token_pricing(token_symbol, token_decimals, value):
     try:
         token_model = Token.objects.get(symbol=token_symbol)
-        usd_price = ((Decimal(value) / Decimal(pow(10, token_decimals)))
-                     * Decimal(token_model.price_usd)).quantize(Decimal(10) ** -8)
+        usd_price = calculate_usd_price(
+            value, token_decimals, token_model.price_usd)
     except Token.DoesNotExist:
         token_model = None
         usd_price = 0
 
     return usd_price, token_model
+
+
+def get_historic_pricing(token_symbol, token_decimals, value, timestamp):
+    r = requests.get(
+        'https://min-api.cryptocompare.com/data/pricehistorical?fsym={}&tsyms=USD&ts={}&extraParams=bountiesnetwork'.format(
+            token_symbol,
+            timestamp))
+    r.raise_for_status()
+    coin_data = r.json()
+    if coin_data.get('Response', None) == 'Error':
+        usd_price, token_model = get_token_pricing(token_symbol, token_decimals, value)
+        token_price = token_model.price_usd if token_model else 0
+        return usd_price, token_price
+    token_price = coin_data[token_symbol]['USD']
+    return calculate_usd_price(
+        value,
+        token_decimals,
+        token_price), token_price
 
 
 def map_token_data(pays_tokens, token_contract, amount):
@@ -153,7 +177,8 @@ def map_token_data(pays_tokens, token_contract, amount):
                 token_contract,
                 ContractFactoryClass=ConciseContract
             )
-            # Symbol in DSToken contract is bytes32 and unused chars are padded with '\x00'
+            # Symbol in DSToken contract is bytes32 and unused chars are padded
+            # with '\x00'
             token_symbol = DSToken.symbol().rstrip('\x00')
             token_decimals = DSToken.decimals()
 

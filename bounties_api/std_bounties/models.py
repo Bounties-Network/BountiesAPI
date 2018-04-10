@@ -50,6 +50,7 @@ class Bounty(models.Model):
     token = models.ForeignKey(Token, null=True)
     tokenSymbol = models.CharField(max_length=128, default='ETH')
     tokenDecimals = models.IntegerField(default=18)
+    tokenLockPrice = models.FloatField(null=True, blank=True)
     tokenContract = models.CharField(
         max_length=128,
         default='0x0000000000000000000000000000000000000000')
@@ -91,6 +92,8 @@ class Fulfillment(models.Model):
     fulfillment_created = models.DateTimeField(null=True)
     data = models.CharField(max_length=128)
     accepted = models.BooleanField()
+    accepted_date = models.DateTimeField(null=True)
+    usd_price = models.FloatField(null=True)
     fulfiller = models.CharField(max_length=128)
     fulfiller_name = models.CharField(max_length=128, blank=True)
     fulfiller_email = models.CharField(max_length=128, blank=True)

@@ -1,17 +1,14 @@
 import json
-import datetime
 import requests
 from decimal import Decimal
 
-import os
 from urllib.parse import urljoin
 
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from std_bounties.contract import data
 from std_bounties.models import Token
-from bounties.utils import getDateTimeFromTimestamp
-from std_bounties.utils import wrapped_partial, narrower, formatter, flatten, pipe
+from utils.functional_tools import wrapped_partial, narrower, formatter, flatten, pipe
 
 from rest_framework.reverse import reverse
 from django.conf import settings

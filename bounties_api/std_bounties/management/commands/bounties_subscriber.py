@@ -1,4 +1,3 @@
-import os
 import json
 import time
 from functools import partial
@@ -13,7 +12,7 @@ import logging
 
 from std_bounties.client_helpers import apply_and_notify, bounty_url_for
 from std_bounties.models import Bounty
-from std_bounties.utils import narrower, wrapped_partial, merge
+from utils.functional_tools import narrower, wrapped_partial, merge
 
 logger = logging.getLogger('django')
 

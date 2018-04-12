@@ -2,14 +2,22 @@ import json
 import datetime
 import requests
 from decimal import Decimal
+
+import os
+from urllib.parse import urljoin
+
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from std_bounties.contract import data
 from std_bounties.models import Token
 from bounties.utils import getDateTimeFromTimestamp
+from std_bounties.utils import wrapped_partial, narrower, formatter, flatten, pipe
+
+from rest_framework.reverse import reverse
 from django.conf import settings
 import ipfsapi
 import logging
+
 
 
 logger = logging.getLogger('django')
@@ -191,3 +199,38 @@ def map_token_data(pays_tokens, token_contract, amount):
         'token': token_model.id if token_model else None,
         'usd_price': usd_price,
     }
+
+
+def notify_slack(sc, channel, event, msg):
+    sc.api_call(
+        'chat.postMessage',
+        channel=channel,
+        text='Event {}: {}'.format(
+            event,
+            msg))
+
+    return True
+
+
+def bounty_url_for(bounty_id):
+    url = urljoin(settings.DEPLOY_URL, reverse('std_bounties:bounty-detail', args=[bounty_id]))
+    return url
+
+
+def apply_and_notify(base_value, event, action, inputs, fields, msg, slack_client,
+                     before_narrower=[], before_formatter=[], before_notify=[], after_notify=[]):  # hooks
+    partial_action = wrapped_partial(action, **inputs)
+    partial_narrower = wrapped_partial(narrower,
+                                       fields=fields)
+    partial_formatter = wrapped_partial(formatter, msg)
+    partial_notify = wrapped_partial(notify_slack,
+                                     slack_client,
+                                     settings.NOTIFICATIONS_SLACK_CHANNEL,
+                                     event)
+
+    actions = flatten([partial_action,
+                       before_narrower, partial_narrower,
+                       before_formatter, partial_formatter,
+                       before_notify, partial_notify, after_notify])
+
+    return pipe(base_value, actions)

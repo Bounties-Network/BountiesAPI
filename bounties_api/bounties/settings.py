@@ -183,6 +183,7 @@ SLACK_TOKEN = os.environ.get('slack_token')
 REDIS_LOCATION = os.environ.get('redis_location', 'redis://127.0.0.1:6379')
 LOCAL = os.environ.get('local') == 'true'
 ETH_NETWORK = os.environ.get('eth_network', 'mainNet')
+DEPLOY_URL = os.environ.get('DEPLOY_URL', 'http://127.0.0.1')
 
 networks = {
     'mainNet': 'https://mainnet.infura.io/',

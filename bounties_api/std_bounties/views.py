@@ -25,7 +25,7 @@ class BountyViewSet(viewsets.ReadOnlyModelViewSet):
         'deadline',
         'bounty_created',
         'usd_price')
-    search_fields = ('title', 'description', 'categories__normalized_name')
+    search_fields = ('title', 'description', 'categories__normalized_name', 'issuer')
 
 
 class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):

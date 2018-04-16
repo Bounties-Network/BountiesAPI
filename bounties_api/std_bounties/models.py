@@ -118,3 +118,14 @@ class RankedCategory(models.Model):
     class Meta:
         managed = False
         db_table = 'category_ranks'
+
+
+class Event(models.Model):
+    event = models.CharField(max_length=128)
+    bounty = models.ForeignKey(Bounty, null=True)
+    fulfillment = models.ForeignKey(Fulfillment, null=True)
+    transaction_hash = models.CharField(max_length=128)
+    transaction_from = modesl.CharField(max_length=128)
+    contract_inputs = models.JSONField(null=True)
+    event_date = models.DateTimeField()
+

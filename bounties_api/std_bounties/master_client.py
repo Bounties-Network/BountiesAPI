@@ -1,7 +1,7 @@
 from functools import partial, update_wrapper
 
 from bounties import settings
-from std_bounties.client import BountyClient
+from std_bounties.bounty_client import BountyClient
 from std_bounties.client_helpers import bounty_url_for, apply_and_notify
 from std_bounties.models import Bounty
 from utils.functional_tools import merge, narrower, wrapped_partial

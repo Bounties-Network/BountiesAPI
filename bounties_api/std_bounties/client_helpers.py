@@ -210,7 +210,7 @@ def notify_slack(sc, channel, event, msg):
 
 
 def bounty_url_for(bounty_id):
-    url = urljoin(settings.DEPLOY_URL, reverse('std_bounties:bounty-detail', args=[bounty_id]))
+    url = '{}/bounty/v1/{}/'.format(settings.DEPLOY_URL, bounty_id)
     return url
 
 

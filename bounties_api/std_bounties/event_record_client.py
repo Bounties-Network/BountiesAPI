@@ -4,8 +4,8 @@ class EventRecordClient:
         pass
 
 
-    @transaction.atomic
     def issue_bounty(self, bounty_id, inputs, event_timestamp):
+
         pass
 
 

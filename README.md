@@ -51,9 +51,3 @@ The [**bounties api**](https://github.com/Bounties-Network/BountiesAPI) is a dja
 Other Jobs include:
  - [track_bounty_expirations.py](https://github.com/Bounties-Network/BountiesAPI/blob/master/bounties_api/std_bounties/management/commands/track_bounty_expirations.py).
  - [get_token_values.py](https://github.com/Bounties-Network/BountiesAPI/blob/master/bounties_api/std_bounties/management/commands/get_token_values.py). This syncs with coinmarketcap every 5 minutes and updates pricing on each of the bounties in USD.
-
-## TODO
-- [ ] Setup Linters
-- [ ] Events API to track diffs/events in the contract
-- [ ] Circle Integration
-- [ ] Basic Tests

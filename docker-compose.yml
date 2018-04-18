@@ -30,7 +30,7 @@ services:
     restart: always
     env_file:
       - .env
-    command: bash -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:83"
+    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:83"
     volumes:
       - ./bounties_api:/code
     ports:

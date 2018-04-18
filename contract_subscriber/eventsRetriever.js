@@ -49,6 +49,7 @@ async function sendEvents(events) {
 			messageParams.MessageAttributes.BountyId.StringValue = bountyId;
 			messageParams.MessageAttributes.FulfillmentId.StringValue = fulfillmentId;
 			messageParams.MessageAttributes.MessageDeduplicationId.StringValue = messageDeduplicationId;
+			messageParams.MessageAttributes.TransactionHash.StringValue = transactionHash;
 			messageParams.MessageAttributes.ContractMethodInputs.StringValue = JSON.stringify(contractMethodInputs);
 			messageParams.MessageAttributes.TimeStamp.StringValue = eventTimestamp;
 			messageParams.MessageAttributes.TransactionFrom.StringValue = transactionFrom || '0x';

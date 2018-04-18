@@ -8,7 +8,7 @@ from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from std_bounties.contract import data
 from std_bounties.models import Token
-from utils.functional_tools import wrapped_partial, narrower, formatter, flatten, pipe
+from utils.functional_tools import wrapped_partial, narrower, formatter, flatten, pipe, pluck
 
 from rest_framework.reverse import reverse
 from django.conf import settings
@@ -57,7 +57,7 @@ def map_bounty_data(data_hash, bounty_id):
         data_issuer = {}
 
     categories = data.get('categories', [])
-    plucked_data = {key: data.get(key, '') for key in bounty_data_keys}
+    plucked_data = pluck(data, bounty_data_keys)
 
     return {
         **plucked_data,
@@ -100,7 +100,7 @@ def map_fulfillment_data(data_hash, bounty_id, fulfillment_id):
     if 'payload' in data:
         data = data.get('payload')
     data_fulfiller = data.get('fulfiller', {})
-    plucked_data = {key: data.get(key, '') for key in fulfillment_data_keys}
+    plucked_data = pluck(data, fulfillment_data_keys)
 
     return {
         'data_json': str(data_JSON),

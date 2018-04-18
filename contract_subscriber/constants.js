@@ -16,6 +16,10 @@ exports.SQS_PARAMS = {
     DataType: 'String',
     StringValue: '',
    },
+   'TransactionHash': {
+    DataType: 'String',
+    StringValue: '',
+   },
    'ContractMethodInputs': {
     DataType: 'String',
     StringValue: '',

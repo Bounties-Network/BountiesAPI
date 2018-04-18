@@ -7,6 +7,10 @@ from functools import partial, update_wrapper
 logger = logging.getLogger('django')
 
 
+def pluck(dictionary, fields):
+    """Extract fields from dict and return a dict"""
+    return {key: dictionary.get(key, '') for key in fields}
+
 def narrower(obj, fields):
     """Extract fields from obj and return a dict"""
     narrowed_fields = {}

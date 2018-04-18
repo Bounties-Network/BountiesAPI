@@ -21,7 +21,10 @@ class Command(BaseCommand):
                     deadline__lt=datetime.now(timezone.utc),
                     bountyStage=ACTIVE_STAGE
                 )
-                expired_bounties.update(bountyStage=EXPIRED_STAGE)
+                for bounty in expired_bounties:
+                    bounty.bountyStage=EXPIRED_STAGE
+                    bounty.save()
+                    bounty.record_bounty_state(bounty.deadline)
                 time.sleep(60)
         except Exception as e:
             # goes to rollbar

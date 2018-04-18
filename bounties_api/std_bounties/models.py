@@ -128,9 +128,3 @@ class Event(models.Model):
     transaction_from = models.CharField(max_length=128)
     contract_inputs = JSONField(null=True)
     event_date = models.DateTimeField()
-
-class EventState(models.Model):
-    event_state = models.CharField(max_length=128)
-    event = models.ForeignKey(Event, null=True)
-    bounty = models.ForeignKey(Bounty, null=True)
-    event_date = models.DateTimeField()

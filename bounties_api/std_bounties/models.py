@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.contrib.postgres.fields import JSONField
 
 from django.db import models
-from std_bounties.constants import STAGE_CHOICES, DRAFT_STAGE
+from std_bounties.constants import STAGE_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -21,6 +21,32 @@ class Token(models.Model):
     name = models.CharField(max_length=128)
     symbol = models.CharField(max_length=128)
     price_usd = models.FloatField(default=0, null=True)
+
+
+class BountyState(models.Model):
+    bounty = models.ForeignKey('Bounty')
+    bountyStage = models.IntegerField(null=False)
+    change_date = models.DateTimeField(null=False)
+
+    def save(self, *args, **kwargs):
+        # Until we have a better event system, this logic is needed for when we resync to the
+        # blockchain. Since expired is mutable, we need to make sure it was applied after the
+        # other events - see track_bounty_expirations
+        queryset = BountyState.objects.filter(bounty=self.bounty)
+        if queryset.exists():
+            last_record = queryset.latest()
+            last_stage = last_record.bountyStage
+            if last_stage == EXPIRED_STAGE and self.change_date < last_record.change_date:
+                last_record.delete()
+            if last_stage == ACTIVE_STAGE and self.bounty.deadline < self.change_date:
+                BountyState.objects.create(bounty=self.bounty,
+                                           bountyStage=EXPIRED_STAGE,
+                                           change_date=bounty.deadline)
+        super(BountyState, self).save(*args, **kwargs)
+
+
+    class Meta:
+        get_latest_by = 'change_date'
 
 
 class Bounty(models.Model):
@@ -69,6 +95,14 @@ class Bounty(models.Model):
     data_categories = JSONField(null=True)
     data_issuer = JSONField(null=True)
     data_json = JSONField(null=True)
+
+
+    def record_bounty_state(self, event_date):
+        """Makes sure no duplicates are created"""
+        # Need to make this a post_event signal. The only problem is we need a better event system
+        # since this call requires an event_date
+        return BountyState.objects.get_or_create(bounty=self, bountyStage=self.bountyStage, change_date=event_date)
+
 
     def save_and_clear_categories(self, categories):
         # this is really messy, but this is bc of psql django bugs
@@ -123,7 +157,8 @@ class RankedCategory(models.Model):
 class Event(models.Model):
     event = models.CharField(max_length=128)
     bounty = models.ForeignKey(Bounty, null=True)
-    fulfillment = models.ForeignKey(Fulfillment, null=True)
+    # corresponds to fulfillment_id not the fullfillment pk or id
+    fulfillment_id = models.IntegerField(null=True)
     transaction_hash = models.CharField(max_length=128)
     transaction_from = models.CharField(max_length=128)
     contract_inputs = JSONField(null=True)

@@ -11,3 +11,5 @@
  django-cors-headers==2.2.0
  requests==2.18.4
  uwsgi==2.0.17
+ django-nose==1.4.5
+ coverage==4.5.1

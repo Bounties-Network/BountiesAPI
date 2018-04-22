@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc -a mocha"
   },
   "author": "",
   "license": "ISC",
@@ -17,5 +17,10 @@
     "redis": "^2.8.0",
     "rollbar": "^2.3.9",
     "web3": "^1.0.0-beta.26"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.1.1",
+    "nyc": "^11.7.1"
   }
 }

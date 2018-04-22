@@ -1,0 +1,18 @@
+[run]
+omit=*/migrations/*
+source =
+  std_bounties
+  analytics
+  bounties
+  utils
+[report]
+omit = 
+  */migrations/*
+  *__init__.py
+include = 
+  std_bounties/*
+  utils/*
+  analytics/*
+  bounties/*
+  utils/*
+skip_covered=True

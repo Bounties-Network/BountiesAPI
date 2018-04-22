@@ -9,6 +9,7 @@ from django.test import TestCase
 from utils.functional_tools import narrower, formatter, merge, pipe
 from std_bounties.models import Bounty, Fulfillment
 
+import logging
 
 class BountySubscriberTest(TestCase):
     def setUp(self):
@@ -18,6 +19,7 @@ class BountySubscriberTest(TestCase):
         bounty_id = 2222234234
         self.obj = Bounty(title=title, description=description, usd_price=usd_price, bounty_id=bounty_id)
         self.fullfillment = Fulfillment(bounty=self.obj)
+        logging.disable(logging.CRITICAL)
 
     # narrower
     def test_get_attributes_from_bounty_model(self):

@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import 'antd/dist/antd.css';
-import { Alert, Spin, Card, Layout, Menu, Icon } from 'antd';
+import { Row, Col, Alert, Spin, Card, Layout, Menu, Icon } from 'antd';
 
 import QueryForm from './QueryForm';
+import BountyStatesChart from './components/BountyStatesChart';
+import LineChart from './components/LineChart';
+import BarChart from './components/BarChart';
 
 const { Content, Sider } = Layout;
 
@@ -35,17 +38,37 @@ class App extends Component {
           </Menu>
         </Sider>
         <Layout>
-          <Content style={{ padding: '30px' }}>
-            <Card title="Query" style={{ marginBottom: '30px' }}>
-              <QueryForm {...this.props} />
-            </Card>
+          <Content>
+            <Row>
+              <Col span={24}>
+                <Card bordered={false}>
+                  <QueryForm {...this.props} />
+                </Card>
+              </Col>
+            </Row>
             <Spin spinning={this.props.fetching}>
               {this.props.data &&
-                <Alert
-                  message="Data"
-                  description={JSON.stringify(this.props.data)}
-                  type="info"
-                />}
+                <Row>
+                  <Col md={8}>
+                    {this.props.data.bountyStates &&
+                      <BountyStatesChart data={this.props.data.bountyStates} />
+                    }
+                  </Col>
+                  <Col span={16}>
+                    {this.props.data.bar &&
+                      <BarChart data={this.props.data.bar} />
+                    }
+                  </Col>
+                </Row>}
+              {this.props.data &&
+                <Row>
+                  <Col span={24}>
+                    {this.props.data.line &&
+                      <LineChart data={this.props.data.line} />
+                    }
+                  </Col>
+                </Row>
+              }
               {this.props.error &&
                 <Alert
                   message="Something went wrong"

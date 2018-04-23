@@ -19,7 +19,7 @@ class QueryForm extends Component {
         moment('2018-01-02', dateFormat),
         moment('2018-02-02', dateFormat)
       ],
-      schema: 'gitcoin'
+      schema: 'test'
     };
     this.handleChangeRange = this.handleChangeRange.bind(this);
     this.handleChangeSchema = this.handleChangeSchema.bind(this);

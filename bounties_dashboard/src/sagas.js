@@ -1,47 +1,42 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
 import axios from 'axios';
+import moment from 'moment';
 
 const dateFormat = 'YYYY-MM-DD';
 
-// function that makes the api request and returns a Promise for response
+function dummy(fromDate, toDate) {
+  const data = [];
+  let date = moment(fromDate, dateFormat);
+
+  while (date < moment(toDate, dateFormat)) {
+    data.push({
+      date: date.format(dateFormat),
+      bounties_issued: Math.floor(Math.random() * 44),
+      fulfillments_submitted: Math.floor(Math.random() * 23),
+      fulfillments_accepted: Math.floor(Math.random() * 21),
+      fulfillments_pending_acceptance: Math.floor(Math.random() * 5),
+      fulfillment_acceptance_rate: Math.random(),
+      bounty_fulfilled_rate: Math.random(),
+      avg_fulfiller_acceptance_rate: Math.random(),
+      avg_fulfillment_amount: Math.random(),
+      total_fulfillment_amount: Math.floor(Math.random() * 184),
+      bounty_draft: Math.floor(Math.random() * 11),
+      bounty_active: Math.floor(Math.random() * 48),
+      bounty_completed: Math.floor(Math.random() * 22),
+      bounty_expired: Math.floor(Math.random() * 5),
+      bounty_dead: Math.floor(Math.random() * 11)
+    });
+    date = date.add(1, 'days');
+  }
+  return data;
+}
+
 function fetchData(schema, fromDate, toDate) {
   if (schema === 'test') {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(Object.assign({}, {
-          data: [{
-            date: '2016-01-01',
-            bounties_issued: 44,
-            fulfillments_submitted: 23,
-            fulfillments_accepted: 21,
-            fulfillments_pending_acceptance: 2,
-            fulfillment_acceptance_rate: .91,
-            bounty_fulfilled_rate: .83,
-            avg_fulfiller_acceptance_rate: .73,
-            avg_fulfillment_amount: 45.32,
-            total_fulfillment_amount: 184,
-            bounty_draft: 11,
-            bounty_active: 48,
-            bounty_completed: 22,
-            bounty_expired: 5,
-            bounty_dead: 11
-          }, {
-            date: '2016-01-02',
-            bounties_issued: 44,
-            fulfillments_submitted: 23,
-            fulfillments_accepted: 21,
-            fulfillments_pending_acceptance: 2,
-            fulfillment_acceptance_rate: .91,
-            bounty_fulfilled_rate: .83,
-            avg_fulfiller_acceptance_rate: .73,
-            avg_fulfillment_amount: 45.32,
-            total_fulfillment_amount: 184,
-            bounty_draft: 11,
-            bounty_active: 48,
-            bounty_completed: 22,
-            bounty_expired: 5,
-            bounty_dead: 11
-          }]
+          data: dummy(fromDate, toDate)
         }));
       }, 1000);
     });
@@ -56,18 +51,70 @@ function fetchData(schema, fromDate, toDate) {
   });
 }
 
+function parseData(raw) {
+  const bountyStates = [
+    raw[0].bounty_draft,
+    raw[0].bounty_active,
+    raw[0].bounty_completed,
+    raw[0].bounty_expired,
+    raw[0].bounty_dead
+  ];
+
+  const bountiesIssued = [];
+  const fulfillmentsSubmitted = [];
+  const fulfillmentsAccepted = [];
+  const fulfillmentsPendingAcceptance = [];
+
+  const bountyFulfilledRate = [];
+  const avgFulfillerAcceptanceRate = [];
+  const avgFulfillmentAmount = [];
+
+  for (let i = 0; i < raw.length; i += 1) {
+    const date = Date.parse(raw[i].date);
+    bountiesIssued.push([date, raw[i].bounties_issued]);
+    fulfillmentsSubmitted.push([date, raw[i].fulfillments_submitted]);
+    fulfillmentsAccepted.push([date, raw[i].fulfillments_accepted]);
+    fulfillmentsPendingAcceptance.push([date, raw[i].fulfillments_pending_acceptance]);
+
+    bountyFulfilledRate.push([date, raw[i].bounty_fulfilled_rate]);
+    avgFulfillerAcceptanceRate.push([date, raw[i].avg_fulfiller_acceptance_rate]);
+    avgFulfillmentAmount.push([date, raw[i].avg_fulfillment_amount]);
+  }
+
+  return {
+    bountyStates,
+    line: {
+      bountiesIssued,
+      fulfillmentsSubmitted,
+      fulfillmentsAccepted,
+      fulfillmentsPendingAcceptance
+    },
+    bar: {
+      bountyFulfilledRate,
+      avgFulfillerAcceptanceRate,
+      avgFulfillmentAmount
+    }
+  };
+}
+
+// function that makes the api request and returns a Promise for response
+function getData(schema, fromDate, toDate) {
+  return fetchData(schema, fromDate, toDate)
+    .then(res => parseData(res.data));
+}
+
 // worker saga: makes the api call when watcher saga sees the action
 function* workerSaga(params) {
   try {
-    const response = yield call(
-      fetchData,
+    const data = yield call(
+      getData,
       params.schema,
       params.range[0].format(dateFormat),
       params.range[1].format(dateFormat)
     );
 
     // dispatch a success action to the store with the new data
-    yield put({ type: 'API_CALL_SUCCESS', data: response.data });
+    yield put({ type: 'API_CALL_SUCCESS', data });
   } catch (error) {
     // dispatch a failure action to the store with the error
     yield put({ type: 'API_CALL_FAILURE', error });

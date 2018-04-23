@@ -38,7 +38,7 @@ jobs:
       - run:
           name: run tests
           command: |
-            docker-compose -f docker-compose-test.yml run bounties_api python manage.py test
+            docker-compose -f docker-compose-test.yml run bounties_api python manage.py test && codecov --token=$CODECOV
 
       - store_artifacts:
           path: test-reports

@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  sqs:
+    build:
+      context: ./local_queue
+    volumes:
+      - ./local_queue/elasticmq.conf:/elasticmq.conf
+    ports:
+      - 9324:9324
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: bounties
+    volumes:
+      - psql_bounties:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  redis:
+    image: "redis"
+    volumes:
+      - redis_bounties:/data
+    ports:
+      - "6379:6379"
+  bounties_api:
+    build:
+      context: ./bounties_api
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:83"
+    ports:
+      - "8000:83"
+    depends_on:
+      - db
+      - redis
+volumes:
+  psql_bounties:
+    external: true
+  redis_bounties:
+    external: true

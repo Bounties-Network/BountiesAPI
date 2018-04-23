@@ -36,8 +36,6 @@ jobs:
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
             docker volume create --name redis_bounties
             docker volume create --name psql_bounties
-            docker-compose up bounties_api
-            sleep 30
 
       # run tests!
       # this example uses Django's built-in test-runner
@@ -47,7 +45,7 @@ jobs:
       - run:
           name: run tests
           command: |
-            docker-compose exec bounties_api python manage.py test
+            docker-compose -f docker-compose-test.yml run bounties_api python manage.py test
 
       - store_artifacts:
           path: test-reports

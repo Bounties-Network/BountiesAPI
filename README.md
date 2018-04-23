@@ -1,4 +1,6 @@
 # Bounties-API
+[![CircleCI](https://circleci.com/gh/Bounties-Network/BountiesAPI.svg?style=svg)](https://circleci.com/gh/Bounties-Network/BountiesAPI)
+
 [Deployed Production API - Mainnet Contract](https://api.bounties.network)
 
 [Deployed Staging API - Rinkeby Contract great for testing](https://staging.api.bounties.network)

@@ -38,6 +38,18 @@ services:
     depends_on:
       - db
       - redis
+  contract_subscriber:
+    build:
+      context: ./contract_subscriber
+    restart: always
+    env_file:
+      - .env
+    command: npm start
+    volumes:
+      - ./contract_subscriber:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - redis
 volumes:
   psql_bounties:
     external: true

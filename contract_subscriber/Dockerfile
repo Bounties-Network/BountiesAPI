@@ -21,8 +21,6 @@ run apk --no-cache add --virtual native-deps \
   npm install --quiet && \
   apk del native-deps
 
-RUN npm install
-
 # Bundle app source
 COPY . .
 

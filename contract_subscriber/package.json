@@ -2,10 +2,20 @@
   "name": "subscribe_script",
   "version": "1.0.0",
   "description": "",
+  "nyc": {
+    "include": [
+      "./**/*.js"
+    ],
+    "exclude": [
+      "./**/*.spec.js",
+      "./test/"
+    ]
+  },
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "nyc -a mocha"
+    "test": "nyc report --reporter=text-lcov -a mocha > coverage.lcov",
+    "testnoreport": "nyc -a mocha"
   },
   "author": "",
   "license": "ISC",

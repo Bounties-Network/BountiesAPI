@@ -1,5 +1,5 @@
 # Bounties-API
-[![CircleCI](https://circleci.com/gh/Bounties-Network/BountiesAPI.svg?style=svg)](https://circleci.com/gh/Bounties-Network/BountiesAPI)
+[![CircleCI](https://circleci.com/gh/Bounties-Network/BountiesAPI.svg?style=svg)](https://circleci.com/gh/Bounties-Network/BountiesAPI) [![codecov](https://codecov.io/gh/Bounties-Network/BountiesAPI/branch/master/graph/badge.svg)](https://codecov.io/gh/Bounties-Network/BountiesAPI)
 
 [Deployed Production API - Mainnet Contract](https://api.bounties.network)
 

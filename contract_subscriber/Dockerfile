@@ -21,7 +21,7 @@ run apk --no-cache add --virtual native-deps \
   npm install --quiet && \
   apk del native-deps
 
-
+# Bundle app source
 COPY . .
 
 EXPOSE 8080

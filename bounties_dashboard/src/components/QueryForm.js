@@ -59,6 +59,7 @@ class QueryForm extends Component {
         onChange={this.handleChangeSchema}
       >
         <Option value="test">test</Option>
+        <Option value="all">all</Option>
         <Option value="gitcoin">gitcoin</Option>
       </Select>
     );

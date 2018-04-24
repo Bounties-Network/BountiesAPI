@@ -2,35 +2,18 @@
 import React from 'react';
 import Highcharts from 'highcharts';
 
-function getSeriesObject(data) {
-  return [{
-    name: 'bounties issued',
-    data: data.bountiesIssued
-  }, {
-    name: 'fulfillments submitted',
-    data: data.fulfillmentsSubmitted
-  }, {
-    name: 'fulfillments accepted',
-    data: data.fulfillmentsAccepted
-  }, {
-    name: 'fulfillments pending acceptance',
-    data: data.fulfillmentsPendingAcceptance
-  }];
-}
-
 class LineChart extends React.Component {
   // When the DOM is ready, create the chart.
   componentDidMount() {
-    this.chart = Highcharts.chart('line-chart', {
+    this.chart = Highcharts.chart(this.props.id, {
       title: {
-        text: 'Line Chart'
+        text: this.props.title
       },
       legend: {
         layout: 'horizontal',
         align: 'center',
         verticalAlign: 'bottom'
       },
-
       plotOptions: {
         series: {
           label: {
@@ -45,7 +28,7 @@ class LineChart extends React.Component {
           day: '%d %b'
         }
       },
-      series: getSeriesObject(this.props.data),
+      series: this.props.data,
       responsive: {
         rules: [{
           condition: {
@@ -67,7 +50,7 @@ class LineChart extends React.Component {
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.data !== this.props.data) {
-      this.chart.update({ series: getSeriesObject(nextProps.data) }, true);
+      this.chart.update({ series: nextProps.data }, true);
     }
   }
   componentWillUnmount() {
@@ -75,7 +58,7 @@ class LineChart extends React.Component {
   }
 
   render() {
-    return <div id="line-chart" />;
+    return <div id={this.props.id} />;
   }
 }
 

@@ -45,55 +45,66 @@ function fetchData(schema, fromDate, toDate) {
     method: 'get',
     params: {
       publish_date__range: `${fromDate},${toDate}`,
-      schema
+      schema: (schema === 'all' ? null : schema)
     },
     url: 'https://api.bounties.network/analytics/stats'
   });
 }
 
 function parseData(raw) {
-  const bountyStates = [
-    raw[0].bounty_draft,
-    raw[0].bounty_active,
-    raw[0].bounty_completed,
-    raw[0].bounty_expired,
-    raw[0].bounty_dead
-  ];
+  const bountyDraft = [];
+  const bountyActive = [];
+  const bountyCompleted = [];
+  const bountyExpired = [];
+  const bountyDead = [];
+
+  const fulfillmentAcceptanceRate = [];
+  const bountyFulfilledRate = [];
+  const avgFulfillerAcceptanceRate = [];
 
   const bountiesIssued = [];
   const fulfillmentsSubmitted = [];
   const fulfillmentsAccepted = [];
   const fulfillmentsPendingAcceptance = [];
-
-  const bountyFulfilledRate = [];
-  const avgFulfillerAcceptanceRate = [];
   const avgFulfillmentAmount = [];
 
   for (let i = 0; i < raw.length; i += 1) {
     const date = Date.parse(raw[i].date);
+    bountyDraft.push([date, raw[i].bounty_draft]);
+    bountyActive.push([date, raw[i].bounty_active]);
+    bountyCompleted.push([date, raw[i].bounty_completed]);
+    bountyExpired.push([date, raw[i].bounty_expired]);
+    bountyDead.push([date, raw[i].bounty_dead]);
+
+    fulfillmentAcceptanceRate.push([date, raw[i].fulfillment_acceptance_rate]);
+    bountyFulfilledRate.push([date, raw[i].bounty_fulfilled_rate]);
+    avgFulfillerAcceptanceRate.push([date, raw[i].avg_fulfiller_acceptance_rate]);
+
     bountiesIssued.push([date, raw[i].bounties_issued]);
     fulfillmentsSubmitted.push([date, raw[i].fulfillments_submitted]);
     fulfillmentsAccepted.push([date, raw[i].fulfillments_accepted]);
-    fulfillmentsPendingAcceptance.push([date, raw[i].fulfillments_pending_acceptance]);
 
-    bountyFulfilledRate.push([date, raw[i].bounty_fulfilled_rate]);
-    avgFulfillerAcceptanceRate.push([date, raw[i].avg_fulfiller_acceptance_rate]);
+    fulfillmentsPendingAcceptance.push([date, raw[i].fulfillments_pending_acceptance]);
     avgFulfillmentAmount.push([date, raw[i].avg_fulfillment_amount]);
   }
 
   return {
-    bountyStates,
-    line: {
-      bountiesIssued,
-      fulfillmentsSubmitted,
-      fulfillmentsAccepted,
-      fulfillmentsPendingAcceptance
-    },
-    bar: {
-      bountyFulfilledRate,
-      avgFulfillerAcceptanceRate,
-      avgFulfillmentAmount
-    }
+    bountyDraft,
+    bountyActive,
+    bountyCompleted,
+    bountyExpired,
+    bountyDead,
+
+    fulfillmentAcceptanceRate,
+    bountyFulfilledRate,
+    avgFulfillerAcceptanceRate,
+
+    bountiesIssued,
+    fulfillmentsSubmitted,
+    fulfillmentsAccepted,
+
+    fulfillmentsPendingAcceptance,
+    avgFulfillmentAmount
   };
 }
 

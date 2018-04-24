@@ -54,8 +54,7 @@ jobs:
       - run:
           name: codecov upload
           command: |
-            codecov -t $CODECOV
-
+          bash <(curl -s https://codecov.io/bash)
 
       - store_artifacts:
           path: test-reports

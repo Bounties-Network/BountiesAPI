@@ -14,8 +14,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "nyc report --reporter=text-lcov -a mocha > coverage.lcov",
-    "testnoreport": "nyc -a mocha"
+    "test": "nyc report --reporter=lcov -a mocha",
   },
   "author": "",
   "license": "ISC",

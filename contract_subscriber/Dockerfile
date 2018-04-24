@@ -18,10 +18,14 @@ RUN apk update && apk upgrade && \
 run apk --no-cache add --virtual native-deps \
   g++ gcc libgcc libstdc++ linux-headers make python && \
   npm install --quiet node-gyp -g &&\
-  npm install --quiet && \
+  npm install --quiet --production && \
   apk del native-deps
 
-RUN npm install
+RUN npm install --production
+RUN npm install -g nyc
+RUN npm install -g mocha
+RUN npm install -g chai
+
 
 # Bundle app source
 COPY . .

@@ -43,6 +43,7 @@ jobs:
           name: run django tests
           command: |
             docker-compose -f docker-compose-test.yml run bounties_api python manage.py test
+            mv ./coverage.xml ./bounties_api/coverage.xml
 
       - run:
           name: run node tests

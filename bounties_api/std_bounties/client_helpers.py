@@ -8,7 +8,7 @@ from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from std_bounties.contract import data
 from std_bounties.models import Token
-from utils.functional_tools import wrapped_partial, narrower, formatter, flatten, pipe, pluck
+from utils.functional_tools import wrapped_partial, narrower, formatter, flatten, pipe, pluck, merge
 
 from rest_framework.reverse import reverse
 from django.conf import settings
@@ -125,6 +125,10 @@ def map_fulfillment_data(data_hash, bounty_id, fulfillment_id):
     }
 
 
+def calculate_token_quantity(value, decimals):
+    return Decimal(value) / Decimal(pow(10, decimals))
+
+
 def calculate_usd_price(value, decimals, usd_rate):
     return ((Decimal(value) / Decimal(pow(10, decimals)))
             * Decimal(usd_rate)).quantize(Decimal(10) ** -8)
@@ -202,11 +206,36 @@ def notify_slack(sc, channel, event, msg):
     sc.api_call(
         'chat.postMessage',
         channel=channel,
-        text='Event {}: {}'.format(
+        text='*{}*: {}'.format(
             event,
-            msg))
+            msg),
+        mrkdwn=True)
 
     return True
+
+
+def formatted_fulfillment_amount(fields):
+    fulfillmentAmount = fields.get('fulfillmentAmount')
+    decimals = fields.get('tokenDecimals')
+    return merge(fields, {'total_value': calculate_token_quantity(fulfillmentAmount, decimals)})
+
+
+def token_price(fields):
+    token_price = 'Unknown Price'
+    token = fields.get('token')
+    if token:
+        token_price = Decimal(token.price_usd).quantize(Decimal(10) ** -2)
+    return merge(fields, {'token_price': token_price})
+
+
+def usd_price(fields):
+    usd_price = fields.get('usd_price')
+    return merge(fields, {'usd_price': Decimal(usd_price).quantize(Decimal(10) ** -2)})
+
+
+def format_deadline(fields):
+    deadline = fields.get('deadline')
+    return merge(fields, {'deadline': deadline.strftime('%m/%d/%Y')})
 
 
 def bounty_url_for(bounty_id):

@@ -1,25 +1,14 @@
 from functools import partial, update_wrapper
+from decimal import Decimal
 
 from bounties import settings
 from std_bounties.bounty_client import BountyClient
-from std_bounties.client_helpers import bounty_url_for, apply_and_notify
+from std_bounties.client_helpers import bounty_url_for, apply_and_notify, formatted_fulfillment_amount, token_price, format_deadline
 from std_bounties.models import Bounty
 from utils.functional_tools import merge, narrower, wrapped_partial
 
 from slackclient import SlackClient
 
-
-# def with_clients(action):
-#    """Allow build context for each function execution"""
-#    bounty_client = BountyClient()
-#    sc = SlackClient(settings.SLACK_TOKEN)
-#
-#    def wrapper(*args, **kwargs):
-#        return action(*args, **kwargs)
-#
-#    wrapper = update_wrapper(wrapper, action)
-#
-#    return wrapper
 
 bounty_client = BountyClient()
 sc = SlackClient(settings.SLACK_TOKEN)
@@ -27,8 +16,8 @@ sc = SlackClient(settings.SLACK_TOKEN)
 
 # @with_clients
 def bounty_issued(bounty_id, **kwargs):
-    msg = "{title}, {bounty_id}, {tokenSymbol} @ {tokenDecimals}, {fulfillmentAmount}, " \
-          "{usd_price}, {deadline} {link}"
+    msg = "{title}, id: {bounty_id}\n${usd_price}, {total_value} {tokenSymbol} @ ${token_price}\n" \
+          "Deadline: {deadline}\n{link} :tada:"
     bounty = Bounty.objects.filter(bounty_id=bounty_id)
     add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
@@ -38,35 +27,35 @@ def bounty_issued(bounty_id, **kwargs):
                          action=bounty_client.issue_bounty,
                          inputs=kwargs,
                          fields=['title', 'bounty_id', 'tokenSymbol', 'tokenDecimals',
-                                 'fulfillmentAmount', 'usd_price', 'deadline'],
+                                 'fulfillmentAmount', 'usd_price', 'deadline', 'token'],
                          msg=msg,
                          slack_client=sc,
-                         before_formatter=[add_link]
+                         before_formatter=[add_link, formatted_fulfillment_amount, token_price, format_deadline]
                          )
 
 
 # @with_clients
 def bounty_activated(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
-    msg = "{title} {bounty_id} {tokenSymbol} {usd_price} {link}"
+    msg = "{title}, id: {bounty_id}\n${usd_price}, {total_value} {tokenSymbol} @ ${token_price}\n{link}"
     add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
     apply_and_notify(bounty,
                      event='Bounty Activated',
                      action=bounty_client.activate_bounty,
                      inputs=kwargs,
-                     fields=['title', 'bounty_id', 'tokenSymbol', 'usd_price'],
+                     fields=['title', 'bounty_id', 'tokenSymbol', 'tokenDecimals',
+                             'fulfillmentAmount', 'deadline', 'token', 'usd_price'],
                      msg=msg,
                      slack_client=sc,
-                     before_formatter=[add_link]
+                     before_formatter=[add_link, formatted_fulfillment_amount, token_price, format_deadline]
                      )
 
 
 # @with_clients
 def bounty_fulfilled(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
-    msg = "{title}, {bounty_id}, {fulfillment_id},  {tokenSymbol} @ {tokenDecimals}," \
-          " {fulfillmentAmount}, {usd_price}, {deadline} {link}"
+    msg = "{title}, id: {bounty_id}, fulfillment id: {fulfillment_id}\n{link}"
     add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
     apply_and_notify(bounty,
@@ -89,7 +78,7 @@ def bounty_fulfilled(bounty_id, **kwargs):
 
 def fullfillment_updated(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
-    msg = "{title}, {bounty_id}, {fulfillment_id} {link}"
+    msg = "{title}, id: {bounty_id}, fulfillment id: {fulfillment_id}\n{link}"
     add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
     apply_and_notify(bounty,
@@ -108,8 +97,8 @@ def fullfillment_updated(bounty_id, **kwargs):
 
 def fulfillment_accepted(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
-    msg = "{title}, {bounty_id}, {fulfillment_id},  {tokenSymbol} @ {tokenDecimals}," \
-          " {fulfillmentAmount}, {usd_price}, {deadline} {link}"
+    msg = "{title}, id: {bounty_id}, fulfillment id: {fulfillment_id}\n${usd_price}, {total_value} {tokenSymbol} @ ${token_price}\n" \
+          "Deadline: {deadline}\n{link}"
     add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
     apply_and_notify(bounty,
@@ -123,16 +112,17 @@ def fulfillment_accepted(bounty_id, **kwargs):
                              ('bounty__tokenDecimals', 'tokenDecimals'),
                              ('bounty__fulfillmentAmount', 'fulfillmentAmount'),
                              ('bounty__usd_price', 'usd_price'),
+                             ('bounty__token', 'token'),
                              ('bounty__deadline', 'deadline')],
                      msg=msg,
                      slack_client=sc,
-                     before_formatter=[add_link]
+                     before_formatter=[add_link, formatted_fulfillment_amount, token_price, format_deadline]
                      )
 
 
 def bounty_killed(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
-    msg = "{title}, {bounty_id} {link}"
+    msg = "{title}, id: {bounty_id}\n{link}"
     add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
     apply_and_notify(bounty,
@@ -148,8 +138,8 @@ def bounty_killed(bounty_id, **kwargs):
 
 def contribution_added(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
-    msg = "{title}, {bounty_id}, {tokenDecimals}, {balance}, {usd_price}, {tokenDecimals}," \
-          "{old_balance} {link}"
+
+    msg = "{title}, id: {bounty_id}\n{link}"
     add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
     apply_and_notify(bounty,
@@ -173,7 +163,7 @@ def contribution_added(bounty_id, **kwargs):
 def deadline_extended(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     previous_deadline = narrower(bounty, [('deadline', 'previous_deadline')])
-    msg = "{title}, {bounty_id}, {previous_deadline}, {deadline} {link}"
+    msg = "{title}, id: {bounty_id}\nprevious: {previous_deadline}, new deadline: {deadline}\n{link}"
     mix_previous_deadline = wrapped_partial(merge, source2=previous_deadline)
     add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
@@ -190,7 +180,7 @@ def deadline_extended(bounty_id, **kwargs):
 
 def bounty_changed(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
-    msg = "{title}, {bounty_id} {link}"
+    msg = "{title}, id: {bounty_id}\n{link}"
     add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
     apply_and_notify(bounty,
@@ -206,7 +196,7 @@ def bounty_changed(bounty_id, **kwargs):
 
 def issuer_transfered(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
-    msg = "{title}, {bounty_id} {link}"
+    msg = "{title}, id: {bounty_id}\n{link}"
     add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
     apply_and_notify(bounty,
@@ -222,7 +212,7 @@ def issuer_transfered(bounty_id, **kwargs):
 
 def payout_increased(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
-    msg = "{title}, {bounty_id} {link}"
+    msg = "{title}, id: {bounty_id}\n{link}"
     add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
     apply_and_notify(bounty,

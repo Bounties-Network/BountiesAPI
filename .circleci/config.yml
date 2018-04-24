@@ -49,6 +49,7 @@ jobs:
           command: |
             mkdir /home/circleci/repo/contract_subscriber/.nyc_output
             docker-compose -f docker-compose-test.yml run contract_subscriber npm run test
+            sleep 30
             docker-compose -f docker-compose-test.yml run contract_subscriber npm run testb
 
       - run:

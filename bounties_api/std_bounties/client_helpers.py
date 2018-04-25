@@ -203,6 +203,7 @@ def map_token_data(pays_tokens, token_contract, amount):
 
 
 def notify_slack(sc, channel, event, msg):
+    print(msg);
     sc.api_call(
         'chat.postMessage',
         channel=channel,
@@ -226,6 +227,14 @@ def token_price(fields):
     if token:
         token_price = Decimal(token.price_usd).quantize(Decimal(10) ** -2)
     return merge(fields, {'token_price': token_price})
+
+def token_lock_price(fields):
+    token_price = fields.get('token_lock_price')
+    if token_price:
+        token_price = Decimal(token_price).quantize(Decimal(10) ** -2)
+    else:
+        token_price = 'Unknown Price'
+    return merge(fields, {'token_lock_price': token_price})
 
 
 def usd_price(fields):

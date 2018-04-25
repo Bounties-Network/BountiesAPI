@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from bounties import settings
 from std_bounties.bounty_client import BountyClient
-from std_bounties.client_helpers import bounty_url_for, apply_and_notify, formatted_fulfillment_amount, token_price, format_deadline
+from std_bounties.client_helpers import bounty_url_for, apply_and_notify, formatted_fulfillment_amount, token_price, format_deadline, usd_price, token_lock_price
 from std_bounties.models import Bounty
 from utils.functional_tools import merge, narrower, wrapped_partial
 
@@ -30,7 +30,7 @@ def bounty_issued(bounty_id, **kwargs):
                                  'fulfillmentAmount', 'usd_price', 'deadline', 'token'],
                          msg=msg,
                          slack_client=sc,
-                         before_formatter=[add_link, formatted_fulfillment_amount, token_price, format_deadline]
+                         before_formatter=[add_link, formatted_fulfillment_amount, token_price, format_deadline, usd_price]
                          )
 
 
@@ -48,7 +48,7 @@ def bounty_activated(bounty_id, **kwargs):
                              'fulfillmentAmount', 'deadline', 'token', 'usd_price'],
                      msg=msg,
                      slack_client=sc,
-                     before_formatter=[add_link, formatted_fulfillment_amount, token_price, format_deadline]
+                     before_formatter=[add_link, formatted_fulfillment_amount, token_price, format_deadline, usd_price]
                      )
 
 
@@ -97,7 +97,7 @@ def fullfillment_updated(bounty_id, **kwargs):
 
 def fulfillment_accepted(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
-    msg = "{title}, id: {bounty_id}, fulfillment id: {fulfillment_id}\n${usd_price}, {total_value} {tokenSymbol} @ ${token_price}\n" \
+    msg = "{title}, id: {bounty_id}, fulfillment id: {fulfillment_id}\n${usd_price}, {total_value} {tokenSymbol} @ ${token_lock_price}\n" \
           "Deadline: {deadline}\n{link}"
     add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
@@ -112,11 +112,12 @@ def fulfillment_accepted(bounty_id, **kwargs):
                              ('bounty__tokenDecimals', 'tokenDecimals'),
                              ('bounty__fulfillmentAmount', 'fulfillmentAmount'),
                              ('bounty__usd_price', 'usd_price'),
+                             ('bounty__tokenLockPrice', 'token_lock_price'),
                              ('bounty__token', 'token'),
                              ('bounty__deadline', 'deadline')],
                      msg=msg,
                      slack_client=sc,
-                     before_formatter=[add_link, formatted_fulfillment_amount, token_price, format_deadline]
+                     before_formatter=[add_link, formatted_fulfillment_amount, token_price, format_deadline, usd_price]
                      )
 
 

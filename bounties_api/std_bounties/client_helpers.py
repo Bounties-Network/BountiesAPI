@@ -203,7 +203,6 @@ def map_token_data(pays_tokens, token_contract, amount):
 
 
 def notify_slack(sc, channel, event, msg):
-    print(msg);
     sc.api_call(
         'chat.postMessage',
         channel=channel,

@@ -5,6 +5,7 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 from std_bounties.constants import STAGE_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
 from django.core.exceptions import ObjectDoesNotExist
+from std_bounties.client_helpers import calculate_token_quantity
 
 
 class Category(models.Model):
@@ -60,6 +61,11 @@ class Bounty(models.Model):
     issuer = models.CharField(max_length=128)
     arbiter = models.CharField(max_length=128, null=True)
     fulfillmentAmount = models.DecimalField(decimal_places=0, max_digits=64)
+    calculated_fulfillmentAmount = models.DecimalField(
+        decimal_places=30,
+        max_digits=70,
+        null=True,
+        default=0)
     paysTokens = models.BooleanField()
     bountyStage = models.IntegerField(
         choices=STAGE_CHOICES, default=DRAFT_STAGE)
@@ -67,6 +73,11 @@ class Bounty(models.Model):
         decimal_places=0, max_digits=64, null=True)
     balance = models.DecimalField(
         decimal_places=0,
+        max_digits=70,
+        null=True,
+        default=0)
+    calculated_balance = models.DecimalField(
+        decimal_places=30,
         max_digits=70,
         null=True,
         default=0)
@@ -88,13 +99,21 @@ class Bounty(models.Model):
     sourceFileName = models.CharField(max_length=256, blank=True)
     sourceFileHash = models.CharField(max_length=256, blank=True)
     sourceDirectoryHash = models.CharField(max_length=256, blank=True)
-    webReferenceUrl = models.CharField(max_length=256, blank=True)
+    webReferenceURL = models.CharField(max_length=256, blank=True)
     platform = models.CharField(max_length=128, blank=True)
     schemaVersion = models.CharField(max_length=64, blank=True)
     schemaName = models.CharField(max_length=128, null=True)
     data_categories = JSONField(null=True)
     data_issuer = JSONField(null=True)
     data_json = JSONField(null=True)
+
+    def save(self, *args, **kwargs):
+        fulfillmentAmount = self.fulfillmentAmount
+        balance = self.balance
+        decimals = self.tokenDecimals
+        self.calculated_balance = calculate_token_quantity(balance, decimals)
+        self.calculated_fulfillmentAmount = calculate_token_quantity(fulfillmentAmount, decimals)
+        super(BountyState, self).save(*args, **kwargs)
 
 
     def record_bounty_state(self, event_date):

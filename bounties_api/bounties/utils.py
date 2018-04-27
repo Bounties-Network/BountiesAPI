@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 import time
 import logging
 
@@ -27,3 +28,6 @@ def dictfetchall(cursor):
         dict(zip([col[0] for col in desc], row))
         for row in cursor.fetchall()
     ]
+
+def calculate_token_value(value, decimals):
+    return (Decimal(value) / Decimal(pow(10, decimals))).quantize(Decimal(10) ** -decimals)

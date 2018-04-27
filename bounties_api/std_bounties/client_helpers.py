@@ -28,7 +28,7 @@ bounty_data_keys = [
     'sourceFileName',
     'sourceFileHash',
     'sourceDirectoryHash',
-    'webReferenceUrl']
+    'webReferenceURL']
 fulfillment_data_keys = [
     'description',
     'sourceFileName',

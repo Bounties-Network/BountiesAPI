@@ -77,12 +77,6 @@ class BountyStats(APIView):
         for stage in STAGE_CHOICES:
             bounty_stats[stage[1]] = user_bounties.filter(
                 bountyStage=stage[0]).count()
-        return JsonResponse(bounty_stats)
-
-
-class ProfileStats(APIView):
-    def get(self, request, address=''):
-        user_bounties = Bounty.objects.filter(issuer=address)
         bounties_count = user_bounties.count()
         bounties_accepted_count = user_bounties.filter(
             fulfillments__accepted=True).count()
@@ -102,7 +96,7 @@ class ProfileStats(APIView):
             'submissions_accepted_count': submissions_accepted_count,
             'submissions_acceptance_rate': submissions_acceptance_rate,
         }
-        return JsonResponse(profile_stats)
+        return JsonResponse({**bounty_stats, **profile_stats})
 
 
 class Tokens(APIView):

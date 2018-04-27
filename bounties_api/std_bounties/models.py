@@ -5,7 +5,7 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 from std_bounties.constants import STAGE_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
 from django.core.exceptions import ObjectDoesNotExist
-from std_bounties.client_helpers import calculate_token_quantity
+from bounties.utils import calculate_token_value
 
 
 class Category(models.Model):
@@ -111,9 +111,9 @@ class Bounty(models.Model):
         fulfillmentAmount = self.fulfillmentAmount
         balance = self.balance
         decimals = self.tokenDecimals
-        self.calculated_balance = calculate_token_quantity(balance, decimals)
-        self.calculated_fulfillmentAmount = calculate_token_quantity(fulfillmentAmount, decimals)
-        super(BountyState, self).save(*args, **kwargs)
+        self.calculated_balance = calculate_token_value(balance, decimals)
+        self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
+        super(Bounty, self).save(*args, **kwargs)
 
 
     def record_bounty_state(self, event_date):

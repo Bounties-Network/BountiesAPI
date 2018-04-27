@@ -312,23 +312,6 @@ paths:
       tags:
         - leaderboard
     parameters: []
-  /stats/profile/{address}/:
-    get:
-      operationId: stats_profile_read
-      description: ''
-      parameters: []
-      responses:
-        '200':
-          description: 'Get stats on address pertaining to issued bounties and submitted fulfillments'
-          schema:
-            $ref: '#/definitions/ProfileStats'
-      tags:
-        - stats
-    parameters:
-      - name: address
-        in: path
-        required: true
-        type: string
   /stats/{address}/:
     get:
       operationId: stats_read
@@ -466,9 +449,6 @@ definitions:
       Expired:
         title: Bounties Expired
         type: integer
-  ProfileStats:
-    type: object
-    properties:
       bounties:
         title: Number of bounties issued
         type: integer
@@ -677,8 +657,8 @@ definitions:
         title: SourceDirectoryHash
         type: string
         maxLength: 256
-      webReferenceUrl:
-        title: WebReferenceUrl
+      webReferenceURL:
+        title: WebReferenceURL
         type: string
         maxLength: 256
       platform:

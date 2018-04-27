@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 
 class BountiesTimeline(models.Model):
     date = models.DateField()
@@ -12,8 +10,8 @@ class BountiesTimeline(models.Model):
     fulfillment_acceptance_rate = models.FloatField()
     bounty_fulfilled_rate = models.FloatField()
     avg_fulfiller_acceptance_rate = models.FloatField()
-    avg_fulfillment_amount = models.DecimalField()
-    total_fulfillment_amount = models.DecimalField()
+    avg_fulfillment_amount = models.DecimalField(decimal_places=2, max_digits=10)
+    total_fulfillment_amount = models.DecimalField(decimal_places=2, max_digits=10)
     bounty_draft = models.PositiveIntegerField()
     bounty_active = models.PositiveIntegerField()
     bounty_completed = models.PositiveIntegerField()

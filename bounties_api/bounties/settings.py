@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'std_bounties',
     'analytics',
     'django_nose',
+    'django_faker',
 ]
 
 # Use nose to run all tests

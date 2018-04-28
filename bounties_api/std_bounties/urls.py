@@ -11,7 +11,6 @@ router.register(r'category', views.CategoryViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^stats/profile/(?P<address>\w+)/$', views.ProfileStats.as_view()),
     url(r'^stats/(?P<address>\w+)/$', views.BountyStats.as_view()),
     url(r'^user/(?P<address>\w+)/$', views.UserProfile.as_view()),
     url(r'^leaderboard/$', views.Leaderboard.as_view()),

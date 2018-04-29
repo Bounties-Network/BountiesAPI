@@ -590,6 +590,11 @@ definitions:
         title: FulfillmentAmount
         type: string
         format: decimal
+      calculated_fulfillmentAmount:
+        description: Does the token decimal calculation to give the base denomination
+        title: Calculated Fulfillment Amount
+        type: string
+        format: decimal
       paysTokens:
         title: PaysTokens
         type: boolean
@@ -599,6 +604,11 @@ definitions:
         format: decimal
       balance:
         title: Balance
+        type: string
+        format: decimal
+      calculated_balance:
+        description: Does the token decimal calculation to give the base denomination
+        title: Calculated Balance
         type: string
         format: decimal
       title:
@@ -622,6 +632,10 @@ definitions:
         type: integer
         maximum: 2147483647
         minimum: -2147483648
+      tokenLockPrice:
+        description: The usd price of the token when the bounty goes into a locked state like Completed or Dead
+        title: TokenLockPrice
+        type: number
       tokenContract:
         title: TokenContract
         type: string
@@ -769,6 +783,12 @@ definitions:
         type: string
         format: date-time
         readOnly: true
+      accepted_date:
+        type: string
+        format: date-time
+      usd_price:
+        title: USD Price
+        type: number
       fulfillment_created:
         title: Fulfillment created
         type: string

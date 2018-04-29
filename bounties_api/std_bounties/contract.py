@@ -15,7 +15,7 @@ data = """{
 	},
 	"consensysrinkeby": {
 		"standardBountiesAddress": {
-			"v1":"0x1784b3749b576342c836df3c330384b37ff8014b"
+			"v1":"0x12708d61650c2462f2e10276e0e65239d9b0df4e"
 			}
 	},
 	"localhost": {

@@ -1,8 +1,10 @@
 from datetime import datetime
+from functools import reduce
 
 import arrow
 from django.core.management import BaseCommand
 from analytics.models import BountiesTimeline
+from std_bounties.constants import EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, ACTIVE_STAGE, DRAFT_STAGE
 from std_bounties.models import BountyState
 
 
@@ -27,8 +29,11 @@ def range_days(since, until):
 
 
 def get_date(time_frame):
-    pass
+    return time_frame.last().change_date
 
+
+def add_on(stage):
+    return lambda current, next_value: current + 1 if next_value.bountyStage == stage else current
 
 def get_bounties_issued(time_frame):
     pass
@@ -67,23 +72,24 @@ def get_total_fulfillment_amount(time_frame):
 
 
 def get_bounty_draft(time_frame):
-    pass
+    return reduce(add_on(DRAFT_STAGE), time_frame, 0)
 
 
 def get_bounty_active(time_frame):
-    pass
+    return reduce(add_on(ACTIVE_STAGE), time_frame, 0)
 
 
 def get_bounty_completed(time_frame):
-    pass
+    return reduce(add_on(COMPLETED_STAGE), time_frame, 0)
 
 
 def get_bounty_expired(time_frame):
-    pass
+    return reduce(add_on(EXPIRED_STAGE), time_frame, 0)
 
 
 def get_bounty_dead(time_frame):
-    pass
+    return reduce(add_on(DEAD_STAGE), time_frame, 0)
+
 
 def generate_timeline(time_frame):
     date = get_date(time_frame)

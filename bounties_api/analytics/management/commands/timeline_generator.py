@@ -21,7 +21,7 @@ def day_bounds(day):
     floor = utc_day.floor('day')
     ceil = utc_day.ceil('day')
 
-    return floor, ceil
+    return floor.datetime, ceil.datetime
 
 
 def range_days(since, until):
@@ -71,7 +71,6 @@ def get_avg_fulfillment_amount(time_frame):
 def get_total_fulfillment_amount(time_frame):
     return 0
 
-
 def get_bounty_draft(time_frame):
     return reduce(add_on(DRAFT_STAGE), time_frame, 0)
 
@@ -98,7 +97,7 @@ def generate_timeline(time_frame):
     fulfillment_accepted_frame = Fulfillment.objects.filter(accepted_date__range=time_frame)
     fulfillment_submitted_frame = Fulfillment.objects.filter(fulfillment_created__range=time_frame)
 
-    date = get_date(time_frame[1])
+    date = time_frame[1]
     bounties_issued = get_bounties_issued(bounty_created_frame)
 
     fulfillments_submitted = get_fulfillments_submitted(fulfillment_submitted_frame)
@@ -137,7 +136,7 @@ def generate_timeline(time_frame):
     return bounty_frame
 
 
-class TimelineGenerator(BaseCommand):
+class Command(BaseCommand):
     def handle(self, *args, **options):
         needs_genesis = not BountiesTimeline.objects.all().count()
 
@@ -145,27 +144,25 @@ class TimelineGenerator(BaseCommand):
             first_date = BountyState.objects.first()
             last_date = BountyState.objects.last()
 
-            bounties_by_day = range_days(first_date, last_date)
+            bounties_by_day = range_days(first_date.change_date, last_date.change_date)
 
             for day in bounties_by_day:
-                bounties_by_time_frame = BountyState.objects.filter(change_date__range=day_bounds(day))
-                bounty_day = generate_timeline(bounties_by_time_frame)
+                bounty_day = generate_timeline(day_bounds(day))
 
                 bounty_day.save()
         else:
             last_update = BountiesTimeline.objects.order_by('date').last()
-
-            days = range_days(last_update, datetime.now)
+            since = arrow.get(last_update.date).to('utc')
+            days = range_days(since, datetime.utcnow())
 
             # Instead of calculate the last 5 min, we update all day until now
             # this approach provides more flexibility and simplicity in calculating more stats in the future
             # and provides a better way to expose by day or by hour in case of been needed
             for day in days:
                 bounty_day = generate_timeline(day_bounds(day))
+                bounty_points = BountiesTimeline.objects.filter(date=day.date())
 
-                bounty_points = BountiesTimeline.objects.filter(date=day)
-
-                if bounty_points.exist():
+                if bounty_points.exists():
                     bounty_point = bounty_points.first()
                     bounty_day.id = bounty_point.id
 

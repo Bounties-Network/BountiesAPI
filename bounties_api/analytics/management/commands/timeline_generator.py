@@ -1,23 +1,29 @@
 from datetime import datetime
+
+import arrow
 from django.core.management import BaseCommand
 from analytics.models import BountiesTimeline
 from std_bounties.models import BountyState
 
 
-
-def diff_time(last_update, param):
-    pass
-
-
-def get_days(last_update, now):
-    pass
+def diff_time(since, until):
+    return until - since
 
 
-def day_range(day):
-    pass
+def diff_days(last_update, now=datetime.utcnow()):
+    return (diff_time(now, last_update)).days
 
-def group(objects, by):
-    return {}
+
+def day_bounds(day):
+    utc_day = arrow.get(day).to('utc')
+    floor = utc_day.floor('day')
+    ceil = utc_day.ceil('day')
+
+    return floor, ceil
+
+
+def range_days(since, until):
+    return arrow.Arrow.range('day', since, until)
 
 
 def get_date(time_frame):
@@ -120,29 +126,32 @@ class TimelineGenerator(BaseCommand):
         needs_genesis = not BountiesTimeline.objects.all().count()
 
         if needs_genesis:
-            all_data = BountyState.objects.all()
-            bounties_by_day = group(all_data, by='days')
+            first_date = BountyState.objects.first()
+            last_date = BountyState.objects.last()
+
+            bounties_by_day = range_days(first_date, last_date)
 
             for day in bounties_by_day:
-                bounty_day = generate_timeline(day)
+                bounties_by_time_frame = BountyState.objects.filter(change_date__range=day_bounds(day))
+                bounty_day = generate_timeline(bounties_by_time_frame)
 
                 bounty_day.save()
         else:
             last_update = BountiesTimeline.objects.order_by('date').last()
 
-            days = get_days(last_update, datetime.now)
+            days = range_days(last_update, datetime.now)
 
             # Instead of calculate the last 5 min, we update all day until now
-            # this approach provides more flexibility in calculating more stats in the future
+            # this approach provides more flexibility and simplicity in calculating more stats in the future
             # and provides a better way to expose by day or by hour in case of been needed
             for day in days:
-                time_frame = BountyState.objects.filter(change_date__range=day_range(day))
-                bounty_day = generate_timeline(time_frame)
+                bounties_by_time_frame = BountyState.objects.filter(change_date__range=day_bounds(day))
+                bounty_day = generate_timeline(bounties_by_time_frame)
 
                 bounty_points = BountiesTimeline.objects.filter(date=day)
 
                 if bounty_points.exist():
-                    bounty_point = bounty_points[0]
+                    bounty_point = bounty_points.first()
                     bounty_day.id = bounty_point.id
 
                 bounty_day.save()

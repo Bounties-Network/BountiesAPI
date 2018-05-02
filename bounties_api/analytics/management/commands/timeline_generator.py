@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import reduce
 
 import arrow
@@ -6,7 +6,6 @@ from django.core.management import BaseCommand
 from django.db.models import Q, Max
 
 from analytics.models import BountiesTimeline
-# BountiesTimeline.objects.all().delete()
 from std_bounties.constants import EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, ACTIVE_STAGE, DRAFT_STAGE
 from std_bounties.models import BountyState, Fulfillment, Bounty
 
@@ -40,7 +39,7 @@ def add_on(stage):
 
 
 def get_bounties_issued(time_frame):
-    return time_frame.count()
+    return time_frame.distinct('bounty').count()
 
 
 def get_fulfillments_submitted(time_frame):
@@ -51,25 +50,33 @@ def get_fulfillments_accepted(time_frame):
     return time_frame.count()
 
 
-def get_fulfillments_pending_acceptance(time_frame):
-    return time_frame.count()
+def get_fulfillment_acceptance_rate(time_frame, accepted_date=datetime.now()):
+    return time_frame.filter(accepted_date__lte=accepted_date).count() / time_frame.count()
 
 
-def get_fulfillment_acceptance_rate(time_frame):
-    return 0
+def get_bounty_fulfilled_rate(time_frame, bounties):
+    return time_frame.distinct('bounty').count() / bounties.count()
 
 
-def get_bounty_fulfilled_rate(time_frame):
-    return 0
+def get_avg_fulfiller_acceptance_rate(time_frame, accepted_date=datetime.now()):
+    fulfillers = [b['fulfiller'] for b in time_frame.values('fulfiller').distinct()]
+    counter = 0
+    accumulator = 0
 
+    for fulfiller in fulfillers:
+        print(fulfiller)
+        fulfillments = time_frame.filter(fulfiller=fulfiller)
+        accepted_fulfillments = fulfillments.filter(accepted=True, accepted_date__lte=accepted_date).count()
+        print(accepted_fulfillments / fulfillments.count())
+        accumulator += accepted_fulfillments / fulfillments.count()
+        counter += 1
 
-def get_avg_fulfiller_acceptance_rate(time_frame):
-    return 0
+    return accumulator / counter
 
 
 def get_avg_fulfillment_amount(time_frame):
     completed_bounties = filter(lambda bounty: bounty.bountyStage == COMPLETED_STAGE, time_frame)
-    (total, count) = reduce(lambda prev, current: (prev[0] + current.bounty.fulfillmentAmount, prev[1] + 1),
+    (total, count) = reduce(lambda prev, current: (prev[0] + current.bounty.usd_price, prev[1] + 1),
                             completed_bounties,
                             (0, 0))
 
@@ -119,6 +126,7 @@ def build_stages(time_frame):
 
     **Each total correspond to the last stages of the bounties in the given time frame**
     """
+    # TODO: Queries optimization
     unique_bounties = [b['bounty'] for b in time_frame.values('bounty').distinct()]
 
     stages = [0, 0, 0, 0, 0]
@@ -126,35 +134,32 @@ def build_stages(time_frame):
     for bounty_id in unique_bounties:
         current_stage = time_frame.filter(bounty=bounty_id).aggregate(Max('bountyStage'))['bountyStage__max']
         stages[current_stage] = stages[current_stage] + 1
-        if current_stage not in [EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, ACTIVE_STAGE, DRAFT_STAGE]:
-            print(current_stage)
 
     return stages
 
 
 def generate_timeline(time_frame):
+    date = time_frame[1]
+
     bounties_state_frame = BountyState.objects.filter(change_date__lte=time_frame[1])
     bounty_created_frame = Bounty.objects.filter(bounty_created__range=time_frame)
-    fulfillment_accepted_frame = Fulfillment.objects.filter(accepted_date__range=time_frame)
-    fulfillment_submitted_frame = Fulfillment.objects.filter(fulfillment_created__range=time_frame)
+    fulfillment_accepted_frame = Fulfillment.objects.filter(accepted_date__lte=time_frame[1])
+    fulfillment_submitted_frame = Fulfillment.objects.filter(fulfillment_created__lte=time_frame[1])
 
     stages = build_stages(bounties_state_frame)
 
-    pending_frame = Fulfillment.objects\
-        .filter(created__lt=time_frame[1])\
-        .filter(Q(accepted=False) | Q(accepted_date__gt=time_frame[0]))
 
-    date = time_frame[1]
-    bounties_issued = get_bounties_issued(bounty_created_frame)
+    bounties_issued = get_bounties_issued(bounties_state_frame)
 
     fulfillments_submitted = get_fulfillments_submitted(fulfillment_submitted_frame)
     fulfillments_accepted = get_fulfillments_accepted(fulfillment_accepted_frame)
 
-    fulfillments_pending_acceptance = get_fulfillments_pending_acceptance(pending_frame)
-    fulfillment_acceptance_rate = get_fulfillment_acceptance_rate(time_frame)
+    fulfillment_acceptance_rate = get_fulfillment_acceptance_rate(fulfillment_submitted_frame, date)
 
-    bounty_fulfilled_rate = get_bounty_fulfilled_rate(time_frame)
-    avg_fulfiller_acceptance_rate = get_avg_fulfiller_acceptance_rate(time_frame)
+    bounty_fulfilled_rate = get_bounty_fulfilled_rate(fulfillment_submitted_frame,
+                                                      bounties_state_frame.distinct('bounty'))
+
+    avg_fulfiller_acceptance_rate = get_avg_fulfiller_acceptance_rate(fulfillment_submitted_frame, date)
 
     avg_fulfillment_amount = get_avg_fulfillment_amount(bounties_state_frame)
     total_fulfillment_amount = get_total_fulfillment_amount(bounties_state_frame)
@@ -169,7 +174,7 @@ def generate_timeline(time_frame):
                                     bounties_issued=bounties_issued,
                                     fulfillments_submitted=fulfillments_submitted,
                                     fulfillments_accepted=fulfillments_accepted,
-                                    fulfillments_pending_acceptance=fulfillments_pending_acceptance,
+                                    fulfillments_pending_acceptance=fulfillments_submitted - fulfillments_accepted,
                                     fulfillment_acceptance_rate=fulfillment_acceptance_rate,
                                     bounty_fulfilled_rate=bounty_fulfilled_rate,
                                     avg_fulfiller_acceptance_rate=avg_fulfiller_acceptance_rate,
@@ -192,7 +197,7 @@ class Command(BaseCommand):
             first_date = BountyState.objects.first()
             last_date = BountyState.objects.last()
 
-            bounties_by_day = range_days(first_date.change_date, last_date.change_date)
+            bounties_by_day = range_days(first_date.change_date, last_date.change_date + timedelta(days=1))
 
             for day in bounties_by_day:
                 bounty_day = generate_timeline(day_bounds(day))

@@ -3,9 +3,10 @@ from functools import reduce
 
 import arrow
 from django.core.management import BaseCommand
-from django.db.models import Q
+from django.db.models import Q, Max
 
 from analytics.models import BountiesTimeline
+# BountiesTimeline.objects.all().delete()
 from std_bounties.constants import EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, ACTIVE_STAGE, DRAFT_STAGE
 from std_bounties.models import BountyState, Fulfillment, Bounty
 
@@ -100,11 +101,44 @@ def get_bounty_dead(time_frame):
     return reduce(add_on(DEAD_STAGE), time_frame, 0)
 
 
+def build_stages(time_frame):
+    """ Build the total for each bounty stage in a given time frame
+
+    1. In a given time frame, are retrieved all distinct bounties
+    2. Get the last stage for the bounty
+    3. Increment the counter for the given stage
+
+    Each position correspond in the stage array correspond to the stage in `constants.py`:
+        DRAFT_STAGE = 0
+        ACTIVE_STAGE = 1
+        DEAD_STAGE = 2
+        COMPLETED_STAGE = 3
+        EXPIRED_STAGE = 4
+
+    returns [total_drafts, total_active, total_dead, total_completed, total_expired]
+
+    **Each total correspond to the last stages of the bounties in the given time frame**
+    """
+    unique_bounties = [b['bounty'] for b in time_frame.values('bounty').distinct()]
+
+    stages = [0, 0, 0, 0, 0]
+
+    for bounty_id in unique_bounties:
+        current_stage = time_frame.filter(bounty=bounty_id).aggregate(Max('bountyStage'))['bountyStage__max']
+        stages[current_stage] = stages[current_stage] + 1
+        if current_stage not in [EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, ACTIVE_STAGE, DRAFT_STAGE]:
+            print(current_stage)
+
+    return stages
+
+
 def generate_timeline(time_frame):
-    bounties_state_frame = BountyState.objects.filter(change_date__range=time_frame)
+    bounties_state_frame = BountyState.objects.filter(change_date__lte=time_frame[1])
     bounty_created_frame = Bounty.objects.filter(bounty_created__range=time_frame)
     fulfillment_accepted_frame = Fulfillment.objects.filter(accepted_date__range=time_frame)
     fulfillment_submitted_frame = Fulfillment.objects.filter(fulfillment_created__range=time_frame)
+
+    stages = build_stages(bounties_state_frame)
 
     pending_frame = Fulfillment.objects\
         .filter(created__lt=time_frame[1])\
@@ -141,11 +175,11 @@ def generate_timeline(time_frame):
                                     avg_fulfiller_acceptance_rate=avg_fulfiller_acceptance_rate,
                                     avg_fulfillment_amount=avg_fulfillment_amount,
                                     total_fulfillment_amount=total_fulfillment_amount,
-                                    bounty_draft=bounty_draft,
-                                    bounty_active=bounty_active,
-                                    bounty_completed=bounty_completed,
-                                    bounty_expired=bounty_expired,
-                                    bounty_dead=bounty_dead)
+                                    bounty_draft=stages[DRAFT_STAGE],
+                                    bounty_active=stages[ACTIVE_STAGE],
+                                    bounty_completed=stages[COMPLETED_STAGE],
+                                    bounty_expired=stages[EXPIRED_STAGE],
+                                    bounty_dead=stages[DEAD_STAGE])
 
     return bounty_frame
 

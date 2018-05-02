@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework_filters',
     'std_bounties',
     'analytics',
+    'authentication',
     'django_nose',
 ]
 
@@ -64,10 +65,10 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
+    'authentication.middleware.AuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'bounties.urls'
@@ -204,5 +205,7 @@ networks = {
 }
 
 ETH_NETWORK_URL = networks[ETH_NETWORK]
+SESSION_COOKIE_HTTPONLY = True
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 NOTIFICATIONS_SLACK_CHANNEL = '#bounty_notifs' if ENVIRONMENT == 'production' else ENVIRONMENT + '_bounty_notifs'

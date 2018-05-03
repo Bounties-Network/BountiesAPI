@@ -14,26 +14,34 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             bounties = Bounty.objects.all()
+
             for bounty in bounties:
                 name = bounty.issuer_name
                 email = bounty.issuer_email
                 public_address = bounty.issuer_address
-                User.objects.create(
+                # Update to make the create/update logic only based on address
+                user = User.objects.create_or_update(
                     name=name,
                     email=email,
                     public_address=public_address
                 )
+                bounty.user = user
+                bounty.save()
+
             fulfillments = Fulfillment.objects.all()
 
             for fulfillment in fulfillments:
                 name = fulfillment.fulfiller_name
                 email = fulfillment.fulfiller_email
                 public_address = fulfillment.fulfiller_address
-                User.objects.create(
+                # Update to make the create/update logic only based on address
+                user = User.objects.create_or_update(
                     name=name,
                     email=email,
                     public_address=public_address
                 )
+                fulfillment.user = user
+                fulfillment.save()
         except Exception as e:
             # goes to rollbar
             logger.exception(e)

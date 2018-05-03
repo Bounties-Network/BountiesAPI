@@ -52,6 +52,7 @@ class BountyState(models.Model):
 
 class Bounty(models.Model):
     id = models.IntegerField(primary_key=True)
+    user = models.ForeignKey('authentication.User')
     bounty_id = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -139,6 +140,7 @@ class Bounty(models.Model):
 
 class Fulfillment(models.Model):
     fulfillment_id = models.IntegerField()
+    user = models.ForeignKey('authentication.User')
     bounty = models.ForeignKey(Bounty, related_name='fulfillments')
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)

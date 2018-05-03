@@ -1,19 +1,21 @@
 from datetime import datetime, date
 import json
 
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-
+from analytics.filters import BountiesTimelineFilter
 from .serializers import BountiesTimelineSerializer
 from .models import BountiesTimeline
 
 
 class TimelineBounties(APIView):
     def get(self, request):
-        since = request.query_params.get('since', "")
-        until = request.query_params.get('until', datetime.now().date())
+        queryset = request.query_params.copy()
+        since = queryset.get('since', "")
+        until = queryset.get('until', datetime.now().date())
 
         try:
             since_date = datetime.strptime(since, "%Y-%m-%d").date()
@@ -24,8 +26,15 @@ class TimelineBounties(APIView):
                 until_date = until
 
             if type(since_date) is date and type(until_date) is date:
-                bounties_timeline = BountiesTimeline.objects.filter(date__range=[since_date, until_date])
-                serialized = BountiesTimelineSerializer(bounties_timeline, many=True)
+                queryset['until'] = until_date
+                queryset['since'] = since_date
+
+                bounties_timeline = BountiesTimelineFilter(queryset,
+                                                           BountiesTimeline.objects.all(),
+                                                           request=request)
+
+
+                serialized = BountiesTimelineSerializer(bounties_timeline.qs, many=True, context={'request': request})
 
                 return Response(serialized.data)
         except ValueError:

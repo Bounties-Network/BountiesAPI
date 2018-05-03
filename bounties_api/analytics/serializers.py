@@ -1,9 +1,10 @@
 from rest_framework import serializers
 
 from .models import BountiesTimeline
+from drf_queryfields import QueryFieldsMixin
 
 
-class BountiesTimelineSerializer(serializers.ModelSerializer):
+class BountiesTimelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = BountiesTimeline
         fields = "__all__"

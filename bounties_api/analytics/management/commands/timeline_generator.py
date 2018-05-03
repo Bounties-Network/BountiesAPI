@@ -64,14 +64,12 @@ def get_avg_fulfiller_acceptance_rate(time_frame, accepted_date=datetime.now()):
     accumulator = 0
 
     for fulfiller in fulfillers:
-        print(fulfiller)
         fulfillments = time_frame.filter(fulfiller=fulfiller)
         accepted_fulfillments = fulfillments.filter(accepted=True, accepted_date__lte=accepted_date).count()
-        print(accepted_fulfillments / fulfillments.count())
         accumulator += accepted_fulfillments / fulfillments.count()
         counter += 1
 
-    return accumulator / counter
+    return accumulator / counter if counter > 0 else 0
 
 
 def get_avg_fulfillment_amount(time_frame):
@@ -132,7 +130,7 @@ def build_stages(time_frame):
     stages = [0, 0, 0, 0, 0]
 
     for bounty_id in unique_bounties:
-        current_stage = time_frame.filter(bounty=bounty_id).aggregate(Max('bountyStage'))['bountyStage__max']
+        current_stage = time_frame.filter(bounty=bounty_id).order_by('-change_date').first().bountyStage
         stages[current_stage] = stages[current_stage] + 1
 
     return stages

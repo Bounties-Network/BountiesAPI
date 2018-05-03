@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import JSONField
 
 
 class Notification(models.Model):
@@ -10,3 +11,5 @@ class Notification(models.Model):
     dashboard = models.BooleanField(default=True, null=False)
     subscribed = models.BooleanField(default=True, null=False)
     viewed = models.BooleanField(default=False, null=False)
+    string_data = models.CharField(max_length=512, blank=True)
+    data = JSONField(null=True)

@@ -3,7 +3,6 @@ from functools import reduce
 
 import arrow
 from django.core.management import BaseCommand
-from django.db.models import Q, Max
 
 from analytics.models import BountiesTimeline
 from std_bounties.constants import EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, ACTIVE_STAGE, DRAFT_STAGE
@@ -138,19 +137,23 @@ def build_stages(time_frame):
 
 def generate_timeline(time_frame):
     date = time_frame[1]
-
+    bounties_state_frame_day = BountyState.objects.filter(change_date__range=time_frame, bountyStage=DRAFT_STAGE)
     bounties_state_frame = BountyState.objects.filter(change_date__lte=time_frame[1])
-    bounty_created_frame = Bounty.objects.filter(bounty_created__range=time_frame)
     fulfillment_accepted_frame = Fulfillment.objects.filter(accepted_date__lte=time_frame[1])
+    fulfillment_accepted_frame_day = Fulfillment.objects.filter(accepted_date__range=time_frame)
     fulfillment_submitted_frame = Fulfillment.objects.filter(fulfillment_created__lte=time_frame[1])
+    fulfillment_submitted_frame_day = Fulfillment.objects.filter(fulfillment_created__range=time_frame)
 
     stages = build_stages(bounties_state_frame)
 
+    bounties_issued = get_bounties_issued(bounties_state_frame_day)
+    bounties_issued_cum = get_bounties_issued(bounties_state_frame)
 
-    bounties_issued = get_bounties_issued(bounties_state_frame)
+    fulfillments_submitted = get_fulfillments_submitted(fulfillment_submitted_frame_day)
+    fulfillments_submitted_cum = get_fulfillments_submitted(fulfillment_submitted_frame)
 
-    fulfillments_submitted = get_fulfillments_submitted(fulfillment_submitted_frame)
-    fulfillments_accepted = get_fulfillments_accepted(fulfillment_accepted_frame)
+    fulfillments_accepted = get_fulfillments_accepted(fulfillment_accepted_frame_day)
+    fulfillments_accepted_cum = get_fulfillments_accepted(fulfillment_accepted_frame)
 
     fulfillment_acceptance_rate = get_fulfillment_acceptance_rate(fulfillment_submitted_frame, date)
 
@@ -162,17 +165,14 @@ def generate_timeline(time_frame):
     avg_fulfillment_amount = get_avg_fulfillment_amount(bounties_state_frame)
     total_fulfillment_amount = get_total_fulfillment_amount(bounties_state_frame)
 
-    bounty_draft = get_bounty_draft(bounties_state_frame)
-    bounty_active = get_bounty_active(bounties_state_frame)
-    bounty_completed = get_bounty_completed(bounties_state_frame)
-    bounty_expired = get_bounty_expired(bounties_state_frame)
-    bounty_dead = get_bounty_dead(bounties_state_frame)
-
     bounty_frame = BountiesTimeline(date=date,
                                     bounties_issued=bounties_issued,
+                                    bounties_issued_cum=bounties_issued_cum,
+                                    fulfillments_submitted_cum=fulfillments_submitted_cum,
                                     fulfillments_submitted=fulfillments_submitted,
+                                    fulfillments_accepted_cum=fulfillments_accepted_cum,
                                     fulfillments_accepted=fulfillments_accepted,
-                                    fulfillments_pending_acceptance=fulfillments_submitted - fulfillments_accepted,
+                                    fulfillments_pending_acceptance=fulfillments_submitted_cum - fulfillments_accepted_cum,
                                     fulfillment_acceptance_rate=fulfillment_acceptance_rate,
                                     bounty_fulfilled_rate=bounty_fulfilled_rate,
                                     avg_fulfiller_acceptance_rate=avg_fulfiller_acceptance_rate,

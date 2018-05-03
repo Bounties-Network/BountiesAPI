@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.contrib.postgres.fields import JSONField
 
 from django.db import models
+from authentication.models import User
 from std_bounties.constants import STAGE_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
@@ -114,6 +115,12 @@ class Bounty(models.Model):
         decimals = self.tokenDecimals
         self.calculated_balance = calculate_token_value(balance, decimals)
         self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
+        user = User.objects.get_or_create(
+            name = self.issuer_name,
+            email = self.issuer_email,
+            public_address = self.issuer_address
+        )
+        self.user = user
         super(Bounty, self).save(*args, **kwargs)
 
 
@@ -163,6 +170,15 @@ class Fulfillment(models.Model):
     schemaName = models.CharField(max_length=128, blank=True)
     data_fulfiller = JSONField(null=True)
     data_json = JSONField(null=True)
+
+    def save(self, *args, **kwargs):
+        user = User.objects.get_or_create(
+            name = self.issuer_name,
+            email = self.issuer_email,
+            public_address = self.issuer_address
+        )
+        self.user = user
+        super(Fulfillment, self).save(*args, **kwargs)
 
 
 class RankedCategory(models.Model):

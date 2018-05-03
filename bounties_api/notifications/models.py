@@ -10,6 +10,10 @@ class Notification(models.Model):
     email = models.BooleanField(default=False, null=False)
     dashboard = models.BooleanField(default=True, null=False)
     subscribed = models.BooleanField(default=True, null=False)
+
+
+class NotificationDashboard(models.Model):
+    notification = models.ForeignKey('Notification')
     viewed = models.BooleanField(default=False, null=False)
     string_data = models.CharField(max_length=512, blank=True)
     data = JSONField(null=True)

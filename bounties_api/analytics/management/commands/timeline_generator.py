@@ -119,7 +119,7 @@ def build_stages(time_frame):
         COMPLETED_STAGE = 3
         EXPIRED_STAGE = 4
 
-    returns [total_drafts, total_active, total_dead, total_completed, total_expired]
+    returns [total_drafts, total_active, total_dead, total_completed, total_expired], {bounty: [STAGES...]}
 
     **Each total correspond to the last stages of the bounties in the given time frame**
     """
@@ -127,12 +127,26 @@ def build_stages(time_frame):
     unique_bounties = [b['bounty'] for b in time_frame.values('bounty').distinct()]
 
     stages = [0, 0, 0, 0, 0]
-
+    bounty_stages = {}
     for bounty_id in unique_bounties:
-        current_stage = time_frame.filter(bounty=bounty_id).order_by('-change_date').first().bountyStage
+        bounty_states = time_frame.filter(bounty=bounty_id).order_by('-change_date')
+        bounty_stages[bounty_id] = map(lambda b: b.bountyStage, bounty_states)
+        current_stage = bounty_states.first().bountyStage
         stages[current_stage] = stages[current_stage] + 1
 
-    return stages
+    return stages, bounty_stages
+
+
+def get_noise_bounties(bounties):
+    noise_bounty_dead = sorted([DRAFT_STAGE, DEAD_STAGE])
+    noise_bounty_draft = [DRAFT_STAGE]
+    noise = []
+    for (bountie, stages) in bounties.items():
+        sorted_stages = sorted(stages)
+        if sorted_stages == noise_bounty_dead or sorted_stages == noise_bounty_draft:
+            noise = [bountie] + noise
+
+    return noise
 
 
 def generate_timeline(time_frame):
@@ -144,7 +158,9 @@ def generate_timeline(time_frame):
     fulfillment_submitted_frame = Fulfillment.objects.filter(fulfillment_created__lte=time_frame[1])
     fulfillment_submitted_frame_day = Fulfillment.objects.filter(fulfillment_created__range=time_frame)
 
-    stages = build_stages(bounties_state_frame)
+    stages, bounties = build_stages(bounties_state_frame)
+
+    noise_bounties = get_noise_bounties(bounties)
 
     bounties_issued = get_bounties_issued(bounties_state_frame_day)
     bounties_issued_cum = get_bounties_issued(bounties_state_frame)
@@ -155,10 +171,19 @@ def generate_timeline(time_frame):
     fulfillments_accepted = get_fulfillments_accepted(fulfillment_accepted_frame_day)
     fulfillments_accepted_cum = get_fulfillments_accepted(fulfillment_accepted_frame)
 
+    # Also - a bounty can be active and still have an accepted fulfillment.
+    # For example, a bounty may have a high balance to output multiple fulfillments.
+    # So there is a slight error here.
+    # Also, we probably want to not include bounties from the count that never were in an active state.
+    # ie. a bounty that was in draft forever, or was killed after being in draft.
+
     fulfillment_acceptance_rate = get_fulfillment_acceptance_rate(fulfillment_submitted_frame, date)
 
     bounty_fulfilled_rate = get_bounty_fulfilled_rate(fulfillment_submitted_frame,
-                                                      bounties_state_frame.distinct('bounty'))
+                                                      bounties_state_frame
+                                                      .distinct('bounty')
+                                                      .exclude(bounty__in=noise_bounties)
+                                                      )
 
     avg_fulfiller_acceptance_rate = get_avg_fulfiller_acceptance_rate(fulfillment_submitted_frame, date)
 

@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from notifications.models import DashboardNotification
+from notifications.serializers import DashboardNotificationSerializer
+from notifications.filters import DashboardNotificationFilter
 
-# Create your views here.
+
+class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = DashboardNotificationSerializer
+    queryset = DashboardNotification.objects.all().select_related('notification')
+    filter_class = DashboardNotificationFilter
+    filter_backends = (DjangoFilterBackend,)

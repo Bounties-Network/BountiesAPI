@@ -10,6 +10,11 @@ from std_bounties.constants import EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, A
 from std_bounties.models import BountyState, Fulfillment
 
 
+ALL_SCHEMA = 'all'
+DEFAULT_SCHEMA = 'standardSchema'
+DEFAULT_SCHEMA_QUERY = Q(bounty__schemaName=DEFAULT_SCHEMA) | Q(bounty__schemaName=None)
+
+
 def diff_time(since, until):
     return until - since
 
@@ -158,10 +163,9 @@ def generate_timeline(time_frame, schema):
     fulfillment_schema = Fulfillment.objects
 
     if schema == 'standardSchema':
-        default_to_standard = Q(bounty__schemaName=schema) | Q(bounty__schemaName=None)
-        bounty_state_schema = bounty_state_schema.filter(default_to_standard)
-        fulfillment_schema = fulfillment_schema.filter(default_to_standard)
-    elif schema and schema != 'all':
+        bounty_state_schema = bounty_state_schema.filter(DEFAULT_SCHEMA_QUERY)
+        fulfillment_schema = fulfillment_schema.filter(DEFAULT_SCHEMA_QUERY)
+    elif schema and schema != ALL_SCHEMA:
         bounty_state_schema = bounty_state_schema.filter(bounty__schemaName=schema)
         fulfillment_schema = fulfillment_schema.filter(bounty__schemaName=schema)
 
@@ -229,30 +233,31 @@ def generate_timeline(time_frame, schema):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        needs_genesis = not BountiesTimeline.objects.all().count()
-        schemas_query = BountyState.objects.distinct('bounty__schemaName')
-        schemas = [schema.bounty.schemaName for schema in schemas_query if schema.bounty.schemaName] + ['all']
 
-        if needs_genesis:
+        schemas_query = BountyState.objects.distinct('bounty__schemaName')
+        schemas = [schema.bounty.schemaName for schema in schemas_query if schema.bounty.schemaName] + [ALL_SCHEMA]
+
+        for schema in schemas:
+            needs_genesis = not BountiesTimeline.objects.filter(schema=schema).count()
+
             first_date = BountyState.objects.first()
             last_date = BountyState.objects.last()
 
-            bounties_by_day = range_days(first_date.change_date, last_date.change_date + timedelta(days=1))
+            if needs_genesis:
+                bounties_by_day = range_days(first_date.change_date, last_date.change_date + timedelta(days=1))
 
-            for schema in schemas:
                 for day in bounties_by_day:
                     bounty_day = generate_timeline(day_bounds(day), schema=schema)
 
                     bounty_day.save()
-        else:
-            last_update = BountiesTimeline.objects.order_by('date').last()
-            since = arrow.get(last_update.date).to('utc')
-            days = range_days(since, datetime.utcnow())
+            else:
+                last_update = BountiesTimeline.objects.filter(schema=schema).order_by('date').last()
+                since = arrow.get(last_update.date).to('utc')
+                days = range_days(since, datetime.utcnow())
 
-            # Instead of calculate the last 5 min, we update all day until now
-            # this approach provides more flexibility and simplicity in calculating more stats in the future
-            # and provides a better way to expose by day or by hour in case of been needed
-            for schema in schemas:
+                # Instead of calculate the last 5 min, we update all day until now
+                # this approach provides more flexibility and simplicity in calculating more stats in the future
+                # and provides a better way to expose by day or by hour in case of been needed
                 for day in days:
                     bounty_day = generate_timeline(day_bounds(day), schema=schema)
                     bounty_points = BountiesTimeline.objects.filter(date=day.date(), schema=schema)

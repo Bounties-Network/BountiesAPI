@@ -30,7 +30,7 @@ class TimelineBounties(APIView):
                 queryset['since'] = since_date
 
                 bounties_timeline = BountiesTimelineFilter(queryset,
-                                                           BountiesTimeline.objects.all(),
+                                                           BountiesTimeline.objects.all().order_by('date'),
                                                            request=request)
 
 

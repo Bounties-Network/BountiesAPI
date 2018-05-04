@@ -144,10 +144,10 @@ def get_noise_bounties(bounties):
     noise_bounty_dead = sorted([DRAFT_STAGE, DEAD_STAGE])
     noise_bounty_draft = [DRAFT_STAGE]
     noise = []
-    for (bountie, stages) in bounties.items():
+    for (bounty, stages) in bounties.items():
         sorted_stages = sorted(stages)
         if sorted_stages == noise_bounty_dead or sorted_stages == noise_bounty_draft:
-            noise = [bountie] + noise
+            noise = [bounty] + noise
 
     return noise
 
@@ -232,7 +232,6 @@ class Command(BaseCommand):
         needs_genesis = not BountiesTimeline.objects.all().count()
         schemas_query = BountyState.objects.distinct('bounty__schemaName')
         schemas = [schema.bounty.schemaName for schema in schemas_query if schema.bounty.schemaName] + ['all']
-        print(schemas)
 
         if needs_genesis:
             first_date = BountyState.objects.first()

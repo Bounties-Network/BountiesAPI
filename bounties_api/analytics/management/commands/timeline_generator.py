@@ -3,6 +3,7 @@ from functools import reduce
 
 import arrow
 from django.core.management import BaseCommand
+from django.db.models import Q
 
 from analytics.models import BountiesTimeline
 from std_bounties.constants import EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, ACTIVE_STAGE, DRAFT_STAGE
@@ -156,7 +157,11 @@ def generate_timeline(time_frame, schema):
     bounty_state_schema = BountyState.objects
     fulfillment_schema = Fulfillment.objects
 
-    if schema and schema != 'all':
+    if schema == 'standardSchema':
+        default_to_standard = Q(bounty__schemaName=schema) | Q(bounty__schemaName=None)
+        bounty_state_schema = bounty_state_schema.filter(default_to_standard)
+        fulfillment_schema = fulfillment_schema.filter(default_to_standard)
+    elif schema and schema != 'all':
         bounty_state_schema = bounty_state_schema.filter(bounty__schemaName=schema)
         fulfillment_schema = fulfillment_schema.filter(bounty__schemaName=schema)
 
@@ -217,7 +222,7 @@ def generate_timeline(time_frame, schema):
                                     bounty_completed=stages[COMPLETED_STAGE],
                                     bounty_expired=stages[EXPIRED_STAGE],
                                     bounty_dead=stages[DEAD_STAGE],
-                                    schema=str(schema))
+                                    schema=schema)
 
     return bounty_frame
 
@@ -226,7 +231,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         needs_genesis = not BountiesTimeline.objects.all().count()
         schemas_query = BountyState.objects.distinct('bounty__schemaName')
-        schemas = [schema.bounty.schemaName for schema in schemas_query] + ['all']
+        schemas = [schema.bounty.schemaName for schema in schemas_query if schema.bounty.schemaName] + ['all']
+        print(schemas)
 
         if needs_genesis:
             first_date = BountyState.objects.first()

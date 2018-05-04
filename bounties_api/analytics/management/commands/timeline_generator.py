@@ -6,7 +6,7 @@ from django.core.management import BaseCommand
 
 from analytics.models import BountiesTimeline
 from std_bounties.constants import EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, ACTIVE_STAGE, DRAFT_STAGE
-from std_bounties.models import BountyState, Fulfillment, Bounty
+from std_bounties.models import BountyState, Fulfillment
 
 
 def diff_time(since, until):
@@ -50,11 +50,13 @@ def get_fulfillments_accepted(time_frame):
 
 
 def get_fulfillment_acceptance_rate(time_frame, accepted_date=datetime.now()):
-    return time_frame.filter(accepted_date__lte=accepted_date).count() / time_frame.count()
+    counter = time_frame.count()
+    return time_frame.filter(accepted_date__lte=accepted_date).count() / counter if counter else 0
 
 
 def get_bounty_fulfilled_rate(time_frame, bounties):
-    return time_frame.distinct('bounty').count() / bounties.count()
+    counter = bounties.count()
+    return time_frame.distinct('bounty').count() / bounties.count() if counter else 0
 
 
 def get_avg_fulfiller_acceptance_rate(time_frame, accepted_date=datetime.now()):
@@ -149,14 +151,21 @@ def get_noise_bounties(bounties):
     return noise
 
 
-def generate_timeline(time_frame):
+def generate_timeline(time_frame, schema):
     date = time_frame[1]
-    bounties_state_frame_day = BountyState.objects.filter(change_date__range=time_frame, bountyStage=DRAFT_STAGE)
-    bounties_state_frame = BountyState.objects.filter(change_date__lte=time_frame[1])
-    fulfillment_accepted_frame = Fulfillment.objects.filter(accepted_date__lte=time_frame[1])
-    fulfillment_accepted_frame_day = Fulfillment.objects.filter(accepted_date__range=time_frame)
-    fulfillment_submitted_frame = Fulfillment.objects.filter(fulfillment_created__lte=time_frame[1])
-    fulfillment_submitted_frame_day = Fulfillment.objects.filter(fulfillment_created__range=time_frame)
+    bounty_state_schema = BountyState.objects
+    fulfillment_schema = Fulfillment.objects
+
+    if schema and schema != 'all':
+        bounty_state_schema = bounty_state_schema.filter(bounty__schemaName=schema)
+        fulfillment_schema = fulfillment_schema.filter(bounty__schemaName=schema)
+
+    bounties_state_frame_day = bounty_state_schema.filter(change_date__range=time_frame, bountyStage=DRAFT_STAGE)
+    bounties_state_frame = bounty_state_schema.filter(change_date__lte=time_frame[1])
+    fulfillment_accepted_frame = fulfillment_schema.filter(accepted_date__lte=time_frame[1])
+    fulfillment_accepted_frame_day = fulfillment_schema.filter(accepted_date__range=time_frame)
+    fulfillment_submitted_frame = fulfillment_schema.filter(fulfillment_created__lte=time_frame[1])
+    fulfillment_submitted_frame_day = fulfillment_schema.filter(fulfillment_created__range=time_frame)
 
     stages, bounties = build_stages(bounties_state_frame)
 
@@ -207,7 +216,8 @@ def generate_timeline(time_frame):
                                     bounty_active=stages[ACTIVE_STAGE],
                                     bounty_completed=stages[COMPLETED_STAGE],
                                     bounty_expired=stages[EXPIRED_STAGE],
-                                    bounty_dead=stages[DEAD_STAGE])
+                                    bounty_dead=stages[DEAD_STAGE],
+                                    schema=str(schema))
 
     return bounty_frame
 
@@ -215,6 +225,8 @@ def generate_timeline(time_frame):
 class Command(BaseCommand):
     def handle(self, *args, **options):
         needs_genesis = not BountiesTimeline.objects.all().count()
+        schemas_query = BountyState.objects.distinct('bounty__schemaName')
+        schemas = [schema.bounty.schemaName for schema in schemas_query] + ['all']
 
         if needs_genesis:
             first_date = BountyState.objects.first()
@@ -222,10 +234,11 @@ class Command(BaseCommand):
 
             bounties_by_day = range_days(first_date.change_date, last_date.change_date + timedelta(days=1))
 
-            for day in bounties_by_day:
-                bounty_day = generate_timeline(day_bounds(day))
+            for schema in schemas:
+                for day in bounties_by_day:
+                    bounty_day = generate_timeline(day_bounds(day), schema=schema)
 
-                bounty_day.save()
+                    bounty_day.save()
         else:
             last_update = BountiesTimeline.objects.order_by('date').last()
             since = arrow.get(last_update.date).to('utc')
@@ -234,12 +247,13 @@ class Command(BaseCommand):
             # Instead of calculate the last 5 min, we update all day until now
             # this approach provides more flexibility and simplicity in calculating more stats in the future
             # and provides a better way to expose by day or by hour in case of been needed
-            for day in days:
-                bounty_day = generate_timeline(day_bounds(day))
-                bounty_points = BountiesTimeline.objects.filter(date=day.date())
+            for schema in schemas:
+                for day in days:
+                    bounty_day = generate_timeline(day_bounds(day), schema=schema)
+                    bounty_points = BountiesTimeline.objects.filter(date=day.date(), schema=schema)
 
-                if bounty_points.exists():
-                    bounty_point = bounty_points.first()
-                    bounty_day.id = bounty_point.id
+                    if bounty_points.exists():
+                        bounty_point = bounty_points.first()
+                        bounty_day.id = bounty_point.id
 
-                bounty_day.save()
+                    bounty_day.save()

@@ -16,8 +16,8 @@ paths:
       operationId: bounty_list
       description: Get bounties list
       parameters:
-        - name: ordering
-          in: query
+        - in: query
+          name: ordering
           description: Which field to use when ordering the results.
           required: false
           type: string
@@ -329,6 +329,81 @@ paths:
         in: path
         required: true
         type: string
+  /analytics/:
+    get:
+      operationId: analytics
+      description: 'Get the activity timeline of bounties'
+      parameters: []
+      responses:
+        '200':
+          description: 'Get the timeline for bounties network activity'
+          schema:
+            $ref: '#/definitions/TimelineBounties'
+    parameters:
+      - in: query
+        name: since
+        type: string
+        description: "Date format: YYYY-MM-DD"
+        required: true
+      - in: query
+        name: until
+        type: string
+        description: "Date format: YYYY-MM-DD"
+        required: true
+      - in: query
+        name: bounties_issued_cum
+        type: integer
+      - in: query
+        name: bounties_issued
+        type: integer
+      - in: query
+        name: fulfillments_submitted_cum
+        type: integer
+      - in: query
+        name: fulfillments_submitted
+        type: integer
+      - in: query
+        name: fulfillments_accepted_cum
+        type: integer
+      - in: query
+        name: fulfillments_accepted
+        type: integer
+      - in: query
+        name: fulfillments_pending_acceptance
+        type: integer
+      - in: query
+        name: fulfillment_acceptance_rate
+        type: number
+      - in: query
+        name: bounty_fulfilled_rate
+        type: number
+      - in: query
+        name: avg_fulfiller_acceptance_rate
+        type: number
+      - in: query
+        name: avg_fulfillment_amount
+        type: number
+      - in: query
+        name: total_fulfillment_amount
+        type: integer
+      - in: query
+        name: bounty_draft
+        type: integer
+      - in: query
+        name: bounty_active
+        type: integer
+      - in: query
+        name: bounty_completed
+        type: integer
+      - in: query
+        name: bounty_expired
+        type: integer
+      - in: query
+        name: bounty_dead
+        type: integer
+      - in: query
+        name: schema
+        type: string
   /user/{address}/:
     get:
       operationId: user_read
@@ -346,7 +421,7 @@ paths:
         in: path
         required: true
         type: string
-  /token/:        
+  /token/:
     get:
       operationId: token_list
       description: ''
@@ -371,7 +446,7 @@ paths:
                   type: integer
       tags:
         - token
-    parameters: []        
+    parameters: []
 definitions:
   UserProfile:
     type: object
@@ -850,3 +925,94 @@ definitions:
       bounty:
         title: Bounty
         type: integer
+  TimelineBounties:
+    type: object
+    properties:
+      date:
+        title: date
+        type: string
+        format: date
+      bounties_issued_cum:
+        title: bounties_issued_cum
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bounties_issued:
+        title: bounties_issued
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      fulfillments_submitted_cum:
+        title: fulfillments_submitted_cum
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      fulfillments_submitted:
+        title: fulfillments_submitted
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      fulfillments_accepted_cum:
+        title: fulfillments_accepted_cum
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      fulfillments_accepted:
+        title: fulfillments_accepted
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      fulfillments_pending_acceptance:
+        title: fulfillments_pending_acceptance
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      fulfillment_acceptance_rate:
+        title: fulfillment_acceptance_rate
+        type: number
+        maximum: 1
+        minimum: 0
+      bounty_fulfilled_rate:
+        title: bounty_fulfilled_rate
+        type: number
+        maximum: 1
+        minimum: 0
+      avg_fulfiller_acceptance_rate:
+        title: avg_fulfiller_acceptance_rate
+        type: number
+        maximum: 1
+        minimum: 0
+      avg_fulfillment_amount:
+        title: avg_fulfillment_amount
+        type: number
+      total_fulfillment_amount:
+        title: total_fulfillment_amount
+        type: number
+      bounty_draft:
+        title: bounty_draft
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bounty_active:
+        title: bounty_active
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bounty_completed:
+        title: bounty_completed
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bounty_expired:
+        title: bounty_expired
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bounty_dead:
+        title: bounty_dead
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      schema:
+        title: schema
+        type: string

@@ -17,10 +17,7 @@ sc = SlackClient(settings.SLACK_TOKEN)
 
 # @with_clients
 def bounty_issued(bounty_id, **kwargs):
-    msg = "{title}, id: {bounty_id}\n${usd_price}, {total_value} {tokenSymbol} @ ${token_price}\n" \
-          "Deadline: {deadline}\n{link} :tada:"
     bounty = Bounty.objects.filter(bounty_id=bounty_id)
-    add_link = partial(merge, source2={'link': bounty_url_for(bounty_id)})
 
     if not bounty.exists():
         bounty_client.issue_bounty(bounty_id, **kwargs)

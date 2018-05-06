@@ -5,5 +5,5 @@ class NotificationFilter(filters.FilterSet):
     class Meta:
         model = 
         fields = {
-            'notification__user': ['exact']
+            'user_id': ['notification__user']
         }

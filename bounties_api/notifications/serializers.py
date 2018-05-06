@@ -9,7 +9,6 @@ class NotificationSerializer(serializers.Notification):
 
 
 class DasbhoardNotificationSerializer(serializers.ModelSerializer):
-    notification = NotificationSerializer(read_only=True, source='notification')
 
     class Meta:
         model = DashboardNotification

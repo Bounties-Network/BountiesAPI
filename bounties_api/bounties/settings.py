@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'std_bounties',
     'analytics',
     'authentication',
+    'notifications',
     'django_nose',
 ]
 

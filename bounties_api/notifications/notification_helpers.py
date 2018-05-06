@@ -1,15 +1,15 @@
-from notifications.models import Notification, NotificationDashboard
+from notifications.models import Notification, DashboardNotification
 
 
-def createDashboardNotification(notification_id, user, notification_created, string_data, email=True):
+def createDashboardNotification(notification_name, user, notification_created, string_data, email=True):
     notification = Notification.objects.create(
-        notification_id=notification_id,
+        notification_name=notification_name,
         user=user,
         notification_created=notification_created,
         email=email,
         dashboard=True
     )
-    NotificationDashboard.objects.create(
+    DashboardNotification.objects.create(
         notification=notification,
         string_data=string_data
     )

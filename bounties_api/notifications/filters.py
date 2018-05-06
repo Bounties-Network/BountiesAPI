@@ -1,9 +1,10 @@
 import rest_framework_filters as filters
+from notifications.models import DashboardNotification
 
 
-class NotificationFilter(filters.FilterSet):
+class DashboardNotificationFilter(filters.FilterSet):
+
     class Meta:
-        model = 
+        model = DashboardNotification
         fields = {
-            'user_id': ['notification__user']
         }

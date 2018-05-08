@@ -14,4 +14,7 @@
  django-nose==1.4.5
  coverage==4.5.1
  codecov==2.0.15
- 
+ Faker==0.8.13
+ arrow==0.12.1
+ djangorestframework-queryfields==1.0.0
+

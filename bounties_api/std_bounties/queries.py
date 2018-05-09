@@ -32,7 +32,7 @@ JOIN
 		AND fulfillments.created = max_date_fulfillment.max_date
 ) fulfillment_profiles
 ON fulfillment.fulfiller = fulfillment_profiles.fulfiller
-WHERE fulfillment.accepted = true
+WHERE fulfillment.accepted = true {}
 GROUP BY fulfillment.fulfiller, fulfillment_profiles.fulfiller_name, fulfillment_profiles.fulfiller_email, fulfillment_profiles."fulfiller_githubUsername"
 ORDER BY total_usd desc, total desc
 """

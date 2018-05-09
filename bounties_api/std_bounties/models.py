@@ -167,7 +167,7 @@ class RankedCategory(models.Model):
     name = models.CharField(max_length=128)
     normalized_name = models.CharField(max_length=128)
     total_count = models.IntegerField()
-    schema = models.CharField(max_length=128, blank=False, default='main')
+    platform = models.CharField(max_length=128, blank=False, default='main')
 
     class Meta:
         managed = False

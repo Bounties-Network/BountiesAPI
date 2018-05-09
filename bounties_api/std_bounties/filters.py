@@ -1,5 +1,5 @@
 import rest_framework_filters as filters
-from std_bounties.models import Bounty, Category, Fulfillment
+from std_bounties.models import Bounty, Category, Fulfillment, RankedCategory
 
 
 class CategoriesFilter(filters.FilterSet):
@@ -10,12 +10,21 @@ class CategoriesFilter(filters.FilterSet):
         }
 
 
+class RankedCategoryFilter(filters.FilterSet):
+    class Meta:
+        model = RankedCategory
+        fields = {
+            'platform': ['in', 'exact'],
+        }
+
+
 class FulfillmentsFilter(filters.FilterSet):
     class Meta:
         model = Fulfillment
         fields = {
             'fulfiller': ['exact'],
             'bounty': ['exact'],
+            'platform': ['exact', 'in'],
         }
 
 
@@ -27,6 +36,7 @@ class BountiesFilter(filters.FilterSet):
     class Meta:
         model = Bounty
         fields = {
+            'platform': ['in', 'exact'],
             'issuer': ['exact'],
             'fulfillmentAmount': ['exact', 'lt', 'gt', 'lte'],
             'bountyStage': ['exact'],

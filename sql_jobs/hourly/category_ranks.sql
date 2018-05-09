@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS category_ranks (
 	normalized_name varchar(128),
 	name varchar(128),
 	total_count numeric,
-	schema varchar(128)
+	platform varchar(128)
 );
 
 CREATE TEMP TABLE bounty_category
@@ -13,9 +13,9 @@ AS (
 	JOIN std_bounties_bounty_categories bnty_category
 		ON bounty.bounty_id = bnty_category.bounty_id
 	WHERE
-		bounty."schemaName" = 'standardSchema' OR
-		bounty."schemaName" = 'gitcoinBounty' OR
-		bounty."schemaName" is NULL
+		bounty.platform = 'bounties-network' OR
+		bounty.platform = 'gitcoin' OR
+		bounty.platform is NULL
 );
 
 
@@ -31,16 +31,16 @@ AS (
 CREATE TABLE category_ranks_tmp
 AS SELECT * FROM category_ranks;
 
-DELETE FROM category_ranks_tmp WHERE schema='main';
+DELETE FROM category_ranks_tmp WHERE platform='main';
 
 INSERT INTO category_ranks_tmp
-AS (
+(
 	SELECT
 	 	ROW_NUMBER() over (ORDER BY name) as id,
 		normalized_name,
 		name,
 		total_count,
-		schema='main'
+		'main' as platform
 	FROM (
 		SELECT
 			duplicated_stats.normalized_name,

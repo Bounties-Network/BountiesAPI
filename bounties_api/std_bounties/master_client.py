@@ -2,6 +2,7 @@ from functools import partial, update_wrapper
 from decimal import Decimal
 
 from bounties import settings
+from bounties.ses_client import send_email
 from std_bounties.bounty_client import BountyClient
 from std_bounties.client_helpers import bounty_url_for, apply_and_notify, formatted_fulfillment_amount, token_price, format_deadline, usd_price, token_lock_price
 from std_bounties.models import Bounty
@@ -74,6 +75,8 @@ def bounty_fulfilled(bounty_id, **kwargs):
                      slack_client=sc,
                      before_formatter=[add_link]
                      )
+    send_email(bounty.issuer_email, 'Bounty Contribution Received',
+        'Hey there! You received a contribution for your bounty: {}. {}'.format(bounty.title, bounty_url_for(bounty_id)))
 
 
 def fullfillment_updated(bounty_id, **kwargs):

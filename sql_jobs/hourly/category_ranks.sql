@@ -1,10 +1,46 @@
+CREATE TABLE IF NOT EXISTS category_ranks (
+ 	id bigint,
+	normalized_name varchar(128),
+	name varchar(128),
+	total_count numeric,
+	schema varchar(128)
+);
+
+CREATE TEMP TABLE bounty_category
+AS (
+	SELECT bnty_category.id, bnty_category.bounty_id, bnty_category.category_id
+	FROM std_bounties_bounty bounty
+	JOIN std_bounties_bounty_categories bnty_category
+		ON bounty.bounty_id = bnty_category.bounty_id
+	WHERE
+		bounty."schemaName" = 'standardSchema' OR
+		bounty."schemaName" = 'gitcoinBounty' OR
+		bounty."schemaName" is NULL
+);
+
+
+CREATE TEMP TABLE category 
+AS (
+	SELECT DISTINCT category.id, category.name, category.normalized_name
+	FROM bounty_category
+	JOIN std_bounties_category category
+		ON bounty_category.category_id = category.id
+);
+
+
 CREATE TABLE category_ranks_tmp
+AS SELECT * FROM category_ranks;
+
+DELETE FROM category_ranks_tmp WHERE schema='main';
+
+INSERT INTO category_ranks_tmp
 AS (
 	SELECT
 	 	ROW_NUMBER() over (ORDER BY name) as id,
 		normalized_name,
 		name,
-		total_count
+		total_count,
+		schema='main'
 	FROM (
 		SELECT
 			duplicated_stats.normalized_name,
@@ -25,14 +61,14 @@ AS (
 					SELECT
 						category_id,
 						count(*) as count
-					FROM std_bounties_bounty_categories
+					FROM bounty_category
 					GROUP BY category_id
 				) category_counts
-				JOIN std_bounties_category category
+				JOIN category
 				ON category.id = category_counts.category_id
 				GROUP BY normalized_name
 			) names_and_normalized_counts
-			JOIN std_bounties_category category
+			JOIN category
 			ON names_and_normalized_counts.normalized_name = category.normalized_name
 		) duplicated_stats
 		JOIN (
@@ -43,10 +79,10 @@ AS (
 				SELECT
 					category_id,
 					count(*) as count
-				FROM std_bounties_bounty_categories
+				FROM bounty_category
 				GROUP BY category_id
 			) category_counts
-			JOIN std_bounties_category category
+			JOIN category
 			ON category.id = category_counts.category_id
 			GROUP BY name
 		) defined_names

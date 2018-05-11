@@ -137,7 +137,7 @@ def build_stages(time_frame):
     stages = [0, 0, 0, 0, 0]
     bounty_stages = {}
     for bounty_id in unique_bounties:
-        bounty_states = time_frame.filter(bounty=bounty_id).order_by('-change_date')
+        bounty_states = time_frame.filter(bounty=bounty_id).order_by('-change_date', '-bountyStage')
         bounty_stages[bounty_id] = map(lambda b: b.bountyStage, bounty_states)
         current_stage = bounty_states.first().bountyStage
         stages[current_stage] = stages[current_stage] + 1

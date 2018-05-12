@@ -75,8 +75,14 @@ def bounty_fulfilled(bounty_id, **kwargs):
                      slack_client=sc,
                      before_formatter=[add_link]
                      )
+
+    if bounty.platform == 'colorado':
+        email_url = bounty_url_for(bounty_id, base_url_override='https://colorado.bounties.network')
+    else:
+        email_url = bounty_url_for(bounty_id)
+
     send_email(bounty.issuer_email, 'Bounty Contribution Received',
-        'Hey there! You received a contribution for your bounty: {}. {}'.format(bounty.title, bounty_url_for(bounty_id)))
+        'Hey there! You received a contribution for your bounty: {}. {}'.format(bounty.title, email_url))
 
 
 def fullfillment_updated(bounty_id, **kwargs):

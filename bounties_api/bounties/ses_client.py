@@ -10,12 +10,12 @@ logger = logging.getLogger('django')
 SENDER = 'Bounties Team <team@bounties.network>'
 AWS_REGION = 'us-east-1'
 CHARSET = "UTF-8"
-client = boto3.client('ses', region_name=AWS_REGION,
-    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-    aws_access_key_id=settings.AWS_ACCESS_KEY_ID)
+client = boto3.client('ses', region_name=AWS_REGION)
 
 def send_email(receiver, subject, text):
     if settings.LOCAL:
+        return
+    if settings.ENVIRONMENT not in ['rinkeby', 'production', 'consensys']:
         return
     try:
         response = client.send_email(

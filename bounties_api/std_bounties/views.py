@@ -49,8 +49,8 @@ class UserProfile(APIView):
     def get(self, request, address=''):
         platform_in = extractInParams(request, 'platform', 'platform__in')
         extra_filters = {}
-        if schema_name_in:
-            extra_filters['platform__in'] = schema_name_in
+        if platform_in:
+            extra_filters['platform__in'] = platform_in
         ordered_fulfillments = Fulfillment.objects.filter(
             fulfiller=address.lower(), **extra_filters).order_by('-created')
         if not ordered_fulfillments.exists():
@@ -71,8 +71,12 @@ class Leaderboard(APIView):
         sql_param = ''
         platform_in = extractInParams(request, 'platform', 'platform__in')
         if platform_in:
-            sql_param = 'AND '
+            sql_param = 'AND ( '
+            sql_param += sqlGenerateOrList('fulfillment.\"platform\"', len(platform_in), '=')
+            sql_param += ' OR '
             sql_param += sqlGenerateOrList('bounty.\"platform\"', len(platform_in), '=')
+            sql_param += ' )'
+        platform_in = platform_in + platform_in
 
         formatted_query = LEADERBOARD_QUERY.format(sql_param)
         cursor = connection.cursor()
@@ -88,7 +92,7 @@ class BountyStats(APIView):
         extra_filters_bounty = {}
         extra_filters_fulfillment = {}
         platform_in = extractInParams(request, 'platform', 'platform__in')
-        if schema_name_in:
+        if platform_in:
             extra_filters_bounty['platform__in'] = platform_in
             extra_filters_fulfillment['platform__in'] = platform_in
         user_bounties = Bounty.objects.filter(issuer=address.lower(), **extra_filters_bounty)

@@ -246,8 +246,8 @@ def format_deadline(fields):
     return merge(fields, {'deadline': deadline.strftime('%m/%d/%Y')})
 
 
-def bounty_url_for(bounty_id):
-    url = '{}/bounty/v1/{}/'.format(settings.DEPLOY_URL, bounty_id)
+def bounty_url_for(bounty_id, base_url_override=None):
+    url = '{}/bounty/v1/{}/'.format(base_url_override or settings.DEPLOY_URL, bounty_id)
     return url
 
 

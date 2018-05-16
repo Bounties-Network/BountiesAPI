@@ -6,9 +6,9 @@ from notifications.notification_helpers import createDashboardNotification
 from notifications.notification_templates import *
 from .base_clients import BaseClient
 
+
 class NotificationClient(BaseClient):
     def __init__(self):
-
         pass
 
     def fulfillment_submitted(self, bounty_id, fulfillment_id):
@@ -28,13 +28,11 @@ class NotificationClient(BaseClient):
         string_data = BOUNTY_ACTIVATED_STR.format(bounty_title=bounty.title)
         createDashboardNotification(BOUNTY_ACTIVATED, bounty.user, bounty_state.change_date, string_data)
 
-
     def fulfillment_accepted(self, bounty_id, fulfillment_id):
         bounty = Bounty.objects.get(id=bounty_id)
         fulfillment = Fulfillment.objects.get(bounty_id=bounty, fulfillment_id=fulfillment_id)
         string_data = FULFILLMENT_ACCEPTED_STR.format(bounty_title=bounty.title)
         createDashboardNotification(FULFILLMENT_ACCEPTED, bounty.user, fulfillment.accepted_date, string_data)
-
 
     def bounty_expired(self, bounty_id):
         bounty = Bounty.objects.get(id=bounty_id)

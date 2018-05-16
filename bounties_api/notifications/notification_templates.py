@@ -19,3 +19,34 @@ Your fulfillment has been accepted for bounty {bounty_title}
 BOUNTY_EXPIRED_STR = """
 Yikes! Your Bounty has Expired for bounty {bounty_title}
 """
+
+ISSUE_BOUNTY_STR = """
+
+"""
+
+UPDATE_FULFILLMENT_STR = """
+"""
+
+KILL_BOUNTY_STR = """
+
+"""
+
+ADD_CONTRIBUTION_STR = """
+
+"""
+
+EXTEND_DEADLINE_STR = """
+
+"""
+
+CHANGE_BOUNTY_STR = """
+
+"""
+
+TRANSFER_ISSUER_STR = """
+
+"""
+
+INCREASE_PAYOUT_STR = """
+
+"""

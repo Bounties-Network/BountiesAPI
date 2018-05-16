@@ -9,21 +9,20 @@ from .base_clients import BaseClient
 
 
 class Events(Enum):
-    FULFILLMENT_SUBMITTED='Bounty Issued'
-    BOUNTY_ACTIVATED='Bounty Activated'
-    FULFILLMENT_SUBMITTED='Bounty Fulfillment Submitted'
-    bounty_activated='Bounty Activated'
-    FULFILLMENT_ACCEPTED='Bounty Fulfillment Accepted'
-    BOUNTY_EXPIRED='Bounty Expired'
-    ISSUE_BOUNTY='Bounty Issued'
-    UPDATE_FULFILLMENT='Bounty Fulfillment Updated'
+    FULFILLMENT_SUBMITTED = 'Bounty Issued'
+    BOUNTY_ACTIVATED = 'Bounty Activated'
+    FULFILLMENT_SUBMITTED = 'Bounty Fulfillment Submitted'
+    BOUNTY_ACTIVATED = 'Bounty Activated'
+    FULFILLMENT_ACCEPTED = 'Bounty Fulfillment Accepted'
+    BOUNTY_EXPIRED = 'Bounty Expired'
+    ISSUE_BOUNTY = 'Bounty Issued'
+    UPDATE_FULFILLMENT = 'Bounty Fulfillment Updated'
     KILL_BOUNTY = 'Bounty Killed'
-    ADD_CONTRIBUTION='Contribution Added'
-    EXTEND_DEADLINE="Deadline Extended"
-    CHANGE_BOUNTY='Bounty Changed'
+    ADD_CONTRIBUTION = 'Contribution Added'
+    EXTEND_DEADLINE = 'Deadline Extended'
+    CHANGE_BOUNTY = 'Bounty Changed'
     TRANSFER_ISSUER = 'Issuer Transfered'
     INCREASE_PAYOUT = 'Payout Increased'
-
 
 
 class SlackClient(BaseClient):
@@ -58,33 +57,33 @@ class SlackClient(BaseClient):
         self.notify(event=Events.BOUNTY_EXPIRED.value, msg=string_data)
 
     def issue_bounty(self, bounty, **kwargs):
-        string_data = BOUNTY_EXPIRED_STR.format(bounty_title=bounty.title)
+        string_data = ISSUE_BOUNTY_STR.format(bounty_title=bounty.title)
         self.notify(event=Events.ISSUE_BOUNTY.value, msg=string_data)
 
     def update_fulfillment(self, bounty, **kwargs):
-        string_data = BOUNTY_EXPIRED_STR.format(bounty_title=bounty.title)
+        string_data = UPDATE_FULFILLMENT_STR.format(bounty_title=bounty.title)
         self.notify(Events.UPDATE_FULFILLMENT.value, msg=string_data)
 
     def kill_bounty(self, bounty, **kwargs):
-        string_data = BOUNTY_EXPIRED_STR.format(bounty_title=bounty.title)
+        string_data = KILL_BOUNTY_STR.format(bounty_title=bounty.title)
         self.notify(Events.KILL_BOUNTY, msg=string_data)
 
     def add_contribution(self, bounty, **kwargs):
-        string_data = BOUNTY_EXPIRED_STR.format(bounty_title=bounty.title)
+        string_data = ADD_CONTRIBUTION_STR.format(bounty_title=bounty.title)
         self.notify(Events.ADD_CONTRIBUTION.value, msg=string_data)
 
     def extend_deadline(self, bounty, **kwargs):
-        string_data = BOUNTY_EXPIRED_STR.format(bounty_title=bounty.title)
+        string_data = EXTEND_DEADLINE_STR.format(bounty_title=bounty.title)
         self.notify(Events.EXTEND_DEADLINE.value, msg=string_data)
 
     def change_bounty(self, bounty, **kwargs):
-        string_data = BOUNTY_EXPIRED_STR.format(bounty_title=bounty.title)
+        string_data = CHANGE_BOUNTY_STR.format(bounty_title=bounty.title)
         self.notify(Events.CHANGE_BOUNTY.value, msg=string_data)
 
     def transfer_issuer(self, bounty, **kwargs):
-        string_data = BOUNTY_EXPIRED_STR.format(bounty_title=bounty.title)
+        string_data = TRANSFER_ISSUER_STR.format(bounty_title=bounty.title)
         self.notify(Events.TRANSFER_ISSUER.value, msg=string_data)
 
     def increase_payout(self, bounty, **kwargs):
-        string_data = BOUNTY_EXPIRED_STR.format(bounty_title=bounty.title)
+        string_data = INCREASE_PAYOUT_STR.format(bounty_title=bounty.title)
         self.notify(Events.INCREASE_PAYOUT.value, msg=string_data)

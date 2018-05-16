@@ -22,23 +22,23 @@ def bounty_issued(bounty_id, **kwargs):
 
     if not bounty.exists():
         bounty_client.issue_bounty(bounty_id, **kwargs)
-        slack_client.issue_bounty(bounty_id, **kwargs)
+        slack_client.issue_bounty(bounty, **kwargs)
 
 
 # @with_clients
 def bounty_activated(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.activate_bounty(bounty, **kwargs)
-    notification_client.bounty_activated(bounty_id)
-    slack_client.bounty_activated(bounty_id)
+    notification_client.bounty_activated(bounty)
+    slack_client.bounty_activated(bounty)
 
 
 # @with_clients
 def bounty_fulfilled(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.fulfill_bounty(bounty, **kwargs)
-    notification_client.fulfillment_submitted(bounty_id, kwargs.get('fulfillment_id'))
-    notification_client.fulfillment_submitted(bounty_id, kwargs.get('fulfillment_id'))
+    notification_client.fulfillment_submitted(bounty, kwargs.get('fulfillment_id'))
+    notification_client.fulfillment_submitted(bounty, kwargs.get('fulfillment_id'))
 
 
 def fullfillment_updated(bounty_id, **kwargs):
@@ -50,8 +50,8 @@ def fullfillment_updated(bounty_id, **kwargs):
 def fulfillment_accepted(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.accept_fulfillment(bounty, **kwargs)
-    notification_client.fulfillment_accepted(bounty_id, kwargs.get('fulfillment_id'))
-    slack_client.fulfillment_accepted(bounty_id, kwargs.get('fulfillment_id'))
+    notification_client.fulfillment_accepted(bounty, kwargs.get('fulfillment_id'))
+    slack_client.fulfillment_accepted(bounty, kwargs.get('fulfillment_id'))
 
 
 def bounty_killed(bounty_id, **kwargs):

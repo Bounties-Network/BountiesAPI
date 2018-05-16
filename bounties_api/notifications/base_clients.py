@@ -3,19 +3,19 @@ class BaseClient:
         if client:
             self._client = client
 
-    def fulfillment_submitted(self, bounty_id, fulfillment_id):
+    def fulfillment_submitted(self, bounty, fulfillment_id):
         pass
 
-    def bounty_activated(self, bounty_id):
+    def bounty_activated(self, bounty):
         pass
 
-    def fulfillment_accepted(self, bounty_id, fulfillment_id):
+    def fulfillment_accepted(self, bounty, fulfillment_id):
         pass
 
-    def bounty_expired(self, bounty_id):
+    def bounty_expired(self, bounty):
         pass
 
-    def issue_bounty(self, bounty_id, **kwargs):
+    def issue_bounty(self, bounty, **kwargs):
         pass
 
     def update_fulfillment(self, bounty, **kwargs):

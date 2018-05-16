@@ -4,9 +4,11 @@ from notifications.models import Notification, DashboardNotification
 from notifications.constants import *
 from notifications.notification_helpers import createDashboardNotification
 from notifications.notification_templates import *
+from .base_clients import BaseClient
 
-class NotificationClient:
+class NotificationClient(BaseClient):
     def __init__(self):
+
         pass
 
     def fulfillment_submitted(self, bounty_id, fulfillment_id):

@@ -3,6 +3,8 @@ omit=*/migrations/*
 source =
   std_bounties
   analytics
+  authentication
+  notifications
   bounties
   utils
 [report]
@@ -12,6 +14,8 @@ omit =
 include = 
   std_bounties/*
   utils/*
+  authentication/*
+  notifications/*
   analytics/*
   bounties/*
   utils/*

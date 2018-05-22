@@ -32,7 +32,7 @@ CONTRIBUTION_ADDED_SLACK_STR = """{title}, id: {bounty_id}
 """
 
 DEADLINE_EXTENDED_SLACK_STR = """{title}, id: {bounty_id}
-previous: {previous_deadline}, new deadline: {deadline}
+new deadline: {deadline}
 {link}
 """
 

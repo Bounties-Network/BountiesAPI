@@ -81,8 +81,9 @@ def bounty_fulfilled(bounty_id, **kwargs):
     else:
         email_url = bounty_url_for(bounty_id)
 
-    send_email(bounty.issuer_email, 'Bounty Contribution Received',
-        'Hey there! You received a contribution for your bounty: {}. {}'.format(bounty.title, email_url))
+    if bounty.platform != 'gitcoin':
+        send_email(bounty.issuer_email, 'Bounty Contribution Received',
+            'Hey there! You received a contribution for your bounty: {}. {}'.format(bounty.title, email_url))
 
 
 def fullfillment_updated(bounty_id, **kwargs):

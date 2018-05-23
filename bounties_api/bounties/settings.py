@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'rest_framework_filters',
     'std_bounties',
     'analytics',
+    'authentication',
+    'notifications',
     'django_nose',
 ]
 
@@ -64,10 +66,10 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
+    'authentication.middleware.AuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'bounties.urls'
@@ -190,6 +192,7 @@ STATIC_URL = '/static/'
 if not DEBUG:
     STATIC_URL = 'https://s3.amazonaws.com/assets.bounties.network/' + ENVIRONMENT + '/'
 QUEUE_URL = os.environ.get('queue_url', 'https://sqs.us-east-1.amazonaws.com/802922962628/bounties_development.fifo')
+NOTIFICATIONS_URL = os.environ.get('notifications_url', 'https://sqs.us-east-1.amazonaws.com/802922962628/notifications_development.fifo')
 SLACK_TOKEN = os.environ.get('slack_token')
 REDIS_LOCATION = os.environ.get('redis_location', 'redis://127.0.0.1:6379')
 LOCAL = os.environ.get('local') == 'true'
@@ -204,5 +207,7 @@ networks = {
 }
 
 ETH_NETWORK_URL = networks[ETH_NETWORK]
+SESSION_COOKIE_HTTPONLY = True
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 NOTIFICATIONS_SLACK_CHANNEL = '#bounty_notifs' if ENVIRONMENT == 'production' else ENVIRONMENT + '_bounty_notifs'

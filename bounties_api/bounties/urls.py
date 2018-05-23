@@ -19,6 +19,8 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^auth/', include('authentication.urls', namespace='auth')),
+    url(r'^notification/', include('notifications.urls', namespace='notification')),
     url(r'^$', TemplateView.as_view(template_name="index.html"), name="docs"),
     url(r'^analytics/', include('analytics.urls', namespace='analytics')),
     url(r'^', include('std_bounties.urls', namespace='std_bounties')),

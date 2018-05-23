@@ -2,19 +2,16 @@ import json
 import requests
 from decimal import Decimal
 
-from urllib.parse import urljoin
-
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from std_bounties.contract import data
 from std_bounties.models import Token
-from utils.functional_tools import wrapped_partial, narrower, formatter, flatten, pipe, pluck, merge
+from utils.functional_tools import pluck
 
 from rest_framework.reverse import reverse
 from django.conf import settings
 import ipfsapi
 import logging
-
 
 
 logger = logging.getLogger('django')
@@ -174,16 +171,16 @@ def map_token_data(pays_tokens, token_contract, amount):
 
         try:
             HumanStandardToken = web3.eth.contract(
-                HumanStandardToken_abi,
-                token_contract,
+                abi=HumanStandardToken_abi,
+                address=web3.toChecksumAddress(token_contract),
                 ContractFactoryClass=ConciseContract
             )
             token_symbol = token_symbol = HumanStandardToken.symbol()
             token_decimals = HumanStandardToken.decimals()
         except OverflowError:
             DSToken = web3.eth.contract(
-                DSToken_abi,
-                token_contract,
+                abi=DSToken_abi,
+                address=web3.toChecksumAddress(token_contract),
                 ContractFactoryClass=ConciseContract
             )
             # Symbol in DSToken contract is bytes32 and unused chars are padded
@@ -202,69 +199,11 @@ def map_token_data(pays_tokens, token_contract, amount):
     }
 
 
-def notify_slack(sc, channel, event, msg):
-    sc.api_call(
-        'chat.postMessage',
-        channel=channel,
-        text='*{}*: {}'.format(
-            event,
-            msg),
-        mrkdwn=True)
-
-    return True
-
-
-def formatted_fulfillment_amount(fields):
-    fulfillmentAmount = fields.get('fulfillmentAmount')
-    decimals = fields.get('tokenDecimals')
-    return merge(fields, {'total_value': calculate_token_quantity(fulfillmentAmount, decimals)})
-
-
-def token_price(fields):
-    token_price = 'Unknown Price'
-    token = fields.get('token')
-    if token:
-        token_price = Decimal(token.price_usd).quantize(Decimal(10) ** -2)
-    return merge(fields, {'token_price': token_price})
-
-def token_lock_price(fields):
-    token_price = fields.get('token_lock_price')
-    if token_price:
-        token_price = Decimal(token_price).quantize(Decimal(10) ** -2)
-    else:
-        token_price = 'Unknown Price'
-    return merge(fields, {'token_lock_price': token_price})
-
-
-def usd_price(fields):
-    usd_price = fields.get('usd_price')
-    return merge(fields, {'usd_price': Decimal(usd_price).quantize(Decimal(10) ** -2)})
-
-
-def format_deadline(fields):
-    deadline = fields.get('deadline')
-    return merge(fields, {'deadline': deadline.strftime('%m/%d/%Y')})
-
-
-def bounty_url_for(bounty_id, base_url_override=None):
-    url = '{}/bounty/v1/{}/'.format(base_url_override or settings.DEPLOY_URL, bounty_id)
+def bounty_url_for(bounty_id, platform=None):
+    base_url = settings.DEPLOY_URL
+    if platform == 'colorado':
+        base_url = 'https://colorado.bounties.network'
+    if platform == 'consensys':
+        base_url = 'https://consensys.bounties.network'
+    url = '{}/bounty/v1/{}/'.format(base_url, bounty_id)
     return url
-
-
-def apply_and_notify(base_value, event, action, inputs, fields, msg, slack_client,
-                     before_narrower=[], before_formatter=[], before_notify=[], after_notify=[]):  # hooks
-    partial_action = wrapped_partial(action, **inputs)
-    partial_narrower = wrapped_partial(narrower,
-                                       fields=fields)
-    partial_formatter = wrapped_partial(formatter, msg)
-    partial_notify = wrapped_partial(notify_slack,
-                                     slack_client,
-                                     settings.NOTIFICATIONS_SLACK_CHANNEL,
-                                     event)
-
-    actions = flatten([partial_action,
-                       before_narrower, partial_narrower,
-                       before_formatter, partial_formatter,
-                       before_notify, partial_notify, after_notify])
-
-    return pipe(base_value, actions)

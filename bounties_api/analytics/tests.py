@@ -1,6 +1,6 @@
 import random
 from datetime import datetime, timedelta
-from django.test import TestCase
+import unittest
 
 # Create your tests here.
 from std_bounties.constants import EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, ACTIVE_STAGE, DRAFT_STAGE
@@ -9,7 +9,7 @@ from analytics.management.commands.timeline_generator import diff_time, diff_day
 from std_bounties.models import BountyState
 
 
-class DateUtilsTest(TestCase):
+class DateUtilsTest(unittest.TestCase):
     def test_diff_between_two_date(self):
         first_day = datetime(2018, 1, 1, 0, 0)
         last_day = datetime(2019, 1, 1, 0, 0)
@@ -20,7 +20,7 @@ class DateUtilsTest(TestCase):
         first_day = datetime(2018, 1, 1, 0, 0)
         last_day = datetime(2019, 1, 1, 0, 0)
 
-        self.assertEqual(diff_days(first_day, last_day), 365)
+        self.assertEqual(diff_days(first_day, last_day), -365)
 
     def test_days_bounds(self):
         first_day = datetime(2018, 1, 1, 12, 55)
@@ -29,8 +29,8 @@ class DateUtilsTest(TestCase):
         self.assertEqual(floor.minute, 0)
         self.assertEqual(floor.hour, 0)
         self.assertEqual(floor.second, 0)
-        self.assertEqual(ceil.minute, 23)
-        self.assertEqual(ceil.hour, 59)
+        self.assertEqual(ceil.minute, 59)
+        self.assertEqual(ceil.hour, 23)
         self.assertEqual(ceil.second, 59)
 
     def test_days_range_between_two_dates(self):
@@ -45,7 +45,7 @@ class DateUtilsTest(TestCase):
             self.assertEqual(day, index)
 
 
-class TestStages(TestCase):
+class TestStages(unittest.TestCase):
     def setUp(self):
         bounties = [
             *[BountyState(bountyStage=COMPLETED_STAGE) for _ in range(1, 20)],
@@ -55,7 +55,9 @@ class TestStages(TestCase):
             *[BountyState(bountyStage=DEAD_STAGE) for _ in range(1, 20)]
         ]
 
-        self.bounties = random.shuffle(bounties)
+        # in place shuffle
+        random.shuffle(bounties)
+        self.bounties = bounties
 
     def test_counter_of_bounties_on_completed_stage(self):
         self.assertEqual(get_bounty_completed(self.bounties), 19)

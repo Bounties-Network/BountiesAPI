@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.contrib.postgres.fields import JSONField
 
 from django.db import models
+from authentication.models import User
 from std_bounties.constants import STAGE_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
@@ -52,6 +53,7 @@ class BountyState(models.Model):
 
 class Bounty(models.Model):
     id = models.IntegerField(primary_key=True)
+    user = models.ForeignKey('authentication.User', null=True)
     bounty_id = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -113,6 +115,14 @@ class Bounty(models.Model):
         decimals = self.tokenDecimals
         self.calculated_balance = calculate_token_value(balance, decimals)
         self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
+        user = User.objects.get_or_create(
+            public_address = self.issuer_address,
+            defaults={
+                'name': self.issuer_name,
+                'email': self.issuer_email
+            }
+        )[0]
+        self.user = user
         super(Bounty, self).save(*args, **kwargs)
 
 
@@ -139,6 +149,7 @@ class Bounty(models.Model):
 
 class Fulfillment(models.Model):
     fulfillment_id = models.IntegerField()
+    user = models.ForeignKey('authentication.User', null=True)
     bounty = models.ForeignKey(Bounty, related_name='fulfillments')
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -161,6 +172,17 @@ class Fulfillment(models.Model):
     schemaName = models.CharField(max_length=128, blank=True)
     data_fulfiller = JSONField(null=True)
     data_json = JSONField(null=True)
+
+    def save(self, *args, **kwargs):
+        user = User.objects.get_or_create(
+            public_address = self.fulfiller_address,
+            defaults={
+                'name': self.fulfiller_name,
+                'email': self.fulfiller_email
+            }
+        )[0]
+        self.user = user
+        super(Fulfillment, self).save(*args, **kwargs)
 
 
 class RankedCategory(models.Model):

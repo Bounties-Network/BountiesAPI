@@ -79,7 +79,7 @@ class BountySerializer(CustomSerializer):
         }
 
 
-class LeaderboardSerializer(serializers.Serializer):
+class LeaderboardFulfillerSerializer(serializers.Serializer):
     address = serializers.CharField(max_length=256)
     name = serializers.CharField(max_length=256)
     email = serializers.CharField(max_length=256)
@@ -88,3 +88,14 @@ class LeaderboardSerializer(serializers.Serializer):
     total_usd = serializers.FloatField()
     bounties_fulfilled = serializers.IntegerField(read_only=True)
     fulfillments_accepted = serializers.IntegerField(read_only=True)
+
+
+class LeaderboardIssuerSerializer(serializers.Serializer):
+    address = serializers.CharField(max_length=256)
+    name = serializers.CharField(max_length=256)
+    email = serializers.CharField(max_length=256)
+    githubusername = serializers.CharField(max_length=256)
+    total = serializers.DecimalField(decimal_places=0, max_digits=128)
+    total_usd = serializers.FloatField()
+    bounties_issued = serializers.IntegerField(read_only=True)
+    fulfillments_paid = serializers.IntegerField(read_only=True)

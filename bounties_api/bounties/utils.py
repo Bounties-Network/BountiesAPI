@@ -30,8 +30,28 @@ def extractInParams(request, equals_param, in_param):
         includes = includes_raw.split(',')
         included_values = included_values + includes
     if len(included_values) == 0:
-        return None
+        return []
     return included_values
+
+
+def limitOffsetParams(request):
+    offset = request.GET.get('offset', 0)
+    try:
+        offset = int(offset)
+    except ValueError as verr:
+        offset = 0
+    except Exception as ex:
+        offset = 0
+
+    limit = request.GET.get('limit', 0)
+    try:
+        limit = int(offset)
+    except ValueError as verr:
+        limit = 0
+    except Exception as ex:
+        limit = 0
+
+    return offset, (offset + limit)
 
 
 def getDateTimeFromTimestamp(timestamp):

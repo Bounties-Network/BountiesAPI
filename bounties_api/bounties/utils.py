@@ -43,15 +43,16 @@ def limitOffsetParams(request):
     except Exception as ex:
         offset = 0
 
-    limit = request.GET.get('limit', 0)
+    limit = request.GET.get('limit', -1)
     try:
-        limit = int(offset)
+        limit = int(limit)
     except ValueError as verr:
-        limit = 0
+        limit = -1
     except Exception as ex:
-        limit = 0
+        limit = -1
 
-    return offset, (offset + limit)
+    end_index = -1 if limit == -1 else (offset + limit)
+    return offset, end_index
 
 
 def getDateTimeFromTimestamp(timestamp):

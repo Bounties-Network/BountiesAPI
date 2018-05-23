@@ -185,7 +185,7 @@ def map_token_data(pays_tokens, token_contract, amount):
             )
             # Symbol in DSToken contract is bytes32 and unused chars are padded
             # with '\x00'
-            token_symbol = DSToken.symbol().rstrip('\x00')
+            token_symbol = DSToken.symbol().decode().rstrip('\x00')
             token_decimals = DSToken.decimals()
 
     usd_price, token_model = get_token_pricing(

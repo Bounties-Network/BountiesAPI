@@ -171,16 +171,16 @@ def map_token_data(pays_tokens, token_contract, amount):
 
         try:
             HumanStandardToken = web3.eth.contract(
-                HumanStandardToken_abi,
-                token_contract,
+                abi=HumanStandardToken_abi,
+                address=web3.toChecksumAddress(token_contract),
                 ContractFactoryClass=ConciseContract
             )
             token_symbol = token_symbol = HumanStandardToken.symbol()
             token_decimals = HumanStandardToken.decimals()
         except OverflowError:
             DSToken = web3.eth.contract(
-                DSToken_abi,
-                token_contract,
+                abi=DSToken_abi,
+                address=web3.toChecksumAddress(token_contract),
                 ContractFactoryClass=ConciseContract
             )
             # Symbol in DSToken contract is bytes32 and unused chars are padded

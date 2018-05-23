@@ -71,6 +71,7 @@ class LeaderboardIssuer(APIView):
     def get(self, request):
         sql_param = ''
         platform_in = extractInParams(request, 'platform', 'platform__in')
+        startIndex, endIndex = limitOffsetParams(request)
         if platform_in:
             sql_param = 'AND ( '
             sql_param += sqlGenerateOrList('fulfillment.\"platform\"', len(platform_in), '=')
@@ -83,7 +84,8 @@ class LeaderboardIssuer(APIView):
         cursor = connection.cursor()
         cursor.execute(formatted_query, platform_in)
         query_result = dictfetchall(cursor)
-        serializer = LeaderboardIssuerSerializer(query_result, many=True)
+        narrowed_result = query_result[startIndex : endIndex]
+        serializer = LeaderboardIssuerSerializer(narrowed_result, many=True)
         return JsonResponse(serializer.data, safe=False)
 
 
@@ -104,7 +106,7 @@ class LeaderboardFulfiller(APIView):
         cursor = connection.cursor()
         cursor.execute(formatted_query, platform_in)
         query_result = dictfetchall(cursor)
-        narrowed_result = query_result[startIndex, endIndex]
+        narrowed_result = query_result[startIndex : endIndex]
         serializer = LeaderboardFulfillerSerializer(narrowed_result, many=True)
         return JsonResponse(serializer.data, safe=False)
 

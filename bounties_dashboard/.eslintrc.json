@@ -1,0 +1,17 @@
+{
+    "extends": [
+      "airbnb"
+    ],
+    "env": {
+      "browser": true,
+      "jasmine": true
+    },
+    "rules": {
+      "comma-dangle": ["error", "never"],
+      "react/jsx-filename-extension": [1, {"extensions": [".js"]}],
+      "react/prop-types": [
+        "enabled",
+        { "ignore": "ignore", "customValidators": "customValidator" }
+      ]
+    }
+  }

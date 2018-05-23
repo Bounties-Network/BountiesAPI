@@ -4,11 +4,11 @@ from django.db import connection
 from django.db.models import Count
 from django.http import JsonResponse, Http404
 from rest_framework.views import APIView
-from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList
+from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList, limitOffsetParams
 from std_bounties.constants import STAGE_CHOICES
 from std_bounties.models import Bounty, Fulfillment, RankedCategory, Token
-from std_bounties.queries import LEADERBOARD_QUERY
-from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardSerializer, TokenSerializer
+from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_FULFILLER_QUERY
+from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer
 from std_bounties.filters import BountiesFilter, FulfillmentsFilter, RankedCategoryFilter
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
@@ -66,7 +66,8 @@ class UserProfile(APIView):
         return JsonResponse(user_profile)
 
 
-class Leaderboard(APIView):
+
+class LeaderboardIssuer(APIView):
     def get(self, request):
         sql_param = ''
         platform_in = extractInParams(request, 'platform', 'platform__in')
@@ -78,11 +79,33 @@ class Leaderboard(APIView):
             sql_param += ' )'
         platform_in = platform_in + platform_in
 
-        formatted_query = LEADERBOARD_QUERY.format(sql_param)
+        formatted_query = LEADERBOARD_ISSUER_QUERY.format(sql_param)
         cursor = connection.cursor()
         cursor.execute(formatted_query, platform_in)
         query_result = dictfetchall(cursor)
-        serializer = LeaderboardSerializer(query_result, many=True)
+        serializer = LeaderboardIssuerSerializer(query_result, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+
+class LeaderboardFulfiller(APIView):
+    def get(self, request):
+        sql_param = ''
+        platform_in = extractInParams(request, 'platform', 'platform__in')
+        startIndex, endIndex = limitOffsetParams(request)
+        if platform_in:
+            sql_param = 'AND ( '
+            sql_param += sqlGenerateOrList('fulfillment.\"platform\"', len(platform_in), '=')
+            sql_param += ' OR '
+            sql_param += sqlGenerateOrList('bounty.\"platform\"', len(platform_in), '=')
+            sql_param += ' )'
+        platform_in = platform_in + platform_in
+
+        formatted_query = LEADERBOARD_FULFILLER_QUERY.format(sql_param)
+        cursor = connection.cursor()
+        cursor.execute(formatted_query, platform_in)
+        query_result = dictfetchall(cursor)
+        narrowed_result = query_result[startIndex, endIndex]
+        serializer = LeaderboardFulfillerSerializer(narrowed_result, many=True)
         return JsonResponse(serializer.data, safe=False)
 
 

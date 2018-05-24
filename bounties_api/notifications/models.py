@@ -18,6 +18,7 @@ class DashboardNotification(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     notification = models.ForeignKey(Notification, null=False)
+    isActivity = models.BooleanField(default=False, null=False)
     viewed = models.BooleanField(default=False, null=False)
     string_data = models.CharField(max_length=512, blank=True)
     data = JSONField(null=True)

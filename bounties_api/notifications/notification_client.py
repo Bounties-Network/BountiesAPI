@@ -15,10 +15,11 @@ class NotificationClient:
         string_data_fulfiller = FULFILLMENT_SUBMITTED_FULFILLER_STR.format(bounty_title=bounty.title)
         string_data_issuer = FULFILLMENT_SUBMITTED_ISSUER_STR.format(bounty_title=bounty.title)
         # to fulfiller
-        createDashboardNotification(FULFILLMENT_SUBMITTED, fulfillment.user, fulfillment.fulfillment_created, string_data_fulfiller)
+        createDashboardNotification(FULFILLMENT_SUBMITTED, fulfillment.user, fulfillment.fulfillment_created, string_data_fulfiller, is_activity=False)
         # to bounty issuer
         createDashboardNotification(FULFILLMENT_SUBMITTED, bounty.user, fulfillment.fulfillment_created, string_data_issuer)
         # Once we include email, email client call added here
+
 
     def bounty_activated(self, bounty_id):
         bounty = Bounty.objects.get(id=bounty_id)
@@ -27,11 +28,21 @@ class NotificationClient:
         createDashboardNotification(BOUNTY_ACTIVATED, bounty.user, bounty_state.change_date, string_data)
 
 
+    def bounty_issued_and_activated(self, bounty_id):
+        bounty = Bounty.objects.get(id=bounty_id)
+        bounty_state = BountyState.objects.filter(bounty=bounty, bountyStage=ACTIVE_STAGE).latest()
+        string_data = BOUNTY_ACTIVATED_STR.format(bounty_title=bounty.title)
+        createDashboardNotification(BOUNTY_ISSUED_ACTIVATED, bounty.user, bounty_state.change_date, string_data)
+
+
+
     def fulfillment_accepted(self, bounty_id, fulfillment_id):
         bounty = Bounty.objects.get(id=bounty_id)
         fulfillment = Fulfillment.objects.get(bounty_id=bounty, fulfillment_id=fulfillment_id)
-        string_data = FULFILLMENT_ACCEPTED_STR.format(bounty_title=bounty.title)
-        createDashboardNotification(FULFILLMENT_ACCEPTED, bounty.user, fulfillment.accepted_date, string_data)
+        string_data_issuer = FULFILLMENT_ACCEPTED_ISSUER_STR.format(bounty_title=bounty.title)
+        string_data_fulfiller = FULFILLMENT_ACCEPTED_FULFILLER_STR.format(bounty_title=bounty.title)
+        createDashboardNotification(FULFILLMENT_ACCEPTED, bounty.user, fulfillment.accepted_date, string_data_issuer)
+        createDashboardNotification(FULFILLMENT_ACCEPTED, fulfillment.user, fulfillment.accepted_date, string_data_fulfiller, is_activity=False)
 
 
     def bounty_expired(self, bounty_id):

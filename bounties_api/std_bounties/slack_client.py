@@ -21,6 +21,14 @@ class SlackMessageClient:
         notify_slack(sc, channel, 'Bounty Issued', message)
 
 
+    def bounty_issued_and_activated(self, bounty):
+        message = pipe(bounty, [get_base_bounty_values, wrapped_partial(pluck, fields=[
+            'title', 'bounty_id', 'usd_price', 'total_value', 'tokenSymbol', 'token_price',
+            'deadline', 'link', 'total_value'
+        ]), wrapped_partial(format_message, msg_string=BOUNTY_ISSUED_SLACK_STR)])
+        notify_slack(sc, channel, 'Bounty Issued and Activated', message)
+
+
     def bounty_activated(self, bounty):
         message = pipe(bounty, [get_base_bounty_values, wrapped_partial(pluck, fields=[
             'title', 'bounty_id', 'usd_price', 'total_value', 'tokenSymbol', 'token_price', 'link'

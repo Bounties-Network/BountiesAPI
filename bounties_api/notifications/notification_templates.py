@@ -11,9 +11,12 @@ BOUNTY_ACTIVATED_STR = """
 Your Bounty Has Been Released to the Wild: {bounty_title}
 """
 
-# Do we need one for the issuer?
-FULFILLMENT_ACCEPTED_STR = """
+FULFILLMENT_ACCEPTED_FULFILLER_STR = """
 Your fulfillment has been accepted for bounty {bounty_title}
+"""
+
+FULFILLMENT_ACCEPTED_ISSUER_STR = """
+You accepted a fulfillment for: {bounty_title}
 """
 
 BOUNTY_EXPIRED_STR = """

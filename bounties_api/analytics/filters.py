@@ -12,6 +12,7 @@ class BountiesTimelineFilter(FilterSet):
         model = BountiesTimeline
         fields = {'since': ['date__gte'],
                   'until': ['date__lte'],
+                  'is_week': ['exact'],
                   'bounties_issued_cum': ['gt', 'gte', 'lt', 'lte', 'exact'],
                   'bounties_issued': ['gt', 'gte', 'lt', 'lte', 'exact'],
                   'fulfillments_submitted_cum': ['gt', 'gte', 'lt', 'lte', 'exact'],

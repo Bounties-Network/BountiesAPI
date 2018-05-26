@@ -351,6 +351,11 @@ paths:
         description: "Date format: YYYY-MM-DD"
         required: true
       - in: query
+        name: is_week
+        type: boolean
+        description: "Display aggregated by week"
+        required: true
+      - in: query
         name: bounties_issued_cum
         type: integer
       - in: query
@@ -932,6 +937,9 @@ definitions:
         title: date
         type: string
         format: date
+      is_week:
+        title: is_week
+        type: boolean
       bounties_issued_cum:
         title: bounties_issued_cum
         type: integer

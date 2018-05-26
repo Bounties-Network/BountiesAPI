@@ -7,7 +7,7 @@ from std_bounties.constants import EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, A
 from analytics.management.commands.timeline_generator import diff_time, diff_days, day_bounds, range_days, \
     get_bounty_draft, get_bounty_completed, get_bounty_active, get_bounty_expired, get_bounty_dead, \
     get_fulfillment_acceptance_rate, get_bounty_fulfilled_rate, get_avg_fulfiller_acceptance_rate, \
-    get_avg_fulfillment_amount, get_total_fulfillment_amount, generate_timeline
+    get_avg_fulfillment_amount, get_total_fulfillment_amount, generate_timeline, week_bounds, range_weeks
 from std_bounties.models import BountyState, Fulfillment, Bounty
 
 
@@ -35,6 +35,19 @@ class DateUtilsTest(unittest.TestCase):
         self.assertEqual(ceil.hour, 23)
         self.assertEqual(ceil.second, 59)
 
+    def test_week_bounds(self):
+        first_day = datetime(2018, 5, 26, 12, 55)
+        (floor, ceil) = week_bounds(first_day)
+
+        self.assertEqual(floor.day, 21)
+        self.assertEqual(ceil.day, 27)
+        self.assertEqual(floor.minute, 0)
+        self.assertEqual(floor.hour, 0)
+        self.assertEqual(floor.second, 0)
+        self.assertEqual(ceil.minute, 59)
+        self.assertEqual(ceil.hour, 23)
+        self.assertEqual(ceil.second, 59)
+
     def test_days_range_between_two_dates(self):
         first_day = datetime(2018, 1, 1, 0, 0)
         last_day = datetime(2018, 12, 31, 11, 59)
@@ -45,6 +58,19 @@ class DateUtilsTest(unittest.TestCase):
         for index in range(1, 366):
             day = next(iterator).timetuple().tm_yday
             self.assertEqual(day, index)
+
+    def test_weeks_range_around_two_dates(self):
+        first_day = datetime(2018, 1, 5, 0, 0)
+        last_day = datetime(2018, 1, 31, 11, 59)
+        generated_range = range_weeks(first_day, last_day + timedelta(days=7))
+        iterator = iter(generated_range)
+
+        self.assertEqual(len(generated_range), 5)
+        for index in range(1, len(generated_range) + 1):
+            day = next(iterator).timetuple()
+            print(week_bounds(day))
+            #self.assertEqual(day, index)
+        self.fail()
 
 
 class TimelineTest(unittest.TestCase):

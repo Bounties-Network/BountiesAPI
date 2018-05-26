@@ -3,6 +3,7 @@ from django.db import models
 
 class BountiesTimeline(models.Model):
     date = models.DateField()
+    is_week = models.BooleanField(default=False)
     bounties_issued_cum = models.PositiveIntegerField(default=0)
     bounties_issued = models.PositiveIntegerField(default=0)
     fulfillments_submitted_cum = models.PositiveIntegerField(default=0)

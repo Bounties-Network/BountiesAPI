@@ -77,7 +77,7 @@ ROOT_URLCONF = 'bounties.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['bounties/templates'],
+        'DIRS': ['bounties/templates', 'notifications/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

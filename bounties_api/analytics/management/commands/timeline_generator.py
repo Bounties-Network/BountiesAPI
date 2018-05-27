@@ -245,7 +245,7 @@ class Command(BaseCommand):
         schemas = [schema.bounty.schemaName for schema in schemas_query if schema.bounty.schemaName] + [ALL_SCHEMA]
 
         for schema in schemas:
-            needs_genesis = not BountiesTimeline.objects.filter(schema=schema, is_week=False).count()
+            needs_genesis = not BountiesTimeline.objects.filter(schema=schema, is_week=False).exists()
 
             first_date = BountyState.objects.first()
             last_date = datetime.utcnow()
@@ -276,7 +276,7 @@ class Command(BaseCommand):
                     bounty_day.save()
 
         for schema in schemas:
-            needs_genesis = not BountiesTimeline.objects.filter(schema=schema, is_week=True).count()
+            needs_genesis = not BountiesTimeline.objects.filter(schema=schema, is_week=True).exists()
 
             first_date = BountyState.objects.first()
             last_date = BountyState.objects.last()

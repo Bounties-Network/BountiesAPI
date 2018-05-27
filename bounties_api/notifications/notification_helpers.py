@@ -1,7 +1,7 @@
 from notifications.models import Notification, DashboardNotification
 
 
-def createDashboardNotification(notification_name, user, notification_created, string_data, is_activity=True, email=True):
+def create_dashboard_notification(notification_name, user, notification_created, string_data, is_activity=True, email=True):
     notification = Notification.objects.create(
         notification_name=notification_name,
         user=user,

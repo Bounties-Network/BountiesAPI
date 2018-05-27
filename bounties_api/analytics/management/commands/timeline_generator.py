@@ -241,7 +241,6 @@ def generate_timeline(time_frame, schema):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        BountiesTimeline.objects.all().delete()
         schemas_query = BountyState.objects.distinct('bounty__schemaName')
         schemas = [schema.bounty.schemaName for schema in schemas_query if schema.bounty.schemaName] + [ALL_SCHEMA]
 

@@ -279,7 +279,7 @@ class Command(BaseCommand):
             needs_genesis = not BountiesTimeline.objects.filter(schema=schema, is_week=True).exists()
 
             first_date = BountyState.objects.first()
-            last_date = BountyState.objects.last()
+            last_date = datetime.utcnow()
 
             if needs_genesis:
                 bounties_by_week = range_weeks(first_date.change_date, last_date.change_date + timedelta(days=7))

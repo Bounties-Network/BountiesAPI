@@ -25,7 +25,7 @@ class BountyClient:
         pass
 
     @transaction.atomic
-    def issue_bounty(self, bounty_id, inputs, event_timestamp):
+    def issue_bounty(self, bounty_id, inputs, event_timestamp, **kwargs):
         data_hash = inputs.get('data', 'invalid')
         event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
         ipfs_data = map_bounty_data(data_hash, bounty_id)
@@ -64,7 +64,7 @@ class BountyClient:
         saved_bounty.record_bounty_state(event_date)
         return saved_bounty
 
-    def activate_bounty(self, bounty, inputs, event_timestamp):
+    def activate_bounty(self, bounty, inputs, event_timestamp, **kwargs):
         event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
         bounty.bountyStage = ACTIVE_STAGE
         bounty.record_bounty_state(event_date)
@@ -106,7 +106,7 @@ class BountyClient:
 
         return instance
 
-    def update_fulfillment(self, bounty, fulfillment_id, inputs):
+    def update_fulfillment(self, bounty, fulfillment_id, inputs, **kwargs):
         fulfillment = Fulfillment.objects.get(
             fulfillment_id=fulfillment_id, bounty_id=bounty.bounty_id)
 
@@ -121,7 +121,7 @@ class BountyClient:
 
 
     @transaction.atomic
-    def accept_fulfillment(self, bounty, fulfillment_id, event_timestamp):
+    def accept_fulfillment(self, bounty, fulfillment_id, event_timestamp, **kwargs):
         event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
         bounty.balance = bounty.balance - bounty.fulfillmentAmount
         usd_price, token_price = get_historic_pricing(
@@ -146,7 +146,7 @@ class BountyClient:
 
         return fulfillment
 
-    def kill_bounty(self, bounty, event_timestamp):
+    def kill_bounty(self, bounty, event_timestamp, **kwargs):
         event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
         bounty.old_balance = bounty.balance
         bounty.balance = 0
@@ -167,7 +167,7 @@ class BountyClient:
 
         return bounty
 
-    def add_contribution(self, bounty, inputs, event_timestamp):
+    def add_contribution(self, bounty, inputs, event_timestamp, **kwargs):
         event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
         bounty.balance = Decimal(bounty.balance) + Decimal(inputs.get('value'))
         if bounty.balance >= bounty.fulfillmentAmount and bounty.bountyStage == EXPIRED_STAGE:
@@ -185,7 +185,7 @@ class BountyClient:
 
         return bounty
 
-    def extend_deadline(self, bounty, inputs, event_timestamp):
+    def extend_deadline(self, bounty, inputs, event_timestamp, **kwargs):
         event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
         bounty.deadline = getDateTimeFromTimestamp(
             inputs.get('newDeadline', None))
@@ -197,7 +197,7 @@ class BountyClient:
         return bounty
 
     @transaction.atomic
-    def change_bounty(self, bounty, inputs):
+    def change_bounty(self, bounty, inputs, **kwargs):
         updated_data = {}
         data_hash = inputs.get('data', None)
         deadline = inputs.get('newDeadline', None)
@@ -236,13 +236,13 @@ class BountyClient:
 
         return saved_bounty
 
-    def transfer_issuer(self, bounty, inputs):
+    def transfer_issuer(self, bounty, inputs, **kwargs):
         bounty.issuer = inputs.get('newIssuer')
         bounty.save()
 
         return bounty
 
-    def increase_payout(self, bounty, inputs):
+    def increase_payout(self, bounty, inputs, **kwargs):
         value = inputs.get('value')
         fulfillment_amount = inputs.get('newFulfillmentAmount')
         if value:

@@ -23,11 +23,11 @@ FULFILLMENT_ACCEPTED_ISSUER_STR = """
 Your submission has been accepted for {bounty_title}
 """
 
-SUBMISSION_UPDATED_ISSUER_STR = """
+FULFILLMENT_UPDATED_ISSUER_STR = """
 A submission was updated for bounty {bounty_title}
 """
 
-SUBMISSION_UPDATED_FULFILLER_STR = """
+FULFILLMENT_UPDATED_FULFILLER_STR = """
 You made an update to your submission on {bounty_title}
 """
 
@@ -51,16 +51,12 @@ ISSUER_TRANSFERRED_STR = """
 You transferred ownership of {bounty_title}
 """
 
-ISSUER_TRANSFERRED_RECIPIENT = """
+ISSUER_TRANSFERRED_RECIPIENT_STR = """
 You are now the owner of {bounty_title}
 """
 
 PAYOUT_INCREASED_ISSUER_STR = """
 You increased the payout of {bounty_title}
-"""
-
-PAYOUT_INCREASED_FULFILLER_STR = """"
-{bounty_title} has increased its payout to {value}
 """
 
 BOUNTY_EXPIRED_STR = """

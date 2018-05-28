@@ -33,5 +33,5 @@ NOTIFICATION_IDS = (
     (BOUNTY_EXPIRED, 'BountyExpired'),
     (BOUNTY_COMMENT, 'BountyComment'),
     (BOUNTY_ISSUED_ACTIVATED, 'BountyIssuedActivated'),
-    (FULFILLMENT_UPDATED), 'FulfillmentUpdated',
+    (FULFILLMENT_UPDATED, 'FulfillmentUpdated'),
 )

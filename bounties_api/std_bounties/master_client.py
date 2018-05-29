@@ -2,7 +2,7 @@ from decimal import Decimal
 from std_bounties.bounty_client import BountyClient
 from notifications.notification_client import NotificationClient
 from std_bounties.slack_client import SlackMessageClient
-from std_bounties.client_helpers import bounty_url_for
+from bounties.utils import bounty_url_for
 from std_bounties.models import Bounty
 from bounties.ses_client import send_email
 
@@ -17,9 +17,10 @@ def bounty_issued(bounty_id, **kwargs):
     inputs = kwargs.get('inputs', {})
     is_issue_and_activate = inputs.get('_value', None)
 
-    if not bounty.exists():
-        created_bounty = bounty_client.issue_bounty(bounty_id, **kwargs)
+    if bounty.exists():
+        return
 
+    created_bounty = bounty_client.issue_bounty(bounty_id, **kwargs)
     if not is_issue_and_activate:
         notification_client.bounty_issued(bounty_id)
         slack_client.bounty_issued(created_bounty)
@@ -44,15 +45,6 @@ def bounty_fulfilled(bounty_id, **kwargs):
     bounty_client.fulfill_bounty(bounty, **kwargs)
     notification_client.bounty_fulfilled(bounty_id, **kwargs)
     slack_client.bounty_fulfilled(bounty, fulfillment_id)
-
-    if bounty.platform == 'colorado':
-        email_url = bounty_url_for(bounty_id, platform='colorado')
-    else:
-        email_url = bounty_url_for(bounty_id)
-
-    if bounty.platform != 'gitcoin':
-        send_email(bounty.issuer_email, 'Bounty Contribution Received',
-            'Hey there! You received a contribution for your bounty: {}. {}'.format(bounty.title, email_url))
 
 
 def fullfillment_updated(bounty_id, **kwargs):

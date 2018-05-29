@@ -58,7 +58,7 @@ class NotificationClient:
         create_dashboard_notification(FULFILLMENT_UPDATED, fulfillment.user, event_date, string_data_fulfiller, is_activity=False)
 
 
-    def bounty_killed(self, bounty_id, fulfillment_id, event_date, **kwargs):
+    def bounty_killed(self, bounty_id, event_date, **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)
         string_data = BOUNTY_KILLED_STR.format(bounty_title=bounty.title)
         create_dashboard_notification(BOUNTY_KILLED, bounty.user, event_date, string_data)

@@ -59,6 +59,7 @@ def fullfillment_updated(bounty_id, **kwargs):
     fulfillment_id = kwargs.get('fulfillment_id')
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.update_fulfillment(bounty, **kwargs)
+    notification_client.fulfillment_updated(bounty_id, **kwargs)
     slack_client.fulfillment_updated(bounty, fulfillment_id)
 
 
@@ -73,6 +74,7 @@ def fulfillment_accepted(bounty_id, **kwargs):
 def bounty_killed(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.kill_bounty(bounty, **kwargs)
+    notification_client.bounty_killed(bounty_id, **kwargs)
     slack_client.bounty_killed(bounty)
 
 
@@ -82,29 +84,34 @@ def contribution_added(bounty_id, **kwargs):
     is_issue_and_activate = inputs.get('_issuer', None)
     bounty_client.add_contribution(bounty, **kwargs)
     if not is_issue_and_activate:
+        notification_client.contribution_added(bounty_id, **kwargs)
         slack_client.contribution_added(bounty)
 
 
 def deadline_extended(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.extend_deadline(bounty, **kwargs)
+    notification_client.deadline_extended(bounty_id, **kwargs)
     slack_client.deadline_extended(bounty)
 
 
 def bounty_changed(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.change_bounty(bounty, **kwargs)
+    notification_client.bounty_changed(bounty_id, **kwargs)
     slack_client.bounty_changed(bounty)
 
 
-def issuer_transfered(bounty_id, **kwargs):
+def issuer_transferred(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.transfer_issuer(bounty, **kwargs)
-    slack_client.issuer_transfered(bounty)
+    notification_client.issuer_transferred(bounty_id, **kwargs)
+    slack_client.issuer_transferred(bounty)
 
 
 def payout_increased(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.increase_payout(bounty, **kwargs)
+    notification_client.payout_increased(bounty_id, **kwargs)
     slack_client.payout_increased(bounty)
 

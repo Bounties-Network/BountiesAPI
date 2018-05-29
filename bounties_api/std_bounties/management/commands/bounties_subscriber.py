@@ -80,8 +80,8 @@ class Command(BaseCommand):
 
                 if event == 'BountyFulfilled':
                     master_client.bounty_fulfilled(bounty_id,
-                                                   event_date=event_date,
                                                    fulfillment_id=fulfillment_id,
+                                                   event_date=event_date,
                                                    inputs=contract_method_inputs,
                                                    event_timestamp=event_timestamp,
                                                    transaction_issuer=transaction_from)
@@ -121,7 +121,7 @@ class Command(BaseCommand):
                                                  inputs=contract_method_inputs)
 
                 if event == 'IssuerTransferred':
-                    master_client.issuer_transfered(bounty_id,
+                    master_client.issuer_transferred(bounty_id,
                                                     transaction_from=transaction_from,
                                                     event_date=event_date,
                                                     inputs=contract_method_inputs)

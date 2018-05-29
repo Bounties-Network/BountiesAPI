@@ -78,7 +78,8 @@ class BountyClient:
             fulfillment_id,
             inputs,
             event_timestamp,
-            transaction_issuer):
+            transaction_issuer,
+            **kwargs):
 
         fulfillment = Fulfillment.objects.filter(
             fulfillment_id=fulfillment_id, bounty_id=bounty.bounty_id

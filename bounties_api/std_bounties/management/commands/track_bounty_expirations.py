@@ -1,11 +1,13 @@
 import time
 from datetime import datetime, timezone
 from django.core.management.base import BaseCommand
+from notifications.notification_client import NotificationClient
 from std_bounties.constants import ACTIVE_STAGE, EXPIRED_STAGE
 from std_bounties.models import Bounty
 import logging
 
 logger = logging.getLogger('django')
+notification_client = NotificationClient()
 
 # TODO - This should just be a scheduled cronjob.
 # There is no need to have this as a long running job
@@ -25,6 +27,7 @@ class Command(BaseCommand):
                     bounty.bountyStage=EXPIRED_STAGE
                     bounty.save()
                     bounty.record_bounty_state(bounty.deadline)
+                    notification_client.bounty_expired(bounty.id, bounty.deadline)
                 time.sleep(60)
         except Exception as e:
             # goes to rollbar

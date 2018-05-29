@@ -21,3 +21,10 @@ class NotificationViewed(APIView):
         notification.viewed = True
         notification.save()
         return HttpResponse('success')
+
+
+class NotificationViewAll(APIView):
+    def get(self, request, user_id):
+        notifications = DashboardNotification.objects.filter(notification__user__id=user_id)
+        notifications.update(viewed=True)
+        return HttpResponse('success')

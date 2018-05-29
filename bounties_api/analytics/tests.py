@@ -1,6 +1,7 @@
 import random
 from datetime import datetime, timedelta
 import unittest
+import arrow
 
 # Create your tests here.
 from std_bounties.constants import EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, ACTIVE_STAGE, DRAFT_STAGE
@@ -66,11 +67,13 @@ class DateUtilsTest(unittest.TestCase):
         iterator = iter(generated_range)
 
         self.assertEqual(len(generated_range), 5)
-        for index in range(1, len(generated_range) + 1):
+        moving_day = datetime(2018, 1, 1, 0, 0)
+        for _ in range(1, len(generated_range) + 1):
             day = next(iterator).timetuple()
-            print(week_bounds(day))
-            #self.assertEqual(day, index)
-        self.fail()
+            # constructing the expected range tuple
+            expecting = (arrow.get(moving_day).to('utc').floor('day').datetime, arrow.get(moving_day + timedelta(days=6)).to('utc').ceil('day').datetime)
+            self.assertEqual(week_bounds(day), expecting)
+            moving_day += timedelta(days=7)
 
 
 class TimelineTest(unittest.TestCase):

@@ -30,10 +30,18 @@ def day_bounds(day):
 
     return floor.datetime, ceil.datetime
 
+def week_bounds(day):
+    utc_day = arrow.get(day).to('utc')
+    floor = utc_day.floor('week')
+    ceil = utc_day.ceil('week')
+
+    return floor.datetime, ceil.datetime
 
 def range_days(since, until):
     return arrow.Arrow.range('day', since, until)
 
+def range_weeks(since, until):
+    return arrow.Arrow.range('week', since, until)
 
 def get_date(time_frame):
     return time_frame.last().change_date
@@ -208,7 +216,7 @@ def generate_timeline(time_frame, schema):
     avg_fulfillment_amount = get_avg_fulfillment_amount(bounties_state_frame)
     total_fulfillment_amount = get_total_fulfillment_amount(bounties_state_frame)
 
-    bounty_frame = BountiesTimeline(date=date,
+    bounty_frame = BountiesTimeline(date=time_frame[0],
                                     bounties_issued=bounties_issued,
                                     bounties_issued_cum=bounties_issued_cum,
                                     fulfillments_submitted_cum=fulfillments_submitted_cum,
@@ -233,15 +241,14 @@ def generate_timeline(time_frame, schema):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-
         schemas_query = BountyState.objects.distinct('bounty__schemaName')
         schemas = [schema.bounty.schemaName for schema in schemas_query if schema.bounty.schemaName] + [ALL_SCHEMA]
 
         for schema in schemas:
-            needs_genesis = not BountiesTimeline.objects.filter(schema=schema).count()
+            needs_genesis = not BountiesTimeline.objects.filter(schema=schema, is_week=False).exists()
 
             first_date = BountyState.objects.first()
-            last_date = BountyState.objects.last()
+            last_date = datetime.utcnow()
 
             if needs_genesis:
                 bounties_by_day = range_days(first_date.change_date, last_date.change_date + timedelta(days=1))
@@ -251,7 +258,7 @@ class Command(BaseCommand):
 
                     bounty_day.save()
             else:
-                last_update = BountiesTimeline.objects.filter(schema=schema).order_by('date').last()
+                last_update = BountiesTimeline.objects.filter(schema=schema, is_week=False).order_by('date').last()
                 since = arrow.get(last_update.date).to('utc')
                 days = range_days(since, datetime.utcnow())
 
@@ -260,10 +267,41 @@ class Command(BaseCommand):
                 # and provides a better way to expose by day or by hour in case of been needed
                 for day in days:
                     bounty_day = generate_timeline(day_bounds(day), schema=schema)
-                    bounty_points = BountiesTimeline.objects.filter(date=day.date(), schema=schema)
+                    bounty_points = BountiesTimeline.objects.filter(date=day.date(), schema=schema, is_week=False)
 
                     if bounty_points.exists():
                         bounty_point = bounty_points.first()
                         bounty_day.id = bounty_point.id
 
                     bounty_day.save()
+
+        for schema in schemas:
+            needs_genesis = not BountiesTimeline.objects.filter(schema=schema, is_week=True).exists()
+
+            first_date = BountyState.objects.first()
+            last_date = datetime.utcnow()
+
+            if needs_genesis:
+                bounties_by_week = range_weeks(first_date.change_date, last_date.change_date + timedelta(days=7))
+                
+                for week in bounties_by_week:
+                    bounty_week = generate_timeline(week_bounds(week), schema=schema)
+                    bounty_week.is_week = True
+
+                    bounty_week.save()
+            else:
+                last_update = BountiesTimeline.objects.filter(schema=schema, is_week=True).order_by('date').last()
+                since = arrow.get(last_update.date).to('utc')
+                weeks = range_weeks(since, datetime.utcnow())
+
+                for week in weeks:
+                    bounds = week_bounds(week)
+                    bounty_week = generate_timeline(bounds, schema=schema)
+                    bounty_points = BountiesTimeline.objects.filter(date=bounds[0].date(), schema=schema, is_week=True)
+
+                    if bounty_points.exists():
+                        bounty_point = bounty_points.first()
+                        bounty_week.id = bounty_point.id
+
+                    bounty_week.is_week = True
+                    bounty_week.save()

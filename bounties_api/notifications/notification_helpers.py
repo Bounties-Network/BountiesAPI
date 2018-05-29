@@ -1,7 +1,7 @@
 from notifications.models import Notification, DashboardNotification
 
 
-def create_dashboard_notification(notification_name, user, notification_created, string_data, is_activity=True, email=False):
+def create_dashboard_notification(bounty_id, notification_name, user, notification_created, string_data, is_activity=True, email=False):
     notification = Notification.objects.create(
         notification_name=notification_name,
         user=user,
@@ -13,4 +13,5 @@ def create_dashboard_notification(notification_name, user, notification_created,
         notification=notification,
         string_data=string_data,
         is_activity=is_activity,
+        data={'bounty_id': bounty_id},
     )

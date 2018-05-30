@@ -1,6 +1,7 @@
 from decimal import Decimal
 from bounties import settings
-from std_bounties.client_helpers import bounty_url_for, calculate_token_quantity
+from std_bounties.client_helpers import calculate_token_quantity
+from bounties.utils import bounty_url_for
 from utils.functional_tools import narrower
 
 

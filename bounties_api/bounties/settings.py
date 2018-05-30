@@ -77,7 +77,7 @@ ROOT_URLCONF = 'bounties.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['bounties/templates'],
+        'DIRS': ['bounties/templates', 'notifications/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -211,3 +211,8 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 NOTIFICATIONS_SLACK_CHANNEL = '#bounty_notifs' if ENVIRONMENT == 'production' else ENVIRONMENT + '_bounty_notifs'
+
+PLATFORM_MAPPING = {
+    'colorado': 'https://colorado.bounties.network',
+    'consensys': 'https://consensys.bounties.network',
+}

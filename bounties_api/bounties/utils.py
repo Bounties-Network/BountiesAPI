@@ -2,6 +2,7 @@ import datetime
 from decimal import Decimal
 import time
 import logging
+from django.conf import settings
 
 logger = logging.getLogger('django')
 max_datetime = datetime.datetime(9999, 12, 31, 23, 59, 59, 999999)
@@ -56,3 +57,11 @@ def dictfetchall(cursor):
 
 def calculate_token_value(value, decimals):
     return (Decimal(value) / Decimal(pow(10, decimals))).quantize(Decimal(10) ** -decimals)
+
+
+def bounty_url_for(bounty_id, platform=None):
+    base_url = settings.DEPLOY_URL
+    if platform in settings.PLATFORM_MAPPING:
+        base_url = settings.PLATFORM_MAPPING[platform]
+    url = '{}/bounty/v1/{}/'.format(base_url, bounty_id)
+    return url

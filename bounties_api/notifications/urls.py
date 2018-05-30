@@ -11,4 +11,5 @@ router.register(r'user/(?P<user_id>\d+)', views.NotificationViewSet, 'user_notif
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^(?P<notification_id>\d+)/view/$', views.NotificationViewed.as_view()),
+    url(r'^user/(?P<user_id>\d+)/view_all/$', views.NotificationViewAll.as_view()),
 ]

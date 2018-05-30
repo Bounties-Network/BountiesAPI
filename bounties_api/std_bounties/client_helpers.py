@@ -197,13 +197,3 @@ def map_token_data(pays_tokens, token_contract, amount):
         'token': token_model.id if token_model else None,
         'usd_price': usd_price,
     }
-
-
-def bounty_url_for(bounty_id, platform=None):
-    base_url = settings.DEPLOY_URL
-    if platform == 'colorado':
-        base_url = 'https://colorado.bounties.network'
-    if platform == 'consensys':
-        base_url = 'https://consensys.bounties.network'
-    url = '{}/bounty/v1/{}/'.format(base_url, bounty_id)
-    return url

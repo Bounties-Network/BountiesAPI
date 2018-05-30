@@ -4,7 +4,8 @@ from decimal import Decimal
 from std_bounties.client_helpers import (bounty_url_for,
                                          calculate_token_quantity,
                                          calculate_usd_price,
-                                         get_token_pricing)
+                                         get_token_pricing, map_bounty_data,
+                                         map_fulfillment_data)
 from std_bounties.models import Token
 
 
@@ -107,3 +108,34 @@ class TestCalculationHelpers(unittest.TestCase):
                                                    token_decimals, value)
         self.assertEqual(token_model, self.eth_token)
         self.assertEqual(usd_price, expected_usd_price)
+
+
+class TestMapBountyData(unittest.TestCase):
+    def setUp(self):
+        self.patcher = unittest.mock.patch('std_bounties.client_helpers.ipfs')
+        self.mocked_ipfs = self.patcher.start()
+        self.mocked_ipfs.cat.return_value = "{\"data\":\"blabla\"}"
+        self.addCleanup(self.patcher.stop)
+
+    def test_map_bounty_data(self):
+        data_hash = 'QmTDMoVqvyBkNMRhzvukTDznntByUNDwyNdSfV8dZ3VKRC'
+        bounty_id = 1
+
+        result = map_bounty_data(data_hash, bounty_id)
+        self.assertEqual(result, 'dasda')
+
+
+class TestMapFullfilmentData(unittest.TestCase):
+    def setUp(self):
+        self.patcher = unittest.mock.patch('std_bounties.client_helpers.ipfs')
+        self.mocked_ipfs = self.patcher.start()
+        self.mocked_ipfs.cat.return_value = "{\"data\":\"blabla\"}"
+        self.addCleanup(self.patcher.stop)
+
+    def test_map_fullfilment_data(self):
+        data_hash = 'QmTDMoVqvyBkNMRhzvukTDznntByUNDwyNdSfV8dZ3VKRC'
+        bounty_id = 1
+        fulfillment_id = 1
+
+        result = map_fulfillment_data(data_hash, bounty_id, fulfillment_id)
+        self.assertEqual(result, 'dasda')

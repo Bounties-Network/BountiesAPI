@@ -200,7 +200,7 @@ class BountyClient:
     @transaction.atomic
     def change_bounty(self, bounty, inputs, **kwargs):
         updated_data = {}
-        data_hash = inputs.get('data', None)
+        data_hash = inputs.get('newData', None) or inputs.get('data', None)
         deadline = inputs.get('newDeadline', None)
         fulfillmentAmount = inputs.get('newFulfillmentAmount', None)
         arbiter = inputs.get('newArbiter', None)

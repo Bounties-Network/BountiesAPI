@@ -55,7 +55,7 @@ ISSUER_TRANSFERRED_RECIPIENT_STR = """
 You are now the owner of {bounty_title}
 """
 
-PAYOUT_INCREASED_ISSUER_STR = """
+PAYOUT_INCREASED_STR = """
 You increased the payout of {bounty_title}
 """
 

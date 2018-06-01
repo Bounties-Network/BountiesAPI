@@ -1,13 +1,14 @@
 import json
 import unittest
+from datetime import datetime
 from decimal import Decimal
 
-from std_bounties.client_helpers import (bounty_url_for,
-                                         calculate_token_quantity,
-                                         calculate_usd_price,
-                                         get_token_pricing, map_bounty_data,
-                                         map_fulfillment_data)
-from std_bounties.models import Token
+from std_bounties.bounty_client import BountyClient
+from std_bounties.client_helpers import bounty_url_for, \
+    calculate_token_quantity, calculate_usd_price, get_token_pricing, \
+    map_bounty_data, map_fulfillment_data
+from std_bounties.constants import ACTIVE_STAGE, DRAFT_STAGE, EXPIRED_STAGE
+from std_bounties.models import Bounty, BountyState, Token
 
 
 class TestBountyUrlFor(unittest.TestCase):
@@ -253,3 +254,66 @@ class TestMapFullfilmentData(unittest.TestCase):
                          ipfs_data['payload']['sourceFileHash'])
         self.assertEqual(result['sourceDirectoryHash'],
                          ipfs_data['payload']['sourceDirectoryHash'])
+
+
+class TestBountyClient(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.client = BountyClient()
+
+        deadline = datetime(2019, 1, 1, 1, 1, 1)
+        bounty_to_activate = Bounty(
+            id=1,
+            bounty_id=1,
+            fulfillmentAmount=1,
+            usd_price=1,
+            deadline=deadline,
+            paysTokens=True,
+            bountyStage=DRAFT_STAGE)
+        bounty_to_activate.save()
+        cls.bounty_to_activate_id = bounty_to_activate.id
+
+        bounty_to_extend_deadline = Bounty(
+            id=2,
+            bounty_id=2,
+            fulfillmentAmount=1,
+            usd_price=1,
+            deadline=deadline,
+            paysTokens=True,
+            bountyStage=ACTIVE_STAGE)
+        bounty_to_extend_deadline.save()
+        cls.bounty_to_extend_deadline_id = bounty_to_extend_deadline.id
+
+    def test_activate_bounty(self):
+        activation_timestamp = '1517536922'
+        bounty_to_activate = Bounty.objects.get(pk=self.bounty_to_activate_id)
+
+        result = self.client.activate_bounty(
+            bounty=bounty_to_activate,
+            inputs={},
+            event_timestamp=activation_timestamp)
+
+        self.assertEqual(result.bountyStage, ACTIVE_STAGE)
+
+        activated_bounty_from_db = Bounty.objects.get(
+            pk=self.bounty_to_activate_id)
+        self.assertEqual(result, activated_bounty_from_db)
+
+    def test_extend_deadline(self):
+        event_timestamp = '1517536922'
+        new_deadline_timestamp = '1818636922'
+        inputs = {'newDeadline': new_deadline_timestamp}
+        bounty_to_extend_deadline = Bounty.objects.get(
+            pk=self.bounty_to_extend_deadline_id)
+
+        result = self.client.extend_deadline(
+            bounty=bounty_to_extend_deadline,
+            inputs=inputs,
+            event_timestamp=event_timestamp)
+
+        self.assertEqual(result.bountyStage, ACTIVE_STAGE)
+        self.assertEqual(result.deadline, datetime(2027, 8, 19, 0, 55, 22))
+
+        bounty_to_extend_deadline_from_db = Bounty.objects.get(
+            pk=self.bounty_to_extend_deadline_id)
+        self.assertEqual(result, bounty_to_extend_deadline_from_db)

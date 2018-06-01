@@ -15,6 +15,7 @@ AS (
 	WHERE
 		bounty.platform = 'bounties-network' OR
 		bounty.platform = 'gitcoin' OR
+		bounty.platform = 'hiring' OR
 		bounty.platform is NULL
 );
 

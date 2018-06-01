@@ -251,7 +251,7 @@ class Command(BaseCommand):
             last_date = datetime.utcnow()
 
             if needs_genesis:
-                bounties_by_day = range_days(first_date.change_date, last_date.change_date + timedelta(days=1))
+                bounties_by_day = range_days(first_date.change_date, last_date + timedelta(days=1))
 
                 for day in bounties_by_day:
                     bounty_day = generate_timeline(day_bounds(day), schema=schema)
@@ -282,7 +282,7 @@ class Command(BaseCommand):
             last_date = datetime.utcnow()
 
             if needs_genesis:
-                bounties_by_week = range_weeks(first_date.change_date, last_date.change_date + timedelta(days=7))
+                bounties_by_week = range_weeks(first_date.change_date, last_date + timedelta(days=7))
                 
                 for week in bounties_by_week:
                     bounty_week = generate_timeline(week_bounds(week), schema=schema)

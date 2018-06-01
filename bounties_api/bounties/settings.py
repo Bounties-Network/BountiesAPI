@@ -215,4 +215,5 @@ NOTIFICATIONS_SLACK_CHANNEL = '#bounty_notifs' if ENVIRONMENT == 'production' el
 PLATFORM_MAPPING = {
     'colorado': 'https://colorado.bounties.network',
     'consensys': 'https://consensys.bounties.network',
+    'hiring': 'https://hiring.bounties.network',
 }

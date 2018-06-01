@@ -22,7 +22,7 @@ class NotificationClient:
         string_data_fulfiller = FULFILLMENT_SUBMITTED_FULFILLER_STR.format(bounty_title=bounty.title)
         string_data_issuer = FULFILLMENT_SUBMITTED_ISSUER_STR.format(bounty_title=bounty.title)
         # to fulfiller
-        create_notification(bounty, FULFILLMENT_SUBMITTED, fulfillment.user, fulfillment.fulfillment_created, string_data_fulfiller, 'New Submission', is_activity=False, send_email=True)
+        create_notification(bounty, FULFILLMENT_SUBMITTED, fulfillment.user, fulfillment.fulfillment_created, string_data_fulfiller, 'New Submission', is_activity=False, should_send_email=True)
         # to bounty issuer
         create_notification(bounty, FULFILLMENT_SUBMITTED, bounty.user, fulfillment.fulfillment_created, string_data_issuer, 'You Received a New Submission')
         # Once we include email, email client call added here
@@ -31,13 +31,13 @@ class NotificationClient:
     def bounty_activated(self, bounty_id, event_date, **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)
         string_data = BOUNTY_ACTIVATED_STR.format(bounty_title=bounty.title)
-        create_notification(bounty, BOUNTY_ACTIVATED, bounty.user, event_date, string_data, 'Bounty Activated', send_email=True)
+        create_notification(bounty, BOUNTY_ACTIVATED, bounty.user, event_date, string_data, 'Bounty Activated', should_send_email=True)
 
 
     def bounty_issued_and_activated(self, bounty_id, event_date, **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)
         string_data = BOUNTY_ACTIVATED_STR.format(bounty_title=bounty.title)
-        create_notification(bounty, BOUNTY_ISSUED_ACTIVATED, bounty.user, event_date, string_data, 'Bounty Issued and Activated', send_email=True)
+        create_notification(bounty, BOUNTY_ISSUED_ACTIVATED, bounty.user, event_date, string_data, 'Bounty Issued and Activated', should_send_email=True)
 
 
     def fulfillment_accepted(self, bounty_id, fulfillment_id, **kwargs):
@@ -46,7 +46,7 @@ class NotificationClient:
         string_data_issuer = FULFILLMENT_ACCEPTED_ISSUER_STR.format(bounty_title=bounty.title)
         string_data_fulfiller = FULFILLMENT_ACCEPTED_FULFILLER_STR.format(bounty_title=bounty.title)
         create_notification(bounty, FULFILLMENT_ACCEPTED, bounty.user, fulfillment.accepted_date, string_data_issuer, 'Submission Accepted')
-        create_notification(bounty, FULFILLMENT_ACCEPTED, fulfillment.user, fulfillment.accepted_date, string_data_fulfiller, 'Your Submission was Accepted', is_activity=False, send_email=True)
+        create_notification(bounty, FULFILLMENT_ACCEPTED, fulfillment.user, fulfillment.accepted_date, string_data_fulfiller, 'Your Submission was Accepted', is_activity=False, should_send_email=True)
 
 
     def fulfillment_updated(self, bounty_id, fulfillment_id, event_date, **kwargs):
@@ -101,4 +101,4 @@ class NotificationClient:
     def bounty_expired(self, bounty_id, event_date, **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)
         string_data = BOUNTY_EXPIRED_STR.format(bounty_title=bounty.title)
-        create_notification(bounty, BOUNTY_EXPIRED, bounty.user, event_date, string_data, 'Bounty Expired', send_email=True)
+        create_notification(bounty, BOUNTY_EXPIRED, bounty.user, event_date, string_data, 'Bounty Expired', should_send_email=True)

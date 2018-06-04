@@ -2,8 +2,7 @@ from rest_framework import serializers
 
 from .models import BountiesTimeline
 from drf_queryfields import QueryFieldsMixin
-from std_bounties.models import Category, RankedCategory
-from std_bounties.serializers import CategorySerializer, RankedCategorySerializer
+from std_bounties.models import Category
 
 class BountiesTimelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
@@ -38,9 +37,7 @@ class TimelineCategorySerializer(serializers.ModelSerializer):
         return obj.get('total', 0)
 
     def get_prioritized_name(self, obj):
-        try:
-            ranked_category = RankedCategory.objects.get(
-                normalized_name=obj.get('normalized_name'))
-            return ranked_category.name
-        except RankedCategory.DoesNotExist:
-            return obj.get('normalized_name')
+        ranked_categories = self.context.get('ranked_categories', {})
+        normalized_name = obj.get('normalized_name')
+        prioritized_name = ranked_categories.get(normalized_name, normalized_name)
+        return prioritized_name

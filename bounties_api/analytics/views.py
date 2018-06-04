@@ -10,7 +10,7 @@ from django.db.models import Count
 from analytics.filters import BountiesTimelineFilter
 from .serializers import BountiesTimelineSerializer, TimelineCategorySerializer
 from .models import BountiesTimeline
-from std_bounties.models import Category
+from std_bounties.models import Category, RankedCategory
 
 
 class TimelineBounties(APIView):
@@ -37,11 +37,14 @@ class TimelineBounties(APIView):
 
 
                 serialized = BountiesTimelineSerializer(bounties_timeline.qs, many=True, context={'request': request})
-                queryset = Category.objects.filter(
+
+                ranked_category_list = RankedCategory.objects.distinct().values('normalized_name', 'name')
+                ranked_categories = dict(map(lambda x : (x['normalized_name'],x['name']), ranked_category_list))
+                queryset = Category.objects.select_related('bounty').filter(
                   bounty__bounty_created__gte=since_date,
                   bounty__bounty_created__lte=until_date
                 ).distinct().values('normalized_name').annotate(total=Count('bounty'))
-                categories = TimelineCategorySerializer(queryset, many=True)
+                categories = TimelineCategorySerializer(queryset, many=True, context={'ranked_categories': ranked_categories})
 
                 data = {
                   'timeline': serialized.data,

@@ -219,3 +219,6 @@ PLATFORM_MAPPING = {
     'consensys': 'https://consensys.bounties.network',
     'hiring': 'https://hiring.bounties.network',
 }
+
+if not DEBUG and ENVIRONMENT != 'local':
+    SESSION_COOKIE_DOMAIN = '.bounties.network'

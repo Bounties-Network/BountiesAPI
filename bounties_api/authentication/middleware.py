@@ -10,3 +10,4 @@ class AuthenticationMiddleware(MiddlewareMixin):
             request.current_user = get_user(user_id)
         else:
             request.is_logged_in = False
+            request.current_user = None

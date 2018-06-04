@@ -11,16 +11,15 @@ class UserIDMatches(permissions.BasePermission):
     message = 'Unauthorized'
 
     def has_permission(self, request, view):
-        if request.GET:
-            user_id = request.GET.get('user_id', None)
-        if request.POST:
-            user_id = request.POST.get('user_id', None)
+        user_id = view.kwargs.get('user_id', -1)
 
-        return bool(user_id)
+        if request.current_user:
+            return request.current_user.id == int(user_id)
+        return False
 
 
 class UserObjectPermissions(permissions.BasePermission):
     message = 'Unauthorized'
 
-    def has_object_permissions(self, request, view, obj):
+    def has_object_permission(self, request, view, obj):
         return obj.user == request.current_user

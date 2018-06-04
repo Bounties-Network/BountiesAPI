@@ -14,7 +14,7 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         user_id = self.kwargs.get('user_id')
-        return DashboardNotification.objects.filter(notification__user=user_id).order_by('created')
+        return DashboardNotification.objects.filter(notification__user=user_id).order_by('-created')
     serializer_class = DashboardNotificationSerializer
 
 

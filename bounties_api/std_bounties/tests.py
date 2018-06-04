@@ -4,36 +4,11 @@ from datetime import datetime
 from decimal import Decimal
 
 from std_bounties.bounty_client import BountyClient
-from std_bounties.client_helpers import bounty_url_for, \
-    calculate_token_quantity, calculate_usd_price, get_token_pricing, \
-    map_bounty_data, map_fulfillment_data
+from std_bounties.client_helpers import calculate_token_quantity, \
+    calculate_usd_price, get_token_pricing, map_bounty_data, \
+    map_fulfillment_data
 from std_bounties.constants import ACTIVE_STAGE, DRAFT_STAGE, EXPIRED_STAGE
 from std_bounties.models import Bounty, BountyState, Token
-
-
-class TestBountyUrlFor(unittest.TestCase):
-
-    bounty_id = 1
-    colorado_platform = 'colorado'
-    consensys_platform = 'consensys'
-
-    def test_default_platform(self):
-        expected = 'http://127.0.0.1/bounty/v1/1/'
-
-        result = bounty_url_for(self.bounty_id)
-        self.assertEqual(result, expected)
-
-    def test_colorado_platform(self):
-        expected = 'https://colorado.bounties.network/bounty/v1/1/'
-
-        result = bounty_url_for(self.bounty_id, self.colorado_platform)
-        self.assertEqual(result, expected)
-
-    def test_consensys_platform(self):
-        expected = 'https://consensys.bounties.network/bounty/v1/1/'
-
-        result = bounty_url_for(self.bounty_id, self.consensys_platform)
-        self.assertEqual(result, expected)
 
 
 class TestCalculationHelpers(unittest.TestCase):
@@ -260,7 +235,7 @@ class TestBountyClient(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.client = BountyClient()
-
+        created = datetime(2018, 1, 1, 1, 1, 1)
         deadline = datetime(2019, 1, 1, 1, 1, 1)
         bounty_to_activate = Bounty(
             id=1,
@@ -269,6 +244,7 @@ class TestBountyClient(unittest.TestCase):
             usd_price=1,
             deadline=deadline,
             paysTokens=True,
+            created=created,
             bountyStage=DRAFT_STAGE)
         bounty_to_activate.save()
         cls.bounty_to_activate_id = bounty_to_activate.id
@@ -280,6 +256,7 @@ class TestBountyClient(unittest.TestCase):
             usd_price=1,
             deadline=deadline,
             paysTokens=True,
+            created=created,
             bountyStage=ACTIVE_STAGE)
         bounty_to_extend_deadline.save()
         cls.bounty_to_extend_deadline_id = bounty_to_extend_deadline.id

@@ -20,10 +20,12 @@ class Command(BaseCommand):
                 email = bounty.issuer_email
                 public_address = bounty.issuer_address
                 # Update to make the create/update logic only based on address
-                user = User.objects.create_or_update(
-                    name=name,
-                    email=email,
-                    public_address=public_address
+                user, updated = User.objects.update_or_create(
+                    public_address=public_address,
+                    defaults={
+                        "name": name,
+                        "email": email,
+                    }
                 )
                 bounty.user = user
                 bounty.save()
@@ -35,10 +37,12 @@ class Command(BaseCommand):
                 email = fulfillment.fulfiller_email
                 public_address = fulfillment.fulfiller_address
                 # Update to make the create/update logic only based on address
-                user = User.objects.create_or_update(
-                    name=name,
-                    email=email,
-                    public_address=public_address
+                user, updated = User.objects.update_or_create(
+                    public_address=public_address,
+                    defaults={
+                        "name": name,
+                        "email": email,
+                    }
                 )
                 fulfillment.user = user
                 fulfillment.save()

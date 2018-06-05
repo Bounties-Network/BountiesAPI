@@ -4,7 +4,7 @@ from django.contrib.postgres.fields import JSONField
 
 from django.db import models
 from authentication.models import User
-from std_bounties.constants import STAGE_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
+from std_bounties.constants import STAGE_CHOICES, DIFFICULTY_CHOICES, INTERMEDIATE, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
 
@@ -71,6 +71,9 @@ class Bounty(models.Model):
     paysTokens = models.BooleanField()
     bountyStage = models.IntegerField(
         choices=STAGE_CHOICES, default=DRAFT_STAGE)
+    difficulty = models.IntegerField(
+        choices=DIFFICULTY_CHOICES, null=True)
+    revisions = models.IntegerField(null=True)
     old_balance = models.DecimalField(
         decimal_places=0, max_digits=64, null=True)
     balance = models.DecimalField(

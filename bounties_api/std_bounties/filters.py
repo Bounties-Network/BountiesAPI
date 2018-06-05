@@ -39,7 +39,7 @@ class BountiesFilter(filters.FilterSet):
             'platform': ['in', 'exact'],
             'issuer': ['exact'],
             'fulfillmentAmount': ['exact', 'lt', 'gt', 'lte'],
-            'bountyStage': ['exact'],
+            'bountyStage': ['exact', 'in'],
             'bounty_created': ['lt', 'gt', 'exact'],
             'deadline': ['lt', 'gt', 'exact'],
             'bounty_id': ['exact'],

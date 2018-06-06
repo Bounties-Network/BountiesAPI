@@ -81,7 +81,7 @@ class BountyAbstract(models.Model):
         null=True,
         default=0)
     paysTokens = models.BooleanField()
-    difficulty = models.IntegerField(
+    experienceLevel = models.IntegerField(
         choices=DIFFICULTY_CHOICES, null=True)
     revisions = models.IntegerField(null=True)
     balance = models.DecimalField(

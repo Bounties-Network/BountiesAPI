@@ -4,10 +4,18 @@ from django.contrib.postgres.fields import JSONField
 
 import uuid
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from authentication.models import User
 from std_bounties.constants import STAGE_CHOICES, DIFFICULTY_CHOICES, INTERMEDIATE, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
+
+
+class Review(models.Model):
+    reviewer = models.ForeignKey(User, related_name='reviews')
+    reviewee = models.ForeignKey(User, related_name='reviewees')
+    rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])
+    review = models.TextField()
 
 
 class Category(models.Model):
@@ -194,6 +202,8 @@ class Fulfillment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     fulfillment_created = models.DateTimeField(null=True)
+    fulfiller_review = models.ForeignKey(Review, related_name='fulfillment_review', null=True)
+    issuer_review = models.ForeignKey(Review, related_name='issuer_review', null=True)
     data = models.CharField(max_length=128)
     accepted = models.BooleanField()
     accepted_date = models.DateTimeField(null=True)

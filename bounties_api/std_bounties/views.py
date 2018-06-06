@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.db import connection
 from django.db.models import Count
 from django.http import JsonResponse, Http404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
 from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList
 from std_bounties.constants import STAGE_CHOICES
@@ -19,6 +20,8 @@ from rest_framework_filters.backends import DjangoFilterBackend
 class DraftBountyWriteViewSet(viewsets.ModelViewSet):
     queryset = DraftBounty.objects.filter(on_chain=False)
     serializer_class = DraftBountyWriteSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('user_id',)
     # permission_classes = [AuthenticationPermission, UserObjectPermissions]
 
 

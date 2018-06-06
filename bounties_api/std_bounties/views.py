@@ -25,7 +25,7 @@ class BountyComments(APIView):
         get_object_or_404(Bounty, bounty_id=bounty_id)
         comments = Comment.objects.filter(bounty__id=bounty_id)
         serializer = CommentSerializer(comments, many=True)
-        return JsonResponse(serializer.data)
+        return JsonResponse(serializer.data, safe=False)
 
 
     def post(self, request, bounty_id):

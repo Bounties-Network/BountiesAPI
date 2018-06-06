@@ -155,7 +155,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DraftBounty
-        exclude = ('identifier', 'calculated_balance', )
+        exclude = ('uid', 'calculated_balance', )
 
 
     @transaction.atomic

@@ -27,11 +27,11 @@ class SubmissionReviews(APIView):
         current_user = request.current_user
         reviewer = None
         reviewee = None
-        if fulfillment.user = current_user and not fulfillment.issuer_review:
+        if fulfillment.user == current_user and not fulfillment.issuer_review:
             reviewer = fulfillment.user
             reviewee = bounty.user
 
-        if bounty.user = current_user and not fulfillment.fulfiller_review:
+        if bounty.user == current_user and not fulfillment.fulfiller_review:
             reviewer = bounty.user
             reviewee = fulfillment.user
 

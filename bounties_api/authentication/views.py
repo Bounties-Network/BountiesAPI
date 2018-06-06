@@ -48,7 +48,7 @@ class UserAddressView(mixins.RetrieveModelMixin,
     lookup_field = 'public_address'
 
     def get_permissions(self):
-        if self.action == 'update':
+        if self.action == 'update' or self.action == 'partial_update':
             permission_classes = [AuthenticationPermission, IsSelf]
         else:
             permission_classes = []

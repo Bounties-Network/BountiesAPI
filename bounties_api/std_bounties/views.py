@@ -22,7 +22,15 @@ class DraftBountyWriteViewSet(viewsets.ModelViewSet):
     serializer_class = DraftBountyWriteSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('user_id',)
-    # permission_classes = [AuthenticationPermission, UserObjectPermissions]
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            permission_classes = []
+        elif self.action == 'create':
+            permission_classes = [AuthenticationPermission]
+        else:
+            permission_classes = [AuthenticationPermission, UserObjectPermissions]
+        return [permission() for permission in permission_classes]
 
 
 class BountyViewSet(viewsets.ReadOnlyModelViewSet):

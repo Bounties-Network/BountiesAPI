@@ -18,6 +18,11 @@ class UserIDMatches(permissions.BasePermission):
         return False
 
 
+class IsSelf(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj == request.current_user
+
+
 class UserObjectPermissions(permissions.BasePermission):
     message = 'Unauthorized'
 

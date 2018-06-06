@@ -53,7 +53,6 @@ class BountyState(models.Model):
 
 
 class BountyAbstract(models.Model):
-    id = models.IntegerField(primary_key=True)
     user = models.ForeignKey('authentication.User', null=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -67,8 +66,6 @@ class BountyAbstract(models.Model):
         null=True,
         default=0)
     paysTokens = models.BooleanField()
-    bountyStage = models.IntegerField(
-        choices=STAGE_CHOICES, default=DRAFT_STAGE)
     difficulty = models.IntegerField(
         choices=DIFFICULTY_CHOICES, null=True)
     revisions = models.IntegerField(null=True)
@@ -88,7 +85,6 @@ class BountyAbstract(models.Model):
     token = models.ForeignKey(Token, null=True)
     tokenSymbol = models.CharField(max_length=128, default='ETH')
     tokenDecimals = models.IntegerField(default=18)
-    tokenLockPrice = models.FloatField(null=True, blank=True)
     tokenContract = models.CharField(
         max_length=128,
         default='0x0000000000000000000000000000000000000000')
@@ -110,12 +106,16 @@ class BountyAbstract(models.Model):
 
 
 class Bounty(BountyAbstract):
+    id = models.IntegerField(primary_key=True)
     identifier = models.UUIDField(null=True)
+    bountyStage = models.IntegerField(
+        choices=STAGE_CHOICES, default=DRAFT_STAGE)
     bounty_id = models.IntegerField()
     data = models.CharField(max_length=128)
     issuer = models.CharField(max_length=128)
     old_balance = models.DecimalField(
         decimal_places=0, max_digits=64, null=True)
+    tokenLockPrice = models.FloatField(null=True, blank=True)
     data_categories = JSONField(null=True)
     data_issuer = JSONField(null=True)
     data_json = JSONField(null=True)
@@ -174,7 +174,7 @@ class DraftBounty(BountyAbstract):
         decimals = self.tokenDecimals
         self.calculated_balance = calculate_token_value(balance, decimals)
         self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
-        super(Bounty, self).save(*args, **kwargs)
+        super(DraftBounty, self).save(*args, **kwargs)
 
 
 class Fulfillment(models.Model):

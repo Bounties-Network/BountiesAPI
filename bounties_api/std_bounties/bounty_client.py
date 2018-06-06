@@ -1,6 +1,6 @@
 import datetime
 from decimal import Decimal
-from std_bounties.models import Bounty, Fulfillment
+from std_bounties.models import Bounty, Fulfillment, DraftBounty
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer
 from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE
 from std_bounties.client_helpers import map_bounty_data, map_token_data, map_fulfillment_data, get_token_pricing, get_historic_pricing
@@ -62,6 +62,9 @@ class BountyClient:
         saved_bounty.save_and_clear_categories(
             ipfs_data.get('data_categories'))
         saved_bounty.record_bounty_state(event_date)
+        uid = saved_bounty.uid
+        if uid:
+            DraftBounty.obects.filter(uid=uid).update(on_chain=True)
         return saved_bounty
 
     def activate_bounty(self, bounty, inputs, event_timestamp, **kwargs):

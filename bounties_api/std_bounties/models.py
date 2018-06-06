@@ -225,7 +225,7 @@ class Fulfillment(models.Model):
 
     def save(self, *args, **kwargs):
         user = User.objects.get_or_create(
-            public_address = self.fulfiller_address,
+            public_address = self.fulfiller,
             defaults={
                 'name': self.fulfiller_name,
                 'email': self.fulfiller_email

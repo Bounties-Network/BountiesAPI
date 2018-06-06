@@ -177,41 +177,6 @@ class LeaderboardFulfiller(APIView):
         return JsonResponse(serializer.data, safe=False)
 
 
-class BountyStats(APIView):
-    def get(self, request, address=''):
-        bounty_stats = {}
-        extra_filters_bounty = {}
-        extra_filters_fulfillment = {}
-        platform_in = extractInParams(request, 'platform', 'platform__in')
-        if platform_in:
-            extra_filters_bounty['platform__in'] = platform_in
-            extra_filters_fulfillment['platform__in'] = platform_in
-        user_bounties = Bounty.objects.filter(issuer=address.lower(), **extra_filters_bounty)
-        for stage in STAGE_CHOICES:
-            bounty_stats[stage[1]] = user_bounties.filter(
-                bountyStage=stage[0]).count()
-        bounties_count = user_bounties.count()
-        bounties_accepted_count = user_bounties.filter(
-            fulfillments__accepted=True).count()
-        bounties_acceptance_rate = bounties_accepted_count / \
-            bounties_count if bounties_accepted_count > 0 else 0
-        user_submissions = Fulfillment.objects.filter(fulfiller=address, **extra_filters_fulfillment)
-        submissions_count = user_submissions.count()
-        submissions_accepted_count = user_submissions.filter(
-            accepted=True).count()
-        submissions_acceptance_rate = submissions_accepted_count / \
-            submissions_count if submissions_count > 0 else 0
-        profile_stats = {
-            'bounties': bounties_count,
-            'bounties_accepted': bounties_accepted_count,
-            'bounties_acceptance_rate': bounties_acceptance_rate,
-            'submissions': submissions_count,
-            'submissions_accepted_count': submissions_accepted_count,
-            'submissions_acceptance_rate': submissions_acceptance_rate,
-        }
-        return JsonResponse({**bounty_stats, **profile_stats})
-
-
 class Tokens(APIView):
     def get(self, request):
         token_qs = {}

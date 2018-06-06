@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.contrib.postgres.fields import JSONField
 
+import uuid
 from django.db import models
 from authentication.models import User
 from std_bounties.constants import STAGE_CHOICES, DIFFICULTY_CHOICES, INTERMEDIATE, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
@@ -54,6 +55,7 @@ class BountyState(models.Model):
 class Bounty(models.Model):
     id = models.IntegerField(primary_key=True)
     user = models.ForeignKey('authentication.User', null=True)
+    identifier = models.UUIDField(null=True)
     bounty_id = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -148,6 +150,11 @@ class Bounty(models.Model):
                         self.categories.add(matching_category)
                     except ObjectDoesNotExist:
                         self.categories.create(name=category.strip())
+
+
+class BountyDraft(Bounty):
+    bounty_id = models.IntegerField(null=True)
+    on_chain = models.BooleanField(default=False)
 
 
 class Fulfillment(models.Model):

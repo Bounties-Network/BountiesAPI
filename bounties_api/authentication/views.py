@@ -1,4 +1,8 @@
 from rest_framework.views import APIView
+from rest_framework import viewsets
+from rest_framework import mixins
+from bounties.viewset_mixins import CaseInsensitiveLookupMixin
+from authentication.permissions import AuthenticationPermission, IsSelf
 from authentication.backend import authenticate, login, logout
 from authentication.serializers import UserSerializer
 from authentication.models import User
@@ -34,3 +38,18 @@ class UserView(APIView):
             return JsonResponse(UserSerializer(request.current_user).data)
         raise Http404()
 
+
+class UserAddressView(mixins.RetrieveModelMixin,
+                      mixins.UpdateModelMixin,
+                      CaseInsensitiveLookupMixin,
+                      viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = 'public_address'
+
+    def get_permissions(self):
+        if self.action == 'update':
+            permission_classes = [AuthenticationPermission, IsSelf]
+        else:
+            permission_classes = []
+        return [permission() for permission in permission_classes]

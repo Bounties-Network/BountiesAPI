@@ -4,17 +4,37 @@ from rest_framework.response import Response
 from django.db import connection
 from django.db.models import Count
 from django.http import JsonResponse, Http404
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
 from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList, limitOffsetParams
 from std_bounties.constants import STAGE_CHOICES
 from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_FULFILLER_QUERY
-from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer
-from std_bounties.models import Bounty, DraftBounty, Fulfillment, RankedCategory, Token
+from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer
+from std_bounties.models import Bounty, DraftBounty, Fulfillment, RankedCategory, Token, Comment
 from std_bounties.filters import BountiesFilter, FulfillmentsFilter, RankedCategoryFilter
 from authentication.permissions import AuthenticationPermission, UserObjectPermissions
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
+
+
+class BountyComments(APIView):
+    permission_classes = [AuthenticationPermission]
+
+    def get(self, request, bounty_id):
+        get_object_or_404(Bounty, bounty_id=bounty_id)
+        comments = Comment.objects.filter(bounty__id=bounty_id)
+        serializer = CommentSerializer(comments, many=True)
+        return JsonResponse(serializer.data)
+
+
+    def post(self, request, bounty_id):
+        bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
+        serializer = CommentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        comment = serializer.save()
+        bounty.comments.add(comment)
+        return JsonResponse(serializer.data)
 
 
 class DraftBountyWriteViewSet(viewsets.ModelViewSet):

@@ -1,7 +1,7 @@
 from django.apps import apps
 from rest_framework import serializers
 from bounties.serializers import CreatableSlugRelatedField
-from std_bounties.models import Bounty, Fulfillment, Category, RankedCategory, Token, DraftBounty
+from std_bounties.models import Bounty, Fulfillment, Category, RankedCategory, Token, DraftBounty, Comment
 from std_bounties.client_helpers import map_token_data
 from std_bounties.constants import STAGE_CHOICES
 from django.db import transaction
@@ -27,6 +27,13 @@ class RankedCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = RankedCategory
         fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        field = '__all__'
 
 
 class CategorySerializer(serializers.ModelSerializer):

@@ -11,8 +11,6 @@ router.register(r'^fulfillment', views.FulfillmentViewSet)
 router.register(r'^category', views.CategoryViewSet)
 
 urlpatterns = [
-    url(r'^stats/(?P<address>\w+)/$', views.BountyStats.as_view()),
-    url(r'^user/(?P<address>\w+)/$', views.UserProfile.as_view()),
     url(r'^leaderboard/$', views.Leaderboard.as_view()),
     url(r'^token/$', views.Tokens.as_view()),
     url(r'^bounty/(?P<bounty_id>\d+)/fulfillment/(?P<fulfillment_id>\d+)/review/$', views.SubmissionReviews.as_view()),

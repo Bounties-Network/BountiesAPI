@@ -3,19 +3,46 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from django.db import connection
 from django.db.models import Count
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
 from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList, limitOffsetParams
 from std_bounties.constants import STAGE_CHOICES
 from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_FULFILLER_QUERY
-from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer
+from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer, ReviewSerializer
 from std_bounties.models import Bounty, DraftBounty, Fulfillment, RankedCategory, Token, Comment
 from std_bounties.filters import BountiesFilter, FulfillmentsFilter, RankedCategoryFilter
 from authentication.permissions import AuthenticationPermission, UserObjectPermissions
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
+
+
+class SubmissionReviews(APIView):
+    permission_classes = [AuthenticationPermission]
+
+    def post(self, request, bounty_id, fulfillment_id):
+        bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
+        fulfillment = get_object_or_404(Fulfillment, bounty=bounty, fulfillment_id=fulfillment_id, accepted=True)
+        current_user = request.current_user
+        reviewer = None
+        reviewee = None
+        if fulfillment.user = current_user and not fulfillment.issuer_review:
+            reviewer = fulfillment.user
+            reviewee = bounty.user
+
+        if bounty.user = current_user and not fulfillment.fulfiller_review:
+            reviewer = bounty.user
+            reviewee = fulfillment.user
+
+        if not reviewer:
+            return HttpResponse('Unauthorized', status=401)
+
+        serializer = ReviewSerializer(request.data)
+        serializer.is_valid(raise_exception=True)
+        review = serializer.save(reviewer=reviewer, reviewee=reviewee)
+        return JsonResponse(data=serializer.data)
+
 
 
 class BountyComments(APIView):

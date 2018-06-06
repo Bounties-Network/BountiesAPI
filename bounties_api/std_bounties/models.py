@@ -72,8 +72,6 @@ class BountyAbstract(models.Model):
     difficulty = models.IntegerField(
         choices=DIFFICULTY_CHOICES, null=True)
     revisions = models.IntegerField(null=True)
-    old_balance = models.DecimalField(
-        decimal_places=0, max_digits=64, null=True)
     balance = models.DecimalField(
         decimal_places=0,
         max_digits=70,
@@ -116,6 +114,8 @@ class Bounty(BountyAbstract):
     bounty_id = models.IntegerField()
     data = models.CharField(max_length=128)
     issuer = models.CharField(max_length=128)
+    old_balance = models.DecimalField(
+        decimal_places=0, max_digits=64, null=True)
     data_categories = JSONField(null=True)
     data_issuer = JSONField(null=True)
     data_json = JSONField(null=True)
@@ -158,12 +158,11 @@ class Bounty(BountyAbstract):
                         self.categories.create(name=category.strip())
 
 
-class BountyDraft(BountyAbstract):
+class DraftBounty(BountyAbstract):
     identifier = models.UUIDField(default=uuid.uuid4)
     data = models.CharField(max_length=128, null=True, blank=True)
     issuer = models.CharField(max_length=128, null=True, blank=True)
-    old_balance = models.DecimalField(
-        decimal_places=0, max_digits=64, null=True)
+    on_chain = models.BooleanField(default=False)
     data_categories = None
     data_issuer = None
     data_json = None

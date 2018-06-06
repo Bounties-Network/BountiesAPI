@@ -81,7 +81,6 @@ class BountyAbstract(models.Model):
         default=0)
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField(blank=True)
-    bounty_created = models.DateTimeField(null=True)
     token = models.ForeignKey(Token, null=True)
     tokenSymbol = models.CharField(max_length=128, default='ETH')
     tokenDecimals = models.IntegerField(default=18)
@@ -108,6 +107,7 @@ class BountyAbstract(models.Model):
 class Bounty(BountyAbstract):
     id = models.IntegerField(primary_key=True)
     identifier = models.UUIDField(null=True)
+    bounty_created = models.DateTimeField(null=True)
     bountyStage = models.IntegerField(
         choices=STAGE_CHOICES, default=DRAFT_STAGE)
     bounty_id = models.IntegerField()
@@ -167,6 +167,8 @@ class DraftBounty(BountyAbstract):
     data_issuer = None
     data_json = None
 
+    class Meta:
+        ordering = ['-created']
 
     def save(self, *args, **kwargs):
         fulfillmentAmount = self.fulfillmentAmount

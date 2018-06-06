@@ -1,3 +1,4 @@
+from django.apps import apps
 from rest_framework import serializers
 from bounties.serializers import CreatableSlugRelatedField
 from std_bounties.models import Bounty, Fulfillment, Category, RankedCategory, Token, DraftBounty
@@ -32,6 +33,12 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = apps.get_model('authentication', 'user')
+        exclude = ('nonce',)
 
 
 class BountyFulfillmentSerializer(serializers.ModelSerializer):
@@ -69,6 +76,7 @@ class BountySerializer(CustomSerializer):
     bountyStage = serializers.ChoiceField(choices=STAGE_CHOICES)
     categories = CategorySerializer(read_only=True, many=True)
     current_market_token_data = TokenSerializer(read_only=True, source='token')
+    user = UserSerializer(read_only=True)
     fulfillment_count = serializers.ReadOnlyField(source='fulfillments.count')
 
     class Meta:
@@ -112,11 +120,13 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
     tokenDecimals = serializers.IntegerField(read_only=True)
     usd_price = serializers.FloatField(read_only=True)
     on_chain = serializers.BooleanField(read_only=True)
+    current_market_token_data = TokenSerializer(read_only=True, source='token')
+    user = UserSerializer(read_only=True)
 
 
     class Meta:
         model = DraftBounty
-        exclude = ('user', 'token', 'identifier', 'calculated_balance', )
+        exclude = ('identifier', 'calculated_balance', )
 
 
     @transaction.atomic

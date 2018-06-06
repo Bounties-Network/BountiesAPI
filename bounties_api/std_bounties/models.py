@@ -52,17 +52,13 @@ class BountyState(models.Model):
         get_latest_by = 'change_date'
 
 
-class Bounty(models.Model):
+class BountyAbstract(models.Model):
     id = models.IntegerField(primary_key=True)
     user = models.ForeignKey('authentication.User', null=True)
-    identifier = models.UUIDField(null=True)
-    bounty_id = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField(Category, null=True)
     deadline = models.DateTimeField()
-    data = models.CharField(max_length=128)
-    issuer = models.CharField(max_length=128)
     arbiter = models.CharField(max_length=128, null=True)
     fulfillmentAmount = models.DecimalField(decimal_places=0, max_digits=64)
     calculated_fulfillmentAmount = models.DecimalField(
@@ -110,6 +106,16 @@ class Bounty(models.Model):
     platform = models.CharField(max_length=128, blank=True)
     schemaVersion = models.CharField(max_length=64, blank=True)
     schemaName = models.CharField(max_length=128, null=True)
+
+    class Meta:
+        abstract = True
+
+
+class Bounty(BountyAbstract):
+    identifier = models.UUIDField(null=True)
+    bounty_id = models.IntegerField()
+    data = models.CharField(max_length=128)
+    issuer = models.CharField(max_length=128)
     data_categories = JSONField(null=True)
     data_issuer = JSONField(null=True)
     data_json = JSONField(null=True)
@@ -152,9 +158,24 @@ class Bounty(models.Model):
                         self.categories.create(name=category.strip())
 
 
-class BountyDraft(Bounty):
-    bounty_id = models.IntegerField(null=True)
-    on_chain = models.BooleanField(default=False)
+class BountyDraft(BountyAbstract):
+    identifier = models.UUIDField(default=uuid.uuid4)
+    data = models.CharField(max_length=128, null=True, blank=True)
+    issuer = models.CharField(max_length=128, null=True, blank=True)
+    old_balance = models.DecimalField(
+        decimal_places=0, max_digits=64, null=True)
+    data_categories = None
+    data_issuer = None
+    data_json = None
+
+
+    def save(self, *args, **kwargs):
+        fulfillmentAmount = self.fulfillmentAmount
+        balance = self.balance
+        decimals = self.tokenDecimals
+        self.calculated_balance = calculate_token_value(balance, decimals)
+        self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
+        super(Bounty, self).save(*args, **kwargs)
 
 
 class Fulfillment(models.Model):

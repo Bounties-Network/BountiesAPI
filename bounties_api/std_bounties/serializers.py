@@ -1,7 +1,7 @@
 from django.apps import apps
 from rest_framework import serializers
 from bounties.serializers import CreatableSlugRelatedField
-from std_bounties.models import Bounty, Fulfillment, Category, RankedCategory, Token, DraftBounty, Comment
+from std_bounties.models import Bounty, Fulfillment, Category, RankedCategory, Token, DraftBounty, Comment, Review
 from std_bounties.client_helpers import map_token_data
 from std_bounties.constants import STAGE_CHOICES
 from django.db import transaction
@@ -39,6 +39,15 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = apps.get_model('authentication', 'user')
         exclude = ('nonce',)
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    reviewer = UserSerializer(read_only=True)
+    reviewee = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Review
+        fields = '__all__'
 
 
 class CommentSerializer(serializers.ModelSerializer):

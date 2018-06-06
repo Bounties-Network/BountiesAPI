@@ -95,10 +95,11 @@ class BountySerializer(CustomSerializer):
     current_market_token_data = TokenSerializer(read_only=True, source='token')
     user = UserSerializer(read_only=True)
     fulfillment_count = serializers.ReadOnlyField(source='fulfillments.count')
+    comment_count = serializers.ReadOnlyField(source='comments.count')
 
     class Meta:
         model = Bounty
-        fields = '__all__'
+        exclude = ('comments',)
         extra_fields = ['id']
         extra_kwargs = {
             'data_categories': {'write_only': True},

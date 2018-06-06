@@ -82,6 +82,8 @@ class BountyFulfillmentSerializer(serializers.ModelSerializer):
 
 class FulfillmentSerializer(CustomSerializer):
     bounty_data = BountyFulfillmentSerializer(read_only=True, source='bounty')
+    fulfiller_review = ReviewSerializer(read_only=True)
+    issuer_review = ReviewSerializer(read_only=True)
 
     class Meta:
         model = Fulfillment

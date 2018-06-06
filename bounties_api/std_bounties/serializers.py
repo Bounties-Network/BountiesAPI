@@ -29,13 +29,6 @@ class RankedCategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CommentSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Comment
-        field = '__all__'
-
-
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -46,6 +39,23 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = apps.get_model('authentication', 'user')
         exclude = ('nonce',)
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        user = request.current_user
+        updated_data = {
+            **validated_data,
+            'user': user,
+        }
+        Comment.objects.create(**updated_data)
 
 
 class BountyFulfillmentSerializer(serializers.ModelSerializer):
@@ -150,7 +160,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         instance.tokenDecimals = token_data.get('tokenDecimals')
         instance.token = token_data.get('token')
         instance.usd_price = token_data.get('usd_price')
-        instance.issuer = 'klsjdflkjsdlf'
+        instance.issuer = user.public_address
         instance.save()
         return instance
 

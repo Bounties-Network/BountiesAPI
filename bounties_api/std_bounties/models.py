@@ -19,6 +19,13 @@ class Category(models.Model):
         super(Category, self).save(*args, **kwargs)
 
 
+class Comment(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey('authentication.User')
+    text = models.TextField()
+
+
 class Token(models.Model):
     normalized_name = models.CharField(max_length=128)
     name = models.CharField(max_length=128)
@@ -110,6 +117,7 @@ class Bounty(BountyAbstract):
     bounty_created = models.DateTimeField(null=True)
     bountyStage = models.IntegerField(
         choices=STAGE_CHOICES, default=DRAFT_STAGE)
+    comments = models.ManyToManyField(Comment, null=True, related_name='bounty')
     bounty_id = models.IntegerField()
     data = models.CharField(max_length=128)
     issuer = models.CharField(max_length=128)

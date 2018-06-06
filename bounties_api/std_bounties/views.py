@@ -16,12 +16,10 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
 
 
-class DraftBountyWriteViewSet(mixins.CreateModelMixin,
-                              mixins.UpdateModelMixin,
-                              viewsets.GenericViewSet):
+class DraftBountyWriteViewSet(viewsets.ModelViewSet):
     queryset = DraftBounty.objects.filter(on_chain=False)
     serializer_class = DraftBountyWriteSerializer
-    permission_classes = [AuthenticationPermission, UserObjectPermissions]
+    # permission_classes = [AuthenticationPermission, UserObjectPermissions]
 
 
 class BountyViewSet(viewsets.ReadOnlyModelViewSet):

@@ -5,6 +5,7 @@ from std_bounties import views
 
 router = DefaultRouter()
 
+router.register(r'bounty/draft', views.DraftBountyWriteViewSet)
 router.register(r'bounty', views.BountyViewSet)
 router.register(r'fulfillment', views.FulfillmentViewSet)
 router.register(r'category', views.CategoryViewSet)

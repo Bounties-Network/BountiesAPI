@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from std_bounties.models import Bounty, Fulfillment, Category, RankedCategory, Token
+from bounties.serializers import CreatableSlugRelatedField
+from std_bounties.models import Bounty, Fulfillment, Category, RankedCategory, Token, DraftBounty
 from std_bounties.constants import STAGE_CHOICES
 
 
@@ -60,6 +61,14 @@ class TokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Token
         fields = '__all__'
+
+
+class DraftBountyWriteSerializer(serializers.ModelSerializer):
+    categories = CreatableSlugRelatedField(many=True, slug_field='name', queryset=Category.objects.all())
+
+    class Meta:
+        model = DraftBounty
+        exclude = ('user', 'calculated_fulfillmentAmount', 'issuer', 'tokenLockPrice', 'usd_price', 'token', 'on_chain')
 
 
 class BountySerializer(CustomSerializer):

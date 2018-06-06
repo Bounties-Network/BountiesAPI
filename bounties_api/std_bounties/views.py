@@ -1,3 +1,4 @@
+from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.db import connection
@@ -6,12 +7,21 @@ from django.http import JsonResponse, Http404
 from rest_framework.views import APIView
 from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList
 from std_bounties.constants import STAGE_CHOICES
-from std_bounties.models import Bounty, Fulfillment, RankedCategory, Token
+from std_bounties.models import Bounty, DraftBounty, Fulfillment, RankedCategory, Token
 from std_bounties.queries import LEADERBOARD_QUERY
-from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardSerializer, TokenSerializer
+from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardSerializer, TokenSerializer, DraftBountyWriteSerializer
 from std_bounties.filters import BountiesFilter, FulfillmentsFilter, RankedCategoryFilter
+from authentication.permissions import AuthenticationPermission, UserObjectPermissions
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
+
+
+class DraftBountyWriteViewSet(mixins.CreateModelMixin,
+                              mixins.UpdateModelMixin,
+                              viewsets.GenericViewSet):
+    queryset = DraftBounty.objects.filter(on_chain=False)
+    serializer_class = DraftBountyWriteSerializer
+    permission_classes = [AuthenticationPermission, UserObjectPermissions]
 
 
 class BountyViewSet(viewsets.ReadOnlyModelViewSet):

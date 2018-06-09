@@ -31,7 +31,7 @@ class Logout(APIView):
 class Nonce(APIView):
     def get(self, request, address=''):
         user = User.objects.get_or_create(public_address=address.lower())[0]
-        return HttpResponse(user.nonce)
+        return JsonResponse({'nonce': user.nonce})
 
 
 class UserView(APIView):

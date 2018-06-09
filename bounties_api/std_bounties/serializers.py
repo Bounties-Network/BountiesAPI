@@ -144,18 +144,25 @@ class LeaderboardIssuerSerializer(serializers.Serializer):
 class DraftBountyWriteSerializer(serializers.ModelSerializer):
     # In general try and not have all this logic in a serializer
     categories = CreatableSlugRelatedField(many=True, slug_field='name', queryset=Category.objects.all())
-    tokenContract = serializers.CharField(required=False)
+    tokenContract = serializers.CharField(required=False, allow_blank=True)
     tokenSymbol = serializers.CharField(read_only=True)
     tokenDecimals = serializers.IntegerField(read_only=True)
+    arbiter = serializers.CharField(allow_blank=True, required=False)
     usd_price = serializers.FloatField(read_only=True)
     on_chain = serializers.BooleanField(read_only=True)
     current_market_token_data = TokenSerializer(read_only=True, source='token')
+    webReferenceURL = serializers.CharField(required=False, allow_blank=True)
+    calculated_fulfillmentAmount = serializers.DecimalField(
+        decimal_places=30,
+        max_digits=70,
+        read_only=True)
     user = UserSerializer(read_only=True)
+    issuer = serializers.CharField(read_only=True)
 
 
     class Meta:
         model = DraftBounty
-        exclude = ('uid', 'calculated_balance', )
+        exclude = ('uid', 'token')
 
 
     @transaction.atomic
@@ -170,7 +177,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
             validated_data.get('fulfillmentAmount'))
         instance.tokenSymbol = token_data.get('tokenSymbol')
         instance.tokenDecimals = token_data.get('tokenDecimals')
-        instance.token = token_data.get('token')
+        instance.token_id = token_data.get('token')
         instance.usd_price = token_data.get('usd_price')
         instance.issuer = user.public_address
         instance.save()
@@ -185,7 +192,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
             instance.fulfillmentAmount)
         instance.tokenSymbol = token_data.get('tokenSymbol')
         instance.tokenDecimals = token_data.get('tokenDecimals')
-        instance.token = token_data.get('token')
+        instance.token_id = token_data.get('token')
         instance.usd_price = token_data.get('usd_price')
         instance.save()
         return instance

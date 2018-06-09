@@ -84,16 +84,6 @@ class BountyAbstract(models.Model):
     experienceLevel = models.IntegerField(
         choices=DIFFICULTY_CHOICES, null=True)
     revisions = models.IntegerField(null=True)
-    balance = models.DecimalField(
-        decimal_places=0,
-        max_digits=70,
-        null=True,
-        default=0)
-    calculated_balance = models.DecimalField(
-        decimal_places=30,
-        max_digits=70,
-        null=True,
-        default=0)
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField(blank=True)
     token = models.ForeignKey(Token, null=True)
@@ -132,6 +122,16 @@ class Bounty(BountyAbstract):
     old_balance = models.DecimalField(
         decimal_places=0, max_digits=64, null=True)
     tokenLockPrice = models.FloatField(null=True, blank=True)
+    balance = models.DecimalField(
+        decimal_places=0,
+        max_digits=70,
+        null=True,
+        default=0)
+    calculated_balance = models.DecimalField(
+        decimal_places=30,
+        max_digits=70,
+        null=True,
+        default=0)
     data_categories = JSONField(null=True)
     data_issuer = JSONField(null=True)
     data_json = JSONField(null=True)
@@ -188,9 +188,7 @@ class DraftBounty(BountyAbstract):
 
     def save(self, *args, **kwargs):
         fulfillmentAmount = self.fulfillmentAmount
-        balance = self.balance
         decimals = self.tokenDecimals
-        self.calculated_balance = calculate_token_value(balance, decimals)
         self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
         super(DraftBounty, self).save(*args, **kwargs)
 

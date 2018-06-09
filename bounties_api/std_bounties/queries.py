@@ -26,7 +26,33 @@ JOIN
 			fulfiller,
 			MAX(created) as max_date
 		FROM std_bounties_fulfillment
+		WHERE std_bounties_fulfillment.fulfiller_name != ''
 		GROUP BY fulfiller
+		UNION
+		(
+			SELECT
+				without_name.fulfiller,
+				without_name.max_date
+			FROM (
+				SELECT
+					fulfiller,
+					MAX(created) as max_date
+				FROM std_bounties_fulfillment
+				WHERE fulfiller_name != ''
+				GROUP BY fulfiller
+			) with_name
+			RIGHT JOIN
+			(
+				SELECT
+					fulfiller,
+					MAX(created) as max_date
+				FROM std_bounties_fulfillment
+				WHERE fulfiller_name = ''
+				GROUP BY fulfiller
+			) without_name
+			ON with_name.fulfiller = without_name.fulfiller
+			WHERE with_name.fulfiller IS NULL
+		)
 	) max_date_fulfillment
 	ON fulfillments.fulfiller = max_date_fulfillment.fulfiller
 		AND fulfillments.created = max_date_fulfillment.max_date
@@ -64,7 +90,33 @@ JOIN
 			issuer,
 			MAX(created) as max_date
 		FROM std_bounties_bounty
+		WHERE issuer_name != ''
 		GROUP BY issuer
+		UNION
+		(
+			SELECT
+				without_name.issuer,
+				without_name.max_date
+			FROM (
+				SELECT
+					issuer,
+					MAX(created) as max_date
+				FROM std_bounties_bounty
+				WHERE issuer_name != ''
+				GROUP BY issuer
+			) with_name
+			RIGHT JOIN
+			(
+				SELECT
+					issuer,
+					MAX(created) as max_date
+				FROM std_bounties_bounty
+				WHERE issuer_name = ''
+				GROUP BY issuer
+			) without_name
+			ON with_name.issuer = without_name.issuer
+			WHERE with_name.issuer IS NULL
+		)
 	) max_date_bounty
 	ON bounties.issuer = max_date_bounty.issuer
 		AND bounties.created = max_date_bounty.max_date

@@ -4,15 +4,21 @@ from bounties.ses_client import send_email
 from bounties.utils import bounty_url_for
 
 
-def create_notification(bounty, notification_name, user, notification_created, string_data, subject, is_activity=True, email=False, should_send_email=False):
-    bounty_url = bounty_url_for(bounty.bounty_id, bounty.platform)
-    notification = Notification.objects.create(
-        notification_name=notification_name,
-        user=user,
-        notification_created=notification_created,
-        email=email,
-        dashboard=True
+def create_notification(bounty, uid, notification_name, user, notification_created, string_data, subject, is_activity=True, string_data_email=None, email_button_string='View in App', url_query=''):
+    bounty_url = bounty_url_for(bounty.bounty_id, bounty.platform) + url_query
+    notification, created = Notification.objects.get_or_create(
+        uid=str(uid),
+        defaults = {
+            'notification_name': notification_name,
+            'user': user,
+            'notification_created': notification_created,
+            'dashboard': True,
+        },
     )
+    # this is atomic, so this is a good indicator
+    if not created:
+        return
+
     DashboardNotification.objects.create(
         notification=notification,
         string_data=string_data,
@@ -23,7 +29,9 @@ def create_notification(bounty, notification_name, user, notification_created, s
     username = 'bounty hunter'
     if bounty_user and bounty_user.name:
         username = bounty_user.name
-    email_html = render_to_string('base_notification.html', context={'link': bounty_url, 'username': username, 'message_string': string_data})
-    email_txt = 'Hello {}! \n {} \n View in app: {}'.format(username, string_data, bounty_url)
-    if bounty.platform != 'gitcoin' and should_send_email:
+    email_html = render_to_string('base_notification.html', context={'link': bounty_url, 'username': username, 'message_string': string_data_email or string_data, 'button_text': email_button_string})
+    email_txt = 'Hello {}! \n {}'.format(username, string_data_email or string_data, )
+    if bounty.platform != 'gitcoin' and not notification.email_sent:
         send_email(bounty.user.email, subject, email_txt, email_html)
+        notification.email_sent = True
+        notification.save()

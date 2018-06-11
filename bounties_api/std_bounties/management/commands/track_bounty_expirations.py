@@ -26,8 +26,8 @@ class Command(BaseCommand):
                 for bounty in expired_bounties:
                     bounty.bountyStage=EXPIRED_STAGE
                     bounty.save()
-                    bounty.record_bounty_state(bounty.deadline)
-                    notification_client.bounty_expired(bounty.id, bounty.deadline)
+                    bounty_state = bounty.record_bounty_state(bounty.deadline)
+                    notification_client.bounty_expired(bounty.id, bounty_state[0].id, bounty.deadline)
                 time.sleep(60)
         except Exception as e:
             # goes to rollbar

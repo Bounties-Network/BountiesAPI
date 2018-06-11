@@ -15,12 +15,24 @@ BOUNTY_ACTIVATED_STR = """
 Your Bounty Has Been Released to the Wild: {bounty_title}
 """
 
+FULFILLMENT_ACCEPTED_FULFILLER_EMAIL = """
+Your bounty submission to {bounty_title} was accepted and your payment was processed!
+If you would like, you can rate your experience with the bounty issuer.  This will help set
+expectations for others on the platform.
+"""
+
 FULFILLMENT_ACCEPTED_FULFILLER_STR = """
-You accepted a submission for {bounty_title}
+Your submission has been accepted for {bounty_title}
 """
 
 FULFILLMENT_ACCEPTED_ISSUER_STR = """
-Your submission has been accepted for {bounty_title}
+You accepted a submission for {bounty_title}
+"""
+
+FULFILLMENT_ACCEPTED_ISSUER_EMAIL = """
+You accepted a submission to {bounty_title} and your payment was processed!
+If you would like, you can rate your experience with the bounty hunter.  This will help set
+expectations for others on the platform.
 """
 
 FULFILLMENT_UPDATED_ISSUER_STR = """

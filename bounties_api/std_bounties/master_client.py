@@ -22,7 +22,7 @@ def bounty_issued(bounty_id, **kwargs):
 
     created_bounty = bounty_client.issue_bounty(bounty_id, **kwargs)
     if not is_issue_and_activate:
-        notification_client.bounty_issued(bounty_id)
+        notification_client.bounty_issued(bounty_id, **kwargs)
         slack_client.bounty_issued(created_bounty)
 
 

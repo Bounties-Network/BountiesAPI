@@ -70,13 +70,15 @@ class Command(BaseCommand):
                     master_client.bounty_issued(bounty_id,
                                                 event_date=event_date,
                                                 inputs=contract_method_inputs,
-                                                event_timestamp=event_timestamp)
+                                                event_timestamp=event_timestamp,
+                                                uid=message_deduplication_id)
 
                 if event == 'BountyActivated':
                     master_client.bounty_activated(bounty_id,
                                                    event_date=event_date,
                                                    inputs=contract_method_inputs,
-                                                   event_timestamp=event_timestamp)
+                                                   event_timestamp=event_timestamp,
+                                                   uid=message_deduplication_id)
 
                 if event == 'BountyFulfilled':
                     master_client.bounty_fulfilled(bounty_id,
@@ -84,52 +86,61 @@ class Command(BaseCommand):
                                                    event_date=event_date,
                                                    inputs=contract_method_inputs,
                                                    event_timestamp=event_timestamp,
-                                                   transaction_issuer=transaction_from)
+                                                   transaction_issuer=transaction_from,
+                                                   uid=message_deduplication_id)
 
                 if event == 'FulfillmentUpdated':
                     master_client.fullfillment_updated(bounty_id,
                                                        event_date=event_date,
                                                        fulfillment_id=fulfillment_id,
-                                                       inputs=contract_method_inputs)
+                                                       inputs=contract_method_inputs,
+                                                       uid=message_deduplication_id)
 
                 if event == 'FulfillmentAccepted':
                     master_client.fulfillment_accepted(bounty_id,
                                                        event_date=event_date,
                                                        fulfillment_id=fulfillment_id,
-                                                       event_timestamp=event_timestamp)
+                                                       event_timestamp=event_timestamp,
+                                                       uid=message_deduplication_id)
 
                 if event == 'BountyKilled':
                     master_client.bounty_killed(bounty_id,
                                                 event_date=event_date,
-                                                event_timestamp=event_timestamp)
+                                                event_timestamp=event_timestamp,
+                                                uid=message_deduplication_id)
 
                 if event == 'ContributionAdded':
                     master_client.contribution_added(bounty_id,
                                                      event_date=event_date,
                                                      inputs=contract_method_inputs,
-                                                     event_timestamp=event_timestamp)
+                                                     event_timestamp=event_timestamp,
+                                                     uid=message_deduplication_id)
 
                 if event == 'DeadlineExtended':
                     master_client.deadline_extended(bounty_id,
                                                     event_date=event_date,
                                                     inputs=contract_method_inputs,
-                                                    event_timestamp=event_timestamp)
+                                                    event_timestamp=event_timestamp,
+                                                    uid=message_deduplication_id)
 
                 if event == 'BountyChanged':
                     master_client.bounty_changed(bounty_id,
                                                  event_date=event_date,
-                                                 inputs=contract_method_inputs)
+                                                 inputs=contract_method_inputs,
+                                                 uid=message_deduplication_id)
 
                 if event == 'IssuerTransferred':
                     master_client.issuer_transferred(bounty_id,
                                                     transaction_from=transaction_from,
                                                     event_date=event_date,
-                                                    inputs=contract_method_inputs)
+                                                    inputs=contract_method_inputs,
+                                                    uid=message_deduplication_id)
 
                 if event == 'PayoutIncreased':
                     master_client.payout_increased(bounty_id,
                                                    event_date=event_date,
-                                                   inputs=contract_method_inputs)
+                                                   inputs=contract_method_inputs,
+                                                   uid=message_deduplication_id)
 
                 logger.info(event)
 

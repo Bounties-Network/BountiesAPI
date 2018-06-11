@@ -2,7 +2,7 @@
  psycopg2
  redis==2.10.6
  djangorestframework==3.7.7
- web3==4.2.0
+ web3==4.3.0
  ipfsapi==0.4.2
  boto3==1.5.35
  rollbar==0.13.18

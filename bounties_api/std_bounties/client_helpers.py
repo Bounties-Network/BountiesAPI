@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
+from web3.middleware import geth_poa_middleware
 from std_bounties.contract import data
 from std_bounties.models import Token
 from utils.functional_tools import pluck
@@ -17,6 +18,8 @@ import logging
 logger = logging.getLogger('django')
 
 web3 = Web3(HTTPProvider(settings.ETH_NETWORK_URL))
+if settings.ETH_NETWORK == 'rinkeby':
+    web3.middleware_stack.inject(geth_poa_middleware, layer=0)
 bounties_json = json.loads(data)
 ipfs = ipfsapi.connect(host='https://ipfs.infura.io')
 bounty_data_keys = [
@@ -175,7 +178,7 @@ def map_token_data(pays_tokens, token_contract, amount):
                 address=web3.toChecksumAddress(token_contract),
                 ContractFactoryClass=ConciseContract
             )
-            token_symbol = token_symbol = HumanStandardToken.symbol()
+            token_symbol = HumanStandardToken.symbol()
             token_decimals = HumanStandardToken.decimals()
         except OverflowError:
             DSToken = web3.eth.contract(

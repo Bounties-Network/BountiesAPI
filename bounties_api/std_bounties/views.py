@@ -65,7 +65,12 @@ class SubmissionReviews(APIView):
 
 
 class BountyComments(APIView):
-    permission_classes = [AuthenticationPermission]
+    def get_permissions(self):
+        permission_classes = []
+        if self.request.method == 'POST':
+            permission_classes = [AuthenticationPermission]
+        return [permission() for permission in permission_classes]
+
 
     def get(self, request, bounty_id):
         get_object_or_404(Bounty, bounty_id=bounty_id)

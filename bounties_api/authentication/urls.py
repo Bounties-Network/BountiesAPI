@@ -13,5 +13,6 @@ urlpatterns = [
     url(r'^user/(?P<address>\w+)/profile/$', views.UserProfile.as_view()),
     url(r'^', include(router.urls)),
     url(r'^login/$', views.Login.as_view()),
+    url(r'^signup/$', views.SignUp.as_view()),
     url(r'^logout/$', views.Logout.as_view()),
 ]

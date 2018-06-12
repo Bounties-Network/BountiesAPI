@@ -21,6 +21,19 @@ from rest_framework_filters.backends import DjangoFilterBackend
 class SubmissionReviews(APIView):
     permission_classes = [AuthenticationPermission]
 
+    def get(self, request, bounty_id, fulfillment_id):
+        bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
+        fulfillment = get_object_or_404(Fulfillment, bounty=bounty, fulfillment_id=fulfillment_id, accepted=True)
+        issuer_review = fulfillment.issuer_review
+        fulfiller_review = fulfillment.fulfiller_review
+        issuer_review_data = ReviewSerializer(issuer_review).data if issuer_review else None
+        fulfiller_review_data = ReviewSerializer(fulfiller_review).data if fulfiller_review else None
+        return JsonResponse({
+            'issuer_review': issuer_review_data,
+            'fulfiller_review': fulfiller_review_data,
+        })
+
+
     def post(self, request, bounty_id, fulfillment_id):
         bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
         fulfillment = get_object_or_404(Fulfillment, bounty=bounty, fulfillment_id=fulfillment_id, accepted=True)
@@ -38,7 +51,7 @@ class SubmissionReviews(APIView):
         if not reviewer:
             return HttpResponse('Unauthorized', status=401)
 
-        serializer = ReviewSerializer(request.data)
+        serializer = ReviewSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         review = serializer.save(reviewer=reviewer, reviewee=reviewee)
         return JsonResponse(data=serializer.data)

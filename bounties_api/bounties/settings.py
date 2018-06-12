@@ -27,11 +27,10 @@ SECRET_KEY = os.environ.get('django_secret', 'secret')
 DEBUG = os.environ.get('local', False) == 'true'
 ENVIRONMENT = os.environ.get('environment', 'local')
 
+ALLOWED_HOSTS = '*'
 if DEBUG:
-    ALLOWED_HOSTS = ['.bounties.network', 'localhost']
     CORS_ORIGIN_REGEX_WHITELIST = (r'^http(s)?://(.+\.)?bounties\.network(:\d{1,5})?$', r'^http(s)?://(.+\.)?localhost(:\d{1,5})?$',)
 else:
-    ALLOWED_HOSTS = ['.bounties.network']
     CORS_ORIGIN_REGEX_WHITELIST = (r'^http(s)?://(.+\.)?bounties\.network(:\d{1,5})?$')
 
 CORS_ALLOW_CREDENTIALS = True

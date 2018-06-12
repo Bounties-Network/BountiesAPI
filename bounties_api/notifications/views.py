@@ -11,6 +11,8 @@ from notifications.filters import DashboardNotificationFilter
 
 class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (AuthenticationPermission, UserIDMatches,)
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('is_activity',)
 
     def get_queryset(self):
         user_id = self.kwargs.get('user_id')

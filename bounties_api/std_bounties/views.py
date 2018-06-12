@@ -40,6 +40,7 @@ class SubmissionReviews(APIView):
         current_user = request.current_user
         reviewer = None
         reviewee = None
+        issuer_review = False
         if fulfillment.user == current_user and not fulfillment.issuer_review:
             reviewer = fulfillment.user
             reviewee = bounty.user
@@ -54,6 +55,11 @@ class SubmissionReviews(APIView):
         serializer = ReviewSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         review = serializer.save(reviewer=reviewer, reviewee=reviewee)
+        if fulfillment.user == current_user:
+            fulfillment.issuer_review = review
+        else:
+            fulfillment.fulfiller_review = review
+        fulfillment.save()
         return JsonResponse(data=serializer.data)
 
 

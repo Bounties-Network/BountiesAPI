@@ -18,7 +18,7 @@ import logging
 logger = logging.getLogger('django')
 
 web3 = Web3(HTTPProvider(settings.ETH_NETWORK_URL))
-if settings.ETH_NETWORK in ['rinkeby', 'consensysrinkeby']:
+if settings.ETH_NETWORK in ['rinkeby', 'consensysrinkeby', 'rinkebystaging']:
     web3.middleware_stack.inject(geth_poa_middleware, layer=0)
 bounties_json = json.loads(data)
 ipfs = ipfsapi.connect(host='https://ipfs.infura.io')

@@ -2,8 +2,9 @@ from django.template.loader import render_to_string
 from notifications.models import Notification, DashboardNotification
 from bounties.ses_client import send_email
 from bounties.utils import bounty_url_for
+from django.db import transaction
 
-
+@transaction.atomic
 def create_notification(bounty, uid, notification_name, user, notification_created, string_data, subject, is_activity=True, string_data_email=None, email_button_string='View in App', url_query=''):
     bounty_url = bounty_url_for(bounty.bounty_id, bounty.platform) + url_query
     notification, created = Notification.objects.get_or_create(

@@ -64,7 +64,7 @@ class CommentSerializer(serializers.ModelSerializer):
             **validated_data,
             'user': user,
         }
-        Comment.objects.create(**updated_data)
+        return Comment.objects.create(**updated_data)
 
 
 class BountyFulfillmentSerializer(serializers.ModelSerializer):

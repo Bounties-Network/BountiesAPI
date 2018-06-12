@@ -27,8 +27,36 @@ SECRET_KEY = os.environ.get('django_secret', 'secret')
 DEBUG = os.environ.get('local', False) == 'true'
 ENVIRONMENT = os.environ.get('environment', 'local')
 
-ALLOWED_HOSTS = ['*']
-CORS_ORIGIN_ALLOW_ALL = True
+if DEBUG:
+    ALLOWED_HOSTS = ['.bounties.network', 'localhost']
+    CORS_ORIGIN_REGEX_WHITELIST = (r'^http(s)?://(.+\.)?bounties\.network(:\d{1,5})?$', r'^http(s)?://(.+\.)?localhost(:\d{1,5})?$',)
+else:
+    ALLOWED_HOSTS = ['.bounties.network']
+    CORS_ORIGIN_REGEX_WHITELIST = (r'^http(s)?://(.+\.)?bounties\.network(:\d{1,5})?$')
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+)
+
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+)
+
+
 
 # Application definition
 
@@ -205,6 +233,7 @@ networks = {
     'mainNet': 'https://mainnet.infura.io/',
     'rinkeby':  'https://rinkeby.infura.io/',
     'consensysrinkeby':  'https://rinkeby.infura.io/',
+    'rinkebystaging': 'https://rinkeby.infura.io/',
     'localhost': 'localhost:8545',
 }
 
@@ -220,5 +249,5 @@ PLATFORM_MAPPING = {
     'hiring': 'https://hiring.bounties.network',
 }
 
-if not DEBUG and ENVIRONMENT != 'local':
+if not DEBUG:
     SESSION_COOKIE_DOMAIN = '.bounties.network'

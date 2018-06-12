@@ -143,6 +143,8 @@ LOGGING = {
     'handlers': {
         'rollbar': {
             'access_token': rollbar_token,
+            'environment': ENVIRONMENT,
+            'enabled': True if rollbar_token else False,
             'class': 'rollbar.logger.RollbarHandler',
             'level': 'WARNING',
         },

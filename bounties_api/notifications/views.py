@@ -1,16 +1,33 @@
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework_filters.backends import DjangoFilterBackend
+from rest_framework import mixins
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from authentication.permissions import UserIDMatches, AuthenticationPermission, UserObjectPermissions
-from notifications.models import DashboardNotification
-from notifications.serializers import DashboardNotificationSerializer
+from notifications.models import DashboardNotification, Transaction
+from notifications.serializers import DashboardNotificationSerializer, TransactionSerializer
 from notifications.filters import DashboardNotificationFilter
 
 
+class TransactionViewSet(mixins.CreateModelMixin,
+                         mixins.ListModelMixin,
+                         viewsets.GenericViewSet):
+
+    def get_permissions(self):
+        permission_classes = []
+        if self.action == 'create':
+            permission_classes = [AuthenticationPermission, UserIDMatches]
+        return [permission() for permission in permission_classes]
+
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        return Transaction.objects.filter(user_id=user_id).order_by('-created')
+    serializer_class = TransactionSerializer
+
+
 class NotificationActivityViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (AuthenticationPermission, UserIDMatches,)
 
     def get_queryset(self):
         user_id = self.kwargs.get('user_id')
@@ -19,7 +36,6 @@ class NotificationActivityViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class NotificationPushViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (AuthenticationPermission, UserIDMatches,)
 
     def get_queryset(self):
         user_id = self.kwargs.get('user_id')

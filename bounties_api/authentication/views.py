@@ -8,7 +8,7 @@ from authentication.serializers import UserSerializer
 from authentication.models import User
 from std_bounties.models import Fulfillment
 from django.db.models import Sum, Avg
-from django.http import JsonResponse, HttpResponse, Http404
+from django.http import JsonResponse, HttpResponse
 
 
 class Login(APIView):
@@ -53,7 +53,7 @@ class UserView(APIView):
     def get(self, request):
         if request.is_logged_in:
             return JsonResponse(UserSerializer(request.current_user).data)
-        raise Http404()
+    return HttpResponse('Unauthorized', status=401)
 
 
 class UserProfile(APIView):

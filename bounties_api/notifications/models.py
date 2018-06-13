@@ -28,7 +28,7 @@ class Transaction(models.Model):
     user = models.ForeignKey('authentication.User', null=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    tx_hash = models.CharField(max_length=256, null=False, blank=False)
+    tx_hash = models.CharField(max_length=256, null=False, blank=False, unique=True)
     failed = models.BooleanField(default=False, null=False)
     completed = models.BooleanField(default=False, null=False)
     viewed = models.BooleanField(default=False, null=False)

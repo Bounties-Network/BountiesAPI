@@ -24,15 +24,15 @@ def authenticate(public_address='', signature=''):
 
 
 def login(request, user):
-    request.session['user_id'] = user.id
+    request.session['public_address'] = user.public_address.lower()
 
 
 def logout(request):
     request.session.flush()
 
 
-def get_user(user_id):
+def get_user(public_address):
     try:
-        return User.objects.get(id=user_id)
+        return User.objects.get(public_address=public_address.lower())
     except User.DoesNotExist:
         return None

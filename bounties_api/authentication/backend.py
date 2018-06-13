@@ -16,7 +16,7 @@ def authenticate(public_address='', signature=''):
         calculated_public_address = w3.eth.account.recoverHash(message_hash, signature=signature)
         user.nonce = uuid.uuid4()
         user.save()
-        if calculated_public_address == public_address:
+        if calculated_public_address.lower() == public_address.lower():
             return user
     except Exception as e:
         logger.error('Login attempt failed for address: {}, sig: {}'.format(public_address, signature), e)

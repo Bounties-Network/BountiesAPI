@@ -88,19 +88,3 @@ class UserProfile(APIView):
         serializer = UserSerializer(user)
 
         return JsonResponse({'user': serializer.data, 'stats': profile_stats})
-
-
-class UserAddressView(mixins.RetrieveModelMixin,
-                      mixins.UpdateModelMixin,
-                      CaseInsensitiveLookupMixin,
-                      viewsets.GenericViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    lookup_field = 'public_address'
-
-    def get_permissions(self):
-        if self.action == 'update' or self.action == 'partial_update':
-            permission_classes = [AuthenticationPermission, IsSelf]
-        else:
-            permission_classes = []
-        return [permission() for permission in permission_classes]

@@ -9,14 +9,21 @@ from notifications.serializers import DashboardNotificationSerializer
 from notifications.filters import DashboardNotificationFilter
 
 
-class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
+class NotificationActivityViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (AuthenticationPermission, UserIDMatches,)
-    filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('is_activity',)
 
     def get_queryset(self):
         user_id = self.kwargs.get('user_id')
-        return DashboardNotification.objects.filter(notification__user=user_id).order_by('-created')
+        return DashboardNotification.objects.filter(notification__user=user_id, is_activity=True).order_by('-created')
+    serializer_class = DashboardNotificationSerializer
+
+
+class NotificationPushViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (AuthenticationPermission, UserIDMatches,)
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        return DashboardNotification.objects.filter(notification__user=user_id, is_activity=False).order_by('-created')
     serializer_class = DashboardNotificationSerializer
 
 
@@ -31,10 +38,19 @@ class NotificationViewed(APIView):
         return HttpResponse('success')
 
 
-class NotificationViewAll(APIView):
+class NotificationActivityViewAll(APIView):
     permission_classes = (AuthenticationPermission, UserIDMatches,)
 
     def get(self, request, user_id):
-        notifications = DashboardNotification.objects.filter(notification__user__id=user_id)
+        notifications = DashboardNotification.objects.filter(notification__user__id=user_id, is_activity=True)
+        notifications.update(viewed=True)
+        return HttpResponse('success')
+
+
+class NotificationPushViewAll(APIView):
+    permission_classes = (AuthenticationPermission, UserIDMatches,)
+
+    def get(self, request, user_id):
+        notifications = DashboardNotification.objects.filter(notification__user__id=user_id, is_activity=False)
         notifications.update(viewed=True)
         return HttpResponse('success')

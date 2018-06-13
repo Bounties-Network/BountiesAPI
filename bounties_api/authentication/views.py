@@ -53,7 +53,7 @@ class UserView(APIView):
     def get(self, request):
         if request.is_logged_in:
             return JsonResponse(UserSerializer(request.current_user).data)
-    return HttpResponse('Unauthorized', status=401)
+        return HttpResponse('Unauthorized', status=401)
 
 
 class UserProfile(APIView):

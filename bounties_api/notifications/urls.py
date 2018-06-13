@@ -5,11 +5,13 @@ from notifications import views
 
 router = DefaultRouter()
 
-router.register(r'user/(?P<user_id>\d+)', views.NotificationViewSet, 'user_notifications')
+router.register(r'activity/user/(?P<user_id>\d+)', views.NotificationActivityViewSet, 'user_activity_notifications')
+router.register(r'push/user/(?P<user_id>\d+)', views.NotificationPushViewSet, 'user_push_notifications')
 
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
+    url(r'^activity/user/(?P<user_id>\d+)/view_all/$', views.NotificationActivityViewAll.as_view()),
+    url(r'^push/user/(?P<user_id>\d+)/view_all/$', views.NotificationPushViewAll.as_view()),
     url(r'^(?P<notification_id>\d+)/view/$', views.NotificationViewed.as_view()),
-    url(r'^user/(?P<user_id>\d+)/view_all/$', views.NotificationViewAll.as_view()),
+    url(r'^', include(router.urls)),
 ]

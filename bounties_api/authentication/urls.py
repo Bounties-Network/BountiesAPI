@@ -5,7 +5,6 @@ from rest_framework.routers import DefaultRouter
 
 
 router = DefaultRouter()
-router.register(r'user', views.UserAddressView)
 
 urlpatterns = [
     url(r'^user/$', views.UserView.as_view()),

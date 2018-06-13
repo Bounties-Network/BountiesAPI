@@ -142,13 +142,17 @@ class Bounty(BountyAbstract):
         decimals = self.tokenDecimals
         self.calculated_balance = calculate_token_value(balance, decimals)
         self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
-        user = User.objects.get_or_create(
+        user, created = User.objects.get_or_create(
             public_address = self.issuer_address,
             defaults={
                 'name': self.issuer_name,
                 'email': self.issuer_email
             }
-        )[0]
+        )
+        if not created and not user.profile_hash:
+            user.name = self.issuer_name if self.issuer_name else user.name
+            user.email = self.issuer_email if self.issuer_email else user.email
+            user.save()
         self.user = user
         super(Bounty, self).save(*args, **kwargs)
 
@@ -222,13 +226,17 @@ class Fulfillment(models.Model):
     data_json = JSONField(null=True)
 
     def save(self, *args, **kwargs):
-        user = User.objects.get_or_create(
+        user, created = User.objects.get_or_create(
             public_address = self.fulfiller,
             defaults={
                 'name': self.fulfiller_name,
                 'email': self.fulfiller_email
             }
-        )[0]
+        )
+        if not created and not user.profile_hash:
+            user.name = self.fulfiller_name if self.fulfiller_name else user.name
+            user.email = self.fulfiller_email if self.fulfiller_email else user.email
+            user.save()
         self.user = user
         super(Fulfillment, self).save(*args, **kwargs)
 

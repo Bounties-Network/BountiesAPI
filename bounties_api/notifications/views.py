@@ -22,24 +22,24 @@ class TransactionViewSet(mixins.CreateModelMixin,
 
 
     def get_queryset(self):
-        user_id = self.kwargs.get('user_id')
-        return Transaction.objects.filter(user_id=user_id).order_by('-created')
+        public_address = self.kwargs.get('public_address')
+        return Transaction.objects.filter(user__public_address=public_address).order_by('viewed', '-created')
     serializer_class = TransactionSerializer
 
 
 class NotificationActivityViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
-        user_id = self.kwargs.get('user_id')
-        return DashboardNotification.objects.filter(notification__user=user_id, is_activity=True).order_by('-created')
+        public_address = self.kwargs.get('public_address')
+        return DashboardNotification.objects.filter(notification__user__public_address=public_address, is_activity=True).order_by('-created')
     serializer_class = DashboardNotificationSerializer
 
 
 class NotificationPushViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
-        user_id = self.kwargs.get('user_id')
-        return DashboardNotification.objects.filter(notification__user=user_id, is_activity=False).order_by('-created')
+        public_address = self.kwargs.get('public_address')
+        return DashboardNotification.objects.filter(notification__user__public_address=public_address, is_activity=False).order_by('-created')
     serializer_class = DashboardNotificationSerializer
 
 
@@ -54,11 +54,22 @@ class NotificationViewed(APIView):
         return HttpResponse('success')
 
 
+class TransactionViewed(APIView):
+    permission_classes = (AuthenticationPermission, UserObjectPermissions)
+
+    def get(self, request, transaction_id):
+        transaction = get_object_or_404(Transaction, id=transaction_id)
+        self.check_object_permissions(request, transaction)
+        transaction.viewed = True
+        transaction.save()
+        return HttpResponse('success')
+
+
 class NotificationActivityViewAll(APIView):
     permission_classes = (AuthenticationPermission, UserIDMatches,)
 
-    def get(self, request, user_id):
-        notifications = DashboardNotification.objects.filter(notification__user__id=user_id, is_activity=True)
+    def get(self, request, public_address):
+        notifications = DashboardNotification.objects.filter(notification__user__public_address=public_address, is_activity=True)
         notifications.update(viewed=True)
         return HttpResponse('success')
 
@@ -66,7 +77,7 @@ class NotificationActivityViewAll(APIView):
 class NotificationPushViewAll(APIView):
     permission_classes = (AuthenticationPermission, UserIDMatches,)
 
-    def get(self, request, user_id):
-        notifications = DashboardNotification.objects.filter(notification__user__id=user_id, is_activity=False)
+    def get(self, request, public_address):
+        notifications = DashboardNotification.objects.filter(notification__user__public_address=public_address, is_activity=False)
         notifications.update(viewed=True)
         return HttpResponse('success')

@@ -3,7 +3,7 @@ from django.apps import apps
 from django.db import models
 
 class User(models.Model):
-    public_address = models.TextField(max_length=500, blank=True)
+    public_address = models.TextField(max_length=500, blank=True, unique=True)
     nonce = models.UUIDField(default=uuid.uuid4, null=False, blank=False)
     categories = models.ManyToManyField('std_bounties.Category', null=True)
     name = models.CharField(max_length=128, blank=True)

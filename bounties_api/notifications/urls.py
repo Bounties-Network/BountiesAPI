@@ -7,6 +7,7 @@ router = DefaultRouter()
 
 router.register(r'activity/user/(?P<user_id>\d+)', views.NotificationActivityViewSet, 'user_activity_notifications')
 router.register(r'push/user/(?P<user_id>\d+)', views.NotificationPushViewSet, 'user_push_notifications')
+router.register(r'transaction/user/(?P<user_id>\d+)', views.TransactionViewSet, 'user_transaction_notifications')
 
 
 urlpatterns = [

@@ -44,8 +44,8 @@ class Logout(APIView):
 
 
 class Nonce(APIView):
-    def get(self, request, address=''):
-        user = User.objects.get_or_create(public_address=address.lower())[0]
+    def get(self, request, public_address=''):
+        user = User.objects.get_or_create(public_address=public_address.lower())[0]
         return JsonResponse({'nonce': user.nonce, 'has_signed_up': bool(user.email) and bool(user.name)})
 
 
@@ -57,8 +57,8 @@ class UserView(APIView):
 
 
 class UserProfile(APIView):
-    def get(self, request, address):
-        user = User.objects.get(public_address=address.lower())
+    def get(self, request, public_address):
+        user = User.objects.get(public_address=public_address.lower())
         user_bounties = user.bounty_set
         user_fulfillments = user.fulfillment_set
         user_reviews = user.reviews

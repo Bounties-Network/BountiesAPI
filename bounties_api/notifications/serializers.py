@@ -10,11 +10,14 @@ class DashboardNotificationSerializer(serializers.ModelSerializer):
 
 
 class TransactionSerializer(serializers.ModelSerializer):
-    user = serializers.IntegerField(read_only=True)
+    failed = serializers.BooleanField(read_only=True)
+    completed = serializers.BooleanField(read_only=True)
+    viewed = serializers.BooleanField(read_only=True)
+    data = serializers.JSONField(read_only=True)
 
     class Meta:
         model = Transaction
-        fields = '__all__'
+        exclude = ('user',)
 
     def create(self, validated_data):
         request = self.context.get('request')

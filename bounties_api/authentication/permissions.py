@@ -11,10 +11,10 @@ class UserIDMatches(permissions.BasePermission):
     message = 'Unauthorized'
 
     def has_permission(self, request, view):
-        user_id = view.kwargs.get('user_id', -1)
+        public_address = view.kwargs.get('public_address', -1)
 
         if request.current_user:
-            return request.current_user.id == int(user_id)
+            return request.current_user.public_address == public_address.lower()
         return False
 
 

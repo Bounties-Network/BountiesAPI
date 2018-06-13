@@ -22,3 +22,14 @@ class DashboardNotification(models.Model):
     viewed = models.BooleanField(default=False, null=False)
     string_data = models.CharField(max_length=512, blank=True)
     data = JSONField(null=True)
+
+
+class Transaction(models.Model):
+    user = models.ForeignKey('authentication.User', null=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    tx_hash = models.CharField(max_length=256, null=False, blank=False)
+    failed = models.BooleanField(default=False, null=False)
+    completed = models.BooleanField(default=False, null=False)
+    viewed = models.BooleanField(default=False, null=False)
+    data = JSONField(null=True)

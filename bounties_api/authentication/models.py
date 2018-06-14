@@ -2,6 +2,19 @@ import uuid
 from django.apps import apps
 from django.db import models
 from django.contrib.postgres.fields import JSONField
+from notifications.constants import default_email_options, rev_mapped_notifications
+
+
+class Settings(models.Model):
+    emails = JSONField(null=False, default=default_email_options)
+
+    def readable_accepted_email_settings(self):
+        merged_settings = {**self.emails['issuer'], **self.emails['both'], **self.emails['fulfiller']}
+        return [setting for setting in merged_settings if merged_settings[setting]]
+
+    def accepted_email_settings(self):
+        merged_settings = {**self.emails['issuer'], **self.emails['both'], **self.emails['fulfiller']}
+        return [rev_mapped_notifications[setting] for setting in merged_settings if merged_settings[setting]]
 
 
 class User(models.Model):
@@ -21,8 +34,9 @@ class User(models.Model):
     twitter = models.CharField(max_length=128, blank=True)
     github = models.CharField(max_length=128, blank=True)
     linkedin = models.CharField(max_length=128, blank=True)
+    settings = models.ForeignKey(Settings, null=True)
 
-
-class Settings(models.Model):
-    user = models.ForeignKey(User, related_name='settings')
-    emails = JSONField(null=True)
+    def save(self, *args, **kwargs):
+        if not self.settings:
+            self.settings = Settings.objects.create()
+        super(User, self).save(*args, **kwargs)

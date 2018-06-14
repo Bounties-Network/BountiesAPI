@@ -12,6 +12,8 @@ from bounties.utils import calculate_token_value
 
 
 class Review(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     reviewer = models.ForeignKey(User, related_name='reviews')
     reviewee = models.ForeignKey(User, related_name='reviewees')
     rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])
@@ -143,7 +145,7 @@ class Bounty(BountyAbstract):
         self.calculated_balance = calculate_token_value(balance, decimals)
         self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
         user, created = User.objects.get_or_create(
-            public_address = self.issuer_address,
+            public_address = self.issuer,
             defaults={
                 'name': self.issuer_name,
                 'email': self.issuer_email

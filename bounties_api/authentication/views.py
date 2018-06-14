@@ -58,7 +58,10 @@ class UserView(APIView):
 
 class UserProfile(APIView):
     def get(self, request, public_address):
-        user = User.objects.get(public_address=public_address.lower())
+        try:
+            user = User.objects.get(public_address=public_address.lower())
+        except User.DoesNotExist:
+            return JsonResponse({'user': None, 'stats': {}})
         user_bounties = user.bounty_set
         user_fulfillments = user.fulfillment_set
         user_reviews = user.reviews

@@ -19,7 +19,6 @@ def create_notification(bounty, uid, notification_name, user, notification_creat
     # this is atomic, so this is a good indicator
     if not created:
         return
-
     DashboardNotification.objects.create(
         notification=notification,
         string_data=string_data,
@@ -32,7 +31,15 @@ def create_notification(bounty, uid, notification_name, user, notification_creat
         username = bounty_user.name
     email_html = render_to_string('base_notification.html', context={'link': bounty_url, 'username': username, 'message_string': string_data_email or string_data, 'button_text': email_button_string})
     email_txt = 'Hello {}! \n {}'.format(username, string_data_email or string_data, )
-    if bounty.platform != 'gitcoin' and not notification.email_sent:
-        send_email(bounty.user.email, subject, email_txt, email_html)
+    email_settings = user.settings.emails
+    activity_emails = email_settings['activity']
+    if is_activity and not activity_emails:
+        return
+
+    if not is_activity and notification_name not in user.settings.accepted_email_settings():
+        return
+
+    if not notification.email_sent:
+        send_email(user.email, subject, email_txt, email_html)
         notification.email_sent = True
         notification.save()

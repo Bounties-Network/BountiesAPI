@@ -70,7 +70,7 @@ class UserProfile(APIView):
         fulfiller_ratings_given = user_reviews.filter(issuer_review__isnull=False).aggregate(Avg('rating'))
         fulfiller_ratings_received = user_reviewees.filter(fulfillment_review__isnull=False).aggregate(Avg('rating'))
         issuer_fulfillment_acceptance = None if not Fulfillment.objects.filter(bounty__user=user).count() else (Fulfillment.objects.filter(accepted=True, bounty__user=user).count() / Fulfillment.objects.filter(bounty__user=user).count())
-        fulfiller_fulfillment_acceptance = None if not user_fulfillments.count() else (user_fulfillments.count(accepted=True) / user_fulfillments.count())
+        fulfiller_fulfillment_acceptance = None if not user_fulfillments.count() else (user_fulfillments.filter(accepted=True).count() / user_fulfillments.count())
 
         profile_stats = {
             'awarded': awarded.get('usd_price__sum'),

@@ -48,13 +48,4 @@ class SettingsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Settings
-        exclude = ('user',)
-
-    def create(self, validated_data):
-        request = self.context.get('request')
-        user = request.current_user
-        updated_data = {
-            **validated_data,
-            'user': user,
-        }
-        return Transaction.objects.create(**updated_data)
+        fields = '__all__'

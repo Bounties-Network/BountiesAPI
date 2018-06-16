@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^login/$', views.Login.as_view()),
     url(r'^logout/$', views.Logout.as_view()),
+    url(r'^settings/$', views.SettingsView.as_view()),
 ]

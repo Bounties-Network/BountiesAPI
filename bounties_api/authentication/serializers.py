@@ -22,7 +22,7 @@ def validate_email_settings(validations, fields, label):
                     key: 'This field is required for a {}'.format(label)
                 })
 
-class EmailsSerializer(serializers.BaseSerializer):
+class EmailsSerializer(serializers.JSONField):
     def to_internal_value(self, data):
         if 'issuer' not in data or 'fulfiller' not in data or 'both' not in data:
             raise serializers.ValidationError({
@@ -38,7 +38,7 @@ class EmailsSerializer(serializers.BaseSerializer):
         both_fields = data.get('both')
         validate_email_settings(both_validations, both_fields, 'both')
 
-        return json.dumps(data)
+        return data
 
 
     def to_representation(self, obj):

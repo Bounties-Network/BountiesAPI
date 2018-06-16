@@ -51,6 +51,14 @@ class SettingsView(APIView):
         user.save()
         return JsonResponse(SettingsSerializer(settings).data)
 
+    def put(self, request):
+        user = request.current_user
+        settings = user.settings
+        serializer = SettingsSerializer(settings, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        updated_settings = serializer.save()
+        return JsonResponse(SettingsSerializer(updated_settings).data)
+
 
 class UserProfile(APIView):
     def get(self, request, public_address):

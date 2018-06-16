@@ -49,7 +49,7 @@ class SettingsView(APIView):
         user = request.current_user
         user.settings = settings
         user.save()
-        return JsonResponse(settings.data)
+        return JsonResponse(SettingsSerializer(settings).data)
 
 
 class UserProfile(APIView):

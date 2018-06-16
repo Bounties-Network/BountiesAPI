@@ -42,7 +42,10 @@ class EmailsSerializer(serializers.BaseSerializer):
 
 
     def to_representation(self, obj):
-        return json.loads(obj)
+        if type(obj) != dict:
+            return json.loads(obj)
+        else:
+            return obj
 
 
 class SettingsSerializer(serializers.ModelSerializer):

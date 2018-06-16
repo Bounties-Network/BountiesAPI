@@ -148,7 +148,8 @@ class Bounty(BountyAbstract):
             public_address = self.issuer,
             defaults={
                 'name': self.issuer_name,
-                'email': self.issuer_email
+                'email': self.issuer_email,
+                'github_username': self.issuer_githubUsername,
             }
         )
         if not created and not user.profile_hash:
@@ -232,7 +233,8 @@ class Fulfillment(models.Model):
             public_address = self.fulfiller,
             defaults={
                 'name': self.fulfiller_name,
-                'email': self.fulfiller_email
+                'email': self.fulfiller_email,
+                'github_username': self.fulfiller_githubUsername,
             }
         )
         if not created and not user.profile_hash:

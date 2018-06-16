@@ -5,15 +5,6 @@ from authentication.models import User, Settings
 from notifications.constants import push_notification_options
 
 
-class UserSerializer(serializers.ModelSerializer):
-    categories = CreatableSlugRelatedField(many=True, slug_field='name', read_only=True)
-
-
-    class Meta:
-        model = User
-        exclude = ('nonce',)
-
-
 class EmailsSerializer(serializers.BaseSerializer):
     def to_internal_value(self, data):
         if 'issuer' not in data or 'fulfiller' not in data:
@@ -49,3 +40,12 @@ class SettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Settings
         fields = '__all__'
+
+
+class UserSerializer(serializers.ModelSerializer):
+    categories = CreatableSlugRelatedField(many=True, slug_field='name', read_only=True)
+    settings = SettingsSerializer()
+
+    class Meta:
+        model = User
+        exclude = ('nonce',)

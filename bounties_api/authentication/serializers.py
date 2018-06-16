@@ -59,4 +59,4 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ('nonce',)
+        exclude = ('nonce', 'profile_hash',)

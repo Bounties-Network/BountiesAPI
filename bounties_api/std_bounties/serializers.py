@@ -38,7 +38,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = apps.get_model('authentication', 'user')
-        exclude = ('nonce', 'settings',)
+        exclude = ('nonce', 'settings', 'profile_hash',)
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -164,7 +164,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DraftBounty
-        exclude = ('uid', 'token')
+        exclude = ('uid', 'token',)
 
 
     @transaction.atomic

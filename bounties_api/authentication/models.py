@@ -34,6 +34,7 @@ class User(models.Model):
     twitter = models.CharField(max_length=128, blank=True)
     github = models.CharField(max_length=128, blank=True)
     linkedin = models.CharField(max_length=128, blank=True)
+    github_username = models.CharField(max_length=128, blank=True)
     settings = models.ForeignKey(Settings, null=True)
 
     def save(self, *args, **kwargs):

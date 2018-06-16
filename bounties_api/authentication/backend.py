@@ -11,11 +11,13 @@ logger = logging.getLogger('django')
 
 def authenticate(public_address='', signature=''):
     try:
-        user = User.objects.get_or_create(public_address=public_address.lower())
+        user = User.objects.get_or_create(public_address=public_address.lower())[0]
         message_hash = defunct_hash_message(text='Hi there! Your special nonce: {}'.format(user.nonce))
         calculated_public_address = w3.eth.account.recoverHash(message_hash, signature=signature)
         user.nonce = uuid.uuid4()
         user.save()
+        print(calculated_public_address)
+        print(public_address)
         if calculated_public_address.lower() == public_address.lower():
             return user
     except Exception as e:

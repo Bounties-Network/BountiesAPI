@@ -4,8 +4,8 @@ from rest_framework import mixins
 from bounties.viewset_mixins import CaseInsensitiveLookupMixin
 from authentication.permissions import AuthenticationPermission, IsSelf
 from authentication.backend import authenticate, login, logout
-from authentication.serializers import UserSerializer
-from authentication.models import User
+from authentication.serializers import UserSerializer, SettingsSerializer
+from authentication.models import User, Settings
 from std_bounties.models import Fulfillment
 from django.db.models import Sum, Avg
 from django.http import JsonResponse, HttpResponse
@@ -39,6 +39,17 @@ class UserView(APIView):
         if request.is_logged_in:
             return JsonResponse(UserSerializer(request.current_user).data)
         return HttpResponse('Unauthorized', status=401)
+
+
+class SettingsView(APIView):
+    def post(self, request):
+        serializer = SettingsSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        settings = serializer.save()
+        user = request.current_user
+        user.settings = settings
+        user.save()
+        return JsonResponse(settings.data)
 
 
 class UserProfile(APIView):

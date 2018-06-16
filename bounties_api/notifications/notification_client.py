@@ -23,9 +23,9 @@ class NotificationClient:
         string_data_fulfiller = FULFILLMENT_SUBMITTED_FULFILLER_STR.format(bounty_title=bounty.title)
         string_data_issuer = FULFILLMENT_SUBMITTED_ISSUER_STR.format(bounty_title=bounty.title)
         # to fulfiller
-        create_notification(bounty, FULFILLMENT_SUBMITTED, fulfillment.user, fulfillment.fulfillment_created, string_data_fulfiller, 'New Submission', is_activity=False, should_send_email=True)
+        create_notification(bounty, FULFILLMENT_SUBMITTED, fulfillment.user, fulfillment.fulfillment_created, string_data_fulfiller, 'New Submission', is_activity=False)
         # to bounty issuer
-        create_notification(bounty, FULFILLMENT_SUBMITTED, bounty.user, fulfillment.fulfillment_created, string_data_issuer, 'You Received a New Submission')
+        create_notification(bounty, FULFILLMENT_SUBMITTED, bounty.user, fulfillment.fulfillment_created, string_data_issuer, 'You Received a New Submission', should_send_email=True)
         # Once we include email, email client call added here
 
 

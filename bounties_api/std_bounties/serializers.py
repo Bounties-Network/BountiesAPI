@@ -34,8 +34,10 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 
-class LanguageSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=256)
+class LanguageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Language
+        fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

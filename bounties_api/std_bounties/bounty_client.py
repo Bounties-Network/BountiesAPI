@@ -210,7 +210,7 @@ class BountyClient:
 
         if deadline:
             updated_data['deadline'] = datetime.datetime.fromtimestamp(
-                int(new_deadline))
+                int(deadline))
 
         if fulfillmentAmount:
             updated_data['fulfillmentAmount'] = Decimal(fulfillmentAmount)

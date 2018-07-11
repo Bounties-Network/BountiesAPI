@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList, limitOffsetParams
 from std_bounties.constants import STAGE_CHOICES
 from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_FULFILLER_QUERY
-from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer, ReviewSerializer
+from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LanguageSerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer, ReviewSerializer
 from std_bounties.models import Bounty, DraftBounty, Fulfillment, RankedCategory, Token, Comment
 from std_bounties.filters import BountiesFilter, FulfillmentsFilter, RankedCategoryFilter
 from authentication.permissions import AuthenticationPermission, UserObjectPermissions
@@ -162,6 +162,16 @@ class UserProfile(APIView):
         }
         return JsonResponse(user_profile)
 
+
+class Languages(APIView):
+    def get(self, request):
+        sql_query = 'select name from std_bounties_language;'
+        cursor = connection.cursor()
+        cursor.execute(sql_query)
+        query_result = dictfetchall(cursor)
+        serializer = LanguageSerializer(query_result, many=True)
+        flattened = list(map(lambda x: x['name'], serializer.data))
+        return JsonResponse(flattened, safe=False)
 
 
 class LeaderboardIssuer(APIView):

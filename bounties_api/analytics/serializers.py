@@ -2,9 +2,10 @@ from rest_framework import serializers
 
 from .models import BountiesTimeline
 from drf_queryfields import QueryFieldsMixin
-
+from std_bounties.models import Category
 
 class BountiesTimelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):
+
     class Meta:
         model = BountiesTimeline
         fields = "__all__"
@@ -23,3 +24,20 @@ class BountiesTimelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):
             "bounty_completed",
             "bounty_expired",
             "bounty_dead",)
+
+class TimelineCategorySerializer(serializers.ModelSerializer):
+    total_count = serializers.SerializerMethodField()
+    prioritized_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Category
+        fields = ('normalized_name', 'prioritized_name', 'total_count')
+
+    def get_total_count(self, obj):
+        return obj.get('total', 0)
+
+    def get_prioritized_name(self, obj):
+        ranked_categories = self.context.get('ranked_categories', {})
+        normalized_name = obj.get('normalized_name')
+        prioritized_name = ranked_categories.get(normalized_name, normalized_name)
+        return prioritized_name

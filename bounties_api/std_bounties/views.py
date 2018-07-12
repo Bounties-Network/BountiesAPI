@@ -13,7 +13,7 @@ from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_FULFILLER
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LanguageSerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer, ReviewSerializer
 from std_bounties.models import Bounty, DraftBounty, Fulfillment, RankedCategory, Token, Comment, Language
 from std_bounties.filters import BountiesFilter, FulfillmentsFilter, LanguageFilter, RankedCategoryFilter
-from authentication.permissions import AuthenticationPermission, UserObjectPermissions
+from user.permissions import AuthenticationPermission, UserObjectPermissions
 from notifications.notification_client import NotificationClient
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend

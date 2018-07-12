@@ -1,7 +1,7 @@
 from std_bounties.models import Fulfillment, Bounty, BountyState, Event
 from std_bounties.constants import ACTIVE_STAGE, EXPIRED_STAGE
 from notifications.models import Notification, DashboardNotification
-from authentication.models import User
+from user.models import User
 from notifications.constants import *
 from notifications.notification_helpers import create_notification
 from notifications.notification_templates import *

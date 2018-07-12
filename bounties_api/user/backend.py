@@ -1,5 +1,5 @@
 import uuid
-from authentication.models import User
+from user.models import User
 # Best approach for now with defunct until other forms are more stable
 from eth_account.messages import defunct_hash_message
 from web3.auto import w3

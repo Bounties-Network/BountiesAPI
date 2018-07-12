@@ -14,7 +14,7 @@ SELECT
 FROM std_bounties_fulfillment fulfillment
 JOIN std_bounties_bounty bounty
 ON fulfillment.bounty_id = bounty.id
-JOIN authentication_user profile
+JOIN user_user profile
 ON fulfillment.fulfiller = profile.public_address
 WHERE fulfillment.accepted = true {}
 GROUP BY fulfillment.fulfiller, profile.name, profile.email, profile.github_username, profile.profile_image
@@ -36,7 +36,7 @@ SELECT
 FROM std_bounties_fulfillment fulfillment
 JOIN std_bounties_bounty bounty
 ON fulfillment.bounty_id = bounty.id
-JOIN authentication_user profile
+JOIN user_user profile
 ON bounty.issuer = profile.public_address
 WHERE fulfillment.accepted = true {}
 GROUP BY bounty.issuer, profile.name, profile.email, profile.github_username, profile.profile_image

@@ -3,7 +3,7 @@ import re
 import boto3
 from django.core.management.base import BaseCommand
 from botocore.exceptions import ClientError
-from authentication.models import User
+from user.models import User
 from django.conf import settings
 import logging
 
@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
                 image_r = requests.get(github_image)
                 if image_r.status_code == 200:
-                    try: 
+                    try:
                         bucket = 'assets.bounties.network'
                         key = '{}/userimages/{}.jpg'.format(settings.ENVIRONMENT, user.public_address)
                         client.put_object(Body=image_r.content, ContentType=image_r.headers['content-type'], Bucket=bucket, ACL='public-read', Key=key)

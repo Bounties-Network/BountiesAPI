@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from authentication import views
+from user import views
 from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
 

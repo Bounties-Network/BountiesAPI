@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('authentication', '0001_initial'),
+        ('user', '0001_initial'),
     ]
 
     operations = [
@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 ('email', models.BooleanField(default=False)),
                 ('dashboard', models.BooleanField(default=True)),
                 ('subscribed', models.BooleanField(default=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='authentication.User')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='user.User')),
             ],
         ),
         migrations.AddField(

@@ -4,7 +4,7 @@ from notifications.constants import NOTIFICATION_IDS
 
 
 class Notification(models.Model):
-    user = models.ForeignKey('authentication.User', null=False)
+    user = models.ForeignKey('user.User', null=False)
     uid = models.CharField(null=False, blank=False, max_length=512)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -25,7 +25,7 @@ class DashboardNotification(models.Model):
 
 
 class Transaction(models.Model):
-    user = models.ForeignKey('authentication.User', null=False)
+    user = models.ForeignKey('user.User', null=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     tx_hash = models.CharField(max_length=256, null=False, blank=False, unique=True)

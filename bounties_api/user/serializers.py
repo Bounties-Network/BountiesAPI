@@ -2,7 +2,7 @@ import json
 from rest_framework import serializers
 from django.apps import apps
 from bounties.serializers import CreatableSlugRelatedField
-from authentication.models import User, Settings
+from user.models import User, Settings
 from notifications.constants import push_notification_options
 
 

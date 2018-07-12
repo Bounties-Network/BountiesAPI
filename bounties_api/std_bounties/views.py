@@ -12,7 +12,7 @@ from std_bounties.constants import STAGE_CHOICES
 from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_FULFILLER_QUERY
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LanguageSerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer, ReviewSerializer
 from std_bounties.models import Bounty, DraftBounty, Fulfillment, RankedCategory, Token, Comment, Language
-from std_bounties.filters import BountiesFilter, FulfillmentsFilter, RankedCategoryFilter
+from std_bounties.filters import BountiesFilter, FulfillmentsFilter, LanguageFilter, RankedCategoryFilter
 from authentication.permissions import AuthenticationPermission, UserObjectPermissions
 from notifications.notification_client import NotificationClient
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -145,6 +145,11 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 class LanguageViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = LanguageSerializer
     queryset = Language.objects.order_by('name')
+    filter_class = LanguageFilter
+    filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
+    ordering_fields = ('name',)
+    ordering = ('name',)
+    search_fields = ('normalized_name',)
 
 
 class UserProfile(APIView):

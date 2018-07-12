@@ -45,4 +45,3 @@ class BountiesFilter(filters.FilterSet):
             'deadline': ['lt', 'gt', 'exact'],
             'bounty_id': ['exact'],
         }
-

@@ -10,7 +10,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('authentication', '0002_auto_20180614_2013'),
+        ('user', '0002_auto_20180614_2013'),
         ('notifications', '0002_auto_20180529_2216'),
     ]
 
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('completed', models.BooleanField(default=False)),
                 ('viewed', models.BooleanField(default=False)),
                 ('data', django.contrib.postgres.fields.jsonb.JSONField(null=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='authentication.User')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='user.User')),
             ],
         ),
         migrations.RemoveField(

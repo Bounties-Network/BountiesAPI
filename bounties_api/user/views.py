@@ -2,10 +2,10 @@ from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework import mixins
 from bounties.viewset_mixins import CaseInsensitiveLookupMixin
-from authentication.permissions import AuthenticationPermission, IsSelf
-from authentication.backend import authenticate, login, logout
-from authentication.serializers import UserSerializer, SettingsSerializer
-from authentication.models import User, Settings
+from user.permissions import AuthenticationPermission, IsSelf
+from user.backend import authenticate, login, logout
+from user.serializers import LanguageSerializer, UserSerializer, SettingsSerializer
+from user.models import Language, User, Settings
 from std_bounties.models import Fulfillment
 from django.db.models import Sum, Avg
 from django.http import JsonResponse, HttpResponse
@@ -16,7 +16,7 @@ class Login(APIView):
         public_address = request.data.get('public_address', '')
         signature = request.data.get('signature', '')
         user = authenticate(public_address=public_address, signature=signature)
-        if not user:    
+        if not user:
             return HttpResponse('Unauthorized', status=401)
         login(request, user)
         return JsonResponse(UserSerializer(user).data)
@@ -58,6 +58,11 @@ class SettingsView(APIView):
         serializer.is_valid(raise_exception=True)
         updated_settings = serializer.save()
         return JsonResponse(SettingsSerializer(updated_settings).data)
+
+
+class LanguageViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = LanguageSerializer
+    queryset = Language.objects.order_by('name')
 
 
 class UserProfile(APIView):

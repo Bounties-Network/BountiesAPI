@@ -5,7 +5,7 @@ from django.contrib.postgres.fields import JSONField
 import uuid
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-from authentication.models import User
+from user.models import User
 from std_bounties.constants import STAGE_CHOICES, DIFFICULTY_CHOICES, INTERMEDIATE, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
@@ -28,11 +28,10 @@ class Category(models.Model):
         self.normalized_name = self.name.lower().strip()
         super(Category, self).save(*args, **kwargs)
 
-
 class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey('authentication.User')
+    user = models.ForeignKey('user.User')
     text = models.TextField()
 
 
@@ -70,7 +69,7 @@ class BountyState(models.Model):
 
 
 class BountyAbstract(models.Model):
-    user = models.ForeignKey('authentication.User', null=True)
+    user = models.ForeignKey('user.User', null=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField(Category, null=True)
@@ -202,7 +201,7 @@ class DraftBounty(BountyAbstract):
 
 class Fulfillment(models.Model):
     fulfillment_id = models.IntegerField()
-    user = models.ForeignKey('authentication.User', null=True)
+    user = models.ForeignKey('user.User', null=True)
     bounty = models.ForeignKey(Bounty, related_name='fulfillments')
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)

@@ -5,6 +5,16 @@ from django.contrib.postgres.fields import JSONField
 from notifications.constants import default_email_options, rev_mapped_notifications
 
 
+class Language(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+    normalized_name = models.CharField(max_length=128)
+    native_name = models.CharField(max_length=128)
+
+    def save(self, *args, **kwargs):
+        self.normalized_name = self.name.lower().strip()
+        super(Category, self).save(*args, **kwargs)
+        
+
 class Settings(models.Model):
     emails = JSONField(null=False, default=default_email_options)
 

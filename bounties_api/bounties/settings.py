@@ -72,7 +72,7 @@ INSTALLED_APPS = [
     'rest_framework_filters',
     'std_bounties',
     'analytics',
-    'authentication',
+    'user',
     'notifications',
     'django_nose',
 ]
@@ -96,7 +96,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
-    'authentication.middleware.AuthenticationMiddleware',
+    'user.middleware.AuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'bounties.urls'

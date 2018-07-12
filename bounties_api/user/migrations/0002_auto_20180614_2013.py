@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('std_bounties', '0005_auto_20180503_2353'),
-        ('authentication', '0001_initial'),
+        ('user', '0001_initial'),
     ]
 
     operations = [
@@ -90,6 +90,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='settings',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='authentication.Settings'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='user.Settings'),
         ),
     ]

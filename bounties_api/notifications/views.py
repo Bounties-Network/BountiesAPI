@@ -4,7 +4,7 @@ from rest_framework_filters.backends import DjangoFilterBackend
 from rest_framework import mixins
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
-from authentication.permissions import UserIDMatches, AuthenticationPermission, UserObjectPermissions
+from user.permissions import UserIDMatches, AuthenticationPermission, UserObjectPermissions
 from notifications.models import DashboardNotification, Transaction
 from notifications.serializers import DashboardNotificationSerializer, TransactionSerializer
 from notifications.filters import DashboardNotificationFilter

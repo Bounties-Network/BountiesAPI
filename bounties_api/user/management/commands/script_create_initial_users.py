@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from authentication.models import User
+from user.models import User
 from std_bounties.models import Bounty, Fulfillment
 
 

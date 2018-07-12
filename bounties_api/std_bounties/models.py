@@ -29,8 +29,12 @@ class Category(models.Model):
         super(Category, self).save(*args, **kwargs)
 
 class Language(models.Model):
+    _6391 = models.CharField(max_length=2)
+    _6392T = models.CharField(max_length=3)
+    _6392B = models.CharField(max_length=3)
     name = models.CharField(max_length=128, unique=True)
     normalized_name = models.CharField(max_length=128)
+    native_name = models.CharField(max_length=128)
 
     def save(self, *args, **kwargs):
         self.normalized_name = self.name.lower().strip()

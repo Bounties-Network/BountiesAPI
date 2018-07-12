@@ -145,11 +145,6 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 class LanguageViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = LanguageSerializer
     queryset = Language.objects.order_by('name')
-    filter_class = LanguageFilter
-    filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
-    ordering_fields = ('name',)
-    ordering = ('name',)
-    search_fields = ('normalized_name',)
 
 
 class UserProfile(APIView):

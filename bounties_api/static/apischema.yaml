@@ -220,17 +220,6 @@ paths:
       operationId: language_list
       description: Get all languages sorted by alphabetical order
       parameters:
-        - name: ordering
-          in: query
-          description: Which field to use when ordering the results.
-          required: false
-          type: string
-          enum: [name, -name]
-        - name: search
-          in: query
-          description: Search via name
-          required: false
-          type: string
         - name: limit
           in: query
           description: Number of results to return per page.

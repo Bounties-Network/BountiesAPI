@@ -15,9 +15,6 @@ def add_languages(apps, schema_editor):
 
         for line in data:
             l = Language(
-                _6391=line[0],
-                _6392T=line[1],
-                _6392B=line[2],
                 name=line[3],
                 normalized_name=line[3].lower().strip(),
                 native_name=line[4]
@@ -36,9 +33,6 @@ class Migration(migrations.Migration):
             name='Language',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('_6391', models.CharField(max_length=2)),
-                ('_6392T', models.CharField(max_length=3)),
-                ('_6392B', models.CharField(max_length=3)),
                 ('name', models.CharField(max_length=128, unique=True)),
                 ('normalized_name', models.CharField(max_length=128)),
                 ('native_name', models.CharField(max_length=128)),

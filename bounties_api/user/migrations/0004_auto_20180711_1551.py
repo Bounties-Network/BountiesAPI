@@ -6,7 +6,7 @@ import csv
 from django.db import migrations, models
 
 def add_languages(apps, schema_editor):
-    Language = apps.get_model('std_bounties', 'Language')
+    Language = apps.get_model('user', 'Language')
 
     with open('./std_bounties/fixtures/languages.csv') as f:
         reader = csv.reader(f)

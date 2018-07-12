@@ -28,15 +28,6 @@ class Category(models.Model):
         self.normalized_name = self.name.lower().strip()
         super(Category, self).save(*args, **kwargs)
 
-class Language(models.Model):
-    name = models.CharField(max_length=128, unique=True)
-    normalized_name = models.CharField(max_length=128)
-    native_name = models.CharField(max_length=128)
-
-    def save(self, *args, **kwargs):
-        self.normalized_name = self.name.lower().strip()
-        super(Category, self).save(*args, **kwargs)
-
 class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)

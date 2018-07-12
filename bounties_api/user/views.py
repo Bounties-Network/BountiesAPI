@@ -4,8 +4,8 @@ from rest_framework import mixins
 from bounties.viewset_mixins import CaseInsensitiveLookupMixin
 from user.permissions import AuthenticationPermission, IsSelf
 from user.backend import authenticate, login, logout
-from user.serializers import UserSerializer, SettingsSerializer
-from user.models import User, Settings
+from user.serializers import LanguageSerializer, UserSerializer, SettingsSerializer
+from user.models import Language, User, Settings
 from std_bounties.models import Fulfillment
 from django.db.models import Sum, Avg
 from django.http import JsonResponse, HttpResponse
@@ -58,6 +58,11 @@ class SettingsView(APIView):
         serializer.is_valid(raise_exception=True)
         updated_settings = serializer.save()
         return JsonResponse(SettingsSerializer(updated_settings).data)
+
+
+class LanguageViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = LanguageSerializer
+    queryset = Language.objects.order_by('name')
 
 
 class UserProfile(APIView):

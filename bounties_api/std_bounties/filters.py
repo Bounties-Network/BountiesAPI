@@ -1,5 +1,5 @@
 import rest_framework_filters as filters
-from std_bounties.models import Bounty, Category, Fulfillment, Language, RankedCategory
+from std_bounties.models import Bounty, Category, Fulfillment, RankedCategory
 
 
 class CategoriesFilter(filters.FilterSet):
@@ -17,12 +17,6 @@ class RankedCategoryFilter(filters.FilterSet):
             'platform': ['in', 'exact'],
         }
 
-class LanguageFilter(filters.FilterSet):
-    class Meta:
-        model = Language
-        fields = {
-            'normalized_name': ['exact', 'contains', 'startswith', 'endswith', 'in']
-        }
 
 class FulfillmentsFilter(filters.FilterSet):
     class Meta:

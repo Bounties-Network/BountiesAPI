@@ -5,13 +5,8 @@ from __future__ import unicode_literals
 import json
 from django.db import migrations, models
 
-import os
-
 def add_languages(apps, schema_editor):
     Language = apps.get_model('std_bounties', 'Language')
-
-    print("the good shit ********************")
-    print(os.getcwd())
 
     with open('./std_bounties/fixtures/languages.json') as f:
         languages_list = json.load(f)

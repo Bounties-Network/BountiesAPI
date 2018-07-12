@@ -38,6 +38,7 @@ class BountiesFilter(filters.FilterSet):
         fields = {
             'platform': ['in', 'exact'],
             'issuer': ['exact'],
+            'experienceLevel': ['exact', 'in'],
             'fulfillmentAmount': ['exact', 'lt', 'gt', 'lte'],
             'bountyStage': ['exact', 'in'],
             'bounty_created': ['lt', 'gt', 'exact'],

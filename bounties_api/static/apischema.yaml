@@ -214,6 +214,47 @@ paths:
       tags:
         - category
     parameters: []
+
+  /languages/:
+    get:
+      operationId: language_list
+      description: Get all languages sorted by alphabetical order
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Language'
+      tags:
+        - languages
+    parameters: []
+
   /category/{id}/:
     get:
       operationId: category_read
@@ -795,6 +836,25 @@ definitions:
         type: integer
         maximum: 2147483647
         minimum: -2147483648
+  Language:
+    description: specifies an available language choice
+    required:
+      - name
+      - normalized_name
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 128
+      normalized_name:
+        title: Normalized name
+        type: string
+        maxLength: 128
   BountyFulfillment:
     description: bounty fields passed as the relationship in the fulfillment endpoints.
     title: Bounty data

@@ -37,7 +37,10 @@ class CategorySerializer(serializers.ModelSerializer):
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Language
-        fields = '__all__'
+        fields = [
+            'name',
+            'normalized_name'
+        ]
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

@@ -2,7 +2,7 @@ import json
 from rest_framework import serializers
 from django.apps import apps
 from bounties.serializers import CreatableSlugRelatedField
-from user.models import User, Settings
+from user.models import Language, User, Settings
 from notifications.constants import push_notification_options
 
 
@@ -46,6 +46,15 @@ class EmailsSerializer(serializers.JSONField):
             return json.loads(obj)
         else:
             return obj
+
+
+class LanguageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Language
+        fields = [
+            'name',
+            'normalized_name'
+        ]
 
 
 class SettingsSerializer(serializers.ModelSerializer):

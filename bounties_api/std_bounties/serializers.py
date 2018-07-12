@@ -71,6 +71,38 @@ class CommentSerializer(serializers.ModelSerializer):
         return Comment.objects.create(**updated_data)
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = apps.get_model('authentication', 'user')
+        exclude = ('nonce', 'settings', 'profile_hash',)
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    reviewer = UserSerializer(read_only=True)
+    reviewee = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        user = request.current_user
+        updated_data = {
+            **validated_data,
+            'user': user,
+        }
+        return Comment.objects.create(**updated_data)
+
+
 class BountyFulfillmentSerializer(serializers.ModelSerializer):
 
     class Meta:

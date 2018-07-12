@@ -23,22 +23,9 @@ class NotificationClient:
         string_data_fulfiller = FULFILLMENT_SUBMITTED_FULFILLER_STR.format(bounty_title=bounty.title)
         string_data_issuer = FULFILLMENT_SUBMITTED_ISSUER_STR.format(bounty_title=bounty.title)
         # to fulfiller
-<<<<<<< HEAD
-<<<<<<< HEAD
-        create_notification(bounty, FULFILLMENT_SUBMITTED, fulfillment.user, fulfillment.fulfillment_created, string_data_fulfiller, 'New Submission', is_activity=False)
-        # to bounty issuer
-        create_notification(bounty, FULFILLMENT_SUBMITTED, bounty.user, fulfillment.fulfillment_created, string_data_issuer, 'You Received a New Submission', should_send_email=True)
-        # Once we include email, email client call added here
-=======
-        create_notification(bounty, uid, FULFILLMENT_SUBMITTED, fulfillment.user, fulfillment.fulfillment_created, string_data_fulfiller, 'New Submission')
-        # to bounty issuer
-        create_notification(bounty, uid, FULFILLMENT_SUBMITTED, bounty.user, fulfillment.fulfillment_created, string_data_issuer, 'You Received a New Submission', is_activity=False)
->>>>>>> Include uid passthrough, email template updates, notification client helper update to add more customization, and more :)
-=======
         create_notification(bounty, str(uid) + str(FULFILLMENT_SUBMITTED), FULFILLMENT_SUBMITTED, fulfillment.user, fulfillment.fulfillment_created, string_data_fulfiller, 'New Submission')
         # to bounty issuer
         create_notification(bounty, str(uid) + str(FULFILLMENT_SUBMITTED_ISSUER), FULFILLMENT_SUBMITTED_ISSUER, bounty.user, fulfillment.fulfillment_created, string_data_issuer, 'You Received a New Submission', is_activity=False)
->>>>>>> Include settings and email configs. Remove User endpoints. Lots of updates to fix bugs/issues that came up along the way.
 
 
     def bounty_activated(self, bounty_id, event_date, uid, **kwargs):

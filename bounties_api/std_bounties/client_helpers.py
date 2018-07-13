@@ -63,7 +63,9 @@ def map_bounty_data(data_hash, bounty_id):
             )
         })
     else:
-        metadata.pop('experienceLevel', '')
+        metadata.update({
+            'experienceLevel': rev_mapped_difficulties.get('Beginner')
+        })
 
     data_issuer = data.get('issuer', {})
     if isinstance(data_issuer, str):

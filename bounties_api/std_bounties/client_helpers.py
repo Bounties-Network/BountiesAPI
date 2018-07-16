@@ -59,6 +59,35 @@ def map_bounty_data(data_hash, bounty_id):
     categories = data.get('categories', [])
     plucked_data = pluck(data, bounty_data_keys)
 
+    #if 'platform' is 'gitcoin': also return deadline
+    
+    if metadata.get('platform', '') is 'gitcoin':
+        deadline = data.get('expire_date', '')
+        return {
+            **plucked_data,
+            **metadata,
+            'issuer_name': data_issuer.get(
+                'name',
+                ''),
+            'issuer_email': data_issuer.get(
+                'email',
+                '') or data.get(
+                    'contact',
+                    ''),
+            'issuer_githubUsername': data_issuer.get(
+                'githubUsername',
+                ''),
+            'issuer_address': data_issuer.get(
+                'address',
+                ''),
+            'data_issuer': data_issuer,
+            'data': ipfs_hash,
+            'data_json': str(data_JSON),
+            'data_categories': categories,
+            'deadline': deadline,
+        }
+
+    
     return {
         **plucked_data,
         **metadata,

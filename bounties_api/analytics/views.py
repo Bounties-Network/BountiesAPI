@@ -4,7 +4,7 @@ import json
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.response import Response
+from django.http import JsonResponse
 
 from analytics.filters import BountiesTimelineFilter
 from .serializers import BountiesTimelineSerializer
@@ -41,8 +41,4 @@ class TimelineBounties(APIView):
             pass
 
         res = {"error": 400, "message": "The fields since & until needs being formated as YYYY-MM-DD"}
-        return Response(json.dumps(res), status=status.HTTP_200_OK)
-
-
-
-
+        return JsonResponse(res, status=status.HTTP_400_BAD_REQUEST)

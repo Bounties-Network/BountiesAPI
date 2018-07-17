@@ -5,22 +5,23 @@ from __future__ import unicode_literals
 import csv
 from django.db import migrations, models
 
+
 def add_languages(apps, schema_editor):
     Language = apps.get_model('user', 'Language')
 
     with open('./std_bounties/fixtures/languages.csv') as f:
         reader = csv.reader(f)
-        next(reader) # skip header
+        next(reader)  # skip header
         data = [r for r in reader]
 
         for line in data:
-            l = Language(
+            language = Language(
                 name=line[3],
                 normalized_name=line[3].lower().strip(),
                 native_name=line[4]
             )
 
-            l.save()
+            language.save()
 
 
 class Migration(migrations.Migration):

@@ -22,4 +22,4 @@ DIFFICULTY_CHOICES = (
     (ADVANCED, 'Advanced'),
 )
 
-rev_mapped_difficulties =  dict((y, x) for x, y in DIFFICULTY_CHOICES)
+rev_mapped_difficulties = dict((y, x) for x, y in DIFFICULTY_CHOICES)

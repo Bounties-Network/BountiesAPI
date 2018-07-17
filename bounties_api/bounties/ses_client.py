@@ -12,13 +12,14 @@ AWS_REGION = 'us-east-1'
 CHARSET = "UTF-8"
 client = boto3.client('ses', region_name=AWS_REGION)
 
+
 def send_email(receiver, subject, text, html):
     if settings.LOCAL:
         return
     if settings.ENVIRONMENT not in ['production', 'consensys']:
         return
     try:
-        response = client.send_email(
+        client.send_email(
             Destination={
                 'ToAddresses': [
                     receiver,
@@ -46,4 +47,3 @@ def send_email(receiver, subject, text, html):
         logger.error(e.response['Error']['Message'])
     else:
         logger.info('email sent to {}'.format(receiver))
-

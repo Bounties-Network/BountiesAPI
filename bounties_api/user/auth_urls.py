@@ -1,7 +1,5 @@
-from django.conf.urls import url
 from user import views
-from django.conf.urls import url, include
-from rest_framework.routers import DefaultRouter
+from django.conf.urls import url
 
 
 urlpatterns = [

@@ -1,5 +1,6 @@
 from rest_framework import permissions
 
+
 class AuthenticationPermission(permissions.BasePermission):
     message = 'Unauthorized'
 

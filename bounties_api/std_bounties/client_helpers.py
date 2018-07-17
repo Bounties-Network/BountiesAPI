@@ -10,7 +10,6 @@ from std_bounties.contract import data
 from std_bounties.models import Token
 from utils.functional_tools import pluck
 
-from rest_framework.reverse import reverse
 from django.conf import settings
 import ipfsapi
 import logging
@@ -56,8 +55,10 @@ def map_bounty_data(data_hash, bounty_id):
 
     metadata = data.get('metadata', {})
 
-    formattedExperienceLevel = metadata.get('experienceLevel', '').lower().strip().capitalize()
-    metadata.update({ 'experienceLevel': rev_mapped_difficulties.get(formattedExperienceLevel, BEGINNER)})
+    formattedExperienceLevel = metadata.get(
+        'experienceLevel', '').lower().strip().capitalize()
+    metadata.update({'experienceLevel': rev_mapped_difficulties.get(
+        formattedExperienceLevel, BEGINNER)})
 
     data_issuer = data.get('issuer', {})
     if isinstance(data_issuer, str):
@@ -139,8 +140,7 @@ def calculate_token_quantity(value, decimals):
 
 
 def calculate_usd_price(value, decimals, usd_rate):
-    return ((Decimal(value) / Decimal(pow(10, decimals)))
-            * Decimal(usd_rate)).quantize(Decimal(10) ** -8)
+    return ((Decimal(value) / Decimal(pow(10, decimals))) * Decimal(usd_rate)).quantize(Decimal(10) ** -8)
 
 
 def get_token_pricing(token_symbol, token_decimals, value):
@@ -163,7 +163,8 @@ def get_historic_pricing(token_symbol, token_decimals, value, timestamp):
     r.raise_for_status()
     coin_data = r.json()
     if coin_data.get('Response', None) == 'Error':
-        usd_price, token_model = get_token_pricing(token_symbol, token_decimals, value)
+        usd_price, token_model = get_token_pricing(
+            token_symbol, token_decimals, value)
         token_price = token_model.price_usd if token_model else 0
         return usd_price, token_price
     token_price = coin_data[token_symbol]['USD']

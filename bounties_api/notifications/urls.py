@@ -5,9 +5,18 @@ from notifications import views
 
 router = DefaultRouter()
 
-router.register(r'activity/user/(?P<public_address>\w+)', views.NotificationActivityViewSet, 'user_activity_notifications')
-router.register(r'push/user/(?P<public_address>\w+)', views.NotificationPushViewSet, 'user_push_notifications')
-router.register(r'transaction/user/(?P<public_address>\w+)', views.TransactionViewSet, 'user_transaction_notifications')
+router.register(
+    r'activity/user/(?P<public_address>\w+)',
+    views.NotificationActivityViewSet,
+    'user_activity_notifications')
+router.register(
+    r'push/user/(?P<public_address>\w+)',
+    views.NotificationPushViewSet,
+    'user_push_notifications')
+router.register(
+    r'transaction/user/(?P<public_address>\w+)',
+    views.TransactionViewSet,
+    'user_transaction_notifications')
 
 
 urlpatterns = [

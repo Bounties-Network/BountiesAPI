@@ -71,7 +71,8 @@ class DateUtilsTest(unittest.TestCase):
         for _ in range(1, len(generated_range) + 1):
             day = next(iterator).timetuple()
             # constructing the expected range tuple
-            expecting = (arrow.get(moving_day).to('utc').floor('day').datetime, arrow.get(moving_day + timedelta(days=6)).to('utc').ceil('day').datetime)
+            expecting = (arrow.get(moving_day).to('utc').floor('day').datetime, arrow.get(
+                moving_day + timedelta(days=6)).to('utc').ceil('day').datetime)
             self.assertEqual(week_bounds(day), expecting)
             moving_day += timedelta(days=7)
 
@@ -82,11 +83,11 @@ class TimelineTest(unittest.TestCase):
         accepted_date = datetime(2018, 1, 1, 0, 0)
         bounties = [
             Bounty(id=x,
-            bounty_id=x, 
-            fulfillmentAmount=x,
-            usd_price=x,
-            deadline=accepted_date,
-            paysTokens=True) for x in range(0, 25)
+                   bounty_id=x,
+                   fulfillmentAmount=x,
+                   usd_price=x,
+                   deadline=accepted_date,
+                   paysTokens=True) for x in range(0, 25)
         ]
         bountyStages = [
             *[BountyState(bounty=bounties[x], bountyStage=COMPLETED_STAGE, change_date=accepted_date) for x in range(0, 5)],
@@ -97,11 +98,11 @@ class TimelineTest(unittest.TestCase):
         ]
         fulfillments = [
             Fulfillment(fulfillment_id=x,
-            accepted_date=accepted_date if x % 2 == 0 else None,
-            bounty=bounties[x],
-            fulfiller=x%3,
-            accepted=x % 2 == 0,
-            fulfillment_created=accepted_date) for x in range(0, 5)
+                        accepted_date=accepted_date if x % 2 == 0 else None,
+                        bounty=bounties[x],
+                        fulfiller=x % 3,
+                        accepted=x % 2 == 0,
+                        fulfillment_created=accepted_date) for x in range(0, 5)
         ]
 
         for bounty in bounties:
@@ -110,31 +111,41 @@ class TimelineTest(unittest.TestCase):
             bountyStage.save()
         for fullfilment in fulfillments:
             fullfilment.save()
-        
 
     def test_get_fulfillment_acceptance_rate(self):
-        data = Fulfillment.objects.filter(fulfillment_created__lte=datetime(2018, 1, 1, 0, 0))
+        data = Fulfillment.objects.filter(
+            fulfillment_created__lte=datetime(
+                2018, 1, 1, 0, 0))
         self.assertEqual(get_fulfillment_acceptance_rate(data), 0.6)
 
     def test_get_bounty_fulfilled_rate(self):
-        data = Fulfillment.objects.filter(fulfillment_created__lte=datetime(2018, 1, 1, 0, 0))
+        data = Fulfillment.objects.filter(
+            fulfillment_created__lte=datetime(
+                2018, 1, 1, 0, 0))
         bounties = Bounty.objects.all()
         self.assertEqual(get_bounty_fulfilled_rate(data, bounties), 0.2)
 
     def test_get_avg_fulfiller_acceptance_rate(self):
-        data = Fulfillment.objects.filter(fulfillment_created__lte=datetime(2018, 1, 1, 0, 0))
-        self.assertAlmostEqual(get_avg_fulfiller_acceptance_rate(data), 0.6666666666666666)
+        data = Fulfillment.objects.filter(
+            fulfillment_created__lte=datetime(
+                2018, 1, 1, 0, 0))
+        self.assertAlmostEqual(
+            get_avg_fulfiller_acceptance_rate(data),
+            0.6666666666666666)
 
     def test_get_avg_fulfillment_amount(self):
-        data = BountyState.objects.filter(change_date__lte=datetime(2018, 1, 1, 0, 0))
+        data = BountyState.objects.filter(
+            change_date__lte=datetime(2018, 1, 1, 0, 0))
         self.assertEqual(get_avg_fulfillment_amount(data), 2.0)
 
     def test_get_total_fulfillment_amount(self):
-        data = BountyState.objects.filter(change_date__lte=datetime(2018, 1, 1, 0, 0))
+        data = BountyState.objects.filter(
+            change_date__lte=datetime(2018, 1, 1, 0, 0))
         self.assertEqual(get_total_fulfillment_amount(data), 10)
 
     def test_generate_timeline(self):
-        result = generate_timeline([datetime(2018, 1, 1, 0, 0), datetime(2018, 1, 1, 0, 0)], 'standardSchema')
+        result = generate_timeline(
+            [datetime(2018, 1, 1, 0, 0), datetime(2018, 1, 1, 0, 0)], 'standardSchema')
         self.assertEqual(result.date, datetime(2018, 1, 1, 0, 0))
         self.assertEqual(result.bounties_issued, 5)
         self.assertEqual(result.bounties_issued_cum, 25)
@@ -145,7 +156,9 @@ class TimelineTest(unittest.TestCase):
         self.assertEqual(result.fulfillments_pending_acceptance, 2)
         self.assertEqual(result.fulfillment_acceptance_rate, 0.6)
         self.assertEqual(result.bounty_fulfilled_rate, 0.25)
-        self.assertAlmostEqual(result.avg_fulfiller_acceptance_rate, 0.6666666666666666)
+        self.assertAlmostEqual(
+            result.avg_fulfiller_acceptance_rate,
+            0.6666666666666666)
         self.assertEqual(result.avg_fulfillment_amount, 2)
         self.assertEqual(result.total_fulfillment_amount, 10)
         self.assertEqual(result.bounty_draft, 5)

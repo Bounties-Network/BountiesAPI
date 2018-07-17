@@ -29,9 +29,13 @@ ENVIRONMENT = os.environ.get('environment', 'local')
 
 ALLOWED_HOSTS = '*'
 if DEBUG:
-    CORS_ORIGIN_REGEX_WHITELIST = (r'^http(s)?://(.+\.)?bounties\.network(:\d{1,5})?$', r'^http(s)?://(.+\.)?localhost(:\d{1,5})?$',)
+    CORS_ORIGIN_REGEX_WHITELIST = (
+        r'^http(s)?://(.+\.)?bounties\.network(:\d{1,5})?$',
+        r'^http(s)?://(.+\.)?localhost(:\d{1,5})?$',
+    )
 else:
-    CORS_ORIGIN_REGEX_WHITELIST = (r'^http(s)?://(.+\.)?bounties\.network(:\d{1,5})?$')
+    CORS_ORIGIN_REGEX_WHITELIST = (
+        r'^http(s)?://(.+\.)?bounties\.network(:\d{1,5})?$')
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = (
@@ -54,7 +58,6 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with',
 )
-
 
 
 # Application definition
@@ -220,8 +223,12 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 STATIC_URL = '/static/'
 if not DEBUG:
     STATIC_URL = 'https://s3.amazonaws.com/assets.bounties.network/' + ENVIRONMENT + '/'
-QUEUE_URL = os.environ.get('queue_url', 'https://sqs.us-east-1.amazonaws.com/802922962628/bounties_development.fifo')
-NOTIFICATIONS_URL = os.environ.get('notifications_url', 'https://sqs.us-east-1.amazonaws.com/802922962628/notifications_development.fifo')
+QUEUE_URL = os.environ.get(
+    'queue_url',
+    'https://sqs.us-east-1.amazonaws.com/802922962628/bounties_development.fifo')
+NOTIFICATIONS_URL = os.environ.get(
+    'notifications_url',
+    'https://sqs.us-east-1.amazonaws.com/802922962628/notifications_development.fifo')
 SLACK_TOKEN = os.environ.get('slack_token')
 REDIS_LOCATION = os.environ.get('redis_location', 'redis://127.0.0.1:6379')
 LOCAL = os.environ.get('local') == 'true'
@@ -231,8 +238,8 @@ GITHUB_TOKEN = os.environ.get('github_token', '')
 
 networks = {
     'mainNet': 'https://mainnet.infura.io/',
-    'rinkeby':  'https://rinkeby.infura.io/',
-    'consensysrinkeby':  'https://rinkeby.infura.io/',
+    'rinkeby': 'https://rinkeby.infura.io/',
+    'consensysrinkeby': 'https://rinkeby.infura.io/',
     'rinkebystaging': 'https://rinkeby.infura.io/',
     'localhost': 'localhost:8545',
 }

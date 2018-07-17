@@ -1470,7 +1470,7 @@ definitions:
       experienceLevel:
         description: 0 -> Beginner, 1 -> Intermediate, 2 -> Advanced
         type: number
-        enum: [0, 1, 2, 3]
+        enum: [0, 1, 2]
       revisions:
         type: integer
       title:

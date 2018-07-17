@@ -42,6 +42,7 @@ class User(models.Model):
     email = models.CharField(max_length=128, blank=True)
     organization = models.CharField(max_length=128, blank=True)
     languages = models.CharField(max_length=256, blank=True)
+    skills = models.CharField(max_length=256, blank=True)
     profileFileName = models.CharField(max_length=256, blank=True)
     profileFileHash = models.CharField(max_length=256, blank=True)
     profileDirectoryHash = models.CharField(max_length=256, blank=True)
@@ -50,6 +51,7 @@ class User(models.Model):
     twitter = models.CharField(max_length=128, blank=True)
     github = models.CharField(max_length=128, blank=True)
     linkedin = models.CharField(max_length=128, blank=True)
+    dribble = models.CharField(max_length=128, blank=True)
     github_username = models.CharField(max_length=128, blank=True)
     settings = models.ForeignKey(Settings, null=True)
 

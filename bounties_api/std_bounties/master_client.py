@@ -9,6 +9,16 @@ notification_client = NotificationClient()
 slack_client = SlackMessageClient()
 
 
+def profile_updated(**kwargs):
+    data = map_user_data(kwargs.get('inputs').get('profile'), kwargs.get('transaction_from', None))
+    user = User.objects.get_or_create(public_address=kwargs.get('transaction_from', '').lower())[0]
+
+    for (key, value) in data.items():
+        setattr(user, key, value)
+
+    user.save()
+
+
 def bounty_issued(bounty_id, **kwargs):
     bounty = Bounty.objects.filter(bounty_id=bounty_id)
     inputs = kwargs.get('inputs', {})

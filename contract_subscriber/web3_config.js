@@ -11,9 +11,16 @@ const StandardBounties = new web3.eth.Contract(
 	json[ETH_NETWORK].standardBountiesAddress
 );
 
+const ETHProfiles = new web3.eth.Contract(
+	json.interfaces.ETHProfiles,
+	json[ETH_NETWORK].ethProfilesAddress
+);
+
 abiDecoder.addABI(json.interfaces.StandardBounties);
+abiDecoder.addABI(json.interfaces.ETHProfiles);
 
 exports.getTransaction = web3.eth.getTransaction;
 exports.getBlock = web3.eth.getBlock;
 exports.abiDecoder = abiDecoder;
 exports.StandardBounties = StandardBounties;
+exports.ETHProfiles = ETHProfiles;

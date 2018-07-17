@@ -66,9 +66,17 @@ class Command(BaseCommand):
                     )
                     continue
 
-                logger.info(
-                    'attempting {}: for bounty id {}'.format(
-                        event, str(bounty_id)))
+                logger.info('attempting {}: {}'.format(event,
+                    'for address {}'.format(transaction_from) if bounty_id == -1 else 'for bounty id {}'.format(str(bounty_id)))
+                )
+
+                if event == 'profileUpdated':
+                    master_client.profile_updated(event_date=event_date,
+                                                  inputs=contract_method_inputs,
+                                                  event_timestamp=event_timestamp,
+                                                  transaction_from=transaction_from,
+                                                  uid=message_deduplication_id)
+
                 if event == 'BountyIssued':
                     master_client.bounty_issued(
                         bounty_id,
@@ -163,23 +171,26 @@ class Command(BaseCommand):
                 Event.objects.get_or_create(
                     event=event,
                     transaction_hash=transaction_hash,
-                    defaults={
-                        'bounty_id': bounty_id,
+                    defaults = {
+                        'bounty_id': bounty_id if bounty_id != -1 else None,
                         'fulfillment_id': fulfillment_id if fulfillment_id != -1 else None,
                         'transaction_from': transaction_from,
                         'contract_inputs': contract_method_inputs,
                         'event_date': event_date,
-                    })
-                # there should only be one, but this is easier than nesting a
-                # try catch
-                bounty = Bounty.objects.get(bounty_id=bounty_id)
-                transactions = Transaction.objects.filter(
-                    tx_hash=transaction_hash)
+                    }
+                )
+                # there should only be one, but this is easier than nesting a try catch
+                bounty = Bounty.objects.get(bounty_id=bounty_id) if bounty_id != -1 else None
+
+                transactions = Transaction.objects.filter(tx_hash=transaction_hash)
                 if transactions.exists():
                     transactions.update(
-                        completed=True, viewed=False, data={
-                            'link': bounty_url_for(
-                                bounty.id, bounty.platform)})
+                        completed=True,
+                        viewed=False,
+                        data={
+                            'link': bounty_url_for(bounty.id, bounty.platform) if bounty.id else None
+                        }
+                    )
 
                 redis_client.set(message_deduplication_id, True)
                 sqs_client.delete_message(

@@ -25,8 +25,6 @@ async function handler() {
 			// ETHProfiles latest events
 			fromBlock = await getAsync('ethProfilesCurrentBlock') || 0;
 			events = await ETHProfiles.getPastEvents({fromBlock, toBlock: 'latest'});
-			console.log('eth_profile events');
-			console.log(events);
 			eventBlock = await sendEvents(events);
 
 			if (eventBlock) {

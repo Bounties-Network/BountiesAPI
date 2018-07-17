@@ -88,3 +88,8 @@ def bounty_url_for(bounty_id, platform=None):
         base_url = settings.PLATFORM_MAPPING[platform]
     url = '{}/bounty/v1/{}/'.format(base_url, bounty_id)
     return url
+
+def profile_url_for(public_address):
+    base_url = settings.DEPLOY_URL
+    url = '{}/user/{}/profile/'.format(base_url, public_address)
+    return url

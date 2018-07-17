@@ -18,6 +18,8 @@ def profile_updated(**kwargs):
 
     user.save()
 
+    notification_client.profile_updated(kwargs.get('transaction_from', '').lower(), **kwargs)
+
 
 def bounty_issued(bounty_id, **kwargs):
     bounty = Bounty.objects.filter(bounty_id=bounty_id)

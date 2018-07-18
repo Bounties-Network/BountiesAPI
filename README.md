@@ -34,7 +34,7 @@ docker-compose up
 By default, the sync will connect to mainNet. To change to a rinkeby sync or other, you will need to adjust the eth_network key in the [environment file](https://github.com/Bounties-Network/BountiesAPI/blob/master/.env). As an example, it can be changed to `eth_network=rinkeby`.
 
 ## API Schema and Documentation
-Visit the [production](http://a2e716ea2144911e898ed02122fce8e2-236283655.us-east-1.elb.amazonaws.com:83/) or staging [endpoint](http://afb256214274611e898ed02122fce8e2-504516521.us-east-1.elb.amazonaws.com:83/). Both default to the swagger documentation ui. The local version also serves the documentation.
+Visit the [production](api.bounties.network/) or staging [endpoint](https://staging.api.bounties.network/). Both default to the swagger documentation ui. The local version also serves the documentation.
 
 ## Architecture
 

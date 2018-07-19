@@ -65,10 +65,20 @@ def create_notification(
 
 
 @transaction.atomic
-def create_other_notification(uid, notification_name, user, notification_created, string_data, subject, is_activity=True, string_data_email=None, email_button_string='View in App', url=''):
+def create_other_notification(
+        uid,
+        notification_name,
+        user,
+        notification_created,
+        string_data,
+        subject,
+        is_activity=True,
+        string_data_email=None,
+        email_button_string='View in App',
+        url=''):
     notification, created = Notification.objects.get_or_create(
         uid=str(uid),
-        defaults = {
+        defaults={
             'notification_name': notification_name,
             'user': user,
             'notification_created': notification_created,
@@ -88,8 +98,16 @@ def create_other_notification(uid, notification_name, user, notification_created
     username = 'bounty hunter'
     if user and user.name:
         username = user.name
-    email_html = render_to_string('base_notification.html', context={'link': profile_url_for(user.public_address), 'username': username, 'message_string': string_data_email or string_data, 'button_text': email_button_string})
-    email_txt = 'Hello {}! \n {}'.format(username, string_data_email or string_data, )
+    email_html = render_to_string(
+        'base_notification.html',
+        context={
+            'link': profile_url_for(
+                user.public_address),
+            'username': username,
+            'message_string': string_data_email or string_data,
+            'button_text': email_button_string})
+    email_txt = 'Hello {}! \n {}'.format(
+        username, string_data_email or string_data, )
     email_settings = user.settings.emails
     activity_emails = email_settings['activity']
     if is_activity and not activity_emails:

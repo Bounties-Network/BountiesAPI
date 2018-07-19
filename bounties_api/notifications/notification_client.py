@@ -1,15 +1,8 @@
 from std_bounties.models import Fulfillment, Bounty
 from user.models import User
-<<<<<<< HEAD
 from notifications.constants import notifications
-from notifications.notification_helpers import create_notification
-from notifications.notification_templates import notification_templates, email_templates
-
-=======
-from notifications.constants import *
 from notifications.notification_helpers import create_notification, create_other_notification
-from notifications.notification_templates import *
->>>>>>> added notification support for profile updates
+from notifications.notification_templates import notification_templates, email_templates
 
 
 class NotificationClient:
@@ -314,5 +307,11 @@ class NotificationClient:
 
     def profile_updated(self, public_address, event_date, uid, **kwargs):
         user = User.objects.get(public_address=public_address)
-        string_data = PROFILE_UPDATED_STR.format(public_address=public_address)
-        create_other_notification(uid, PROFILE_UPDATED, user, event_date, string_data, 'You Updated Your Profile')
+        string_data = notification_templates['ProfileUpdated'].format(public_address=public_address)
+        create_other_notification(
+            uid,
+            notifications['ProfileUpdated'],
+            user,
+            event_date,
+            string_data,
+            'You Updated Your Profile')

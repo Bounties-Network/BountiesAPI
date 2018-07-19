@@ -81,6 +81,7 @@ def calculate_token_value(value, decimals):
     return (Decimal(value) / Decimal(pow(10, decimals))
             ).quantize(Decimal(10) ** -decimals)
 
+
 def base_url_for(platform=None):
     base_url = settings.DEPLOY_URL
     if platform in settings.PLATFORM_MAPPING:
@@ -88,9 +89,11 @@ def base_url_for(platform=None):
 
     return base_url
 
+
 def bounty_url_for(bounty_id, platform=None):
     url = '{}/bounty/v1/{}/'.format(base_url_for(platform), bounty_id)
     return url
+
 
 def profile_url_for(public_address, platform=None):
     url = '{}/user/{}/profile/'.format(base_url_for(platform), public_address)

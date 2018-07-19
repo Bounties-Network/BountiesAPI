@@ -5,8 +5,8 @@ from django.contrib.postgres.fields import JSONField
 import uuid
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-from authentication.models import User
-from std_bounties.constants import STAGE_CHOICES, DIFFICULTY_CHOICES, INTERMEDIATE, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
+from user.models import User
+from std_bounties.constants import STAGE_CHOICES, DIFFICULTY_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
 
@@ -16,7 +16,10 @@ class Review(models.Model):
     modified = models.DateTimeField(auto_now=True)
     reviewer = models.ForeignKey(User, related_name='reviews')
     reviewee = models.ForeignKey(User, related_name='reviewees')
-    rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])
+    rating = models.IntegerField(
+        validators=[
+            MaxValueValidator(5),
+            MinValueValidator(1)])
     review = models.TextField()
 
 
@@ -32,7 +35,7 @@ class Category(models.Model):
 class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey('authentication.User')
+    user = models.ForeignKey('user.User')
     text = models.TextField()
 
 
@@ -61,16 +64,15 @@ class BountyState(models.Model):
             if last_stage == ACTIVE_STAGE and self.bounty.deadline < self.change_date:
                 BountyState.objects.create(bounty=self.bounty,
                                            bountyStage=EXPIRED_STAGE,
-                                           change_date=bounty.deadline)
+                                           change_date=self.bounty.deadline)
         super(BountyState, self).save(*args, **kwargs)
-
 
     class Meta:
         get_latest_by = 'change_date'
 
 
 class BountyAbstract(models.Model):
-    user = models.ForeignKey('authentication.User', null=True)
+    user = models.ForeignKey('user.User', null=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField(Category, null=True)
@@ -117,7 +119,8 @@ class Bounty(BountyAbstract):
     bounty_created = models.DateTimeField(null=True)
     bountyStage = models.IntegerField(
         choices=STAGE_CHOICES, default=DRAFT_STAGE)
-    comments = models.ManyToManyField(Comment, null=True, related_name='bounty')
+    comments = models.ManyToManyField(
+        Comment, null=True, related_name='bounty')
     bounty_id = models.IntegerField()
     data = models.CharField(max_length=128)
     issuer = models.CharField(max_length=128)
@@ -143,9 +146,10 @@ class Bounty(BountyAbstract):
         balance = self.balance
         decimals = self.tokenDecimals
         self.calculated_balance = calculate_token_value(balance, decimals)
-        self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
+        self.calculated_fulfillmentAmount = calculate_token_value(
+            fulfillmentAmount, decimals)
         user, created = User.objects.get_or_create(
-            public_address = self.issuer,
+            public_address=self.issuer,
             defaults={
                 'name': self.issuer_name,
                 'email': self.issuer_email,
@@ -159,13 +163,12 @@ class Bounty(BountyAbstract):
         self.user = user
         super(Bounty, self).save(*args, **kwargs)
 
-
     def record_bounty_state(self, event_date):
         """Makes sure no duplicates are created"""
         # Need to make this a post_event signal. The only problem is we need a better event system
         # since this call requires an event_date
-        return BountyState.objects.get_or_create(bounty=self, bountyStage=self.bountyStage, change_date=event_date)
-
+        return BountyState.objects.get_or_create(
+            bounty=self, bountyStage=self.bountyStage, change_date=event_date)
 
     def save_and_clear_categories(self, categories):
         # this is really messy, but this is bc of psql django bugs
@@ -196,19 +199,22 @@ class DraftBounty(BountyAbstract):
     def save(self, *args, **kwargs):
         fulfillmentAmount = self.fulfillmentAmount
         decimals = self.tokenDecimals
-        self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
+        self.calculated_fulfillmentAmount = calculate_token_value(
+            fulfillmentAmount, decimals)
         super(DraftBounty, self).save(*args, **kwargs)
 
 
 class Fulfillment(models.Model):
     fulfillment_id = models.IntegerField()
-    user = models.ForeignKey('authentication.User', null=True)
+    user = models.ForeignKey('user.User', null=True)
     bounty = models.ForeignKey(Bounty, related_name='fulfillments')
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     fulfillment_created = models.DateTimeField(null=True)
-    fulfiller_review = models.ForeignKey(Review, related_name='fulfillment_review', null=True)
-    issuer_review = models.ForeignKey(Review, related_name='issuer_review', null=True)
+    fulfiller_review = models.ForeignKey(
+        Review, related_name='fulfillment_review', null=True)
+    issuer_review = models.ForeignKey(
+        Review, related_name='issuer_review', null=True)
     data = models.CharField(max_length=128)
     accepted = models.BooleanField()
     accepted_date = models.DateTimeField(null=True)
@@ -230,7 +236,7 @@ class Fulfillment(models.Model):
 
     def save(self, *args, **kwargs):
         user, created = User.objects.get_or_create(
-            public_address = self.fulfiller,
+            public_address=self.fulfiller,
             defaults={
                 'name': self.fulfiller_name,
                 'email': self.fulfiller_email,

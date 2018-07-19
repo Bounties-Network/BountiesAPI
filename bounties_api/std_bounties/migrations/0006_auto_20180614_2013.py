@@ -11,7 +11,7 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('authentication', '0002_auto_20180614_2013'),
+        ('user', '0002_auto_20180614_2013'),
         ('std_bounties', '0005_auto_20180503_2353'),
     ]
 
@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True)),
                 ('text', models.TextField()),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='authentication.User')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='user.User')),
             ],
         ),
         migrations.CreateModel(
@@ -62,7 +62,7 @@ class Migration(migrations.Migration):
                 ('on_chain', models.BooleanField(default=False)),
                 ('categories', models.ManyToManyField(null=True, to='std_bounties.Category')),
                 ('token', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='std_bounties.Token')),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='authentication.User')),
+                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='user.User')),
             ],
             options={
                 'ordering': ['-created'],
@@ -76,8 +76,8 @@ class Migration(migrations.Migration):
                 ('modified', models.DateTimeField(auto_now=True)),
                 ('rating', models.IntegerField(validators=[django.core.validators.MaxValueValidator(5), django.core.validators.MinValueValidator(1)])),
                 ('review', models.TextField()),
-                ('reviewee', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviewees', to='authentication.User')),
-                ('reviewer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to='authentication.User')),
+                ('reviewee', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviewees', to='user.User')),
+                ('reviewer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to='user.User')),
             ],
         ),
         migrations.AddField(

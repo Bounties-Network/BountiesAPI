@@ -37,7 +37,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = apps.get_model('authentication', 'user')
+        model = apps.get_model('user', 'user')
         exclude = ('nonce', 'settings', 'profile_hash',)
 
 
@@ -145,7 +145,8 @@ class LeaderboardIssuerSerializer(serializers.Serializer):
 
 class DraftBountyWriteSerializer(serializers.ModelSerializer):
     # In general try and not have all this logic in a serializer
-    categories = CreatableSlugRelatedField(many=True, slug_field='name', queryset=Category.objects.all())
+    categories = CreatableSlugRelatedField(
+        many=True, slug_field='name', queryset=Category.objects.all())
     tokenContract = serializers.CharField(required=False, allow_blank=True)
     tokenSymbol = serializers.CharField(read_only=True)
     tokenDecimals = serializers.IntegerField(read_only=True)
@@ -161,15 +162,15 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     issuer = serializers.CharField(read_only=True)
 
-
     class Meta:
         model = DraftBounty
         exclude = ('uid', 'token',)
 
-
     @transaction.atomic
     def create(self, validated_data):
-        instance = super(DraftBountyWriteSerializer, self).create(validated_data)
+        instance = super(
+            DraftBountyWriteSerializer,
+            self).create(validated_data)
         request = self.context.get('request')
         user = request.current_user
         instance.user = user
@@ -187,7 +188,11 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        updated_instance = super(DraftBountyWriteSerializer, self).update(instance, validated_data)
+        super(
+            DraftBountyWriteSerializer,
+            self).update(
+            instance,
+            validated_data)
         token_data = map_token_data(
             instance.paysTokens,
             instance.tokenContract,

@@ -31,4 +31,4 @@ class BountiesTimelineFilter(FilterSet):
                   'bounty_expired': ['gt', 'gte', 'lt', 'lte', 'exact'],
                   'bounty_dead': ['gt', 'gte', 'lt', 'lte', 'exact'],
                   'schema': ['exact']
-        }
+                  }

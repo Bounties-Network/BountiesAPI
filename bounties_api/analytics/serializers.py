@@ -4,7 +4,9 @@ from .models import BountiesTimeline
 from drf_queryfields import QueryFieldsMixin
 
 
-class BountiesTimelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):
+class BountiesTimelineSerializer(
+        QueryFieldsMixin,
+        serializers.ModelSerializer):
     class Meta:
         model = BountiesTimeline
         fields = "__all__"

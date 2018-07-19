@@ -1,4 +1,4 @@
-from authentication.backend import get_user
+from user.backend import get_user
 from django.utils.deprecation import MiddlewareMixin
 
 

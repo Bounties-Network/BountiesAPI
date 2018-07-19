@@ -1,10 +1,7 @@
-from decimal import Decimal
 from std_bounties.bounty_client import BountyClient
 from notifications.notification_client import NotificationClient
 from std_bounties.slack_client import SlackMessageClient
-from bounties.utils import bounty_url_for
 from std_bounties.models import Bounty
-from bounties.ses_client import send_email
 
 
 bounty_client = BountyClient()
@@ -106,4 +103,3 @@ def payout_increased(bounty_id, **kwargs):
     bounty_client.increase_payout(bounty, **kwargs)
     notification_client.payout_increased(bounty_id, **kwargs)
     slack_client.payout_increased(bounty)
-

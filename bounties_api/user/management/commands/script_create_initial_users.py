@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from authentication.models import User
+from user.models import User
 from std_bounties.models import Bounty, Fulfillment
 
 
@@ -8,7 +8,8 @@ logger = logging.getLogger('django')
 
 
 class Command(BaseCommand):
-    # This is a temp script/migration script - not something that runs regularly
+    # This is a temp script/migration script - not something that runs
+    # regularly
     help = 'Script to Create the Users From Current Bounties and Fulfillments'
 
     def handle(self, *args, **options):

@@ -1,6 +1,6 @@
 import datetime
 from decimal import Decimal
-from std_bounties.models import Bounty, Fulfillment, DraftBounty
+from std_bounties.models import Fulfillment, DraftBounty
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer
 from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE
 from std_bounties.client_helpers import map_bounty_data, map_token_data, map_fulfillment_data, get_token_pricing, get_historic_pricing
@@ -92,7 +92,8 @@ class BountyClient:
             return
 
         data_hash = inputs.get('data')
-        ipfs_data = map_fulfillment_data(data_hash, bounty.bounty_id, fulfillment_id)
+        ipfs_data = map_fulfillment_data(
+            data_hash, bounty.bounty_id, fulfillment_id)
 
         fulfillment_data = {
             'fulfillment_id': fulfillment_id,
@@ -115,7 +116,8 @@ class BountyClient:
             fulfillment_id=fulfillment_id, bounty_id=bounty.bounty_id)
 
         data_hash = inputs.get('data')
-        ipfs_data = map_fulfillment_data(data_hash, bounty.bounty_id, fulfillment_id)
+        ipfs_data = map_fulfillment_data(
+            data_hash, bounty.bounty_id, fulfillment_id)
 
         fulfillment_serializer = FulfillmentSerializer(
             fulfillment, data={**ipfs_data}, partial=True)
@@ -123,9 +125,13 @@ class BountyClient:
 
         return instance
 
-
     @transaction.atomic
-    def accept_fulfillment(self, bounty, fulfillment_id, event_timestamp, **kwargs):
+    def accept_fulfillment(
+            self,
+            bounty,
+            fulfillment_id,
+            event_timestamp,
+            **kwargs):
         event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
         bounty.balance = bounty.balance - bounty.fulfillmentAmount
         usd_price, token_price = get_historic_pricing(
@@ -159,7 +165,8 @@ class BountyClient:
             bounty.tokenDecimals,
             bounty.fulfillmentAmount,
             event_timestamp)
-        has_accepted_fulfillments = bounty.fulfillments.filter(accepted=True).exists()
+        has_accepted_fulfillments = bounty.fulfillments.filter(
+            accepted=True).exists()
         if has_accepted_fulfillments:
             bounty.bountyStage = COMPLETED_STAGE
         else:
@@ -193,7 +200,8 @@ class BountyClient:
         event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
         bounty.deadline = getDateTimeFromTimestamp(
             inputs.get('newDeadline', None))
-        if bounty.deadline > datetime.datetime.now() and bounty.bountyStage == EXPIRED_STAGE:
+        if bounty.deadline > datetime.datetime.now(
+        ) and bounty.bountyStage == EXPIRED_STAGE:
             bounty.bountyStage = ACTIVE_STAGE
             bounty.record_bounty_state(event_date)
         bounty.save()

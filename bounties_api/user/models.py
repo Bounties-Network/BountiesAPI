@@ -1,20 +1,36 @@
 import uuid
-from django.apps import apps
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-from notifications.constants import default_email_options, rev_mapped_notifications
+from notifications.constants import default_email_options, notifications
+
+
+class Language(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+    normalized_name = models.CharField(max_length=128)
+    native_name = models.CharField(max_length=128)
+
+    def save(self, *args, **kwargs):
+        self.normalized_name = self.name.lower().strip()
+        super(Language, self).save(*args, **kwargs)
 
 
 class Settings(models.Model):
     emails = JSONField(null=False, default=default_email_options)
 
     def readable_accepted_email_settings(self):
-        merged_settings = {**self.emails['issuer'], **self.emails['both'], **self.emails['fulfiller']}
+        merged_settings = {
+            **self.emails['issuer'],
+            **self.emails['both'],
+            **self.emails['fulfiller']}
         return [setting for setting in merged_settings if merged_settings[setting]]
 
     def accepted_email_settings(self):
-        merged_settings = {**self.emails['issuer'], **self.emails['both'], **self.emails['fulfiller']}
-        return [rev_mapped_notifications[setting] for setting in merged_settings if merged_settings[setting]]
+        merged_settings = {
+            **self.emails['issuer'],
+            **self.emails['both'],
+            **self.emails['fulfiller']}
+        return [notifications[setting]
+                for setting in merged_settings if merged_settings[setting]]
 
 
 class User(models.Model):

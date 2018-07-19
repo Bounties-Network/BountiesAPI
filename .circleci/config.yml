@@ -9,7 +9,7 @@ jobs:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
       image: circleci/classic:latest
-      
+
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -34,11 +34,19 @@ jobs:
             docker volume create --name redis_bounties
             docker volume create --name psql_bounties
 
+      - run:
+          name: python linter
+          command: |
+            pyenv global 3.5.2
+            pip3 install flake8==3.5.0
+            flake8 --ignore=E501,F405,W191
+
       # run tests!
       # this example uses Django's built-in test-runner
       # other common Python testing frameworks include pytest and nose
       # https://pytest.org
       # https://nose.readthedocs.io
+
       - run:
           name: run django tests
           command: |
@@ -53,4 +61,3 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
-          

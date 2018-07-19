@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from bounties.sqs_client import sqs_client
 import logging
+import time
 
 
 logger = logging.getLogger('django')
@@ -29,15 +30,17 @@ class Command(BaseCommand):
                 if not messages:
                     continue
 
-                message = messages[0]
-
-                receipt_handle = message['ReceiptHandle']
-                message_attributes = message['MessageAttributes']
-
-                user_id = int(message_attributes['UserId']['StringValue'])
-                time_stamp = int(message_attributes['TimeStamp']['StringValue'])
-                notification_id = int(message_attributes['NotificationId']['StringValue'])
-                data = json.loads(message_attributes['Data']['StringValue'])
+                # message = messages[0]
+                #
+                # receipt_handle = message['ReceiptHandle']
+                # message_attributes = message['MessageAttributes']
+                #
+                # user_id = int(message_attributes['UserId']['StringValue'])
+                # time_stamp = int(
+                #     message_attributes['TimeStamp']['StringValue'])
+                # notification_id = int(
+                #     message_attributes['NotificationId']['StringValue'])
+                # data = json.loads(message_attributes['Data']['StringValue'])
 
         except Exception as e:
             # goes to rollbar

@@ -1,11 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework import viewsets
-from rest_framework import mixins
-from bounties.viewset_mixins import CaseInsensitiveLookupMixin
-from user.permissions import AuthenticationPermission, IsSelf
 from user.backend import authenticate, login, logout
 from user.serializers import LanguageSerializer, UserSerializer, SettingsSerializer
-from user.models import Language, User, Settings
+from user.models import Language, User
 from std_bounties.models import Fulfillment
 from django.db.models import Sum, Avg
 from django.http import JsonResponse, HttpResponse
@@ -30,8 +27,10 @@ class Logout(APIView):
 
 class Nonce(APIView):
     def get(self, request, public_address=''):
-        user = User.objects.get_or_create(public_address=public_address.lower())[0]
-        return JsonResponse({'nonce': user.nonce, 'has_signed_up': bool(user.email) and bool(user.name)})
+        user = User.objects.get_or_create(
+            public_address=public_address.lower())[0]
+        return JsonResponse(
+            {'nonce': user.nonce, 'has_signed_up': bool(user.email) and bool(user.name)})
 
 
 class UserView(APIView):
@@ -76,14 +75,31 @@ class UserProfile(APIView):
         user_reviews = user.reviews
         user_reviewees = user.reviewees
 
-        awarded = Fulfillment.objects.filter(accepted=True, bounty__user=user).aggregate(Sum('usd_price'))
-        earned = user_fulfillments.filter(accepted=True).aggregate(Sum('usd_price'))
-        issuer_ratings_given = user_reviews.filter(fulfillment_review__isnull=False).aggregate(Avg('rating'))
-        issuer_ratings_received = user_reviewees.filter(issuer_review__isnull=False).aggregate(Avg('rating'))
-        fulfiller_ratings_given = user_reviews.filter(issuer_review__isnull=False).aggregate(Avg('rating'))
-        fulfiller_ratings_received = user_reviewees.filter(fulfillment_review__isnull=False).aggregate(Avg('rating'))
-        issuer_fulfillment_acceptance = None if not Fulfillment.objects.filter(bounty__user=user).count() else (Fulfillment.objects.filter(accepted=True, bounty__user=user).count() / Fulfillment.objects.filter(bounty__user=user).count())
-        fulfiller_fulfillment_acceptance = None if not user_fulfillments.count() else (user_fulfillments.filter(accepted=True).count() / user_fulfillments.count())
+        awarded = Fulfillment.objects.filter(
+            accepted=True, bounty__user=user).aggregate(
+            Sum('usd_price'))
+        earned = user_fulfillments.filter(
+            accepted=True).aggregate(
+            Sum('usd_price'))
+        issuer_ratings_given = user_reviews.filter(
+            fulfillment_review__isnull=False).aggregate(
+            Avg('rating'))
+        issuer_ratings_received = user_reviewees.filter(
+            issuer_review__isnull=False).aggregate(Avg('rating'))
+        fulfiller_ratings_given = user_reviews.filter(
+            issuer_review__isnull=False).aggregate(
+            Avg('rating'))
+        fulfiller_ratings_received = user_reviewees.filter(
+            fulfillment_review__isnull=False).aggregate(Avg('rating'))
+        issuer_fulfillment_acceptance = None if not Fulfillment.objects.filter(
+            bounty__user=user).count() else (
+            Fulfillment.objects.filter(
+                accepted=True,
+                bounty__user=user).count() /
+            Fulfillment.objects.filter(
+                bounty__user=user).count())
+        fulfiller_fulfillment_acceptance = None if not user_fulfillments.count() else (
+            user_fulfillments.filter(accepted=True).count() / user_fulfillments.count())
 
         profile_stats = {
             'awarded': awarded.get('usd_price__sum'),
@@ -95,8 +111,7 @@ class UserProfile(APIView):
             'issuer_fulfillment_acceptance': issuer_fulfillment_acceptance,
             'fulfiller_fulfillment_acceptance': fulfiller_fulfillment_acceptance,
             'total_bounties': user_bounties.count(),
-            'total_fulfillments': user_fulfillments.count()
-        }
+            'total_fulfillments': user_fulfillments.count()}
         serializer = UserSerializer(user)
 
         return JsonResponse({'user': serializer.data, 'stats': profile_stats})

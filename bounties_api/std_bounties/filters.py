@@ -6,8 +6,12 @@ class CategoriesFilter(filters.FilterSet):
     class Meta:
         model = Category
         fields = {
-            'normalized_name': ['exact', 'contains', 'startswith', 'endswith', 'in']
-        }
+            'normalized_name': [
+                'exact',
+                'contains',
+                'startswith',
+                'endswith',
+                'in']}
 
 
 class RankedCategoryFilter(filters.FilterSet):
@@ -29,8 +33,14 @@ class FulfillmentsFilter(filters.FilterSet):
 
 
 class BountiesFilter(filters.FilterSet):
-    categories = filters.RelatedFilter(CategoriesFilter, name='categories', queryset=Category.objects.all())
-    fulfillments = filters.RelatedFilter(FulfillmentsFilter, name='fulfillments', queryset=Fulfillment.objects.all())
+    categories = filters.RelatedFilter(
+        CategoriesFilter,
+        name='categories',
+        queryset=Category.objects.all())
+    fulfillments = filters.RelatedFilter(
+        FulfillmentsFilter,
+        name='fulfillments',
+        queryset=Fulfillment.objects.all())
     bounty_created = filters.DateFilter(name='bounty_created')
 
     class Meta:

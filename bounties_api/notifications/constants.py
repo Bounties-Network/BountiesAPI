@@ -44,18 +44,26 @@ NOTIFICATION_IDS = (
     (RATING_RECEIVED, 'RatingReceived'),
 )
 
-mapped_notifications = dict(NOTIFICATION_IDS)
-rev_mapped_notifications =  dict((y, x) for x, y in NOTIFICATION_IDS)
+id_to_notification = dict(NOTIFICATION_IDS)
+notifications = dict((y, x) for x, y in NOTIFICATION_IDS)
 
 push_notification_options = {
-    'issuer': [mapped_notifications[notif] for notif in [FULFILLMENT_SUBMITTED_ISSUER, FULFILLMENT_UPDATED_ISSUER, TRANSFER_RECIPIENT, BOUNTY_EXPIRED, BOUNTY_COMMENT]],
-    'fulfiller': [mapped_notifications[notif] for notif in [FULFILLMENT_ACCEPTED_FULFILLER]],
-    'both': [mapped_notifications[notif] for notif in [RATING_ISSUED]],
+    'issuer': [
+        id_to_notification[notif] for notif in [
+            FULFILLMENT_SUBMITTED_ISSUER,
+            FULFILLMENT_UPDATED_ISSUER,
+            TRANSFER_RECIPIENT,
+            BOUNTY_EXPIRED,
+            BOUNTY_COMMENT]],
+    'fulfiller': [
+        id_to_notification[notif] for notif in [FULFILLMENT_ACCEPTED_FULFILLER]],
+    'both': [
+        id_to_notification[notif] for notif in [RATING_ISSUED]],
 }
 
 default_email_options = {
     'activity': True,
-    'issuer': { notif: True for notif in push_notification_options['issuer']},
-    'fulfiller': { notif: True for notif in push_notification_options['fulfiller']},
-    'both': { notif: True for notif in push_notification_options['both']},
+    'issuer': {notif: True for notif in push_notification_options['issuer']},
+    'fulfiller': {notif: True for notif in push_notification_options['fulfiller']},
+    'both': {notif: True for notif in push_notification_options['both']},
 }

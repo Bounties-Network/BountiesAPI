@@ -10,6 +10,7 @@ from bounties.redis_client import redis_client
 from bounties.sqs_client import sqs_client
 from std_bounties.models import Event, Bounty
 from notifications.models import Transaction
+from bounties.utils import bounty_url_for
 import logging
 
 
@@ -52,7 +53,8 @@ class Command(BaseCommand):
                 event_timestamp = message_attributes['TimeStamp']['StringValue']
                 contract_method_inputs = json.loads(
                     message_attributes['ContractMethodInputs']['StringValue'])
-                event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
+                event_date = datetime.datetime.fromtimestamp(
+                    int(event_timestamp))
 
                 # If someone uploads a data hash that is faulty, then we want to blacklist all events around that
                 # bounty id. We manage this manually
@@ -68,61 +70,69 @@ class Command(BaseCommand):
                     'attempting {}: for bounty id {}'.format(
                         event, str(bounty_id)))
                 if event == 'BountyIssued':
-                    master_client.bounty_issued(bounty_id,
-                                                event_date=event_date,
-                                                inputs=contract_method_inputs,
-                                                event_timestamp=event_timestamp,
-                                                uid=message_deduplication_id)
+                    master_client.bounty_issued(
+                        bounty_id,
+                        event_date=event_date,
+                        inputs=contract_method_inputs,
+                        event_timestamp=event_timestamp,
+                        uid=message_deduplication_id)
 
                 if event == 'BountyActivated':
-                    master_client.bounty_activated(bounty_id,
-                                                   event_date=event_date,
-                                                   inputs=contract_method_inputs,
-                                                   event_timestamp=event_timestamp,
-                                                   uid=message_deduplication_id)
+                    master_client.bounty_activated(
+                        bounty_id,
+                        event_date=event_date,
+                        inputs=contract_method_inputs,
+                        event_timestamp=event_timestamp,
+                        uid=message_deduplication_id)
 
                 if event == 'BountyFulfilled':
-                    master_client.bounty_fulfilled(bounty_id,
-                                                   fulfillment_id=fulfillment_id,
-                                                   event_date=event_date,
-                                                   inputs=contract_method_inputs,
-                                                   event_timestamp=event_timestamp,
-                                                   transaction_issuer=transaction_from,
-                                                   uid=message_deduplication_id)
+                    master_client.bounty_fulfilled(
+                        bounty_id,
+                        fulfillment_id=fulfillment_id,
+                        event_date=event_date,
+                        inputs=contract_method_inputs,
+                        event_timestamp=event_timestamp,
+                        transaction_issuer=transaction_from,
+                        uid=message_deduplication_id)
 
                 if event == 'FulfillmentUpdated':
-                    master_client.fullfillment_updated(bounty_id,
-                                                       event_date=event_date,
-                                                       fulfillment_id=fulfillment_id,
-                                                       inputs=contract_method_inputs,
-                                                       uid=message_deduplication_id)
+                    master_client.fullfillment_updated(
+                        bounty_id,
+                        event_date=event_date,
+                        fulfillment_id=fulfillment_id,
+                        inputs=contract_method_inputs,
+                        uid=message_deduplication_id)
 
                 if event == 'FulfillmentAccepted':
-                    master_client.fulfillment_accepted(bounty_id,
-                                                       event_date=event_date,
-                                                       fulfillment_id=fulfillment_id,
-                                                       event_timestamp=event_timestamp,
-                                                       uid=message_deduplication_id)
+                    master_client.fulfillment_accepted(
+                        bounty_id,
+                        event_date=event_date,
+                        fulfillment_id=fulfillment_id,
+                        event_timestamp=event_timestamp,
+                        uid=message_deduplication_id)
 
                 if event == 'BountyKilled':
-                    master_client.bounty_killed(bounty_id,
-                                                event_date=event_date,
-                                                event_timestamp=event_timestamp,
-                                                uid=message_deduplication_id)
+                    master_client.bounty_killed(
+                        bounty_id,
+                        event_date=event_date,
+                        event_timestamp=event_timestamp,
+                        uid=message_deduplication_id)
 
                 if event == 'ContributionAdded':
-                    master_client.contribution_added(bounty_id,
-                                                     event_date=event_date,
-                                                     inputs=contract_method_inputs,
-                                                     event_timestamp=event_timestamp,
-                                                     uid=message_deduplication_id)
+                    master_client.contribution_added(
+                        bounty_id,
+                        event_date=event_date,
+                        inputs=contract_method_inputs,
+                        event_timestamp=event_timestamp,
+                        uid=message_deduplication_id)
 
                 if event == 'DeadlineExtended':
-                    master_client.deadline_extended(bounty_id,
-                                                    event_date=event_date,
-                                                    inputs=contract_method_inputs,
-                                                    event_timestamp=event_timestamp,
-                                                    uid=message_deduplication_id)
+                    master_client.deadline_extended(
+                        bounty_id,
+                        event_date=event_date,
+                        inputs=contract_method_inputs,
+                        event_timestamp=event_timestamp,
+                        uid=message_deduplication_id)
 
                 if event == 'BountyChanged':
                     master_client.bounty_changed(bounty_id,
@@ -131,17 +141,19 @@ class Command(BaseCommand):
                                                  uid=message_deduplication_id)
 
                 if event == 'IssuerTransferred':
-                    master_client.issuer_transferred(bounty_id,
-                                                    transaction_from=transaction_from,
-                                                    event_date=event_date,
-                                                    inputs=contract_method_inputs,
-                                                    uid=message_deduplication_id)
+                    master_client.issuer_transferred(
+                        bounty_id,
+                        transaction_from=transaction_from,
+                        event_date=event_date,
+                        inputs=contract_method_inputs,
+                        uid=message_deduplication_id)
 
                 if event == 'PayoutIncreased':
-                    master_client.payout_increased(bounty_id,
-                                                   event_date=event_date,
-                                                   inputs=contract_method_inputs,
-                                                   uid=message_deduplication_id)
+                    master_client.payout_increased(
+                        bounty_id,
+                        event_date=event_date,
+                        inputs=contract_method_inputs,
+                        uid=message_deduplication_id)
 
                 logger.info(event)
 
@@ -151,19 +163,23 @@ class Command(BaseCommand):
                 Event.objects.get_or_create(
                     event=event,
                     transaction_hash=transaction_hash,
-                    defaults = {
+                    defaults={
                         'bounty_id': bounty_id,
                         'fulfillment_id': fulfillment_id if fulfillment_id != -1 else None,
                         'transaction_from': transaction_from,
                         'contract_inputs': contract_method_inputs,
                         'event_date': event_date,
-                    }
-                )
-                # there should only be one, but this is easier than nesting a try catch
+                    })
+                # there should only be one, but this is easier than nesting a
+                # try catch
                 bounty = Bounty.objects.get(bounty_id=bounty_id)
-                transactions = Transaction.objects.filter(tx_hash=transaction_hash)
+                transactions = Transaction.objects.filter(
+                    tx_hash=transaction_hash)
                 if transactions.exists():
-                    transactions.update(completed=True, viewed=False, data={'link': bounty_url_for(bounty.id, bounty.platform)})
+                    transactions.update(
+                        completed=True, viewed=False, data={
+                            'link': bounty_url_for(
+                                bounty.id, bounty.platform)})
 
                 redis_client.set(message_deduplication_id, True)
                 sqs_client.delete_message(

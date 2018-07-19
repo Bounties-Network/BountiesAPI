@@ -7,8 +7,8 @@ from std_bounties.bounty_client import BountyClient
 from std_bounties.client_helpers import calculate_token_quantity, \
     calculate_usd_price, get_token_pricing, map_bounty_data, \
     map_fulfillment_data
-from std_bounties.constants import ACTIVE_STAGE, DRAFT_STAGE, EXPIRED_STAGE
-from std_bounties.models import Bounty, BountyState, Token
+from std_bounties.constants import ACTIVE_STAGE, DRAFT_STAGE
+from std_bounties.models import Bounty, Token
 
 
 class TestCalculationHelpers(unittest.TestCase):

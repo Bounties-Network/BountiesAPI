@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.contrib.postgres.fields import JSONField
+from django.core.exceptions import ObjectDoesNotExist
 from notifications.constants import default_email_options, notifications
 
 
@@ -41,7 +42,7 @@ class User(models.Model):
     name = models.CharField(max_length=128, blank=True)
     email = models.CharField(max_length=128, blank=True)
     organization = models.CharField(max_length=128, blank=True)
-    languages = models.CharField(max_length=256, blank=True)
+    languages = models.ManyToManyField('user.Language', null=True)
     skills = models.CharField(max_length=256, blank=True)
     profileFileName = models.CharField(max_length=256, blank=True)
     profileFileHash = models.CharField(max_length=256, blank=True)
@@ -59,3 +60,16 @@ class User(models.Model):
         if not self.settings:
             self.settings = Settings.objects.create()
         super(User, self).save(*args, **kwargs)
+
+    def save_and_clear_languages(self, languages):
+        # this is really messy, but this is bc of psql django bugs
+        self.languages.clear()
+        if isinstance(languages, list):
+            for language in languages:
+                if isinstance(language, str):
+                    try:
+                        matching_language = Language.objects.get(
+                            normalized_name=language.strip().lower())
+                        self.languages.add(matching_language)
+                    except ObjectDoesNotExist:
+                        pass

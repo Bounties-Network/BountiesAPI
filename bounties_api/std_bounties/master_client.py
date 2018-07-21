@@ -21,7 +21,10 @@ def profile_updated(**kwargs):
             'transaction_from', '').lower())[0]
 
     for (key, value) in data.items():
-        setattr(user, key, value)
+        if key != 'languages':
+            setattr(user, key, value)
+
+    user.save_and_clear_languages(data.get('languages'))
 
     user.save()
 

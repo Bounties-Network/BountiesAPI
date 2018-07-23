@@ -832,47 +832,34 @@ paths:
     get:
       operationId: issuer_leaderboard_list
       description: ''
-      parameters: []
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+        - name: platform
+          in: query
+          description: Platform that created the bounty
+          required: false
+          type: string
       responses:
         '200':
           description: 'Get current leaderboard list'
           schema:
-            type: array
-            items:
-              type: object
-              properties:
-                address:
-                  title: Address
-                  type: string
-                  maxLength: 128
-                name:
-                  title: Name
-                  type: string
-                  maxLength: 128
-                email:
-                  title: Email
-                  type: string
-                  maxLength: 128
-                githubUsername:
-                  title: Github Username
-                  type: string
-                  maxLength: 128
-                profile_image:
-                  title: Profile image
-                  type: string
-                  maxLength: 256
-                total:
-                  title: Sum of all
-                  type: string
-                  format: decimal
-                total_usd:
-                  title: Sum of all
-                  type: string
-                  format: decimal
-                bounties_issued:
-                  type: integer
-                fulfillments_paid:
-                  type: integer
+            type: object
+            properties:
+              count:
+                type: integer
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Leaderboard'
       tags:
         - leaderboard
 
@@ -881,7 +868,22 @@ paths:
     get:
       operationId: fulfiller_leaderboard_list
       description: ''
-      parameters: []
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+        - name: platform
+          in: query
+          description: Platform that created the bounty
+          required: false
+          type: string
       responses:
         '200':
           description: 'Get current leaderboard list'
@@ -890,38 +892,12 @@ paths:
             items:
               type: object
               properties:
-                address:
-                  title: Address
-                  type: string
-                  maxLength: 128
-                name:
-                  title: Name
-                  type: string
-                  maxLength: 128
-                email:
-                  title: Email
-                  type: string
-                  maxLength: 128
-                githubUsername:
-                  title: Github Username
-                  type: string
-                  maxLength: 128
-                profile_image:
-                  title: Profile image
-                  type: string
-                  maxLength: 256
-                total:
-                  title: Sum of all
-                  type: string
-                  format: decimal
-                total_usd:
-                  title: Sum of all
-                  type: string
-                  format: decimal
-                bounties_fulfilled:
+                count:
                   type: integer
-                fulfillments_accepted:
-                  type: integer
+                results:
+                  type: array
+                  items:
+                    $ref: '#/definitions/Leaderboard'
       tags:
         - leaderboard
     parameters: []
@@ -1126,6 +1102,41 @@ paths:
         type: integer
 
 definitions:
+  Leaderboard:
+    type: object
+    properties:
+      address:
+        title: Address
+        type: string
+        maxLength: 128
+      name:
+        title: Name
+        type: string
+        maxLength: 128
+      email:
+        title: Email
+        type: string
+        maxLength: 128
+      githubUsername:
+        title: Github Username
+        type: string
+        maxLength: 128
+      profile_image:
+        title: Profile image
+        type: string
+        maxLength: 256
+      total:
+        title: Sum of all
+        type: string
+        format: decimal
+      total_usd:
+        title: Sum of all
+        type: string
+        format: decimal
+      bounties_issued:
+        type: integer
+      fulfillments_paid:
+        type: integer
   DashboardNotification:
     type: object
     properties:

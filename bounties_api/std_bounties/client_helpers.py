@@ -163,10 +163,6 @@ def map_user_data(data_hash, public_address):
     plucked_data = pluck(data, user_data_keys)
     plucked_social = pluck(data.get('social', {}), user_social_keys)
 
-    plucked_data.update({
-        'skills': ','.join(plucked_data.get('skills', ''))
-    })
-
     user = {
         **plucked_data,
         **plucked_social,

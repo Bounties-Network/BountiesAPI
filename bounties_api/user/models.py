@@ -15,6 +15,15 @@ class Language(models.Model):
         super(Language, self).save(*args, **kwargs)
 
 
+class Skill(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+    normalized_name = models.CharField(max_length=128)
+
+    def save(self, *args, **kwargs):
+        self.normalized_name = self.name.lower().strip()
+        super(Skill, self).save(*args, **kwargs)
+
+
 class Settings(models.Model):
     emails = JSONField(null=False, default=default_email_options)
 
@@ -43,7 +52,7 @@ class User(models.Model):
     email = models.CharField(max_length=128, blank=True)
     organization = models.CharField(max_length=128, blank=True)
     languages = models.ManyToManyField('user.Language', null=True)
-    skills = models.CharField(max_length=256, blank=True)
+    skills = models.ManyToManyField('user.Skill', null=True)
     profileFileName = models.CharField(max_length=256, blank=True)
     profileFileHash = models.CharField(max_length=256, blank=True)
     profileDirectoryHash = models.CharField(max_length=256, blank=True)
@@ -60,6 +69,19 @@ class User(models.Model):
         if not self.settings:
             self.settings = Settings.objects.create()
         super(User, self).save(*args, **kwargs)
+
+    def save_and_clear_skills(self, skills):
+        # this is really messy, but this is bc of psql django bugs
+        self.skills.clear()
+        if isinstance(skills, list):
+            for skill in skills:
+                if isinstance(skill, str):
+                    try:
+                        matching_skill = Skill.objects.get(
+                            name=skill.strip())
+                        self.skills.add(matching_skill)
+                    except ObjectDoesNotExist:
+                        self.skills.create(name=skill.strip())
 
     def save_and_clear_languages(self, languages):
         # this is really messy, but this is bc of psql django bugs

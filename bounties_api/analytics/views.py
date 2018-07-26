@@ -42,21 +42,22 @@ class TimelineBounties(APIView):
                 if schema == 'all':
                     ranked_category_list = RankedCategory.objects.distinct().values('normalized_name', 'name')
                     ranked_categories = dict(map(lambda x: (x['normalized_name'], x['name']), ranked_category_list))
-                    gitcoin = Category.objects.select_related('bounty').filter(
+
+                    gitcoinQuery = Category.objects.select_related('bounty').filter(
                         bounty__bounty_created__gte=since_date,
                         bounty__bounty_created__lte=until_date,
                         bounty__schemaName__exact='gitcoinBounty'
-                    ).distinct().values('normalized_name').annotate(total=Count('bounty')) 
+                    ).distinct().values('normalized_name').annotate(total=Count('bounty'))
 
-                    standard = Category.objects.select_related('bounty').filter(
+                    standardQuery = Category.objects.select_related('bounty').filter(
                         bounty__bounty_created__gte=since_date,
                         bounty__bounty_created__lte=until_date,
                         bounty__schemaName__exact='standardSchema'
                     ).distinct().values('normalized_name').annotate(total=Count('bounty'))
 
-                    queryset = gitcoin | standard
+                    queryset = gitcoinQuery | standardQuery
                     categories = TimelineCategorySerializer(queryset, many=True, context={'ranked_categories': ranked_categories})
-                
+
                 else:
                     ranked_category_list = RankedCategory.objects.distinct().values('normalized_name', 'name')
                     ranked_categories = dict(map(lambda x: (x['normalized_name'], x['name']), ranked_category_list))

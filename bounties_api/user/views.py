@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from user.backend import authenticate, login, logout
-from user.serializers import LanguageSerializer, UserSerializer, SettingsSerializer
+from user.serializers import LanguageSerializer, UserSerializer, UserInfoSerializer, SettingsSerializer
 from user.models import Language, User
 from std_bounties.models import Fulfillment
 from django.db.models import Sum, Avg
@@ -62,6 +62,17 @@ class SettingsView(APIView):
 class LanguageViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = LanguageSerializer
     queryset = Language.objects.order_by('name')
+
+
+class UserInfo(APIView):
+    def get(self, request, public_address):
+        try:
+            user = User.objects.get(public_address=public_address.lower())
+        except User.DoesNotExist:
+            return HttpResponse('Not Found', status=404)
+
+        serializer = UserInfoSerializer(user)
+        return JsonResponse(serializer.data)
 
 
 class UserProfile(APIView):

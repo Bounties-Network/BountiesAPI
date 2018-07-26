@@ -69,9 +69,49 @@ class SettingsSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     categories = CreatableSlugRelatedField(
-        many=True, slug_field='name', read_only=True)
+        many=True,
+        slug_field='name',
+        read_only=True
+    )
+
+    languages = CreatableSlugRelatedField(
+        many=True,
+        slug_field='name',
+        read_only=True
+    )
+
+    skills = CreatableSlugRelatedField(
+        many=True,
+        slug_field='name',
+        read_only=True
+    )
+
     settings = SettingsSerializer()
 
     class Meta:
         model = User
         exclude = ('nonce', 'profile_hash',)
+
+
+class UserInfoSerializer(serializers.ModelSerializer):
+    languages = CreatableSlugRelatedField(
+        many=True,
+        slug_field='name',
+        read_only=True
+    )
+
+    skills = CreatableSlugRelatedField(
+        many=True,
+        slug_field='name',
+        read_only=True
+    )
+
+    class Meta:
+        model = User
+        exclude = (
+            'id',
+            'nonce',
+            'profile_hash',
+            'categories',
+            'settings',
+        )

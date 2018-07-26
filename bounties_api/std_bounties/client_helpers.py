@@ -47,7 +47,6 @@ def map_bounty_data(data_hash, bounty_id):
         ipfs_hash = 'invalid'
 
     data = json.loads(data_JSON)
-
     meta = data.get('meta', {})
 
     if 'payload' in data:
@@ -68,7 +67,7 @@ def map_bounty_data(data_hash, bounty_id):
     categories = data.get('categories', [])
     plucked_data = pluck(data, bounty_data_keys)
 
-    return {
+    bounty = {
         **plucked_data,
         **meta,
         **metadata,
@@ -91,6 +90,12 @@ def map_bounty_data(data_hash, bounty_id):
         'data_json': str(data_JSON),
         'data_categories': categories,
     }
+
+    # if 'platform' is gitcoin, also return deadline
+    if metadata.get('platform', '') is 'gitcoin':
+        bounty.update({'deadline': data.get('expire_date', '')})
+
+    return bounty
 
 
 def map_fulfillment_data(data_hash, bounty_id, fulfillment_id):

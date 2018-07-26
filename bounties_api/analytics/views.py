@@ -16,9 +16,9 @@ from std_bounties.models import Category, RankedCategory
 class TimelineBounties(APIView):
     def get(self, request):
         queryset = request.query_params.copy()
-        since = queryset.get('since', "")
+        since = queryset.get('since', '')
         until = queryset.get('until', datetime.now().date())
-        schema = queryset.get('schema')
+        schema = queryset.get('schema', 'all')
 
         try:
             since_date = datetime.strptime(since, "%Y-%m-%d").date()

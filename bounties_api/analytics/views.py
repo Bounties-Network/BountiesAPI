@@ -47,13 +47,13 @@ class TimelineBounties(APIView):
                         bounty__bounty_created__gte=since_date,
                         bounty__bounty_created__lte=until_date,
                         bounty__schemaName__exact='gitcoinBounty'
-                    ).distinct().values('normalized_name').annotate(total=Count('bounty'))
+                    ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
 
                     standardQuery = Category.objects.select_related('bounty').filter(
                         bounty__bounty_created__gte=since_date,
                         bounty__bounty_created__lte=until_date,
                         bounty__schemaName__exact='standardSchema'
-                    ).distinct().values('normalized_name').annotate(total=Count('bounty'))
+                    ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
 
                     queryset = gitcoinQuery | standardQuery
                     categories = TimelineCategorySerializer(queryset, many=True, context={'ranked_categories': ranked_categories})
@@ -65,7 +65,7 @@ class TimelineBounties(APIView):
                         bounty__bounty_created__gte=since_date,
                         bounty__bounty_created__lte=until_date,
                         bounty__schemaName__exact=schema
-                    ).distinct().values('normalized_name').annotate(total=Count('bounty'))
+                    ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
                     categories = TimelineCategorySerializer(queryset, many=True, context={'ranked_categories': ranked_categories})
 
                 data = {

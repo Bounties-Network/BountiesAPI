@@ -18,7 +18,7 @@ class TimelineBounties(APIView):
         queryset = request.query_params.copy()
         since = queryset.get('since', '')
         until = queryset.get('until', datetime.now().date())
-        schema = queryset.get('schema', 'all')
+        platform = queryset.get('platform', 'all')
 
         try:
             since_date = datetime.strptime(since, "%Y-%m-%d").date()
@@ -39,20 +39,20 @@ class TimelineBounties(APIView):
 
                 serialized = BountiesTimelineSerializer(bounties_timeline.qs, many=True, context={'request': request})
 
-                if schema == 'all':
+                if platform == 'all':
                     ranked_category_list = RankedCategory.objects.distinct().values('normalized_name', 'name')
                     ranked_categories = dict(map(lambda x: (x['normalized_name'], x['name']), ranked_category_list))
 
                     gitcoinQuery = Category.objects.select_related('bounty').filter(
                         bounty__bounty_created__gte=since_date,
                         bounty__bounty_created__lte=until_date,
-                        bounty__schemaName__exact='gitcoinBounty'
+                        bounty__platform__exact='gitcoin'
                     ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
 
                     standardQuery = Category.objects.select_related('bounty').filter(
                         bounty__bounty_created__gte=since_date,
                         bounty__bounty_created__lte=until_date,
-                        bounty__schemaName__exact='standardSchema'
+                        bounty__platform__exact='bounties-network'
                     ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
 
                     queryset = gitcoinQuery | standardQuery
@@ -64,7 +64,7 @@ class TimelineBounties(APIView):
                     queryset = Category.objects.select_related('bounty').filter(
                         bounty__bounty_created__gte=since_date,
                         bounty__bounty_created__lte=until_date,
-                        bounty__schemaName__exact=schema
+                        bounty__platform__exact=platform
                     ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
                     categories = TimelineCategorySerializer(queryset, many=True, context={'ranked_categories': ranked_categories})
 

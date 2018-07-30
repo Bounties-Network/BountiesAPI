@@ -10,9 +10,10 @@ from std_bounties.constants import EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, A
 from std_bounties.models import BountyState, Fulfillment
 
 
-ALL_SCHEMA = 'all'
-DEFAULT_SCHEMA = 'standardSchema'
-DEFAULT_SCHEMA_QUERY = Q(bounty__schemaName=DEFAULT_SCHEMA) | Q(bounty__schemaName=None)
+ALL_PLATFORM = 'all'
+DEFAULT_PLATFORM = 'bounties-network'
+DEFAULT_PLATFORM_QUERY = Q(bounty__platform=DEFAULT_PLATFORM) | Q(bounty__platform=None) | Q(bounty__platform='')
+
 
 
 def diff_time(since, until):
@@ -165,24 +166,32 @@ def get_noise_bounties(bounties):
     return noise
 
 
-def generate_timeline(time_frame, schema):
+def generate_timeline(time_frame, platform=DEFAULT_PLATFORM):
     date = time_frame[1]
-    bounty_state_schema = BountyState.objects
-    fulfillment_schema = Fulfillment.objects
+    bounty_state_platform = BountyState.objects
+    fulfillment_platform = Fulfillment.objects
 
-    if schema == 'standardSchema':
-        bounty_state_schema = bounty_state_schema.filter(DEFAULT_SCHEMA_QUERY)
-        fulfillment_schema = fulfillment_schema.filter(DEFAULT_SCHEMA_QUERY)
-    elif schema and schema != ALL_SCHEMA:
-        bounty_state_schema = bounty_state_schema.filter(bounty__schemaName=schema)
-        fulfillment_schema = fulfillment_schema.filter(bounty__schemaName=schema)
+    if platform == DEFAULT_PLATFORM:
+        bounty_state_platform = bounty_state_platform.select_related('bounty').filter(DEFAULT_PLATFORM_QUERY)
+        fulfillment_platform = fulfillment_platform.select_related('bounty').filter(DEFAULT_PLATFORM_QUERY)
+    elif platform and platform != ALL_PLATFORM:
+        bounty_state_platform = bounty_state_platform.select_related('bounty').filter(
+            bounty__platform=platform)
+        fulfillment_platform = fulfillment_platform.select_related('bounty').filter(
+            bounty__platform=platform)
 
-    bounties_state_frame_day = bounty_state_schema.filter(change_date__range=time_frame, bountyStage=DRAFT_STAGE)
-    bounties_state_frame = bounty_state_schema.filter(change_date__lte=time_frame[1])
-    fulfillment_accepted_frame = fulfillment_schema.filter(accepted_date__lte=time_frame[1])
-    fulfillment_accepted_frame_day = fulfillment_schema.filter(accepted_date__range=time_frame)
-    fulfillment_submitted_frame = fulfillment_schema.filter(fulfillment_created__lte=time_frame[1])
-    fulfillment_submitted_frame_day = fulfillment_schema.filter(fulfillment_created__range=time_frame)
+    bounties_state_frame_day = bounty_state_platform.filter(
+        change_date__range=time_frame, bountyStage=DRAFT_STAGE)
+    bounties_state_frame = bounty_state_platform.filter(
+        change_date__lte=time_frame[1])
+    fulfillment_accepted_frame = fulfillment_platform.filter(
+        accepted_date__lte=time_frame[1])
+    fulfillment_accepted_frame_day = fulfillment_platform.filter(
+        accepted_date__range=time_frame)
+    fulfillment_submitted_frame = fulfillment_platform.filter(
+        fulfillment_created__lte=time_frame[1])
+    fulfillment_submitted_frame_day = fulfillment_platform.filter(
+        fulfillment_created__range=time_frame)
 
     stages, bounties = build_stages(bounties_state_frame)
 
@@ -214,38 +223,41 @@ def generate_timeline(time_frame, schema):
     avg_fulfiller_acceptance_rate = get_avg_fulfiller_acceptance_rate(fulfillment_submitted_frame, date)
 
     avg_fulfillment_amount = get_avg_fulfillment_amount(bounties_state_frame)
-    total_fulfillment_amount = get_total_fulfillment_amount(bounties_state_frame)
+    total_fulfillment_amount = get_total_fulfillment_amount(
+        bounties_state_frame)
 
-    bounty_frame = BountiesTimeline(date=time_frame[0],
-                                    bounties_issued=bounties_issued,
-                                    bounties_issued_cum=bounties_issued_cum,
-                                    fulfillments_submitted_cum=fulfillments_submitted_cum,
-                                    fulfillments_submitted=fulfillments_submitted,
-                                    fulfillments_accepted_cum=fulfillments_accepted_cum,
-                                    fulfillments_accepted=fulfillments_accepted,
-                                    fulfillments_pending_acceptance=fulfillments_submitted_cum - fulfillments_accepted_cum,
-                                    fulfillment_acceptance_rate=fulfillment_acceptance_rate,
-                                    bounty_fulfilled_rate=bounty_fulfilled_rate,
-                                    avg_fulfiller_acceptance_rate=avg_fulfiller_acceptance_rate,
-                                    avg_fulfillment_amount=avg_fulfillment_amount,
-                                    total_fulfillment_amount=total_fulfillment_amount,
-                                    bounty_draft=stages[DRAFT_STAGE],
-                                    bounty_active=stages[ACTIVE_STAGE],
-                                    bounty_completed=stages[COMPLETED_STAGE],
-                                    bounty_expired=stages[EXPIRED_STAGE],
-                                    bounty_dead=stages[DEAD_STAGE],
-                                    schema=schema)
+    bounty_frame = BountiesTimeline(
+        date=time_frame[0],
+        bounties_issued=bounties_issued,
+        bounties_issued_cum=bounties_issued_cum,
+        fulfillments_submitted_cum=fulfillments_submitted_cum,
+        fulfillments_submitted=fulfillments_submitted,
+        fulfillments_accepted_cum=fulfillments_accepted_cum,
+        fulfillments_accepted=fulfillments_accepted,
+        fulfillments_pending_acceptance=fulfillments_submitted_cum - fulfillments_accepted_cum,
+        fulfillment_acceptance_rate=fulfillment_acceptance_rate,
+        bounty_fulfilled_rate=bounty_fulfilled_rate,
+        avg_fulfiller_acceptance_rate=avg_fulfiller_acceptance_rate,
+        avg_fulfillment_amount=avg_fulfillment_amount,
+        total_fulfillment_amount=total_fulfillment_amount,
+        bounty_draft=stages[DRAFT_STAGE],
+        bounty_active=stages[ACTIVE_STAGE],
+        bounty_completed=stages[COMPLETED_STAGE],
+        bounty_expired=stages[EXPIRED_STAGE],
+        bounty_dead=stages[DEAD_STAGE],
+        platform=platform)
 
     return bounty_frame
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        schemas_query = BountyState.objects.distinct('bounty__schemaName')
-        schemas = [schema.bounty.schemaName for schema in schemas_query if schema.bounty.schemaName] + [ALL_SCHEMA]
+        platform_query = BountyState.objects.distinct('bounty__platform')
+        platforms = [p.bounty.platform for p in platform_query if p.bounty.platform] + [ALL_PLATFORM]
 
-        for schema in schemas:
-            needs_genesis = not BountiesTimeline.objects.filter(schema=schema, is_week=False).exists()
+        for platform in platforms:
+            needs_genesis = not BountiesTimeline.objects.filter(
+                platform=platform, is_week=False).exists()
 
             first_date = BountyState.objects.first()
             last_date = datetime.utcnow()
@@ -254,11 +266,13 @@ class Command(BaseCommand):
                 bounties_by_day = range_days(first_date.change_date, last_date + timedelta(days=1))
 
                 for day in bounties_by_day:
-                    bounty_day = generate_timeline(day_bounds(day), schema=schema)
+                    bounty_day = generate_timeline(
+                        day_bounds(day), platform=platform)
 
                     bounty_day.save()
             else:
-                last_update = BountiesTimeline.objects.filter(schema=schema, is_week=False).order_by('date').last()
+                last_update = BountiesTimeline.objects.filter(
+                    platform=platform, is_week=False).order_by('date').last()
                 since = arrow.get(last_update.date).to('utc')
                 days = range_days(since, datetime.utcnow())
 
@@ -266,8 +280,10 @@ class Command(BaseCommand):
                 # this approach provides more flexibility and simplicity in calculating more stats in the future
                 # and provides a better way to expose by day or by hour in case of been needed
                 for day in days:
-                    bounty_day = generate_timeline(day_bounds(day), schema=schema)
-                    bounty_points = BountiesTimeline.objects.filter(date=day.date(), schema=schema, is_week=False)
+                    bounty_day = generate_timeline(
+                        day_bounds(day), platform=platform)
+                    bounty_points = BountiesTimeline.objects.filter(
+                        date=day.date(), platform=platform, is_week=False)
 
                     if bounty_points.exists():
                         bounty_point = bounty_points.first()
@@ -275,8 +291,9 @@ class Command(BaseCommand):
 
                     bounty_day.save()
 
-        for schema in schemas:
-            needs_genesis = not BountiesTimeline.objects.filter(schema=schema, is_week=True).exists()
+        for platform in platforms:
+            needs_genesis = not BountiesTimeline.objects.filter(
+                platform=platform, is_week=True).exists()
 
             first_date = BountyState.objects.first()
             last_date = datetime.utcnow()
@@ -285,19 +302,22 @@ class Command(BaseCommand):
                 bounties_by_week = range_weeks(first_date.change_date, last_date + timedelta(days=7))
                 
                 for week in bounties_by_week:
-                    bounty_week = generate_timeline(week_bounds(week), schema=schema)
+                    bounty_week = generate_timeline(
+                        week_bounds(week), platform=platform)
                     bounty_week.is_week = True
 
                     bounty_week.save()
             else:
-                last_update = BountiesTimeline.objects.filter(schema=schema, is_week=True).order_by('date').last()
+                last_update = BountiesTimeline.objects.filter(
+                    platform=platform, is_week=True).order_by('date').last()
                 since = arrow.get(last_update.date).to('utc')
                 weeks = range_weeks(since, datetime.utcnow())
 
                 for week in weeks:
                     bounds = week_bounds(week)
-                    bounty_week = generate_timeline(bounds, schema=schema)
-                    bounty_points = BountiesTimeline.objects.filter(date=bounds[0].date(), schema=schema, is_week=True)
+                    bounty_week = generate_timeline(bounds, platform=platform)
+                    bounty_points = BountiesTimeline.objects.filter(
+                        date=bounds[0].date(), platform=platform, is_week=True)
 
                     if bounty_points.exists():
                         bounty_point = bounty_points.first()

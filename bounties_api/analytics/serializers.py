@@ -28,17 +28,17 @@ class BountiesTimelineSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
 class TimelineCategorySerializer(serializers.ModelSerializer):
     total_count = serializers.SerializerMethodField()
-    prioritized_name = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
-        fields = ('prioritized_name', 'normalized_name', 'total_count')
+        fields = ('name', 'normalized_name', 'total_count')
 
     def get_total_count(self, obj):
         return obj.get('total', 0)
 
-    def get_prioritized_name(self, obj):
+    def get_name(self, obj):
         ranked_categories = self.context.get('ranked_categories', {})
         normalized_name = obj.get('normalized_name')
-        prioritized_name = ranked_categories.get(normalized_name, normalized_name)
-        return prioritized_name
+        name = ranked_categories.get(normalized_name, normalized_name)
+        return name

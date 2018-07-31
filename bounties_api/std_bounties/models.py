@@ -75,7 +75,7 @@ class BountyAbstract(models.Model):
     user = models.ForeignKey('user.User', null=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    categories = models.ManyToManyField(Category, null=True)
+    categories = models.ManyToManyField(Category)
     deadline = models.DateTimeField()
     arbiter = models.CharField(max_length=128, null=True)
     fulfillmentAmount = models.DecimalField(decimal_places=0, max_digits=64)
@@ -120,7 +120,7 @@ class Bounty(BountyAbstract):
     bountyStage = models.IntegerField(
         choices=STAGE_CHOICES, default=DRAFT_STAGE)
     comments = models.ManyToManyField(
-        Comment, null=True, related_name='bounty')
+        Comment, related_name='bounty')
     bounty_id = models.IntegerField()
     data = models.CharField(max_length=128)
     issuer = models.CharField(max_length=128)

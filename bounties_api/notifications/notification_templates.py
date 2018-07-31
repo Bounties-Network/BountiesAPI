@@ -18,7 +18,8 @@ notification_templates = {
     'BountyExpired': 'Yikes! Your bounty has expired: {bounty_title}.',
     'BountyComment': 'A comment was added for bounty: {bounty_title}.',
     'RatingReceived': 'You received a review for your experience with: {bounty_title}.',
-    'RatingIssued': 'You left a review for your experience with: {bounty_title}.'
+    'RatingIssued': 'You left a review for your experience with: {bounty_title}.',
+    'ProfileUpdated': 'You updated your profile assciated with: {public_address}.'
 }
 
 email_templates = {

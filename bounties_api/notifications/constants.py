@@ -19,6 +19,7 @@ FULFILLMENT_UPDATED = 17
 FULFILLMENT_UPDATED_ISSUER = 18
 RATING_ISSUED = 19
 RATING_RECEIVED = 20
+PROFILE_UPDATED = 21
 
 NOTIFICATION_IDS = (
     (FULFILLMENT_SUBMITTED, 'FulfillmentSubmitted'),
@@ -42,6 +43,7 @@ NOTIFICATION_IDS = (
     (FULFILLMENT_UPDATED_ISSUER, 'FulfillmentUpdatedIssuer'),
     (RATING_ISSUED, 'RatingIssued'),
     (RATING_RECEIVED, 'RatingReceived'),
+    (PROFILE_UPDATED, 'ProfileUpdated'),
 )
 
 id_to_notification = dict(NOTIFICATION_IDS)

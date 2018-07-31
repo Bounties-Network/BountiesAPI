@@ -1,24 +1,36 @@
 from django.template.loader import render_to_string
 from notifications.models import Notification, DashboardNotification
 from bounties.ses_client import send_email
-from bounties.utils import bounty_url_for
+from bounties.utils import bounty_url_for, profile_url_for
 from django.db import transaction
+
+
+def create_bounty_notification(**kwargs):
+    bounty = kwargs.pop('bounty')
+    bounty_url = bounty_url_for(bounty.bounty_id, bounty.platform) + kwargs.get('url_query', '')
+    kwargs.update({'url': bounty_url, 'notification_created': bounty.bounty_created})
+    create_notification(**kwargs)
+
+
+def create_profile_updated_notification(*args, **kwargs):
+    profile_url = profile_url_for(kwargs.get('user').public_address)
+    kwargs.update({'url': profile_url})
+    create_notification(**kwargs)
 
 
 @transaction.atomic
 def create_notification(
-        bounty,
         uid,
         notification_name,
         user,
         notification_created,
-        string_data,
+        data,
         subject,
         is_activity=True,
         string_data_email=None,
         email_button_string='View in App',
-        url_query=''):
-    bounty_url = bounty_url_for(bounty.bounty_id, bounty.platform) + url_query
+        url=''):
+
     notification, created = Notification.objects.get_or_create(
         uid=str(uid),
         defaults={
@@ -33,23 +45,23 @@ def create_notification(
         return
     DashboardNotification.objects.create(
         notification=notification,
-        string_data=string_data,
+        string_data=data,
         is_activity=is_activity,
-        data={'link': bounty_url},
+        data={'link': url},
     )
-    bounty_user = bounty.user
+
     username = 'bounty hunter'
-    if bounty_user and bounty_user.name:
-        username = bounty_user.name
+    if user and user.name:
+        username = user.name
     email_html = render_to_string(
         'base_notification.html',
         context={
-            'link': bounty_url,
+            'link': url,
             'username': username,
-            'message_string': string_data_email or string_data,
+            'message_string': string_data_email or data,
             'button_text': email_button_string})
     email_txt = 'Hello {}! \n {}'.format(
-        username, string_data_email or string_data, )
+        username, string_data_email or data, )
     email_settings = user.settings.emails
     activity_emails = email_settings['activity']
     if is_activity and not activity_emails:

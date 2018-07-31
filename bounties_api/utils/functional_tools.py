@@ -12,6 +12,12 @@ def pluck(dictionary, fields):
     return {key: dictionary.get(key, '') for key in fields}
 
 
+def prune(dictionary):
+    """Removes keys which point to None values"""
+    return {key: dictionary.get(key, '')
+            for key, value in dictionary.items() if value}
+
+
 def narrower(obj, fields):
     """Extract fields from obj and return a dict"""
     narrowed_fields = {}

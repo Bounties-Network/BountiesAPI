@@ -199,7 +199,7 @@ class LeaderboardIssuer(APIView):
         query_result = dictfetchall(cursor)
         narrowed_result = query_result[startIndex: endIndex]
         serializer = LeaderboardIssuerSerializer(narrowed_result, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return JsonResponse({'count': len(query_result), 'results': serializer.data}, safe=False)
 
 
 class LeaderboardFulfiller(APIView):
@@ -223,7 +223,7 @@ class LeaderboardFulfiller(APIView):
         query_result = dictfetchall(cursor)
         narrowed_result = query_result[startIndex: endIndex]
         serializer = LeaderboardFulfillerSerializer(narrowed_result, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return JsonResponse({'count': len(query_result), 'results': serializer.data}, safe=False)
 
 
 class Tokens(APIView):

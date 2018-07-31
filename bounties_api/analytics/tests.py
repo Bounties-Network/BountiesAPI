@@ -145,7 +145,7 @@ class TimelineTest(unittest.TestCase):
 
     def test_generate_timeline(self):
         result = generate_timeline(
-            [datetime(2018, 1, 1, 0, 0), datetime(2018, 1, 1, 0, 0)], 'standardSchema')
+            [datetime(2018, 1, 1, 0, 0), datetime(2018, 1, 1, 0, 0)], 'bounties-network')
         self.assertEqual(result.date, datetime(2018, 1, 1, 0, 0))
         self.assertEqual(result.bounties_issued, 5)
         self.assertEqual(result.bounties_issued_cum, 25)
@@ -166,7 +166,7 @@ class TimelineTest(unittest.TestCase):
         self.assertEqual(result.bounty_completed, 5)
         self.assertEqual(result.bounty_expired, 5)
         self.assertEqual(result.bounty_dead, 5)
-        self.assertEqual(result.schema, 'standardSchema')
+        self.assertEqual(result.platform, 'bounties-network')
 
 
 class TestStages(unittest.TestCase):

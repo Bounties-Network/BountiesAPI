@@ -67,7 +67,7 @@ def map_bounty_data(data_hash, bounty_id):
     metadata = data.get('metadata', {})
 
     experienceLevel = metadata.get('experienceLevel') or data.get('difficulty') or ''
-    formattedExperienceLevel = experienceLevel.lower().strip().capitalize()
+    formattedExperienceLevel = str(experienceLevel).lower().strip().capitalize()
 
     metadata.update({'experienceLevel': rev_mapped_difficulties.get(
         formattedExperienceLevel, BEGINNER)})

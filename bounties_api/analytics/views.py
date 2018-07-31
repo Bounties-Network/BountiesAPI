@@ -8,9 +8,10 @@ from rest_framework.response import Response
 from django.db.models import Count
 
 from analytics.filters import BountiesTimelineFilter
-from .serializers import BountiesTimelineSerializer, TimelineCategorySerializer
+from .serializers import BountiesTimelineSerializer, TimelineCategorySerializer, TokenListSerializer
 from .models import BountiesTimeline
 from std_bounties.models import Category, RankedCategory
+from std_bounties.views import Tokens
 
 
 class TimelineBounties(APIView):
@@ -56,7 +57,6 @@ class TimelineBounties(APIView):
                     ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
 
                     queryset = gitcoinQuery | standardQuery
-                    categories = TimelineCategorySerializer(queryset, many=True, context={'ranked_categories': ranked_categories})
 
                 else:
                     ranked_category_list = RankedCategory.objects.distinct().values('normalized_name', 'name')
@@ -66,11 +66,16 @@ class TimelineBounties(APIView):
                         bounty__bounty_created__lte=until_date,
                         bounty__platform__exact=platform
                     ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
-                    categories = TimelineCategorySerializer(queryset, many=True, context={'ranked_categories': ranked_categories})
+
+                categories = TimelineCategorySerializer(queryset, many=True, context={'ranked_categories': ranked_categories})
+
+                token_list = json.loads(Tokens.get(self, request).getvalue())
+                tokens = TokenListSerializer(token_list, many=True)
 
                 data = {
                     'timeline': serialized.data,
-                    'categories': categories.data
+                    'categories': categories.data,
+                    'tokens': tokens.data
                 }
 
                 return Response(data)

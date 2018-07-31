@@ -8,9 +8,8 @@ from std_bounties import master_client
 from django.conf import settings
 from bounties.redis_client import redis_client
 from bounties.sqs_client import sqs_client
-from std_bounties.models import Event, Bounty
+from std_bounties.models import Event
 from notifications.models import Transaction
-from bounties.utils import bounty_url_for
 import logging
 
 
@@ -73,6 +72,9 @@ class Command(BaseCommand):
                         1 else 'for bounty id {}'.format(
                             str(bounty_id))))
 
+                transaction_path = '/bounty/' + str(bounty_id)
+                transaction_link_text = 'View bounty'
+                transaction_message = 'Transaction confirmed'
                 if event == 'profileUpdated':
                     master_client.profile_updated(
                         event_date=event_date,
@@ -80,6 +82,8 @@ class Command(BaseCommand):
                         event_timestamp=event_timestamp,
                         transaction_from=transaction_from,
                         uid=message_deduplication_id)
+                    transaction_path = '/profile/' + transaction_from
+                    transaction_link_text = 'View profile'
 
                 if event == 'BountyIssued':
                     master_client.bounty_issued(
@@ -122,6 +126,9 @@ class Command(BaseCommand):
                         fulfillment_id=fulfillment_id,
                         event_timestamp=event_timestamp,
                         uid=message_deduplication_id)
+                    transaction_link_text = 'Rate fulfiller'
+                    transaction_path = transaction_path + '/?rating=true'
+                    transaction_message = 'Submission accepted'
 
                 if event == 'BountyKilled':
                     master_client.bounty_killed(
@@ -182,18 +189,16 @@ class Command(BaseCommand):
                         'contract_inputs': contract_method_inputs,
                         'event_date': event_date,
                     })
-                # there should only be one, but this is easier than nesting a
-                # try catch
-                bounty = Bounty.objects.get(
-                    bounty_id=bounty_id) if bounty_id != -1 else None
 
                 transactions = Transaction.objects.filter(
                     tx_hash=transaction_hash)
                 if transactions.exists():
                     transactions.update(
                         completed=True, viewed=False, data={
-                            'link': bounty_url_for(
-                                bounty.id, bounty.platform) if bounty.id else None})
+                            'link': transaction_path,
+                            'linkText': transaction_link_text,
+                            'message': transaction_message,
+                        })
 
                 redis_client.set(message_deduplication_id, True)
                 sqs_client.delete_message(

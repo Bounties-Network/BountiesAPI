@@ -19,8 +19,9 @@ class TransactionViewSet(mixins.CreateModelMixin,
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
-        public_address = self.kwargs.get('public_address')
+        public_address = self.kwargs.get('public_address', '').lower()
         return Transaction.objects.filter(
+            viewed=False,
             user__public_address=public_address).order_by(
             'viewed', '-created')
     serializer_class = TransactionSerializer

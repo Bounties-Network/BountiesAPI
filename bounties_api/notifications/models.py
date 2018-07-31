@@ -37,4 +37,4 @@ class Transaction(models.Model):
     failed = models.BooleanField(default=False, null=False)
     completed = models.BooleanField(default=False, null=False)
     viewed = models.BooleanField(default=False, null=False)
-    data = JSONField(null=True)
+    data = JSONField(default=dict, null=False)

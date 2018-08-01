@@ -169,9 +169,12 @@ def map_user_data(data_hash, public_address):
     plucked_data = pluck(data, user_data_keys)
     plucked_social = pluck(data.get('social', {}), user_social_keys)
 
+    skills = [skill for skill in plucked_data.get('skills', []) if len(skill) > 0]
+
     user = {
         **plucked_data,
         **plucked_social,
+        'skills': skills,
         'website': data.get('social', {}).get('personalWebsite', None),
         'profileFileName': data.get('profilePhoto', {}).get('fileName', None),
         'profileDirectoryHash': data.get('profilePhoto', {}).get('fileDirectoryHash', None)

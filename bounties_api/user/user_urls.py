@@ -6,6 +6,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 
 router.register(r'^languages', views.LanguageViewSet)
+router.register(r'^skills', views.SkillViewSet)
 
 urlpatterns = [
     url(r'^settings/$', views.SettingsView.as_view()),

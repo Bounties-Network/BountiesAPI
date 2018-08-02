@@ -176,7 +176,8 @@ class Command(BaseCommand):
                     for blacklisted in retry:
                         message = redis_client.get(blacklisted)
                         if message:
-                            self.handle_message(message)
+                            if self.handle_message(message):
+                                redis_client.lrem('retry_blacklist', 0, blacklisted)
         except Exception as e:
             # goes to rollbar
             logger.exception(e)

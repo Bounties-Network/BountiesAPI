@@ -38,11 +38,17 @@ fulfillment_data_keys = [
 
 def map_bounty_data(data_hash, bounty_id):
     ipfs_hash = data_hash
-    if len(ipfs_hash) != 46 or not ipfs_hash.startswith('Qm'):
-        logger.error('Data Hash Incorrect for bounty: {:d}'.format(bounty_id))
-        data_JSON = "{}"
-    else:
-        data_JSON = ipfs.cat(ipfs_hash)
+    try:
+        if len(ipfs_hash) != 46 or not ipfs_hash.startswith('Qm'):
+            logger.error('Data Hash Incorrect for bounty: {:d}'.format(bounty_id))
+            data_JSON = "{}"
+        else:
+            data_JSON = ipfs.cat(ipfs_hash)
+    except StatusError as e:
+        redis_client.set('blacklist:' + str(bounty_id), True)
+        logger.error('Timeout for bounty id: ' + bounty_id)
+        raise e
+
     if len(ipfs_hash) == 0:
         ipfs_hash = 'invalid'
 
@@ -85,13 +91,19 @@ def map_bounty_data(data_hash, bounty_id):
 
 def map_fulfillment_data(data_hash, bounty_id, fulfillment_id):
     ipfs_hash = data_hash
-    if len(ipfs_hash) != 46 or not ipfs_hash.startswith('Qm'):
-        logger.error(
-            'Data Hash Incorrect for fulfillment on bounty: {:d} fulfillment: {:d}'.format(
-                bounty_id, fulfillment_id))
-        data_JSON = "{}"
-    else:
-        data_JSON = ipfs.cat(ipfs_hash)
+    try:
+        if len(ipfs_hash) != 46 or not ipfs_hash.startswith('Qm'):
+            logger.error(
+                'Data Hash Incorrect for fulfillment on bounty: {:d} fulfillment: {:d}'.format(
+                    bounty_id, fulfillment_id))
+            data_JSON = "{}"
+        else:
+            data_JSON = ipfs.cat(ipfs_hash)
+    except StatusError as e:
+        redis_client.set('blacklist:' + str(bounty_id), True)
+        logger.error('Timeout for bounty id: ' + bounty_id)
+        raise e
+
     if len(ipfs_hash) == 0:
         ipfs_hash = 'invalid'
 

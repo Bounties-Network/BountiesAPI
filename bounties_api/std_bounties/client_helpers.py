@@ -45,9 +45,10 @@ def map_bounty_data(data_hash, bounty_id):
         else:
             data_JSON = ipfs.cat(ipfs_hash)
     except StatusError as e:
-        redis_client.set('blacklist:' + str(bounty_id), True)
-        logger.error('Timeout for bounty id: ' + bounty_id)
-        raise e
+        if e.original.response.status_code == 504:
+            redis_client.set('blacklist:' + str(bounty_id), True)
+            logger.error('Timeout for bounty id: ' + bounty_id)
+            raise e
 
     if len(ipfs_hash) == 0:
         ipfs_hash = 'invalid'
@@ -100,9 +101,10 @@ def map_fulfillment_data(data_hash, bounty_id, fulfillment_id):
         else:
             data_JSON = ipfs.cat(ipfs_hash)
     except StatusError as e:
-        redis_client.set('blacklist:' + str(bounty_id), True)
-        logger.error('Timeout for bounty id: ' + bounty_id)
-        raise e
+        if e.original.response.status_code == 504:
+            redis_client.set('blacklist:' + str(bounty_id), True)
+            logger.error('Timeout for bounty id: ' + bounty_id)
+            raise e
 
     if len(ipfs_hash) == 0:
         ipfs_hash = 'invalid'

@@ -155,6 +155,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
     on_chain = serializers.BooleanField(read_only=True)
     current_market_token_data = TokenSerializer(read_only=True, source='token')
     webReferenceURL = serializers.CharField(required=False, allow_blank=True)
+    uid = serializers.CharField(read_only=True)
     calculated_fulfillmentAmount = serializers.DecimalField(
         decimal_places=30,
         max_digits=70,
@@ -164,7 +165,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DraftBounty
-        exclude = ('uid', 'token',)
+        exclude = ('token',)
 
     @transaction.atomic
     def create(self, validated_data):

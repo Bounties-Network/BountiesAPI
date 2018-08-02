@@ -42,7 +42,7 @@ class Command(BaseCommand):
                 QueueUrl=settings.QUEUE_URL,
                 ReceiptHandle=receipt_handle,
             )
-            return
+            return False
 
         event_defaults = {
             'bounty_id': bounty_id,

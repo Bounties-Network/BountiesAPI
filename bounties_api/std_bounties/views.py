@@ -108,7 +108,7 @@ class DraftBountyWriteViewSet(viewsets.ModelViewSet):
     queryset = DraftBounty.objects.filter(on_chain=False)
     serializer_class = DraftBountyWriteSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('user_id',)
+    filter_fields = ('issuer',)
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:

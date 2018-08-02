@@ -23,6 +23,7 @@ if settings.ETH_NETWORK in ['rinkeby', 'consensysrinkeby', 'rinkebystaging']:
 bounties_json = json.loads(data)
 ipfs = ipfsapi.connect(host='https://ipfs.infura.io')
 bounty_data_keys = [
+    'uid',
     'description',
     'title',
     'sourceFileName',

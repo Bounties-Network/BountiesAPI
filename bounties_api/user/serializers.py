@@ -1,7 +1,7 @@
 import json
 from rest_framework import serializers
 from bounties.serializers import CreatableSlugRelatedField
-from user.models import Language, User, Settings
+from user.models import Language, User, Settings, Skill
 from notifications.constants import push_notification_options
 
 
@@ -53,6 +53,15 @@ class EmailsSerializer(serializers.JSONField):
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Language
+        fields = [
+            'name',
+            'normalized_name'
+        ]
+
+
+class SkillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Skill
         fields = [
             'name',
             'normalized_name'

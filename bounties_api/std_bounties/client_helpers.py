@@ -5,6 +5,8 @@ from decimal import Decimal
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from web3.middleware import geth_poa_middleware
+from ipfsapi.exceptions import StatusError
+from bounties.redis_client import redis_client
 from std_bounties.contract import data
 from std_bounties.models import Token
 from utils.functional_tools import pluck
@@ -47,8 +49,8 @@ def map_bounty_data(data_hash, bounty_id):
     except StatusError as e:
         if e.original.response.status_code == 504:
             redis_client.set('blacklist:' + str(bounty_id), True)
-            logger.error('Timeout for bounty id: ' + bounty_id)
-            raise e
+            logger.error('Timeout for bounty id: ' + str(bounty_id))
+        raise e
 
     if len(ipfs_hash) == 0:
         ipfs_hash = 'invalid'
@@ -103,8 +105,8 @@ def map_fulfillment_data(data_hash, bounty_id, fulfillment_id):
     except StatusError as e:
         if e.original.response.status_code == 504:
             redis_client.set('blacklist:' + str(bounty_id), True)
-            logger.error('Timeout for bounty id: ' + bounty_id)
-            raise e
+            logger.error('Timeout for bounty id: ' + str(bounty_id))
+        raise e
 
     if len(ipfs_hash) == 0:
         ipfs_hash = 'invalid'

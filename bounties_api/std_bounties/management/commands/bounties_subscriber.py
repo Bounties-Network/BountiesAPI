@@ -139,6 +139,7 @@ class Command(BaseCommand):
             ReceiptHandle=receipt_handle,
         )
 
+        return True
 
     def handle(self, *args, **options):
         try:
@@ -173,7 +174,9 @@ class Command(BaseCommand):
                     logger.info('retry_blacklist reset to: {}'.format(retry_blacklist))
                     retry = redis_client.lrange('retry_blacklist', 0, -1)
                     for blacklisted in retry:
-                        self.handle_message(blacklisted)
+                        message = redis_client.get(blacklisted)
+                        if message:
+                            self.handle_message(message)
         except Exception as e:
             # goes to rollbar
             logger.exception(e)

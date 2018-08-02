@@ -115,7 +115,7 @@ class BountyAbstract(models.Model):
 
 class Bounty(BountyAbstract):
     id = models.IntegerField(primary_key=True)
-    uid = models.UUIDField(null=True)
+    uid = models.CharField(max_length=128, null=True)
     bounty_created = models.DateTimeField(null=True)
     bountyStage = models.IntegerField(
         choices=STAGE_CHOICES, default=DRAFT_STAGE)

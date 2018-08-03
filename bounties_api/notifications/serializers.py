@@ -1,11 +1,14 @@
 from rest_framework import serializers
-from notifications.models import DashboardNotification, Transaction
+from notifications.models import DashboardNotification, Transaction, Notification
+from std_bounties.serializers import UserSerializer
 
 
 class NotificationSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    from_user = UserSerializer(read_only=True)
 
     class Meta:
-        model = DashboardNotification
+        model = Notification
         fields = '__all__'
 
 

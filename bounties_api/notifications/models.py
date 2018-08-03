@@ -5,6 +5,12 @@ from notifications.constants import NOTIFICATION_IDS
 
 class Notification(models.Model):
     user = models.ForeignKey('user.User', null=False)
+    from_user = models.ForeignKey(
+        'user.User',
+        default=None,
+        null=True,
+        related_name="from_user"
+    )
     uid = models.CharField(null=False, blank=False, max_length=512)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

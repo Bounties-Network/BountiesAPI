@@ -23,8 +23,9 @@ def create_notification(
         uid,
         notification_name,
         user,
+        from_user,
         notification_created,
-        data,
+        string_data,
         subject,
         bounty_title='',
         is_activity=True,
@@ -37,6 +38,7 @@ def create_notification(
         defaults={
             'notification_name': notification_name,
             'user': user,
+            'from_user': from_user,
             'notification_created': notification_created,
             'dashboard': True,
         },
@@ -46,7 +48,7 @@ def create_notification(
         return
     DashboardNotification.objects.create(
         notification=notification,
-        string_data=data,
+        string_data=string_data,
         is_activity=is_activity,
         data={'link': url, 'bounty_title': bounty_title},
     )
@@ -59,10 +61,10 @@ def create_notification(
         context={
             'link': url,
             'username': username,
-            'message_string': string_data_email or data,
+            'message_string': string_data_email or string_data,
             'button_text': email_button_string})
     email_txt = 'Hello {}! \n {}'.format(
-        username, string_data_email or data, )
+        username, string_data_email or string_data, )
     email_settings = user.settings.emails
     activity_emails = email_settings['activity']
     if is_activity and not activity_emails:

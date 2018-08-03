@@ -2,7 +2,15 @@ from rest_framework import serializers
 from notifications.models import DashboardNotification, Transaction
 
 
+class NotificationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DashboardNotification
+        fields = '__all__'
+
+
 class DashboardNotificationSerializer(serializers.ModelSerializer):
+    notification = NotificationSerializer(read_only=True)
 
     class Meta:
         model = DashboardNotification

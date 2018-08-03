@@ -26,6 +26,7 @@ def create_notification(
         notification_created,
         data,
         subject,
+        bounty_title='',
         is_activity=True,
         string_data_email=None,
         email_button_string='View in App',
@@ -47,7 +48,7 @@ def create_notification(
         notification=notification,
         string_data=data,
         is_activity=is_activity,
-        data={'link': url},
+        data={'link': url, 'bounty_title': bounty_title},
     )
 
     username = 'bounty hunter'

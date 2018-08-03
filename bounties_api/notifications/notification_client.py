@@ -19,6 +19,7 @@ class NotificationClient:
             notification_name=notifications['BountyIssued'],
             user=bounty.user,
             data=string_data,
+            bounty_title=bounty.title,
             subject='New bounty issued')
 
     def bounty_fulfilled(self, bounty_id, fulfillment_id, uid, **kwargs):
@@ -37,6 +38,7 @@ class NotificationClient:
             notification_name=notifications['FulfillmentSubmitted'],
             user=fulfillment.user,
             data=string_data_fulfiller,
+            bounty_title=bounty.title,
             subject='New Submission')
         # to bounty issuer
         create_bounty_notification(
@@ -47,6 +49,7 @@ class NotificationClient:
             user=bounty.user,
             data=string_data_issuer,
             subject='You Received a New Submission',
+            bounty_title=bounty.title,
             is_activity=False)
 
     def bounty_activated(self, bounty_id, event_date, uid, **kwargs):
@@ -59,6 +62,7 @@ class NotificationClient:
             notification_name=notifications['BountyActivated'],
             user=bounty.user,
             data=string_data,
+            bounty_title=bounty.title,
             subject='Bounty Activated')
 
     def bounty_issued_and_activated(
@@ -72,6 +76,7 @@ class NotificationClient:
             notification_name=notifications['BountyIssuedActivated'],
             user=bounty.user,
             data=string_data,
+            bounty_title=bounty.title,
             subject='Bounty Issued and Activated')
 
     def fulfillment_accepted(self, bounty_id, fulfillment_id, uid, **kwargs):
@@ -94,6 +99,7 @@ class NotificationClient:
             data=string_data_issuer,
             subject='Submission Accepted',
             string_data_email=string_data_issuer_email,
+            bounty_title=bounty.title,
             email_button_string='Rate Fulfiller')
         create_bounty_notification(
             bounty=bounty,
@@ -103,6 +109,7 @@ class NotificationClient:
             user=fulfillment.user,
             data=string_data_fulfiller,
             subject='Your Submission was Accepted',
+            bounty_title=bounty.title,
             is_activity=False,
             string_data_email=string_data_fulfiller_email,
             email_button_string='Rate Issuer')
@@ -128,7 +135,8 @@ class NotificationClient:
             notification_name=notifications['FulfillmentUpdatedIssuer'],
             user=bounty.user,
             data=string_data_issuer,
-            subjet='Submission was Updated',
+            bounty_title=bounty.title,
+            subject='Submission was Updated',
             is_activity=False)
         create_bounty_notification(
             bounty=bounty,
@@ -137,6 +145,7 @@ class NotificationClient:
             notification_name=notifications['FulfillmentUpdated'],
             user=fulfillment.user,
             data=string_data_fulfiller,
+            bounty_title=bounty.title,
             subject='Submission Updated')
 
     def bounty_killed(self, bounty_id, event_date, uid, **kwargs):
@@ -149,6 +158,7 @@ class NotificationClient:
             notification_name=notifications['BountyKilled'],
             user=bounty.user,
             data=string_data,
+            bounty_title=bounty.title,
             subject='Bounty Killed')
 
     def contribution_added(self, bounty_id, event_date, uid, **kwargs):
@@ -164,6 +174,7 @@ class NotificationClient:
             notification_name=notifications['ContributionAdded'],
             user=bounty.user,
             data=string_data,
+            bounty_title=bounty.title,
             subject='Contribution Added')
 
     def deadline_extended(self, bounty_id, event_date, uid, **kwargs):
@@ -176,6 +187,7 @@ class NotificationClient:
             notification_name=notifications['DeadlineExtended'],
             user=bounty.user,
             data=string_data,
+            bounty_title=bounty.title,
             subject='Deadline Extended')
 
     def bounty_changed(self, bounty_id, event_date, uid, **kwargs):
@@ -188,6 +200,7 @@ class NotificationClient:
             notification_name=notifications['BountyChanged'],
             user=bounty.user,
             data=string_data,
+            bounty_title=bounty.title,
             subject='Bounty Updated')
 
     def issuer_transferred(
@@ -211,6 +224,7 @@ class NotificationClient:
             notification_name=notifications['IssuerTransferred'],
             user=original_user,
             data=string_data_transferrer,
+            bounty_title=bounty.title,
             subject='Bounty Transferred')
         create_bounty_notification(
             bounty=bounty,
@@ -219,6 +233,7 @@ class NotificationClient:
             notification_name=notifications['TransferRecipient'],
             user=bounty.user,
             data=string_data_recipient,
+            bounty_title=bounty.title,
             subject='A Bounty was Transferred to You',
             is_activity=False)
 
@@ -232,6 +247,7 @@ class NotificationClient:
             notification_name=notifications['PayoutIncreased'],
             user=bounty.user,
             data=string_data,
+            bounty_title=bounty.title,
             subject='Payout Increased')
 
     def bounty_expired(self, bounty_id, event_date, uid, **kwargs):
@@ -245,6 +261,7 @@ class NotificationClient:
             user=bounty.user,
             data=string_data,
             subject='Bounty Expired',
+            bounty_title=bounty.title,
             is_activity=False)
 
     def comment_issued(self, bounty_id, event_date, uid, **kwargs):
@@ -258,6 +275,7 @@ class NotificationClient:
             user=bounty.user,
             data=string_data,
             subject='Your Bounty Received a Comment',
+            bounty_title=bounty.title,
             is_activity=False)
 
     def rating_issued(self, bounty_id, event_date, uid, issuer, **kwargs):
@@ -270,6 +288,7 @@ class NotificationClient:
             notification_name=notifications['RatingIssued'],
             user=issuer,
             data=string_data,
+            bounty_title=bounty.title,
             subject='You Issued a New Rating')
 
     def rating_received(self, bounty_id, event_date, uid, receiver, **kwargs):
@@ -283,6 +302,7 @@ class NotificationClient:
             user=receiver,
             data=string_data,
             subject='You Received a New Rating on Your Bounty',
+            bounty_title=bounty.title,
             is_activity=False)
 
     def profile_updated(self, public_address, event_date, uid, **kwargs):

@@ -177,9 +177,10 @@ class Bounty(BountyAbstract):
             for category in categories:
                 if isinstance(category, str):
                     try:
-                        matching_category = Category.objects.get(
-                            name=category.strip())
-                        self.categories.add(matching_category)
+                        if category != '':
+                            matching_category = Category.objects.get(
+                                name=category.strip())
+                            self.categories.add(matching_category)
                     except ObjectDoesNotExist:
                         self.categories.create(name=category.strip())
 

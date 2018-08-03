@@ -77,9 +77,10 @@ class User(models.Model):
             for skill in skills:
                 if isinstance(skill, str):
                     try:
-                        matching_skill = Skill.objects.get(
-                            name=skill.strip())
-                        self.skills.add(matching_skill)
+                        if skill != '':
+                            matching_skill = Skill.objects.get(
+                                name=skill.strip())
+                            self.skills.add(matching_skill)
                     except ObjectDoesNotExist:
                         self.skills.create(name=skill.strip())
 

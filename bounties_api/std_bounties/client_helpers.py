@@ -67,6 +67,8 @@ def map_bounty_data(data_hash, bounty_id):
     metadata = data.get('metadata', {})
 
     experienceLevel = metadata.get('experienceLevel') or data.get('difficulty') or ''
+    experienceLevel = 'Advanced' if experienceLevel == 'Expert' else experienceLevel
+
     formattedExperienceLevel = str(experienceLevel).lower().strip().capitalize()
 
     metadata.update({'experienceLevel': rev_mapped_difficulties.get(
@@ -170,12 +172,9 @@ def map_user_data(data_hash, public_address):
     plucked_data = pluck(data, user_data_keys)
     plucked_social = pluck(data.get('social', {}), user_social_keys)
 
-    skills = [skill for skill in plucked_data.get('skills', []) if len(skill) > 0]
-
     user = {
         **plucked_data,
         **plucked_social,
-        'skills': skills,
         'website': data.get('social', {}).get('personalWebsite', None),
         'profileFileName': data.get('profilePhoto', {}).get('fileName', None),
         'profileDirectoryHash': data.get('profilePhoto', {}).get('fileDirectoryHash', None)

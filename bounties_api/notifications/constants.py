@@ -64,7 +64,7 @@ push_notification_options = {
 }
 
 default_email_options = {
-    'activity': True,
+    'activity': False,
     'issuer': {notif: True for notif in push_notification_options['issuer']},
     'fulfiller': {notif: True for notif in push_notification_options['fulfiller']},
     'both': {notif: True for notif in push_notification_options['both']},

@@ -20,7 +20,6 @@ DIFFICULTY_CHOICES = (
     (BEGINNER, 'Beginner'),
     (INTERMEDIATE, 'Intermediate'),
     (ADVANCED, 'Advanced'),
-    (ADVANCED, 'Expert'),
 )
 
 rev_mapped_difficulties = dict((y, x) for x, y in DIFFICULTY_CHOICES)

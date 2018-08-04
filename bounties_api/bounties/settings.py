@@ -205,7 +205,7 @@ networks = {
     'mainNet': 'https://mainnet.infura.io/',
     'rinkeby':  'https://rinkeby.infura.io/',
     'consensysrinkeby':  'https://rinkeby.infura.io/',
-    'localhost': 'localhost:8545',
+    'develop': 'http://localhost:8545',
 }
 
 ETH_NETWORK_URL = networks[ETH_NETWORK]

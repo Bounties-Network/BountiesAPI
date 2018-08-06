@@ -47,7 +47,7 @@ class Command(BaseCommand):
                         if image_r is None:
                             image_r = requests.get(github_image)
 
-                if image_r.status_code == 200:
+                if image_r and image_r.status_code == 200:
                     try:
                         bucket = 'assets.bounties.network'
                         key = '{}/userimages/{}.jpg'.format(

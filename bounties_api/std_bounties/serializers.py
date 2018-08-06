@@ -75,6 +75,7 @@ class BountyFulfillmentSerializer(serializers.ModelSerializer):
             'id',
             'bounty_id',
             'title',
+            'usd_price',
             'tokenSymbol',
             'tokenDecimals',
             'fulfillmentAmount']
@@ -84,6 +85,7 @@ class FulfillmentSerializer(CustomSerializer):
     bounty_data = BountyFulfillmentSerializer(read_only=True, source='bounty')
     fulfiller_review = ReviewSerializer(read_only=True)
     issuer_review = ReviewSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Fulfillment

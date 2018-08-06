@@ -64,7 +64,7 @@ class BountyClient:
         saved_bounty.record_bounty_state(event_date)
         uid = saved_bounty.uid
         if uid:
-            DraftBounty.obects.filter(uid=uid).update(on_chain=True)
+            DraftBounty.objects.filter(uid=uid).update(on_chain=True)
         return saved_bounty
 
     def activate_bounty(self, bounty, inputs, event_timestamp, **kwargs):

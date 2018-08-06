@@ -4,7 +4,7 @@ from user.backend import authenticate, login, logout
 from user.serializers import LanguageSerializer, UserSerializer, UserInfoSerializer, SettingsSerializer, SkillSerializer
 from user.models import Language, User, Skill
 from std_bounties.models import Fulfillment
-from django.db.models import Sum, Avg
+from django.db.models import Sum, Avg, Count
 from django.http import JsonResponse, HttpResponse
 
 
@@ -117,6 +117,16 @@ class UserProfile(APIView):
         fulfiller_fulfillment_acceptance = None if not user_fulfillments.count() else (
             user_fulfillments.filter(accepted=True).count() / user_fulfillments.count())
 
+        total_fulfillments_on_bounties = user_bounties.annotate(
+            fulfillments_count=Count('fulfillments')).aggregate(
+            Sum('fulfillments_count')
+        ).get('fulfillments_count__sum', None)
+
+        if total_fulfillments_on_bounties:
+            total_fulfillments_on_bounties = total_fulfillments_on_bounties
+        else:
+            total_fulfillments_on_bounties = 0
+
         profile_stats = {
             'awarded': awarded.get('usd_price__sum'),
             'earned': earned.get('usd_price__sum'),
@@ -127,7 +137,9 @@ class UserProfile(APIView):
             'issuer_fulfillment_acceptance': issuer_fulfillment_acceptance,
             'fulfiller_fulfillment_acceptance': fulfiller_fulfillment_acceptance,
             'total_bounties': user_bounties.count(),
-            'total_fulfillments': user_fulfillments.count()}
+            'total_fulfillments': user_fulfillments.count(),
+            'total_fulfillments_on_bounties': total_fulfillments_on_bounties
+        }
         serializer = UserSerializer(user)
 
         return JsonResponse({'user': serializer.data, 'stats': profile_stats})

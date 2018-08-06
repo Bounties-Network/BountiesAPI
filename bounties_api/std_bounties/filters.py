@@ -28,6 +28,7 @@ class FulfillmentsFilter(filters.FilterSet):
         fields = {
             'fulfiller': ['exact'],
             'bounty': ['exact'],
+            'bounty__issuer_address': ['exact'],
             'platform': ['exact', 'in'],
         }
 

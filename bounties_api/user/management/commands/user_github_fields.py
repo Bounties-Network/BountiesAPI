@@ -58,8 +58,8 @@ class Command(BaseCommand):
                             Bucket=bucket,
                             ACL='public-read',
                             Key=key)
-                        user.profile_image = 'https://{}/{}'.format(
-                            bucket, key)
+                        user.profile_image = 'https://{}/{}'.format(bucket, key)
+                        user.isProfileImageDirty = False
                     except ClientError as e:
                         logger.error(e.response['Error']['Message'])
 

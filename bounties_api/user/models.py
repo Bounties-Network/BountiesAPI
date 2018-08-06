@@ -24,6 +24,16 @@ class Skill(models.Model):
         super(Skill, self).save(*args, **kwargs)
 
 
+class RankedSkill(models.Model):
+    name = models.CharField(max_length=128)
+    normalized_name = models.CharField(max_length=128)
+    total_count = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'skill_ranks'
+
+
 class Settings(models.Model):
     emails = JSONField(null=False, default=default_email_options)
 

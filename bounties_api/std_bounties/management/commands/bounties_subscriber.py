@@ -1,7 +1,6 @@
 import json
 import time
 import datetime
-from collections import namedtuple
 
 from django.core.management.base import BaseCommand
 
@@ -10,82 +9,15 @@ from django.conf import settings
 from bounties.redis_client import redis_client
 from bounties.sqs_client import sqs_client
 from std_bounties.models import Event
+from . import message
 import logging
 
 
 logger = logging.getLogger('django')
 
-Message = namedtuple('Message', (
-    'receipt_handle,'
-    'event,'
-    'bounty_id,'
-    'fulfillment_id,'
-    'message_deduplication_id,'
-    'transaction_from,'
-    'transaction_hash,'
-    'event_timestamp,'
-    'event_date,'
-    'contract_method_inputs'))
 
 class Command(BaseCommand):
     help = 'Listen to SQS queue for contract events'
-
-    def message_to_string(self, message):
-        if not message:
-            return False
-        
-        message.event_date = str(message.event_date)
-        return json.dumps(message._asdict())
-        
-        # return Message(
-        #     receipt_handle=message.receipt_handle,
-        #     event=message.event,
-        #     bounty_id=message.bounty_id,
-        #     fulfillment_id=message.fulfillment_id,
-        #     message_deduplication_id=message.message_deduplication_id,
-        #     transaction_from=message.transaction_from,
-        #     transaction_hash=message.transaction_hash,
-        #     event_timestamp=message.event_timestamp,
-        #     event_date=str(message.event_date),
-        #     contract_method_inputs=json.dumps(message.contract_method_inputs)
-        # )
-
-    def string_to_message(self, message):
-        if not message:
-            return False
-
-        return Message(
-            receipt_handle=message['receipt_handle'],
-            event=message['event'],
-            bounty_id=int(message['bounty_id']),
-            fulfillment_id=int(message['fulfillment_id']),
-            message_deduplication_id=message['message_deduplication_id'],
-            transaction_from=message['transaction_from'],
-            transaction_hash=message['transaction_hash'],
-            event_timestamp=message['event_timestamp'],
-            event_date=datetime.datetime.fromisoformat(message['event_date']),
-            contract_method_inputs=json.loads(message['contract_method_inputs'])
-        )
-
-    def unwrap_message(self, message):
-        if not message:
-            return False
-
-        message_attributes = message['MessageAttributes']
-
-        return Message(
-            receipt_handle=message['ReceiptHandle'],
-            event=message_attributes['Event']['StringValue'],
-            bounty_id=int(message_attributes['BountyId']['StringValue']),
-            fulfillment_id=int(message_attributes['FulfillmentId']['StringValue']),
-            message_deduplication_id=message_attributes['MessageDeduplicationId']['StringValue'],
-            transaction_from=message_attributes['TransactionFrom']['StringValue'],
-            transaction_hash=message_attributes['TransactionHash']['StringValue'],
-            event_timestamp=message_attributes['TimeStamp']['StringValue'],
-            event_date=datetime.datetime.fromtimestamp(int(event_timestamp)),
-            contract_method_inputs=json.loads(
-                message_attributes['ContractMethodInputs']['StringValue'])
-        )
 
     def handle_message(self, message):
         try:
@@ -226,9 +158,7 @@ class Command(BaseCommand):
                     MaxNumberOfMessages=1,
                 )
 
-                
-                message = self.unwrap_event(response.get('Messages'))
-
+                message = Message(response.get('Messages'))
 
                 retry_blacklist =- 1
                 logger.info('done processing regular message, retry_blacklist is now: {}'.format(retry_blacklist))

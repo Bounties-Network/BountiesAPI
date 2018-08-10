@@ -1,20 +1,19 @@
 import json
 import time
 import datetime
+import logging
 
 from django.core.management.base import BaseCommand
-
-from std_bounties import master_client
 from django.conf import settings
+
 from bounties.redis_client import redis_client
 from bounties.sqs_client import sqs_client
+from std_bounties import master_client
 from std_bounties.models import Event
-from . import message
-import logging
+from std_bounties.message import Message
 
 
 logger = logging.getLogger('django')
-
 
 class Command(BaseCommand):
     help = 'Listen to SQS queue for contract events'

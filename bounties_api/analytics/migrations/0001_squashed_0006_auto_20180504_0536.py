@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('bounty_fulfilled_rate', models.FloatField(default=0)),
                 ('avg_fulfiller_acceptance_rate', models.FloatField(default=0)),
                 ('avg_fulfillment_amount', models.FloatField(default=0)),
-                ('total_fulfillment_amount', models.DecimalField(decimal_places=0, default=0, max_digits=64)),
+                ('total_fulfillment_amount', models.DecimalField(decimal_places=2, default=0, max_digits=64)),
                 ('bounty_draft', models.PositiveIntegerField(default=0)),
                 ('bounty_active', models.PositiveIntegerField(default=0)),
                 ('bounty_completed', models.PositiveIntegerField(default=0)),

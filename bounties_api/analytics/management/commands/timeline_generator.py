@@ -3,7 +3,7 @@ from functools import reduce
 
 import arrow
 from django.core.management import BaseCommand
-from django.db.models import Q
+from django.db.models import Q, Sum
 
 from analytics.models import BountiesTimeline
 from std_bounties.constants import EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, ACTIVE_STAGE, DRAFT_STAGE
@@ -95,6 +95,19 @@ def get_avg_fulfiller_acceptance_rate(
         counter += 1
 
     return accumulator / counter if counter > 0 else 0
+
+def get_total_amount_paid(time_frame, accepted_date=datetime.now()):
+    fulfillers = [b['fulfiller']
+                  for b in time_frame.values('fulfiller').distinct()]
+
+    total = 0
+    for fulfiller in fulfillers:
+        fulfillments = time_frame.filter(fulfiller=fulfiller)
+        accepted_fulfillments = fulfillments.filter(
+            accepted=True, accepted_date__lte=accepted_date)
+        sum_fulfillments = accepted_fulfillments.aggregate(Sum('usd_price')).get('usd_price__sum')
+        total += sum_fulfillments if sum_fulfillments != None else 0
+    return total    
 
 
 def get_avg_fulfillment_amount(time_frame):
@@ -250,8 +263,7 @@ def generate_timeline(time_frame, platform=DEFAULT_PLATFORM):
         fulfillment_submitted_frame, date)
 
     avg_fulfillment_amount = get_avg_fulfillment_amount(bounties_state_frame)
-    total_fulfillment_amount = get_total_fulfillment_amount(
-        bounties_state_frame)
+    total_fulfillment_amount = get_total_amount_paid(fulfillment_submitted_frame, date)
 
     bounty_frame = BountiesTimeline(
         date=time_frame[0],

@@ -9,6 +9,7 @@ from std_bounties.client_helpers import calculate_token_quantity, \
     map_fulfillment_data
 from std_bounties.constants import ACTIVE_STAGE, DRAFT_STAGE, EXPIRED_STAGE
 from std_bounties.models import Bounty, BountyState, Token
+from std_bounties.message import Message
 
 
 class TestCalculationHelpers(unittest.TestCase):
@@ -294,3 +295,80 @@ class TestBountyClient(unittest.TestCase):
         bounty_to_extend_deadline_from_db = Bounty.objects.get(
             pk=self.bounty_to_extend_deadline_id)
         self.assertEqual(result, bounty_to_extend_deadline_from_db)
+
+class TestEventMessage(unittest.TestCase):
+    def setUp(self):
+        self.maxDiff = None
+
+        self.receipt_handle = '434806a2-d8db-45e8-8b46-8f9b41fb65d3#c9adaa49-8d45-420a-81ab-1a7071c389df'
+        self.event = 'BountyIssued'
+        self.bounty_id = 42
+        self.fulfillment_id = 12345
+        self.message_deduplication_id = '044444444444444444444444444444444442222222222222222222222222222222BountyIssued'
+        self.transaction_from = '0x4444444444444444444422222222222222222222'
+        self.transaction_hash = '0x4444444444444444444444444444444442222222222222222222222222222222'
+        self.event_timestamp = '1513709342'
+        self.event_date = datetime(2017, 12, 19, 13, 49, 2)
+        self.contract_method_inputs = {
+            'bountyId': '42',
+            'data': 'Qma7vipDNoPYph96ZfNasTD7jczhtJRM8TRL9RUDkzLyNB'
+        },
+
+        self.dict_values = {
+            'receipt_handle': self.receipt_handle,
+            'event': self.event,
+            'bounty_id': self.bounty_id,
+            'fulfillment_id': self.fulfillment_id,
+            'message_deduplication_id': self.message_deduplication_id,
+            'transaction_from': self.transaction_from,
+            'transaction_hash': self.transaction_hash,
+            'event_timestamp': self.event_timestamp,
+            'event_date': self.event_date,
+            'contract_method_inputs': self.contract_method_inputs,
+        }
+
+        self.string_values = '{"receipt_handle": '
+        '"434806a2-d8db-45e8-8b46-8f9b41fb65d3#c9adaa49-8d45-420a-81ab-1a7071c389df", '
+        '"event": "BountyIssued", '
+        '"bounty_id": 42, '
+        '"fulfillment_id": 12345, '
+        '"message_deduplication_id": "044444444444444444444444444444444442222222222222222222222222222222BountyIssued", '
+        '"transaction_from": "0x4444444444444444444422222222222222222222", '
+        '"transaction_hash": "0x4444444444444444444444444444444442222222222222222222222222222222", '
+        '"event_timestamp": "1513709342", '
+        '"event_date": "2017-12-19 13:49:02", '
+        '"contract_method_inputs": {"bountyId": "42", '
+        '"data": "Qma7vipDNoPYph96ZfNasTD7jczhtJRM8TRL9RUDkzLyNB"}}'
+
+        self.default_event = {}
+    
+    def test_from_kwargs(self):
+        message = Message(
+            receipt_handle=self.receipt_handle,
+            event=self.event,
+            bounty_id=self.bounty_id,
+            fulfillment_id=self.fulfillment_id,
+            message_deduplication_id=self.message_deduplication_id,
+            transaction_from=self.transaction_from,
+            transaction_hash=self.transaction_hash,
+            event_timestamp=self.event_timestamp,
+            event_date=self.event_date,
+            contract_method_inputs=self.contract_method_inputs
+        )
+        self.assertDictEqual(self.dict_values, message.__dict__)
+
+
+    def test_create_from_dict(self):
+        message = Message(self.dict_values)
+        self.assertDictEqual(self.dict_values, message.__dict__)
+
+    def test_create_from_string(self):
+        message = Message(self.string_values)
+        self.assertDictEqual(self.dict_values, message.__dict__)
+    
+    def test_string_conversion(self):
+        message = Message(self.dict_values)
+        self.assertEqual(self.string_values, str(message))
+    
+    def test_message_from_event(self):
+        pass

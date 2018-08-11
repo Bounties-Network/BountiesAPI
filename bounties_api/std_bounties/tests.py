@@ -312,7 +312,7 @@ class TestEventMessage(unittest.TestCase):
         self.contract_method_inputs = {
             'bountyId': '42',
             'data': 'Qma7vipDNoPYph96ZfNasTD7jczhtJRM8TRL9RUDkzLyNB'
-        },
+        }
 
         self.dict_values = {
             'receipt_handle': self.receipt_handle,
@@ -327,18 +327,23 @@ class TestEventMessage(unittest.TestCase):
             'contract_method_inputs': self.contract_method_inputs,
         }
 
-        self.string_values = '{"receipt_handle": '
-        '"434806a2-d8db-45e8-8b46-8f9b41fb65d3#c9adaa49-8d45-420a-81ab-1a7071c389df", '
-        '"event": "BountyIssued", '
-        '"bounty_id": 42, '
-        '"fulfillment_id": 12345, '
-        '"message_deduplication_id": "044444444444444444444444444444444442222222222222222222222222222222BountyIssued", '
-        '"transaction_from": "0x4444444444444444444422222222222222222222", '
-        '"transaction_hash": "0x4444444444444444444444444444444442222222222222222222222222222222", '
-        '"event_timestamp": "1513709342", '
-        '"event_date": "2017-12-19 13:49:02", '
-        '"contract_method_inputs": {"bountyId": "42", '
-        '"data": "Qma7vipDNoPYph96ZfNasTD7jczhtJRM8TRL9RUDkzLyNB"}}'
+        self.string_values = """\
+{
+    "receipt_handle": "434806a2-d8db-45e8-8b46-8f9b41fb65d3#c9adaa49-8d45-420a-81ab-1a7071c389df",
+    "event": "BountyIssued",
+    "bounty_id": 42,
+    "fulfillment_id": 12345,
+    "message_deduplication_id": "044444444444444444444444444444444442222222222222222222222222222222BountyIssued",
+    "transaction_from": "0x4444444444444444444422222222222222222222",
+    "transaction_hash": "0x4444444444444444444444444444444442222222222222222222222222222222",
+    "event_timestamp": "1513709342",
+    "event_date": "2017-12-19T13:49:02",
+    "contract_method_inputs": {
+        "bountyId": "42",
+        "data": "Qma7vipDNoPYph96ZfNasTD7jczhtJRM8TRL9RUDkzLyNB"
+    }
+}\
+"""
 
         self.default_event = {}
     
@@ -363,7 +368,7 @@ class TestEventMessage(unittest.TestCase):
         self.assertDictEqual(self.dict_values, message.__dict__)
 
     def test_create_from_string(self):
-        message = Message(self.string_values)
+        message = Message.message_from_string(self.string_values)
         self.assertDictEqual(self.dict_values, message.__dict__)
     
     def test_string_conversion(self):

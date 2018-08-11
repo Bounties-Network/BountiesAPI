@@ -96,6 +96,7 @@ def get_avg_fulfiller_acceptance_rate(
 
     return accumulator / counter if counter > 0 else 0
 
+
 def get_total_amount_paid(time_frame, accepted_date=datetime.now()):
     fulfillers = [b['fulfiller']
                   for b in time_frame.values('fulfiller').distinct()]
@@ -106,8 +107,8 @@ def get_total_amount_paid(time_frame, accepted_date=datetime.now()):
         accepted_fulfillments = fulfillments.filter(
             accepted=True, accepted_date__lte=accepted_date)
         sum_fulfillments = accepted_fulfillments.aggregate(Sum('usd_price')).get('usd_price__sum')
-        total += sum_fulfillments if sum_fulfillments != None else 0
-    return total    
+        total += sum_fulfillments if sum_fulfillments is not None else 0
+    return total
 
 
 def get_avg_fulfillment_amount(time_frame):
@@ -135,8 +136,10 @@ def get_total_fulfillment_amount(time_frame):
 def get_total_unique_issuers(time_frame):
     return time_frame.distinct('bounty').values('bounty__issuer_address').distinct().count()
 
+
 def get_total_unique_fulfillers(time_frame):
     return time_frame.values('fulfiller').distinct().count()
+
 
 def get_bounty_draft(time_frame):
     return reduce(add_on(DRAFT_STAGE), time_frame, 0)
@@ -309,7 +312,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         platform_query = BountyState.objects.distinct('bounty__platform')
         platforms = [p.bounty.platform for p in platform_query if p.bounty.platform] + [ALL_PLATFORM]
-
 
         for platform in platforms:
             needs_genesis = not BountiesTimeline.objects.filter(

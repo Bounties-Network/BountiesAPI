@@ -12,7 +12,6 @@ from std_bounties.models import BountyState, Fulfillment
 
 ALL_PLATFORM = 'all'
 DEFAULT_PLATFORM = 'bounties-network'
-ALL_PLATFORM_QUERY = Q(bounty__platform='bounties-network') | Q(bounty__platform='gitcoin')
 DEFAULT_PLATFORM_QUERY = Q(bounty__platform=DEFAULT_PLATFORM) | Q(bounty__platform=None) | Q(bounty__platform='')
 
 
@@ -215,9 +214,6 @@ def generate_timeline(time_frame, platform=DEFAULT_PLATFORM):
     if platform == DEFAULT_PLATFORM:
         bounty_state_platform = bounty_state_platform.select_related('bounty').filter(DEFAULT_PLATFORM_QUERY)
         fulfillment_platform = fulfillment_platform.select_related('bounty').filter(DEFAULT_PLATFORM_QUERY)
-    # elif platform == ALL_PLATFORM:
-    #     bounty_state_platform = bounty_state_platform.select_related('bounty').filter(ALL_PLATFORM_QUERY)
-    #     fulfillment_platform = fulfillment_platform.select_related('bounty').filter(ALL_PLATFORM_QUERY)
     elif platform and platform != ALL_PLATFORM:
         bounty_state_platform = bounty_state_platform.select_related('bounty').filter(
             bounty__platform=platform)
@@ -275,8 +271,10 @@ def generate_timeline(time_frame, platform=DEFAULT_PLATFORM):
     avg_fulfillment_amount = get_avg_fulfillment_amount(bounties_state_frame)
     total_fulfillment_amount = get_total_amount_paid(fulfillment_accepted_frame, date)
 
-    total_unique_issuers = get_total_unique_issuers(bounties_state_frame)
-    total_unique_fulfillers = get_total_unique_fulfillers(fulfillment_submitted_frame)
+    total_unique_issuers = get_total_unique_issuers(bounties_state_frame_day)
+    total_unique_issuers_cum = get_total_unique_issuers(bounties_state_frame)
+    total_unique_fulfillers = get_total_unique_fulfillers(fulfillment_submitted_frame_day)
+    total_unique_fulfillers_cum = get_total_unique_fulfillers(fulfillment_submitted_frame)
 
     bounty_frame = BountiesTimeline(
         date=time_frame[0],
@@ -294,7 +292,9 @@ def generate_timeline(time_frame, platform=DEFAULT_PLATFORM):
         avg_fulfillment_amount=avg_fulfillment_amount,
         total_fulfillment_amount=total_fulfillment_amount,
         total_unique_issuers=total_unique_issuers,
+        total_unique_issuers_cum=total_unique_issuers_cum,
         total_unique_fulfillers=total_unique_fulfillers,
+        total_unique_fulfillers_cum=total_unique_fulfillers_cum,
         bounty_draft=stages[DRAFT_STAGE],
         bounty_active=stages[ACTIVE_STAGE],
         bounty_completed=stages[COMPLETED_STAGE],

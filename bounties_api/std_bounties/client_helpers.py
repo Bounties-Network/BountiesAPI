@@ -33,6 +33,7 @@ bounty_data_keys = [
     'webReferenceURL']
 fulfillment_data_keys = [
     'description',
+    'url',
     'sourceFileName',
     'sourceFileHash',
     'sourceDirectoryHash']

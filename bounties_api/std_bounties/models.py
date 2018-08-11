@@ -226,6 +226,7 @@ class Fulfillment(models.Model):
     fulfiller_githubUsername = models.CharField(max_length=128, blank=True)
     fulfiller_address = models.CharField(max_length=128, blank=True)
     description = models.TextField(blank=True)
+    url = models.CharField(max_length=256, blank=True)
     sourceFileName = models.CharField(max_length=256, blank=True)
     sourceFileHash = models.CharField(max_length=256, blank=True)
     sourceDirectoryHash = models.CharField(max_length=256, blank=True)

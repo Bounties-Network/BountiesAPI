@@ -15,8 +15,9 @@ class BountiesTimeline(models.Model):
     bounty_fulfilled_rate = models.FloatField(default=0)
     avg_fulfiller_acceptance_rate = models.FloatField(default=0)
     avg_fulfillment_amount = models.FloatField(default=0)
-    total_fulfillment_amount = models.DecimalField(
-        decimal_places=2, max_digits=64, default=0)
+    total_fulfillment_amount = models.FloatField(default=0)
+    total_unique_issuers = models.PositiveIntegerField(default=0)
+    total_unique_fulfillers = models.PositiveIntegerField(default=0)
     bounty_draft = models.PositiveIntegerField(default=0)
     bounty_active = models.PositiveIntegerField(default=0)
     bounty_completed = models.PositiveIntegerField(default=0)

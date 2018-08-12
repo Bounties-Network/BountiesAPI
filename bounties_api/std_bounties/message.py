@@ -26,7 +26,7 @@ class Message:
     contract_method_inputs = {}
 
     @staticmethod
-    def message_from_event(event):
+    def from_event(event):
         if not event:
             raise ValueError('Can\'t create message without event')
         elif event.__class__ != dict:
@@ -50,7 +50,7 @@ class Message:
         )
     
     @staticmethod
-    def message_from_string(string):
+    def from_string(string):
         if not string:
             raise ValueError('Can\'t create message without string')
         elif string.__class__ != str:
@@ -58,13 +58,17 @@ class Message:
         
         dictionary = json.loads(string)
         dictionary['event_date'] = datetime.strptime(dictionary['event_date'], '%Y-%m-%dT%H:%M:%S')
-        return Message(dictionary)
+        return Message.from_dict(dictionary)
+    
+    @staticmethod
+    def from_dict(dictionary):
+        message = Message()
+        message.__dict__.update(dictionary)
+        return message
 
     def __init__(self, *args, **kwargs):
         if kwargs:
             self.__dict__.update(kwargs)
-        elif args:
-            self.__dict__.update(*args)
     
     def __str__(self):
         return json.dumps(self.__dict__, indent=4, default=to_serializable)

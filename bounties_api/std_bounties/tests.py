@@ -300,6 +300,7 @@ class TestEventMessage(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
 
+        # Default values in variables, dict and string formats
         self.receipt_handle = '434806a2-d8db-45e8-8b46-8f9b41fb65d3#c9adaa49-8d45-420a-81ab-1a7071c389df'
         self.event = 'BountyIssued'
         self.bounty_id = 42
@@ -414,19 +415,18 @@ class TestEventMessage(unittest.TestCase):
         )
         self.assertDictEqual(self.dict_values, message.__dict__)
 
-
     def test_create_from_dict(self):
-        message = Message(self.dict_values)
+        message = Message.from_dict(self.dict_values)
         self.assertDictEqual(self.dict_values, message.__dict__)
 
     def test_create_from_string(self):
-        message = Message.message_from_string(self.string_values)
+        message = Message.from_string(self.string_values)
         self.assertDictEqual(self.dict_values, message.__dict__)
-    
+
     def test_string_conversion(self):
-        message = Message(self.dict_values)
+        message = Message.from_dict(self.dict_values)
         self.assertEqual(self.string_values, str(message))
-    
+
     def test_message_from_event(self):
-        message = Message.message_from_event(self.event_values)
+        message = Message.from_event(self.event_values)
         self.assertEqual(self.string_values, str(message))

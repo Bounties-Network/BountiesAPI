@@ -1,13 +1,29 @@
 version: '3'
-
 services:
-  sqs:
-    build:
-      context: ./local_queue
-    volumes:
-      - ./local_queue/elasticmq.conf:/elasticmq.conf
+  localstack:
+    image: localstack/localstack
     ports:
-      - 9324:9324
+      - "4567-4583:4567-4583"
+      - "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}"
+    environment:
+      - SERVICES=${SERVICES- }
+      - DEBUG=${DEBUG- }
+      - DATA_DIR=${DATA_DIR- }
+      - PORT_WEB_UI=${PORT_WEB_UI- }
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
+      - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - ./local_queue/elasticmq.conf:/elasticmq.conf
+  # sqs:
+  #   build:
+  #     context: ./local_queue
+  #   volumes:
+  #     - ./local_queue/elasticmq.conf:/elasticmq.conf
+  #   ports:
+  #     - 9324:9324
   db:
     image: postgres
     environment:
@@ -49,7 +65,7 @@ services:
     volumes:
       - ./bounties_api:/code
     depends_on:
-      - sqs
+      - localstack
       - db
       - redis
       - bounties_api
@@ -104,8 +120,21 @@ services:
       - ./contract_subscriber:/usr/src/app
       - /usr/src/app/node_modules
     depends_on:
-      - sqs
+      - localstack
       - redis
+  # contract_subscriber:
+  #   build:
+  #     context: ./contract_subscriber
+  #   restart: always
+  #   env_file:
+  #     - .env
+  #   command: npm start
+  #   volumes:
+  #     - ./contract_subscriber:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   depends_on:
+  #     - sqs
+  #     - redis
 volumes:
   psql_bounties:
     external: true

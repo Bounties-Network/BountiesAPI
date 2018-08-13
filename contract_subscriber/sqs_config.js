@@ -6,7 +6,7 @@ if (process.env.local) {
 	sqs = new AWS.SQS({
 	    credentials: myCredentials,
 	    region: 'none',
-	    endpoint: 'http://sqs:9324',
+	    endpoint: 'http://localstack:4576',
 	});
 } else {
 	AWS.config.update({region: 'us-east-1'});

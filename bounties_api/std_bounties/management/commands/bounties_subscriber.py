@@ -174,12 +174,8 @@ class Command(BaseCommand):
                     message.bounty_id, event))
 
         except StatusError as e:
-            redis_client.lpush('retry_blacklist', json.dumps(message._asdict()))
-            logger.error('Timeout for bounty id (added to blacklist_retry): {}'.format(
-                message.bounty_id))
+            if e.original.response.status_code == 504:
+                redis_client.lpush('retry_blacklist', str(message))
+                logger.error('Timeout for bounty id (added to blacklist_retry): {}'.format(
+                    message.bounty_id))
             raise e
-            # if e.original.response.status_code == 504:
-            #     redis_client.lpush('retry_blacklist', json.dumps(message._asdict()))
-                # logger.error('Timeout for bounty id (added to blacklist_retry): {}'.format(
-                #     message.bounty_id))
-            # raise e

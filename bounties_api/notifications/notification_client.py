@@ -225,10 +225,10 @@ class NotificationClient:
             uid,
             **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)
-        original_user = User.objects.get(public_address=transaction_from)
+        original_user = User.objects.get(public_address=transaction_from.lower())
         string_data_transferrer = notification_templates['IssuerTransferred'].format(
             bounty_title=bounty.title)
-        string_data_recipient = notification_templates['TransferRecipient'].format(
+        string_data_recipient = notification_templates['TransferredRecipient'].format(
             bounty_title=bounty.title)
         create_bounty_notification(
             bounty=bounty,

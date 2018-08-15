@@ -20,7 +20,7 @@ data = """{
 	},
 	"rinkebystaging": {
 		"standardBountiesAddress": {
-			"v1":"0xe365b8dc0b4b509f3d17befef86d2cc150af8eba"
+			"v1":"0xdd1636b88e9071507e859e61991ed4be6647f420"
 		}
 	},
 	"localhost": {

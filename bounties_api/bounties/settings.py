@@ -213,6 +213,8 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 NOTIFICATIONS_SLACK_CHANNEL = '#bounty_notifs' if ENVIRONMENT == 'production' else ENVIRONMENT + '_bounty_notifs'
+# PUBLIC_NOTIFICATIONS_SLACK_CHANNEL = '#community-general' if ENVIRONMENT == 'production' else ENVIRONMENT + '#general-beta'
+PUBLIC_NOTIFICATIONS_SLACK_CHANNEL = '#general-beta'
 
 PLATFORM_MAPPING = {
     'colorado': 'https://colorado.bounties.network',

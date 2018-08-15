@@ -7,6 +7,7 @@ from slackclient import SlackClient
 
 sc = SlackClient(settings.SLACK_TOKEN)
 channel = settings.NOTIFICATIONS_SLACK_CHANNEL
+public_channel = settings.PUBLIC_NOTIFICATIONS_SLACK_CHANNEL
 
 class SlackMessageClient:
 
@@ -27,6 +28,7 @@ class SlackMessageClient:
             'deadline', 'link', 'total_value'
         ]), wrapped_partial(format_message, msg_string=BOUNTY_ISSUED_SLACK_STR)])
         notify_slack(sc, channel, 'Bounty Issued and Activated', message)
+        notify_slack(sc, public_channel, 'A new bounty is available!', message)
 
 
     def bounty_activated(self, bounty):
@@ -34,6 +36,7 @@ class SlackMessageClient:
             'title', 'bounty_id', 'usd_price', 'total_value', 'tokenSymbol', 'token_price', 'link'
         ]), wrapped_partial(format_message, msg_string=BOUNTY_ACTIVATED_SLACK_STR)])
         notify_slack(sc, channel, 'Bounty Activated', message)
+        notify_slack(sc, public_channel, 'A new bounty is available!', message)
 
 
     def bounty_fulfilled(self, bounty, fulfillment_id):

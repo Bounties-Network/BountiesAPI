@@ -67,7 +67,7 @@ class User(models.Model):
     profileFileHash = models.CharField(max_length=256, blank=True)
     profileDirectoryHash = models.CharField(max_length=256, blank=True)
     profile_image = models.CharField(max_length=256, blank=True)
-    isProfileImageDirty = models.BooleanField(default=False)
+    is_profile_image_dirty = models.BooleanField(default=False)
     website = models.CharField(max_length=128, blank=True)
     twitter = models.CharField(max_length=128, blank=True)
     github = models.CharField(max_length=128, blank=True)

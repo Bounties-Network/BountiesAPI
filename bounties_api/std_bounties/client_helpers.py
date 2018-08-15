@@ -182,13 +182,13 @@ def map_user_data(data_hash, public_address):
         'website': data.get('social', {}).get('personalWebsite', None),
         'profileFileName': data.get('profilePhoto', {}).get('fileName', None),
         'profileDirectoryHash': profileDirectoryHash,
-        'isProfileImageDirty': isProfileImageDirty(profileDirectoryHash, public_address)
+        'is_profile_image_dirty': is_profile_image_dirty(profileDirectoryHash, public_address)
     }
 
     return prune(user)
 
 
-def isProfileImageDirty(ipfs_hash, public_address):
+def is_profile_image_dirty(ipfs_hash, public_address):
     try:
         user = User.objects.get(public_address=public_address.lower())
     except User.DoesNotExist:

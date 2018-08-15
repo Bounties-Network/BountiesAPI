@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='user',
-            name='isProfileImageDirty',
+            name='is_profile_image_dirty',
             field=models.BooleanField(default=False),
         ),
     ]

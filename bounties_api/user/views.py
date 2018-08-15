@@ -1,11 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from user.backend import authenticate, login, logout
-from user.serializers import LanguageSerializer, UserSerializer, UserInfoSerializer, SettingsSerializer, SkillSerializer
-from user.models import Language, User, Skill
+from user.serializers import LanguageSerializer, UserSerializer, UserInfoSerializer, SettingsSerializer, RankedSkillSerializer
+from user.models import Language, User, RankedSkill
 from std_bounties.models import Fulfillment
-from django.db.models import Sum, Avg
+from django.db.models import Sum, Avg, Count
 from django.http import JsonResponse, HttpResponse
+from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework_filters.backends import DjangoFilterBackend
 
 
 class Login(APIView):
@@ -65,8 +67,12 @@ class LanguageViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SkillViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = SkillSerializer
-    queryset = Skill.objects.all()
+    serializer_class = RankedSkillSerializer
+    queryset = RankedSkill.objects.all()
+    filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
+    ordering_fields = ('total_count',)
+    ordering = ('-total_count',)
+    search_fields = ('normalized_name',)
 
 
 class UserInfo(APIView):
@@ -117,6 +123,14 @@ class UserProfile(APIView):
         fulfiller_fulfillment_acceptance = None if not user_fulfillments.count() else (
             user_fulfillments.filter(accepted=True).count() / user_fulfillments.count())
 
+        total_fulfillments_on_bounties = user_bounties.annotate(
+            fulfillments_count=Count('fulfillments')).aggregate(
+            Sum('fulfillments_count')
+        ).get('fulfillments_count__sum', None)
+
+        if not total_fulfillments_on_bounties:
+            total_fulfillments_on_bounties = 0
+
         profile_stats = {
             'awarded': awarded.get('usd_price__sum'),
             'earned': earned.get('usd_price__sum'),
@@ -127,7 +141,9 @@ class UserProfile(APIView):
             'issuer_fulfillment_acceptance': issuer_fulfillment_acceptance,
             'fulfiller_fulfillment_acceptance': fulfiller_fulfillment_acceptance,
             'total_bounties': user_bounties.count(),
-            'total_fulfillments': user_fulfillments.count()}
+            'total_fulfillments': user_fulfillments.count(),
+            'total_fulfillments_on_bounties': total_fulfillments_on_bounties
+        }
         serializer = UserSerializer(user)
 
         return JsonResponse({'user': serializer.data, 'stats': profile_stats})

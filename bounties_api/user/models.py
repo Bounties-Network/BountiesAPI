@@ -24,6 +24,16 @@ class Skill(models.Model):
         super(Skill, self).save(*args, **kwargs)
 
 
+class RankedSkill(models.Model):
+    name = models.CharField(max_length=128)
+    normalized_name = models.CharField(max_length=128)
+    total_count = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'skill_ranks'
+
+
 class Settings(models.Model):
     emails = JSONField(null=False, default=default_email_options)
 
@@ -57,6 +67,7 @@ class User(models.Model):
     profileFileHash = models.CharField(max_length=256, blank=True)
     profileDirectoryHash = models.CharField(max_length=256, blank=True)
     profile_image = models.CharField(max_length=256, blank=True)
+    is_profile_image_dirty = models.BooleanField(default=False)
     website = models.CharField(max_length=128, blank=True)
     twitter = models.CharField(max_length=128, blank=True)
     github = models.CharField(max_length=128, blank=True)

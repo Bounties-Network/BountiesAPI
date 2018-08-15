@@ -8,6 +8,7 @@ from web3.middleware import geth_poa_middleware
 from std_bounties.constants import rev_mapped_difficulties, BEGINNER
 from std_bounties.contract import data
 from std_bounties.models import Token
+from user.models import User
 from utils.functional_tools import pluck, prune
 
 from django.conf import settings
@@ -32,6 +33,7 @@ bounty_data_keys = [
     'webReferenceURL']
 fulfillment_data_keys = [
     'description',
+    'url',
     'sourceFileName',
     'sourceFileHash',
     'sourceDirectoryHash']
@@ -172,15 +174,27 @@ def map_user_data(data_hash, public_address):
     plucked_data = pluck(data, user_data_keys)
     plucked_social = pluck(data.get('social', {}), user_social_keys)
 
+    profileDirectoryHash = data.get('profilePhoto', {}).get('fileDirectoryHash', None)
+
     user = {
         **plucked_data,
         **plucked_social,
         'website': data.get('social', {}).get('personalWebsite', None),
         'profileFileName': data.get('profilePhoto', {}).get('fileName', None),
-        'profileDirectoryHash': data.get('profilePhoto', {}).get('fileDirectoryHash', None)
+        'profileDirectoryHash': profileDirectoryHash,
+        'is_profile_image_dirty': is_profile_image_dirty(profileDirectoryHash, public_address)
     }
 
     return prune(user)
+
+
+def is_profile_image_dirty(ipfs_hash, public_address):
+    try:
+        user = User.objects.get(public_address=public_address.lower())
+    except User.DoesNotExist:
+        return False
+
+    return user.profileDirectoryHash != ipfs_hash
 
 
 def calculate_token_quantity(value, decimals):

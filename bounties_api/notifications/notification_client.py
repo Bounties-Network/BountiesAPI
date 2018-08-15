@@ -333,6 +333,7 @@ class NotificationClient:
             uid=uid,
             notification_name=notifications['ProfileUpdated'],
             user=user,
+            from_user=None,
             notification_created=event_date,
             string_data=string_data,
             subject='You Updated Your Profile')

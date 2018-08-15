@@ -68,6 +68,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class BountyFulfillmentSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Bounty
@@ -78,7 +79,8 @@ class BountyFulfillmentSerializer(serializers.ModelSerializer):
             'usd_price',
             'tokenSymbol',
             'tokenDecimals',
-            'fulfillmentAmount']
+            'fulfillmentAmount',
+            'user']
 
 
 class FulfillmentSerializer(CustomSerializer):

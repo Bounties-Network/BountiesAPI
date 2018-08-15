@@ -26,6 +26,7 @@ class FulfillmentsFilter(filters.FilterSet):
     class Meta:
         model = Fulfillment
         fields = {
+            'fulfillment_id': ['exact'],
             'fulfiller': ['exact'],
             'bounty': ['exact'],
             'bounty__issuer_address': ['exact'],

@@ -1,5 +1,5 @@
 import rest_framework_filters as filters
-from std_bounties.models import Bounty, Category, Fulfillment, RankedCategory
+from std_bounties.models import Bounty, Category, Fulfillment, RankedCategory, Review
 
 
 class CategoriesFilter(filters.FilterSet):
@@ -19,6 +19,15 @@ class RankedCategoryFilter(filters.FilterSet):
         model = RankedCategory
         fields = {
             'platform': ['in', 'exact'],
+        }
+
+
+class ReviewsFilter(filters.FilterSet):
+    class Meta:
+        model = Review
+        fields = {
+            'reviewer__public_address': ['exact'],
+            'reviewee__public_address': ['exact'],
         }
 
 

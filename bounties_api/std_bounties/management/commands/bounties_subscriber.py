@@ -19,15 +19,26 @@ logger = logging.getLogger('django')
 class Command(BaseCommand):
     help = 'Listen to SQS queue for contract events'
 
+    def add_to_blacklist(self, message):
+        removed = redis_client.lrem('blacklist:{}'.format(
+            message.bounty_id), str(message))
+        redis_client.rpush('blacklist:{}'.format(message.bounty_id), str(message))
+        removed = redis_client.lrem('blacklist:{}'.format(
+            message.bounty_id), str(message), -1)
+        logger.error('Added to {} to blacklist'.format(message.bounty_id))
+
     def resolve_blacklist(self):
-        logger.info('checking retry_blacklist for entries')
-        retry = redis_client.lrange('retry_blacklist', 0, -1)
-        for blacklisted in retry:
-            logger.info('retrying blacklsited entry: {}'.format(blacklisted))
-            blacklisted_message = redis_client.get(blacklisted)
-            if blacklisted_message:
-                self.handle_message(Message.from_string(blacklisted_message))
-                redis_client.lrem('retry_blacklist', 0, blacklisted)
+        for key in redis_client.scan_iter("blacklist:*"):
+            logger.info('attempting to pop blacklist queue {}'.format(key))
+            try:
+                retry = redis_client.lpop(key).decode('UTF-8')
+                logger.info('retrying blacklisted entry: {}'.format(retry))
+                self.handle_message(Message.from_string(retry))
+            except Exception as e:
+                # Don't re-raise - we just place it back in the list and try again later
+                logger.info('retrying blacklist entry for {} failed with {}'.format(
+                    key, e))
+                redis_client.lpush(key, retry)
 
     def handle(self, *args, **options):
         try:
@@ -57,12 +68,17 @@ class Command(BaseCommand):
 
                 # If someone uploads a data hash that is faulty, then we want to blacklist all events around that
                 # bounty id. We manage this manually
-                if redis_client.get('blacklist:' + str(message.bounty_id)):
+                blacklist_exists = redis_client.exists('blacklist:{}'.format(message.bounty_id))
+                logger.info('trying blacklist:{}'.format(message.bounty_id))
+                logger.info('got: {}'.format(blacklist_exists))
+
+                if blacklist_exists:
                     redis_client.set(message.message_deduplication_id, True)
                     sqs_client.delete_message(
                         QueueUrl=settings.QUEUE_URL,
                         ReceiptHandle=message.receipt_handle,
                     )
+                    self.add_to_blacklist(message)
                     continue
 
                 self.handle_message(message)
@@ -175,7 +191,7 @@ class Command(BaseCommand):
 
         except StatusError as e:
             if e.original.response.status_code == 504:
-                redis_client.lpush('retry_blacklist', str(message))
-                logger.error('Timeout for bounty id (added to blacklist_retry): {}'.format(
+                logger.error('Timeout for bounty id {}, added to blacklist'.format(
                     message.bounty_id))
+                self.add_to_blacklist(message)
             raise e

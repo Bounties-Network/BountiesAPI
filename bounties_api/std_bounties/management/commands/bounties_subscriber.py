@@ -19,27 +19,6 @@ logger = logging.getLogger('django')
 class Command(BaseCommand):
     help = 'Listen to SQS queue for contract events'
 
-    def add_to_blacklist(self, message):
-        removed = redis_client.lrem('blacklist:{}'.format(
-            message.bounty_id), str(message))
-        redis_client.rpush('blacklist:{}'.format(message.bounty_id), str(message))
-        removed = redis_client.lrem('blacklist:{}'.format(
-            message.bounty_id), str(message), -1)
-        logger.error('Added to {} to blacklist'.format(message.bounty_id))
-
-    def resolve_blacklist(self):
-        for key in redis_client.scan_iter("blacklist:*"):
-            logger.info('attempting to pop blacklist queue {}'.format(key))
-            try:
-                retry = redis_client.lpop(key).decode('UTF-8')
-                logger.info('retrying blacklisted entry: {}'.format(retry))
-                self.handle_message(Message.from_string(retry))
-            except Exception as e:
-                # Don't re-raise - we just place it back in the list and try again later
-                logger.info('retrying blacklist entry for {} failed with {}'.format(
-                    key, e))
-                redis_client.lpush(key, retry)
-
     def handle(self, *args, **options):
         try:
             # retry the blacklisted events when this reaches zero
@@ -96,6 +75,27 @@ class Command(BaseCommand):
             # goes to rollbar
             logger.exception(e)
             raise e
+
+    def add_to_blacklist(self, message):
+        removed = redis_client.lrem('blacklist:{}'.format(
+            message.bounty_id), str(message))
+        redis_client.rpush('blacklist:{}'.format(message.bounty_id), str(message))
+        removed = redis_client.lrem('blacklist:{}'.format(
+            message.bounty_id), str(message), -1)
+        logger.warning('Added to {} to blacklist'.format(message.bounty_id))
+
+    def resolve_blacklist(self):
+        for key in redis_client.scan_iter("blacklist:*"):
+            logger.info('attempting to pop blacklist queue {}'.format(key))
+            try:
+                retry = redis_client.lpop(key).decode('UTF-8')
+                logger.warning('retrying blacklisted entry: {}'.format(retry))
+                self.handle_message(Message.from_string(retry))
+            except Exception as e:
+                # Don't re-raise - we just place it back in the list and try again later
+                logger.warning('retrying blacklist entry for {} failed with {}'.format(
+                    key, e))
+                redis_client.lpush(key, retry)
 
     def handle_message(self, message):
         logger.info('For bounty id {}, running event {}'.format(
@@ -191,7 +191,12 @@ class Command(BaseCommand):
 
         except StatusError as e:
             if e.original.response.status_code == 504:
-                logger.error('Timeout for bounty id {}, added to blacklist'.format(
+                logger.warning('Timeout for bounty id {}, added to blacklist'.format(
                     message.bounty_id))
+                redis_client.set(message.message_deduplication_id, True)
+                sqs_client.delete_message(
+                    QueueUrl=settings.QUEUE_URL,
+                    ReceiptHandle=message.receipt_handle,
+                )
                 self.add_to_blacklist(message)
             raise e

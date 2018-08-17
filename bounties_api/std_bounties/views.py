@@ -20,7 +20,13 @@ notification_client = NotificationClient()
 
 class ReviewsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ReviewSerializer
-    queryset = Review.objects.all()
+    def get_queryset(self):
+        review_type = self.request.GET.get('review_type', '')
+        if review_type == 'fulfiller':
+            Review.objects.filter(fulfiller_review__isnull=False)
+        if review_type == 'issuer':
+            Review.objects.filter(issuer_review__isnull=False)
+        return Review.objects.all()
     filter_class = ReviewsFilter
     filter_backends = (DjangoFilterBackend,)
 

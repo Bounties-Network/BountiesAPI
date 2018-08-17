@@ -5,8 +5,6 @@ from decimal import Decimal
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from web3.middleware import geth_poa_middleware
-from ipfsapi.exceptions import StatusError
-from bounties.redis_client import redis_client
 from std_bounties.contract import data
 from std_bounties.models import Token
 from utils.functional_tools import pluck

@@ -21,4 +21,11 @@ class BountiesTimeline(models.Model):
     bounty_completed = models.PositiveIntegerField(default=0)
     bounty_expired = models.PositiveIntegerField(default=0)
     bounty_dead = models.PositiveIntegerField(default=0)
-    schema = models.CharField(max_length=64, blank=True)
+    platform = models.CharField(max_length=64, blank=True)
+
+
+class Tokens(models.Model):
+    token_symbol = models.CharField(max_length=128)
+    token_contract = models.CharField(max_length=128)
+    total_count = models.PositiveIntegerField(default=0)
+    usd_price = models.FloatField(default=0)

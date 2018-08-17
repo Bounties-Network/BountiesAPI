@@ -37,7 +37,17 @@ class Migration(migrations.Migration):
                 ('bounties_issued_cum', models.PositiveIntegerField(default=0)),
                 ('fulfillments_accepted_cum', models.PositiveIntegerField(default=0)),
                 ('fulfillments_submitted_cum', models.PositiveIntegerField(default=0)),
-                ('schema', models.CharField(blank=True, max_length=64)),
+                ('platform', models.CharField(blank=True, max_length=64)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Tokens',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('token_symbol', models.CharField(max_length=128)),
+                ('token_contract', models.CharField(max_length=128)),
+                ('total_count', models.PositiveIntegerField(default=0)),
+                ('usd_price', models.FloatField(default=0))
             ],
         ),
     ]

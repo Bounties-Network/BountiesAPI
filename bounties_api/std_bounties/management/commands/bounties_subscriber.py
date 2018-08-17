@@ -46,18 +46,23 @@ class Command(BaseCommand):
                 message = Message.from_event(messages[0])
 
                 # If someone uploads a data hash that is faulty, then we want to blacklist all events around that
-                # bounty id. We manage this manually
-                blacklist_exists = redis_client.exists('blacklist:{}'.format(message.bounty_id))
-                logger.info('trying blacklist:{}'.format(message.bounty_id))
-                logger.info('got: {}'.format(blacklist_exists))
+                # bounty id. It can either be a permanent blacklist, typically added manually, or a pending blacklist.
+                # All the events in the pending blacklist will retry later.
+                permanent_blacklist = redis_client.get('blacklist:{}'.format(message.bounty_id))
+                pending_blacklist = redis_client.exists('pending_blacklist:{}'.format(message.bounty_id))
 
-                if blacklist_exists:
+                if permanent_blacklist or pending_blacklist:
                     redis_client.set(message.message_deduplication_id, True)
                     sqs_client.delete_message(
                         QueueUrl=settings.QUEUE_URL,
                         ReceiptHandle=message.receipt_handle,
                     )
-                    self.add_to_blacklist(message)
+                    if permanent_blacklist:
+                        logger.info('Skipping event for {}, permanent blacklist found'.format(message.bounty_id))
+                    else:
+                        logger.info('Pending blacklist exists for {}, adding event {}'.format(
+                            message.event))
+                        self.add_to_blacklist(message)
                     continue
 
                 self.handle_message(message)
@@ -77,23 +82,23 @@ class Command(BaseCommand):
             raise e
 
     def add_to_blacklist(self, message):
-        removed = redis_client.lrem('blacklist:{}'.format(
+        removed = redis_client.lrem('pending_blacklist:{}'.format(
             message.bounty_id), str(message))
-        redis_client.rpush('blacklist:{}'.format(message.bounty_id), str(message))
-        removed = redis_client.lrem('blacklist:{}'.format(
+        redis_client.rpush('pending_blacklist:{}'.format(message.bounty_id), str(message))
+        removed = redis_client.lrem('pending_blacklist:{}'.format(
             message.bounty_id), str(message), -1)
-        logger.warning('Added to {} to blacklist'.format(message.bounty_id))
+        logger.warning('Added to {} to pending_blacklist'.format(message.bounty_id))
 
     def resolve_blacklist(self):
-        for key in redis_client.scan_iter("blacklist:*"):
-            logger.info('attempting to pop blacklist queue {}'.format(key))
+        for key in redis_client.scan_iter("pending_blacklist:*"):
+            logger.info('Attempting to pop pending_blacklist queue {}'.format(key))
             try:
                 retry = redis_client.lpop(key).decode('UTF-8')
-                logger.warning('retrying blacklisted entry: {}'.format(retry))
+                logger.warning('Retrying event: {}'.format(retry))
                 self.handle_message(Message.from_string(retry))
             except Exception as e:
                 # Don't re-raise - we just place it back in the list and try again later
-                logger.warning('retrying blacklist entry for {} failed with {}'.format(
+                logger.warning('Retrying event for {} failed with {}'.format(
                     key, e))
                 redis_client.lpush(key, retry)
 
@@ -191,8 +196,7 @@ class Command(BaseCommand):
 
         except StatusError as e:
             if e.original.response.status_code == 504:
-                logger.warning('Timeout for bounty id {}, added to blacklist'.format(
-                    message.bounty_id))
+                logger.warning('Timeout for bounty id {}'.format(message.bounty_id))
                 redis_client.set(message.message_deduplication_id, True)
                 sqs_client.delete_message(
                     QueueUrl=settings.QUEUE_URL,

@@ -94,37 +94,41 @@ class UserProfile(APIView):
             return JsonResponse({'user': None, 'stats': {}})
 
         platform = request.GET.get('platform', None)
+        additional_filters = {}
 
-        user_bounties = user.bounty_set.filter(platform=platform)
-        user_fulfillments = user.fulfillment_set.filter(platform=platform)
-        user_reviews = user.reviews.filter(platform=platform)
-        user_reviewees = user.reviewees.filter(platform=platform)
+        if platform:
+            additional_filters.update({'platform': platform})
+
+        user_bounties = user.bounty_set.filter(**additional_filters)
+        user_fulfillments = user.fulfillment_set.filter(**additional_filters)
+        user_reviews = user.reviews.filter(**additional_filters)
+        user_reviewees = user.reviewees.filter(**additional_filters)
 
         awarded = Fulfillment.objects.filter(
-            accepted=True, bounty__user=user, platform=platform).aggregate(
+            accepted=True, bounty__user=user, **additional_filters).aggregate(
             Sum('usd_price'))
         earned = user_fulfillments.filter(
-            accepted=True, platform=platform).aggregate(
+            accepted=True).aggregate(
             Sum('usd_price'))
         issuer_ratings_given = user_reviews.filter(
-            fulfillment_review__isnull=False, platform=platform).aggregate(
+            fulfillment_review__isnull=False).aggregate(
             Avg('rating'))
         issuer_ratings_received = user_reviewees.filter(
-            issuer_review__isnull=False, platform=platform).aggregate(Avg('rating'))
+            issuer_review__isnull=False).aggregate(Avg('rating'))
         fulfiller_ratings_given = user_reviews.filter(
-            issuer_review__isnull=False, platform=platform).aggregate(
+            issuer_review__isnull=False).aggregate(
             Avg('rating'))
         fulfiller_ratings_received = user_reviewees.filter(
-            fulfillment_review__isnull=False, platform=platform).aggregate(Avg('rating'))
+            fulfillment_review__isnull=False).aggregate(Avg('rating'))
         issuer_fulfillment_acceptance = None if not Fulfillment.objects.filter(
-            bounty__user=user, platform=platform).count() else (
+            bounty__user=user, **additional_filters).count() else (
             Fulfillment.objects.filter(
                 accepted=True,
-                bounty__user=user, platform=platform).count() /
+                bounty__user=user, **additional_filters).count() /
             Fulfillment.objects.filter(
-                bounty__user=user, platform=platform).count())
+                bounty__user=user, **additional_filters).count())
         fulfiller_fulfillment_acceptance = None if not user_fulfillments.count() else (
-            user_fulfillments.filter(accepted=True, platform=platform).count() / user_fulfillments.count())
+            user_fulfillments.filter(accepted=True).count() / user_fulfillments.count())
 
         total_fulfillments_on_bounties = user_bounties.annotate(
             fulfillments_count=Count('fulfillments')).aggregate(

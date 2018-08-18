@@ -19,6 +19,7 @@ class Notification(models.Model):
     notification_created = models.DateTimeField(null=False)
     email_sent = models.BooleanField(default=False, null=False)
     dashboard = models.BooleanField(default=True, null=False)
+    platform = models.CharField(max_length=128, blank=True)
 
 
 class DashboardNotification(models.Model):
@@ -44,3 +45,4 @@ class Transaction(models.Model):
     completed = models.BooleanField(default=False, null=False)
     viewed = models.BooleanField(default=False, null=False)
     data = JSONField(default=dict, null=False)
+    platform = models.CharField(max_length=128, blank=True)

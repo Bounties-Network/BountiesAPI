@@ -8,7 +8,11 @@ from django.db import transaction
 def create_bounty_notification(**kwargs):
     bounty = kwargs.pop('bounty')
     bounty_url = bounty_url_for(bounty.bounty_id, bounty.platform) + kwargs.get('url_query', '')
-    kwargs.update({'url': bounty_url, 'notification_created': bounty.bounty_created})
+    kwargs.update({
+        'url': bounty_url,
+        'notification_created': bounty.bounty_created,
+        'platform': bounty.platform
+    })
     create_notification(**kwargs)
 
 
@@ -31,7 +35,8 @@ def create_notification(
         is_activity=True,
         string_data_email=None,
         email_button_string='View in App',
-        url=''):
+        url='',
+        platform=''):
 
     notification, created = Notification.objects.get_or_create(
         uid=str(uid),
@@ -41,6 +46,7 @@ def create_notification(
             'from_user': from_user,
             'notification_created': notification_created,
             'dashboard': True,
+            'platform': platform,
         },
     )
     # this is atomic, so this is a good indicator

@@ -21,6 +21,7 @@ class Review(models.Model):
             MaxValueValidator(5),
             MinValueValidator(1)])
     review = models.TextField()
+    platform = models.CharField(max_length=128, blank=True)
 
 
 class Category(models.Model):

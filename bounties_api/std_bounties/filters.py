@@ -28,6 +28,7 @@ class ReviewsFilter(filters.FilterSet):
         fields = {
             'reviewer__public_address': ['exact'],
             'reviewee__public_address': ['exact'],
+            'platform': ['exact'],
         }
 
 
@@ -38,7 +39,7 @@ class FulfillmentsFilter(filters.FilterSet):
             'fulfillment_id': ['exact'],
             'fulfiller': ['exact'],
             'bounty': ['exact'],
-            'bounty__issuer_address': ['exact'],
+            'bounty__user__public_address': ['exact'],
             'platform': ['exact', 'in'],
         }
 

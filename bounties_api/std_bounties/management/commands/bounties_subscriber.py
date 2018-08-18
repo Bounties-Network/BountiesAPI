@@ -52,11 +52,7 @@ class Command(BaseCommand):
                 pending_blacklist = redis_client.exists('pending_blacklist:{}'.format(message.bounty_id))
 
                 if permanent_blacklist or pending_blacklist:
-                    redis_client.set(message.message_deduplication_id, True)
-                    sqs_client.delete_message(
-                        QueueUrl=settings.QUEUE_URL,
-                        ReceiptHandle=message.receipt_handle,
-                    )
+                    self.remove_from_queue(message)
                     if permanent_blacklist:
                         logger.info('Skipping event for {}, permanent blacklist found'.format(message.bounty_id))
                     else:
@@ -66,6 +62,8 @@ class Command(BaseCommand):
                     continue
 
                 self.handle_message(message)
+
+                self.remove_from_queue(message)
 
                 retry_blacklist -= 1
                 logger.info('done processing regular message, retry_blacklist is now: {}'.format(
@@ -80,6 +78,15 @@ class Command(BaseCommand):
             # goes to rollbar
             logger.exception(e)
             raise e
+
+    def remove_from_queue(self, message):
+        # This means the contract subscriber will never send this event
+        # through to sqs again
+        redis_client.set(message.message_deduplication_id, True)
+        sqs_client.delete_message(
+            QueueUrl=settings.QUEUE_URL,
+            ReceiptHandle=message.receipt_handle,
+        )
 
     def add_to_blacklist(self, message):
         removed = redis_client.lrem('pending_blacklist:{}'.format(
@@ -123,14 +130,6 @@ class Command(BaseCommand):
             event=message.event,
             transaction_hash=message.transaction_hash,
             defaults=event_arguments
-        )
-
-        # This means the contract subscriber will never send this event
-        # through to sqs again
-        redis_client.set(message.message_deduplication_id, True)
-        sqs_client.delete_message(
-            QueueUrl=settings.QUEUE_URL,
-            ReceiptHandle=message.receipt_handle,
         )
 
     def notify_master_client(self, message):
@@ -197,10 +196,6 @@ class Command(BaseCommand):
         except StatusError as e:
             if e.original.response.status_code == 504:
                 logger.warning('Timeout for bounty id {}'.format(message.bounty_id))
-                redis_client.set(message.message_deduplication_id, True)
-                sqs_client.delete_message(
-                    QueueUrl=settings.QUEUE_URL,
-                    ReceiptHandle=message.receipt_handle,
-                )
+                self.remove_from_queue(message)
                 self.add_to_blacklist(message)
             raise e

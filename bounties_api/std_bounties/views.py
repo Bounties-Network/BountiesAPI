@@ -117,6 +117,8 @@ class BountyComments(APIView):
         bounty.comments.add(comment)
         notification_client.comment_issued(
             bounty.bounty_id, comment.created, comment.id)
+        notification_client.comment_received(
+            bounty.bounty_id, comment.created, comment.id)
         return JsonResponse(serializer.data)
 
 

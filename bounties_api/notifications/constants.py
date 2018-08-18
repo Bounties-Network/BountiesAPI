@@ -13,13 +13,14 @@ ISSUER_TRANSFERRED = 11
 TRANSFER_RECIPIENT = 12
 PAYOUT_INCREASED = 13
 BOUNTY_EXPIRED = 14
-BOUNTY_COMMENT = 15
+BOUNTY_COMMENT_RECEIVED = 15
 BOUNTY_ISSUED_ACTIVATED = 16
 FULFILLMENT_UPDATED = 17
 FULFILLMENT_UPDATED_ISSUER = 18
 RATING_ISSUED = 19
 RATING_RECEIVED = 20
 PROFILE_UPDATED = 21
+BOUNTY_COMMENT = 22
 
 NOTIFICATION_IDS = (
     (FULFILLMENT_SUBMITTED, 'FulfillmentSubmitted'),
@@ -37,13 +38,14 @@ NOTIFICATION_IDS = (
     (TRANSFER_RECIPIENT, 'TransferRecipient'),
     (PAYOUT_INCREASED, 'PayoutIncreased'),
     (BOUNTY_EXPIRED, 'BountyExpired'),
-    (BOUNTY_COMMENT, 'BountyComment'),
+    (BOUNTY_COMMENT_RECEIVED, 'BountyCommentReceived'),
     (BOUNTY_ISSUED_ACTIVATED, 'BountyIssuedActivated'),
     (FULFILLMENT_UPDATED, 'FulfillmentUpdated'),
     (FULFILLMENT_UPDATED_ISSUER, 'FulfillmentUpdatedIssuer'),
     (RATING_ISSUED, 'RatingIssued'),
     (RATING_RECEIVED, 'RatingReceived'),
     (PROFILE_UPDATED, 'ProfileUpdated'),
+    (BOUNTY_COMMENT, 'BountyComment'),
 )
 
 id_to_notification = dict(NOTIFICATION_IDS)
@@ -56,7 +58,7 @@ push_notification_options = {
             FULFILLMENT_UPDATED_ISSUER,
             TRANSFER_RECIPIENT,
             BOUNTY_EXPIRED,
-            BOUNTY_COMMENT]],
+            BOUNTY_COMMENT_RECEIVED]],
     'fulfiller': [
         id_to_notification[notif] for notif in [FULFILLMENT_ACCEPTED_FULFILLER]],
     'both': [

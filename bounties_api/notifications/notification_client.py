@@ -225,7 +225,8 @@ class NotificationClient:
             uid,
             **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)
-        original_user = User.objects.get(public_address=transaction_from.lower())
+        original_user = User.objects.get(
+            public_address=transaction_from.lower())
         string_data_transferrer = notification_templates['IssuerTransferred'].format(
             bounty_title=bounty.title)
         string_data_recipient = notification_templates['TransferredRecipient'].format(
@@ -288,16 +289,40 @@ class NotificationClient:
             bounty_title=bounty.title)
         create_bounty_notification(
             bounty=bounty,
-            uid=uid,
+            uid='BountyComment' + str(uid),
             notification_name=notifications['BountyComment'],
-            user=bounty.user,
-            from_user=comment.user,
+            user=comment.user,
+            from_user=None,
             string_data=string_data,
-            subject='Your Bounty Received a Comment',
+            subject='You Commented on a Bounty',
             bounty_title=bounty.title,
-            is_activity=False)
+            is_activity=True)
 
-    def rating_issued(self, bounty_id, event_date, uid, reviewer, reviewee, **kwargs):
+    def comment_received(self, bounty_id, event_date, uid, **kwargs):
+        bounty = Bounty.objects.get(id=bounty_id)
+        comment = Comment.objects.get(id=uid)
+        if bounty.user != comment.user:
+            string_data = notification_templates['BountyCommentReceived'].format(
+                bounty_title=bounty.title)
+            create_bounty_notification(
+                bounty=bounty,
+                uid=uid,
+                notification_name=notifications['BountyCommentReceived'],
+                user=bounty.user,
+                from_user=comment.user,
+                string_data=string_data,
+                subject='Your Bounty Received a Comment',
+                bounty_title=bounty.title,
+                is_activity=False)
+
+    def rating_issued(
+            self,
+            bounty_id,
+            event_date,
+            uid,
+            reviewer,
+            reviewee,
+            **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)
         string_data = notification_templates['RatingIssued'].format(
             bounty_title=bounty.title)
@@ -311,7 +336,14 @@ class NotificationClient:
             bounty_title=bounty.title,
             subject='You Issued a New Rating')
 
-    def rating_received(self, bounty_id, event_date, uid, reviewer, reviewee, **kwargs):
+    def rating_received(
+            self,
+            bounty_id,
+            event_date,
+            uid,
+            reviewer,
+            reviewee,
+            **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)
         string_data = notification_templates['RatingReceived'].format(
             bounty_title=bounty.title)
@@ -328,7 +360,8 @@ class NotificationClient:
 
     def profile_updated(self, public_address, event_date, uid, **kwargs):
         user = User.objects.get(public_address=public_address)
-        string_data = notification_templates['ProfileUpdated'].format(public_address=public_address)
+        string_data = notification_templates['ProfileUpdated'].format(
+            public_address=public_address)
         create_profile_updated_notification(
             uid=uid,
             notification_name=notifications['ProfileUpdated'],

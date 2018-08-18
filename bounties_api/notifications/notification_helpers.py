@@ -7,7 +7,8 @@ from django.db import transaction
 
 def create_bounty_notification(**kwargs):
     bounty = kwargs.pop('bounty')
-    bounty_url = bounty_url_for(bounty.bounty_id, bounty.platform) + kwargs.get('url_query', '')
+    bounty_url = bounty_url_for(
+        bounty.bounty_id, bounty.platform) + kwargs.get('url_query', '')
     kwargs.update({
         'url': bounty_url,
         'notification_created': bounty.bounty_created,

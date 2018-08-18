@@ -16,7 +16,7 @@ client = boto3.client('ses', region_name=AWS_REGION)
 def send_email(receiver, subject, text, html):
     if settings.LOCAL:
         return
-    if settings.ENVIRONMENT not in ['production', 'consensys']:
+    if settings.ENVIRONMENT not in ['production', 'consensys', 'rinkstaging']:
         return
     try:
         client.send_email(

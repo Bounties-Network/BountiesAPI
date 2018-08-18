@@ -38,7 +38,7 @@ class FulfillmentsFilter(filters.FilterSet):
             'fulfillment_id': ['exact'],
             'fulfiller': ['exact'],
             'bounty': ['exact'],
-            'bounty__issuer_address': ['exact'],
+            'bounty__user__public_address': ['exact'],
             'platform': ['exact', 'in'],
         }
 

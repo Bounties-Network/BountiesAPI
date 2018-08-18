@@ -127,7 +127,7 @@ class Command(BaseCommand):
                         event_timestamp=event_timestamp,
                         uid=message_deduplication_id)
                     transaction_link_text = 'Rate fulfiller'
-                    transaction_path = transaction_path + '/?rating=true'
+                    transaction_path = transaction_path + '/?fulfillment_id={}&rating=true'.format(fulfillment_id)
                     transaction_message = 'Submission accepted'
 
                 if event == 'BountyKilled':

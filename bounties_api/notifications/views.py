@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from user.permissions import UserIDMatches, AuthenticationPermission, UserObjectPermissions
 from notifications.models import DashboardNotification, Transaction
 from notifications.serializers import DashboardNotificationSerializer, TransactionSerializer
+from notifications.filters import TransactionFilter, DashboardNotificationFilter
 
 
 class TransactionViewSet(mixins.CreateModelMixin,
@@ -25,6 +26,7 @@ class TransactionViewSet(mixins.CreateModelMixin,
             user__public_address=public_address).order_by(
             'viewed', '-created')
     serializer_class = TransactionSerializer
+    filter_class = TransactionFilter
 
 
 class NotificationActivityViewSet(viewsets.ReadOnlyModelViewSet):
@@ -35,6 +37,7 @@ class NotificationActivityViewSet(viewsets.ReadOnlyModelViewSet):
             notification__user__public_address=public_address,
             is_activity=True).order_by('-created')
     serializer_class = DashboardNotificationSerializer
+    filter_class = DashboardNotificationFilter
 
 
 class NotificationPushViewSet(viewsets.ReadOnlyModelViewSet):
@@ -45,6 +48,7 @@ class NotificationPushViewSet(viewsets.ReadOnlyModelViewSet):
             notification__user__public_address=public_address,
             is_activity=False).order_by('-created')
     serializer_class = DashboardNotificationSerializer
+    filter_class = DashboardNotificationFilter
 
 
 class NotificationViewed(APIView):

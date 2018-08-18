@@ -28,6 +28,7 @@ class ReviewsFilter(filters.FilterSet):
         fields = {
             'reviewer__public_address': ['exact'],
             'reviewee__public_address': ['exact'],
+            'platform': ['exact'],
         }
 
 

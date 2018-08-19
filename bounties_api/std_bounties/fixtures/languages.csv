@@ -7,16 +7,16 @@ ar,ara,ara,Arabic,العربية
 av,ava,ava,Avaric,"авармацӀ,магӀарулмацӀ"
 ay,aym,aym,Aymara,aymararu
 az,aze,aze,Azerbaijani,azərbaycandili
-az,azb,azb,SouthAzerbaijani,تورکجه‎
+az,azb,azb,South Azerbaijani,تورکجه‎
 ba,bak,bak,Bashkir,башҡорттеле
 be,bel,bel,Belarusian,беларускаямова
 bg,bul,bul,Bulgarian,българскиезик
 bh,bih,bih,Bihari,भोजपुरी
 bm,bam,bam,Bambara,bamanankan
-bn,ben,ben,Bengali;Bangla,বাংলা
-bo,bod,tib,"TibetanStandard,Tibetan,Central",བོད་ཡིག
+bn,ben,ben,Bengali,বাংলা
+bo,bod,tib,Tibetan,བོད་ཡིག
 bs,bos,bos,Bosnian,bosanskijezik
-ca,cat,cat,Catalan;Valencian,"català,valencià"
+ca,cat,cat,Catalan,"català,valencià"
 ce,che,che,Chechen,нохчийнмотт
 cs,ces,cze,Czech,"čeština,českýjazyk"
 cu,chu,chu,"OldChurchSlavonic,ChurchSlavonic,OldBulgarian",ѩзыкъсловѣньскъ
@@ -27,16 +27,16 @@ de,deu,ger,German,Deutsch
 ee,ewe,ewe,Ewe,Eʋegbe
 el,ell,gre,"Greek,Modern",ελληνικά
 en,eng,eng,English,English
-es,spa,spa,Spanish;Castilian,"español,castellano"
+es,spa,spa,Spanish,"español"
 et,est,est,Estonian,"eesti,eestikeel"
 fa,fas,per,Persian(Farsi),فارسی
-ff,ful,ful,Fula;Fulah;Pulaar;Pular,"Fulfulde,Pulaar,Pular"
+ff,ful,ful,Fula,"Fulfulde,Pulaar,Pular"
 fi,fin,fin,Finnish,"suomi,suomenkieli"
 fj,fij,fij,Fijian,vosaVakaviti
 fr,fra,fre,French,"français,languefrançaise"
 fy,fry,fry,WesternFrisian,Frysk
 ga,gle,gle,Irish,Gaeilge
-gd,gla,gla,ScottishGaelic;Gaelic,Gàidhlig
+gd,gla,gla,Scottish Gaelic,Gàidhlig
 gl,glg,glg,Galician,galego
 gn,grn,grn,Guaraní,Avañe'ẽ
 gu,guj,guj,Gujarati,ગુજરાતી
@@ -45,7 +45,7 @@ he,heb,heb,Hebrew(modern),עברית
 hi,hin,hin,Hindi,"हिन्दी,हिंदी"
 ho,hmo,hmo,HiriMotu,HiriMotu
 hr,hrv,hrv,Croatian,hrvatskijezik
-ht,hat,hat,Haitian;HaitianCreole,Kreyòlayisyen
+ht,hat,hat,Haitian,Kreyòlayisyen
 hu,hun,hun,Hungarian,magyar
 hy,hye,arm,Armenian,Հայերեն
 ia,ina,ina,Interlingua,Interlingua
@@ -71,9 +71,9 @@ ku,kur,kur,Kurdish,"Kurdî,كوردی‎"
 kv,kom,kom,Komi,комикыв
 ky,kir,kir,Kyrgyz,"Кыргызча,Кыргызтили"
 la,lat,lat,Latin,"latine,lingualatina"
-lb,ltz,ltz,"Luxembourgish,Letzeburgesch",Lëtzebuergesch
+lb,ltz,ltz,Luxembourgish,Lëtzebuergesch
 lg,lug,lug,Ganda,Luganda
-li,lim,lim,"Limburgish,Limburgan,Limburger",Limburgs
+li,lim,lim,Limburgish,Limburgs
 ln,lin,lin,Lingala,Lingála
 lo,lao,lao,Lao,ພາສາລາວ
 lt,lit,lit,Lithuanian,lietuviųkalba
@@ -89,23 +89,23 @@ ms,msa,may,Malay,"bahasaMelayu,بهاسملايو‎"
 mt,mlt,mlt,Maltese,Malti
 my,mya,bur,Burmese,ဗမာစာ
 na,nau,nau,Nauru,EkakairũNaoero
-nb,nob,nob,NorwegianBokmål,Norskbokmål
-nd,nde,nde,NorthNdebele,isiNdebele
+nb,nob,nob,Norwegian Bokmål,Norskbokmål
+nd,nde,nde,North Ndebele,isiNdebele
 ne,nep,nep,Nepali,नेपाली
 ng,ndo,ndo,Ndonga,Owambo
 nl,nld,dut,Dutch,"Nederlands,Vlaams"
-nn,nno,nno,NorwegianNynorsk,Norsknynorsk
+nn,nno,nno,Norwegian Nynorsk,Norsknynorsk
 no,nor,nor,Norwegian,Norsk
 nr,nbl,nbl,SouthNdebele,isiNdebele
-nv,nav,nav,"Navajo,Navaho","Dinébizaad,Dinékʼehǰí"
-ny,nya,nya,Chichewa;Chewa;Nyanja,"chiCheŵa,chinyanja"
+nv,nav,nav,Navajo,"Dinébizaad,Dinékʼehǰí"
+ny,nya,nya,Chichewa,"chiCheŵa,chinyanja"
 om,orm,orm,Oromo,AfaanOromoo
 or,ori,ori,Oriya,ଓଡ଼ିଆ
-os,oss,oss,"Ossetian,Ossetic",иронæвзаг
-pa,pan,pan,"Panjabi,Punjabi","ਪੰਜਾਬੀ,پنجابی‎"
+os,oss,oss,Ossetian,иронæвзаг
+pa,pan,pan,Panjabi,"ਪੰਜਾਬੀ,پنجابی‎"
 pi,pli,pli,Pāli,पाऴि
 pl,pol,pol,Polish,"językpolski,polszczyzna"
-ps,pus,pus,"Pashto,Pushto",پښتو
+ps,pus,pus,Pashto,پښتو
 pt,por,por,Portuguese,português
 qu,que,que,Quechua,"RunaSimi,Kichwa"
 rm,roh,roh,Romansh,rumantschgrischun
@@ -117,7 +117,7 @@ sc,srd,srd,Sardinian,sardu
 sd,snd,snd,Sindhi,"सिन्धी,سنڌي،سندھی‎"
 se,sme,sme,NorthernSami,Davvisámegiella
 sg,sag,sag,Sango,yângâtîsängö
-si,sin,sin,"Sinhala,Sinhalese",සිංහල
+si,sin,sin,Sinhala,සිංහල
 sk,slk,slo,Slovak,"slovenčina,slovenskýjazyk"
 sl,slv,slv,Slovene,"slovenskijezik,slovenščina"
 sm,smo,smo,Samoan,gaganafa'aSamoa
@@ -141,7 +141,7 @@ tr,tur,tur,Turkish,Türkçe
 ts,tso,tso,Tsonga,Xitsonga
 tt,tat,tat,Tatar,"татартеле,tatartele"
 tw,twi,twi,Twi,Twi
-ug,uig,uig,"Uyghur,Uighur","Uyƣurqə,ئۇيغۇرچە‎"
+ug,uig,uig,Uyghur,"Uyƣurqə,ئۇيغۇرچە‎"
 uk,ukr,ukr,Ukrainian,українськамова
 ur,urd,urd,Urdu,اردو
 uz,uzb,uzb,Uzbek,"O‘zbek,Ўзбек,أۇزبېك‎"
@@ -153,6 +153,6 @@ wo,wol,wol,Wolof,Wollof
 xh,xho,xho,Xhosa,isiXhosa
 yi,yid,yid,Yiddish,ייִדיש
 yo,yor,yor,Yoruba,Yorùbá
-za,zha,zha,"Zhuang,Chuang","Saɯcueŋƅ,Sawcuengh"
+za,zha,zha,Zhuang,"Saɯcueŋƅ,Sawcuengh"
 zh,zho,chi,Chinese,"中文(Zhōngwén),汉语,漢語"
 zu,zul,zul,Zulu,isiZulu

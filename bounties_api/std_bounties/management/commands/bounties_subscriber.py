@@ -48,7 +48,8 @@ class Command(BaseCommand):
 
                 already_deduplicated = redis_client.get(message.message_deduplication_id)
                 if already_deduplicated and already_deduplicated.decode('UTF-8') == 'True':
-                    print('deduplicating message: {}'.format(str(message)))
+                    logger.warning('deduplicating message and removing from queue: {}'.format(str(message)))
+                    self.remove_from_queue(message)
                     continue
 
                 # If someone uploads a data hash that is faulty, then we want to blacklist all events around that

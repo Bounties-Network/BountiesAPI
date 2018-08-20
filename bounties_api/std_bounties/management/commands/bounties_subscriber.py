@@ -46,7 +46,7 @@ class Command(BaseCommand):
                 # There is only ever 1 because MaxNumberOfMessages=1
                 message = Message.from_event(messages[0])
 
-                if str(redis_client.get(message.message_deduplication_id)) == 'True':
+                if redis_client.get(message.message_deduplication_id).decode('UTF-8') == 'True':
                     continue
 
                 # If someone uploads a data hash that is faulty, then we want to blacklist all events around that

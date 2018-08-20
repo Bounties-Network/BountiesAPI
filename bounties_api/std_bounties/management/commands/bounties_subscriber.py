@@ -46,6 +46,9 @@ class Command(BaseCommand):
                 # There is only ever 1 because MaxNumberOfMessages=1
                 message = Message.from_event(messages[0])
 
+                if str(redis_client.get(message.message_deduplication_id)) == 'True':
+                    continue
+
                 # If someone uploads a data hash that is faulty, then we want to blacklist all events around that
                 # bounty id. It can either be a permanent blacklist, typically added manually, or a pending blacklist.
                 # All the events in the pending blacklist will retry later.
@@ -83,7 +86,7 @@ class Command(BaseCommand):
     def remove_from_queue(self, message):
         # This means the contract subscriber will never send this event
         # through to sqs again
-        redis_client.set(message.message_deduplication_id, True)
+        redis_client.set(message.message_deduplication_id, 'True')
         try:
             sqs_client.delete_message(
                 QueueUrl=settings.QUEUE_URL,

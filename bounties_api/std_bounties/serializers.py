@@ -75,11 +75,13 @@ class BountyFulfillmentSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'bounty_id',
+            'bountyStage',
             'title',
             'usd_price',
             'tokenSymbol',
             'tokenDecimals',
             'fulfillmentAmount',
+            'calculated_fulfillmentAmount',
             'user']
 
 

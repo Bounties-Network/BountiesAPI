@@ -1,5 +1,6 @@
 import requests
 import boto3
+from random import random
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from botocore.exceptions import ClientError
@@ -49,9 +50,10 @@ class Command(BaseCommand):
 
                 if image_r and image_r.status_code == 200:
                     try:
+                        nonce = int(random() * 1000)
                         bucket = 'assets.bounties.network'
-                        key = '{}/userimages/{}.jpg'.format(
-                            settings.ENVIRONMENT, user.public_address)
+                        key = '{}/userimages/{}-{}.jpg'.format(
+                            settings.ENVIRONMENT, user.public_address, nonce)
                         client.put_object(
                             Body=image_r.content,
                             ContentType=image_r.headers['content-type'],
@@ -68,7 +70,6 @@ class Command(BaseCommand):
                 if not user.email and github_email:
                     user.email = github_email
 
-                print('profile image {}'.format(user.profile_image))
                 user.save()
                 logger.info('uploaded for: {}'.format(user.public_address))
 

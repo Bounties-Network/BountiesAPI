@@ -46,6 +46,9 @@ class Command(BaseCommand):
                 # There is only ever 1 because MaxNumberOfMessages=1
                 message = Message.from_event(messages[0])
 
+                if redis_client.get(message.message_deduplication_id):
+                    continue
+
                 # If someone uploads a data hash that is faulty, then we want to blacklist all events around that
                 # bounty id. It can either be a permanent blacklist, typically added manually, or a pending blacklist.
                 # All the events in the pending blacklist will retry later.

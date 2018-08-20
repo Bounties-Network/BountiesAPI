@@ -6,6 +6,7 @@ import logging
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from ipfsapi.exceptions import StatusError 
+from botocore.exceptions import ClientError
 
 from bounties.redis_client import redis_client
 from bounties.sqs_client import sqs_client
@@ -83,10 +84,15 @@ class Command(BaseCommand):
         # This means the contract subscriber will never send this event
         # through to sqs again
         redis_client.set(message.message_deduplication_id, True)
-        sqs_client.delete_message(
-            QueueUrl=settings.QUEUE_URL,
-            ReceiptHandle=message.receipt_handle,
-        )
+        try:
+            sqs_client.delete_message(
+                QueueUrl=settings.QUEUE_URL,
+                ReceiptHandle=message.receipt_handle,
+            )
+        except ClientError as e:
+            logger.warning('SQS delete_message hit an error: '.format(
+                e.response['Error']['Message']))
+
 
     def add_to_blacklist(self, message):
         removed = redis_client.lrem('pending_blacklist:{}'.format(

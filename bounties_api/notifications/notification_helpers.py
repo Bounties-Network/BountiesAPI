@@ -1,8 +1,10 @@
-from django.template.loader import render_to_string
-from notifications.models import Notification, DashboardNotification
+from django.db import transaction
+
 from bounties.ses_client import send_email
 from bounties.utils import bounty_url_for, profile_url_for
-from django.db import transaction
+
+from notifications.models import Notification, DashboardNotification
+from notifications import email_helpers
 
 
 def create_bounty_notification(**kwargs):
@@ -49,9 +51,12 @@ def create_notification(
             'platform': platform,
         },
     )
-    # this is atomic, so this is a good indicator
+
+    # this function is atomic, so this is a good way to be sure 
+    # we never notify more than once
     if not created:
         return
+
     DashboardNotification.objects.create(
         notification=notification,
         string_data=string_data,
@@ -59,9 +64,20 @@ def create_notification(
         data={'link': url, 'bounty_title': bounty_title},
     )
 
+    if is_activity and not activity_emails:
+        return
+
+    if not is_activity and notification_name not in
+            user.settings.accepted_email_settings():
+        return
+
+    if notification.email_sent:
+        return
+        
     username = 'bounty hunter'
     if user and user.name:
         username = user.name
+
     email_html = render_to_string(
         'base_notification.html',
         context={
@@ -73,13 +89,7 @@ def create_notification(
         username, string_data_email or string_data, )
     email_settings = user.settings.emails
     activity_emails = email_settings['activity']
-    if is_activity and not activity_emails:
-        return
 
-    if not is_activity and notification_name not in user.settings.accepted_email_settings():
-        return
-
-    if not notification.email_sent:
-        send_email(user.email, subject, email_txt, email_html)
-        notification.email_sent = True
-        notification.save()
+    send_email(user.email, subject, email_txt, email_html)
+    notification.email_sent = True
+    notification.save()

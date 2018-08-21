@@ -36,8 +36,7 @@ class NotificationClient:
         # to fulfiller
         create_bounty_notification(
             bounty=bounty,
-            uid=str(uid) +
-            str(notifications['FulfillmentSubmitted']),
+            uid=str(uid) + str(notifications['FulfillmentSubmitted']),
             notification_name=notifications['FulfillmentSubmitted'],
             user=fulfillment.user,
             from_user=bounty.user,
@@ -48,8 +47,7 @@ class NotificationClient:
         # to bounty issuer
         create_bounty_notification(
             bounty=bounty,
-            uid=str(uid) +
-            str(notifications['FulfillmentSubmittedIssuer']),
+            uid=str(uid) + str(notifications['FulfillmentSubmittedIssuer']),
             notification_name=notifications['FulfillmentSubmittedIssuer'],
             user=bounty.user,
             from_user=fulfillment.user,
@@ -116,8 +114,7 @@ class NotificationClient:
             email_button_string='Rate Fulfiller')
         create_bounty_notification(
             bounty=bounty,
-            uid=str(uid) +
-            str(notifications['FulfillmentAcceptedFulfiller']),
+            uid=str(uid) + str(notifications['FulfillmentAcceptedFulfiller']),
             notification_name=notifications['FulfillmentAcceptedFulfiller'],
             user=fulfillment.user,
             from_user=bounty.user,
@@ -145,8 +142,7 @@ class NotificationClient:
             bounty_title=bounty.title)
         create_bounty_notification(
             bounty=bounty,
-            uid=str(uid) +
-            str(notifications['FulfillmentUpdatedIssuer']),
+            uid=str(uid) + str(notifications['FulfillmentUpdatedIssuer']),
             notification_name=notifications['FulfillmentUpdatedIssuer'],
             user=bounty.user,
             from_user=fulfillment.user,
@@ -248,8 +244,7 @@ class NotificationClient:
             bounty_title=bounty.title)
         create_bounty_notification(
             bounty=bounty,
-            uid=str(uid) +
-            str(notifications['IssuerTransferred']),
+            uid=str(uid) + str(notifications['IssuerTransferred']),
             notification_name=notifications['IssuerTransferred'],
             user=original_user,
             from_user=bounty.user,
@@ -259,8 +254,7 @@ class NotificationClient:
             subject='Bounty Transferred')
         create_bounty_notification(
             bounty=bounty,
-            uid=str(uid) +
-            str(notifications['TransferRecipient']),
+            uid=str(uid) + str(notifications['TransferRecipient']),
             notification_name=notifications['TransferRecipient'],
             user=bounty.user,
             from_user=original_user,

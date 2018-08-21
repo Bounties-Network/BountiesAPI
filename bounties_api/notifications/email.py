@@ -17,22 +17,58 @@ from notifications.constants import notifications
 class Email:
 	notification_name = ''
 	link = ''
+
 	username = ''
-	message_string = ''
-	button_text = ''
+	bounty_title = ''
+	bounty_categories = []
+	usd_amount = 0.0
+	token_amount = 0.0
+	token = ''
+	issuer_address = ''
+	user_address = ''
+	submission_description = ''
+	token_amount_remaining = 0.0
+	usd_amount_remaining = 0.0
+	remaining_submissions = 0
+
+	notification_to_template = {
+		
+	}
+
 
     def __init__(self, *args, **kwargs):
         self.__dict__.update(kwargs)
 
 
 
-	def render(self):
-		return render_to_string(
-			self.template,
-			context={
+    context(self):
+    	return {
+			'username': self.username,
+			'bounty_title': self.bounty_title,
+			'bounty_categories': self.bounty_categories,
+			'usd_amount': self.usd_amount,
+			'token_amount': self.token_amount,
+			'token': self.token,
+			'issuer_address': self.issuer_address,
+			'user_address': self.user_address,
+			'submission_description': self.submission_description,
+			'token_amount_remaining': self.token_amount_remaining,
+			'usd_amount_remaining': self.usd_amount_remaining,
+			'remaining_submissions': self.remaining_submissions
+    	}
 
-			}
-		)
+
+
+
+	# def render(self):
+	# 	return render_to_string(
+	# 		self.template,
+	# 		context={
+
+	# 		}
+	# 	)
+
+
 
 
 

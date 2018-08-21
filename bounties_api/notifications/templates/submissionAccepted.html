@@ -596,7 +596,7 @@
 
                         <td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-                            <p style="font-size: 1rem !important;">The user {user_name} just accepted your submission on their bounty:</p>
+                            <p style="font-size: 1rem !important;">The user {{ user_name }} just accepted your submission on their bounty:</p>
                         </td>
                     </tr>
                 </tbody></table>
@@ -605,13 +605,13 @@
 
                         <td valign="top" class="mcnTextContent" style="padding:24px 24px 0.25rem 24px; width: 70%;">
 
-                            <h3 style="font-weight: 500; color: black; font-size: 1rem"><a href="" style="text-decoration: none; color: black; font-weight: 500; font-size: inherit;">{bounty_title}</a></h3>
-                            							{bounty_categories}
+                            <h3 style="font-weight: 500; color: black; font-size: 1rem"><a href="" style="text-decoration: none; color: black; font-weight: 500; font-size: inherit;">{{ bounty_title }}</a></h3>
+                            							{{ bounty_categories }}
                         </td>
 												<td valign="top" class="mcnTextContent" style="padding:24px 24px 0.25rem 24px; width: 30%;">
 
-                            <h2 style="color: #5A28C6; font-size: 1.563rem; text-align: right; line-height: 1.563rem;">${usd_amount}</h2>
-														<p style="color: #A09CA8; font-size: 0.75rem; text-align: right; line-height: 0.75rem; margin-top: 0.5rem; font-weight: 400">{token_amount} {token}</p>
+                            <h2 style="color: #5A28C6; font-size: 1.563rem; text-align: right; line-height: 1.563rem;">${{ usd_amount }}</h2>
+														<p style="color: #A09CA8; font-size: 0.75rem; text-align: right; line-height: 0.75rem; margin-top: 0.5rem; font-weight: 400">{{ token_amount }} {{ token }}</p>
 
 
                         </td>
@@ -619,7 +619,7 @@
 											<tr>
 												<td valign="top" class="mcnTextContent" style="position: relative; padding-left:24px; padding-right:24px; width: 10%; padding-bottom: 20px; border-bottom: 0px solid lightGrey; height: 2rem;">
 													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{bounty_profile_picture}">
-													<a href="#" style="color: #4A93FF; font-size: 0.875rem; top: 0.25rem; position: absolute; margin-left: 1rem; display: inline-block;">{issuer_address}</a>
+													<a href="#" style="color: #4A93FF; font-size: 0.875rem; top: 0.25rem; position: absolute; margin-left: 1rem; display: inline-block;">{{ issuer_address }}</a>
 
 												</td>
 												<td valign="top" class="mcnTextContent" style="padding-left:24px; padding-right:24px; width: 90%; padding-bottom: 20px; border-bottom: 0px solid lightGrey;">
@@ -634,7 +634,7 @@
 
 														<p style="margin: 0px; display: inline-block; ">
 															<b style="color: #A09CA8; font-weight: 400; font-size: 12px;">Submission Description:</b></br>
-															<b style="color: #4A93FF; font-size: 0.875rem; font-weight: 400; color: #615E67; ">{submission_description}</b>
+															<b style="color: #4A93FF; font-size: 0.875rem; font-weight: 400; color: #615E67; ">{{ submission_description }}</b>
 														</p>
 
                         </td>
@@ -652,8 +652,8 @@
 
 													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{user_profile_picture}">
 														<p style="top: 9px; position: absolute; margin-left: 1rem; display: inline-block;">
-														<b style="color: black; font-weight: 500; ">{user_full_name}</b></br>
-														<a href="#" style="color: #4A93FF; font-size: 0.875rem;">{user_address}</a></p>
+														<b style="color: black; font-weight: 500; ">{{ user_full_name }}</b></br>
+														<a href="#" style="color: #4A93FF; font-size: 0.875rem;">{{ user_address }}</a></p>
 
                         </td>
                     </tr>
@@ -664,7 +664,7 @@
 
                         <td valign="top" class="mcnTextContent" style="padding-top:2rem; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-                            <p style="font-size: 1rem !important; text-align: center;">How was your experience with the issuer of this bounty? Submit your rating and feedback to help others know what it's like working with {issuer_address}.</p>
+                            <p style="font-size: 1rem !important; text-align: center;">How was your experience with the issuer of this bounty? Submit your rating and feedback to help others know what it's like working with {{ issuer_address }}.</p>
                         </td>
                     </tr>
                 </tbody></table>

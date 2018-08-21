@@ -63,7 +63,7 @@ class Command(BaseCommand):
                         logger.info('Skipping event for {}, permanent blacklist found'.format(message.bounty_id))
                     else:
                         logger.info('Pending blacklist exists for {}, adding event {}'.format(
-                            message.event))
+                            message.bounty_id, message.event))
                         self.add_to_blacklist(message)
                     continue
 
@@ -98,13 +98,19 @@ class Command(BaseCommand):
             logger.warning('SQS delete_message hit an error: '.format(
                 e.response['Error']['Message']))
 
-
     def add_to_blacklist(self, message):
-        removed = redis_client.lrem('pending_blacklist:{}'.format(
-            message.bounty_id), str(message))
-        redis_client.rpush('pending_blacklist:{}'.format(message.bounty_id), str(message))
-        removed = redis_client.lrem('pending_blacklist:{}'.format(
-            message.bounty_id), str(message), -1)
+        existing = redis_client.lrange('pending_blacklist:{}'.format(
+            message.bounty_id), 0, -1)
+
+        message_string = str(message)
+
+        for key in existing:
+            if key and key.decode('UTF-8') == message_string:
+                logger.warning('Did not add {} to pending_blacklist, already existed'.format(
+                    message.bounty_id))
+                return
+
+        redis_client.rpush('pending_blacklist:{}'.format(message.bounty_id), message_string)
         logger.warning('Added to {} to pending_blacklist'.format(message.bounty_id))
 
     def resolve_blacklist(self):

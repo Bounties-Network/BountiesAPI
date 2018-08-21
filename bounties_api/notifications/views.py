@@ -35,7 +35,7 @@ class NotificationActivityViewSet(viewsets.ReadOnlyModelViewSet):
         public_address = self.kwargs.get('public_address')
         return DashboardNotification.objects.filter(
             notification__user__public_address=public_address,
-            is_activity=True).order_by('-created')
+            is_activity=True).order_by('-notification__notification_created')
     serializer_class = DashboardNotificationSerializer
     filter_class = DashboardNotificationFilter
 
@@ -46,7 +46,7 @@ class NotificationPushViewSet(viewsets.ReadOnlyModelViewSet):
         public_address = self.kwargs.get('public_address')
         return DashboardNotification.objects.filter(
             notification__user__public_address=public_address,
-            is_activity=False).order_by('-created')
+            is_activity=False).order_by('-notification__notification_created')
     serializer_class = DashboardNotificationSerializer
     filter_class = DashboardNotificationFilter
 

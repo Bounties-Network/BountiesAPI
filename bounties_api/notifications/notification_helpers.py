@@ -11,7 +11,6 @@ def create_bounty_notification(**kwargs):
         bounty.bounty_id, bounty.platform) + kwargs.get('url_query', '')
     kwargs.update({
         'url': bounty_url,
-        'notification_created': bounty.bounty_created,
         'platform': bounty.platform
     })
     create_notification(**kwargs)

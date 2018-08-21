@@ -182,7 +182,8 @@ def map_user_data(data_hash, public_address):
         'website': data.get('social', {}).get('personalWebsite', None),
         'profileFileName': data.get('profilePhoto', {}).get('fileName', None),
         'profileDirectoryHash': profileDirectoryHash,
-        'is_profile_image_dirty': is_profile_image_dirty(profileDirectoryHash, public_address)
+        'is_profile_image_dirty': is_profile_image_dirty(profileDirectoryHash, public_address),
+        'profile_hash': data_hash
     }
 
     return prune(user)

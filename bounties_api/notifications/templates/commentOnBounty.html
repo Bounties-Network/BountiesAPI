@@ -606,21 +606,21 @@
                         <td valign="top" class="mcnTextContent" style="padding:24px 24px 0.25rem 24px; width: 70%;">
 
                             <h3 style="font-weight: 500; color: black; font-size: 1rem"><a href="" style="text-decoration: none; color: black; font-weight: 500; font-size: inherit;">{bounty_title}</a></h3>
-                            							
+
                             							{bounty_categories}
                         </td>
 												<td valign="top" class="mcnTextContent" style="padding:24px 24px 0.25rem 24px; width: 30%;">
 
-                            <h2 style="color: #5A28C6; font-size: 1.563rem; text-align: right; line-height: 1.563rem;">$100</h2>
-														<p style="color: #A09CA8; font-size: 0.75rem; text-align: right; line-height: 0.75rem; margin-top: 0.5rem; font-weight: 400">0.01 ETH</p>
+                            <h2 style="color: #5A28C6; font-size: 1.563rem; text-align: right; line-height: 1.563rem;">${usd_amount}</h2>
+														<p style="color: #A09CA8; font-size: 0.75rem; text-align: right; line-height: 0.75rem; margin-top: 0.5rem; font-weight: 400">{token_amount} {token}</p>
 
 
                         </td>
 											</tr>
 											<tr>
 												<td valign="top" class="mcnTextContent" style="position: relative; padding-left:24px; padding-right:24px; width: 10%; padding-bottom: 20px; border-bottom: 0px solid lightGrey; height: 2rem;">
-													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/fae20fec-36ab-4594-9753-643c04e0ab9a.png">
-													<a href="#" style="color: #4A93FF; font-size: 0.875rem; top: 0.25rem; position: absolute; margin-left: 1rem; display: inline-block;">0x4b10...6d92</a>
+													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{bounty_profile_picture}">
+													<a href="#" style="color: #4A93FF; font-size: 0.875rem; top: 0.25rem; position: absolute; margin-left: 1rem; display: inline-block;">{issuer_address}</a>
 
 												</td>
 												<td valign="top" class="mcnTextContent" style="padding-left:24px; padding-right:24px; width: 90%; padding-bottom: 20px; border-bottom: 0px solid lightGrey;">
@@ -635,7 +635,7 @@
 
 														<p style="margin: 0px; display: inline-block; ">
 															<b style="color: #A09CA8; font-weight: 400; font-size: 12px;">Comment:</b></br>
-															<b style="color: #4A93FF; font-size: 0.875rem; font-weight: 400; color: #615E67; ">This is a bounty comment This is a bounty comment This is a bounty comment This is a bounty comment This is a bounty comment</b>
+															<b style="color: #4A93FF; font-size: 0.875rem; font-weight: 400; color: #615E67; ">{comment}</b>
 														</p>
 
                         </td>
@@ -651,10 +651,10 @@
 												<td valign="top" class="mcnTextContent" style="padding:24px; position: relative; width: 9rem">
 
 
-													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/fae20fec-36ab-4594-9753-643c04e0ab9a.png">
+													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{user_profile_picture}">
 														<p style="top: 9px; position: absolute; margin-left: 1rem; display: inline-block;">
-														<b style="color: black; font-weight: 500; ">Matt Garnett</b></br>
-														<a href="#" style="color: #4A93FF; font-size: 0.875rem;">0x4b10...6d92</a></p>
+														<b style="color: black; font-weight: 500; ">{user_full_name}</b></br>
+														<a href="#" style="color: #4A93FF; font-size: 0.875rem;">{user_address}</a></p>
 
                         </td>
                     </tr>

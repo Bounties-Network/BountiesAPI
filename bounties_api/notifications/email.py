@@ -39,3 +39,6 @@ class Email:
 #bouty_categories = []
 # <p style="color: #A09CA8; padding: 0.25rem 0.5rem; margin-right: 0.1rem; border: 1px solid lightGrey; border-radius: 25px; display:inline-block; font-size: 0.75rem; font-weight: 400; font-family: 'Inter UI', sans-serif;">Category 1</p>
 # <p style="color: #A09CA8; padding: 0.25rem 0.5rem; margin-right: 0.1rem; border: 1px solid lightGrey; border-radius: 25px; display:inline-block; font-size: 0.75rem; font-weight: 400; font-family: 'Inter UI', sans-serif;">Category 2</p>
+
+# bounty profile picture
+# default = https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/fae20fec-36ab-4594-9753-643c04e0ab9a.png

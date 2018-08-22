@@ -2,38 +2,10 @@ from std_bounties.bounty_client import BountyClient
 from notifications.notification_client import NotificationClient
 from std_bounties.slack_client import SlackMessageClient
 from std_bounties.models import Bounty
-from std_bounties.client_helpers import map_user_data
-from user.models import User
 
 bounty_client = BountyClient()
 notification_client = NotificationClient()
 slack_client = SlackMessageClient()
-
-
-def profile_updated(**kwargs):
-    data = map_user_data(
-        kwargs.get('inputs').get('profile'),
-        kwargs.get(
-            'transaction_from',
-            None))
-    user = User.objects.get_or_create(
-        public_address=kwargs.get(
-            'transaction_from', '').lower())[0]
-
-    for (key, value) in data.items():
-        if key != 'languages' and key != 'skills':
-            setattr(user, key, value)
-
-    user.save_and_clear_languages(data.get('languages'))
-    user.save_and_clear_skills(data.get('skills', []))
-
-    user.save()
-
-    notification_client.profile_updated(
-        kwargs.get(
-            'transaction_from',
-            '').lower(),
-        **kwargs)
 
 
 def bounty_issued(bounty_id, **kwargs):

@@ -65,25 +65,11 @@ class Command(BaseCommand):
                     )
                     continue
 
-                logger.info(
-                    'attempting {}: {}'.format(
-                        event,
-                        'for address {}'.format(transaction_from) if bounty_id == -
-                        1 else 'for bounty id {}'.format(
-                            str(bounty_id))))
+                logger.info('attempting {} for bounty id: {}'.format(event, str(bounty_id)))
 
                 transaction_path = '/bounty/' + str(bounty_id)
                 transaction_link_text = 'View bounty'
                 transaction_message = 'Transaction confirmed'
-                if event == 'profileUpdated':
-                    master_client.profile_updated(
-                        event_date=event_date,
-                        inputs=contract_method_inputs,
-                        event_timestamp=event_timestamp,
-                        transaction_from=transaction_from,
-                        uid=message_deduplication_id)
-                    transaction_path = '/profile/' + transaction_from
-                    transaction_link_text = 'View profile'
 
                 if event == 'BountyIssued':
                     master_client.bounty_issued(

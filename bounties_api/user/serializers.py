@@ -130,3 +130,20 @@ class UserInfoSerializer(serializers.ModelSerializer):
             'categories',
             'settings',
         )
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'name',
+            'email',
+            'organization',
+            'profileFileName',
+            'profileDirectoryHash',
+            'is_profile_image_dirty',
+            'website',
+            'twitter',
+            'github',
+            'linkedin',
+        )

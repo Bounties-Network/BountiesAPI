@@ -1,13 +1,16 @@
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from user.backend import authenticate, login, logout
-from user.serializers import LanguageSerializer, UserSerializer, UserInfoSerializer, SettingsSerializer, RankedSkillSerializer
+from user.serializers import LanguageSerializer, UserSerializer, UserInfoSerializer, UserProfileSerializer, SettingsSerializer, RankedSkillSerializer
 from user.models import Language, User, RankedSkill
 from std_bounties.models import Fulfillment
 from django.db.models import Sum, Avg, Count
 from django.http import JsonResponse, HttpResponse
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
+from notifications.notification_client import NotificationClient
+
+notification_client = NotificationClient()
 
 
 class Login(APIView):
@@ -87,6 +90,21 @@ class UserInfo(APIView):
 
 
 class UserProfile(APIView):
+    def post(self, request, public_address):
+        user = request.current_user
+        user.is_profile_image_dirty = request.data.get('profileDirectoryHash') != str(user.profileDirectoryHash)
+        serializer = UserProfileSerializer(user, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        user.save_and_clear_skills(request.data.get('skills'))
+        user.save_and_clear_languages(request.data.get('languages'))
+
+        user.save()
+
+        notification_client.profile_updated(user.public_address.lower())
+
+        return JsonResponse(UserProfileSerializer(user).data)
+
     def get(self, request, public_address):
         try:
             user = User.objects.get(public_address=public_address.lower())

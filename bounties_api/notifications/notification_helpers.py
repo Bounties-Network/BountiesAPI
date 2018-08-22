@@ -4,11 +4,11 @@ from bounties.ses_client import send_email
 from bounties.utils import bounty_url_for, profile_url_for
 
 from notifications.models import Notification, DashboardNotification
-from notifications import email_helpers
+from notifications.email import Email
 
 
 def create_bounty_notification(**kwargs):
-    bounty = kwargs.pop('bounty')
+    bounty = kwargs.get('bounty')
     bounty_url = bounty_url_for(
         bounty.bounty_id, bounty.platform) + kwargs.get('url_query', '')
     kwargs.update({
@@ -26,6 +26,7 @@ def create_profile_updated_notification(*args, **kwargs):
 
 @transaction.atomic
 def create_notification(
+        bounty,
         uid,
         notification_name,
         user,
@@ -36,7 +37,6 @@ def create_notification(
         bounty_title='',
         is_activity=True,
         string_data_email=None,
-        email_button_string='View in App',
         url='',
         platform=''):
 
@@ -64,11 +64,14 @@ def create_notification(
         data={'link': url, 'bounty_title': bounty_title},
     )
 
+    email_settings = user.settings.emails
+    activity_emails = email_settings['activity']
+
     if is_activity and not activity_emails:
         return
 
-    if not is_activity and notification_name not in
-            user.settings.accepted_email_settings():
+    if (not is_activity and
+        notification_name not in user.settings.accepted_email_settings()):
         return
 
     if notification.email_sent:
@@ -78,17 +81,19 @@ def create_notification(
     if user and user.name:
         username = user.name
 
-    email_html = render_to_string(
-        'base_notification.html',
-        context={
-            'link': url,
-            'username': username,
-            'message_string': string_data_email or string_data,
-            'button_text': email_button_string})
+
+
+    email = Email(
+        notification_name=notification_name,
+        bounty=bounty,
+    )
+
+    email_html = email.render()
+
+    print(email_html)
+
     email_txt = 'Hello {}! \n {}'.format(
         username, string_data_email or string_data, )
-    email_settings = user.settings.emails
-    activity_emails = email_settings['activity']
 
     send_email(user.email, subject, email_txt, email_html)
     notification.email_sent = True

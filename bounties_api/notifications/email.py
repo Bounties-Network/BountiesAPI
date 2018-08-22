@@ -66,22 +66,68 @@ class Email:
 	bounty_profile_picture = default_picture
 	user_profile_picture = default_picture
 
+	@staticmethod
+	def render_categories(categories):
+		def render_category(c):
+			return render_to_string('category.html', context={ 'category': c })
 
-	def __init__(self, notification_name, bounty):
+		print('trynig to map over categories')
+		print()
+		print(categories)
+		print(categories.all())
+		print()
+
+		return map(render_category, categories.all())
+
+	def __init__(self, **kwargs):
+		notification_name = kwargs['notification_name']
+		bounty = kwargs['bounty']
+
+		print('-------------------------')
+		print('-------------------------')
+		print('-------------------------')
+		print()
+		print()
+		print()
+		print()
+		print('email.py for notification {}'.format(notification_name))
+		print()
+		print(kwargs)
+		print()
+		print(bounty.__dict__)
+		print()
+		print()
+		print()
+		print()
+		print('-------------------------')
+		print('-------------------------')
+		print('-------------------------')
+
+
+
+
 		if notification_name.__class__ != int:
 			raise TypeError('notification_name must be of type int')
 		if bounty.__class__ != Bounty:
 			raise TypeError('bounty must be of type Bounty')
-		if notification_name not in constants.notifications:
-			raise ValueError('notification_name must be a valid notification')
+		if notification_name not in Email.templates:
+			raise ValueError('notification_name {}'
+				' must be a valid notification'.format(notification_name))
 
-		self.link = bounty.url
-		self.username = bounty.username
-		self.bounty_title = bounty.bounty_title
+
+		self.notification_name = notification_name
+		self.url = kwargs['url']
+		self.username = bounty.user and bounty.user.name
+		self.bounty_title = kwargs['bounty_title']
 		self.bounty_categories = bounty.categories
 		self.usd_amount = bounty.usd_price
-		self.token_amount = bounty.token
-		self.token = bounty.calculated_fulfillmentAmount.strip('0')
+		# Strip leading and trailing zeroes, and a potentially trailing period
+		self.token_amount = str(bounty.calculated_fulfillmentAmount)
+			.strip('0').strip('.')
+		self.token = bounty.tokenSymbol
+
+		self.categories = Email.render_categories(bounty.categories)
+
 		# self.issuer_address = bounty.''
 		# self.issuer_address_link = bounty.''
 		# self.user_address = bounty.''
@@ -97,7 +143,7 @@ class Email:
 		return {
 			'username': self.username,
 			'bounty_title': self.bounty_title,
-			'bounty_categories': self.render_categories(),
+			'bounty_categories': self.categories,
 			'usd_amount': self.usd_amount,
 			'token_amount': self.token_amount,
 			'token': self.token,
@@ -119,8 +165,3 @@ class Email:
 		except KeyError as e:
 			raise ValueError('Can\'t render without valid notification_name')
 
-	def render_categories(self):
-		def render_category(c):
-			return render_to_string('category.html', context={ 'category': c })
-
-		return map(render_category, self.bounty_categories)

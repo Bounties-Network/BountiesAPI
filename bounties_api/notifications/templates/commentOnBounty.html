@@ -605,7 +605,7 @@
 
                         <td valign="top" class="mcnTextContent" style="padding:24px 24px 0.25rem 24px; width: 70%;">
 
-                            <h3 style="font-weight: 500; color: black; font-size: 1rem"><a href="" style="text-decoration: none; color: black; font-weight: 500; font-size: inherit;">{{ bounty_title }}</a></h3>
+                            <h3 style="font-weight: 500; color: black; font-size: 1rem"><href="{{ url }}" style="text-decoration: none; color: black; font-weight: 500; font-size: inherit;">{{ bounty_title }}</a></h3>
 
                             							                            							{% autoescape off %}{{ bounty_categories  }}{% endautoescape %}
                         </td>
@@ -651,7 +651,7 @@
 												<td valign="top" class="mcnTextContent" style="padding:24px; position: relative; width: 9rem">
 
 
-													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{user_profile_picture}">
+													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{{ user_profile_image }}">
 														<p style="top: 9px; position: absolute; margin-left: 1rem; display: inline-block;">
 														<b style="color: black; font-weight: 500; ">{{ from_user_name }}</b></br>
 														<a href="{{ user_address_link }}" style="color: #4A93FF; font-size: 0.875rem;">{{ from_user_address }}</a></p>

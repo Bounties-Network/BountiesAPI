@@ -605,7 +605,7 @@
 
                         <td valign="top" class="mcnTextContent" style="padding:24px 24px 0.25rem 24px; width: 70%;">
 
-                            <h3 style="font-weight: 500; color: black; font-size: 1rem"><a href="" style="text-decoration: none; color: black; font-weight: 500; font-size: inherit;">{{ bounty_title }}</a></h3>
+                            <h3 style="font-weight: 500; color: black; font-size: 1rem"><href="{{ url }}" style="text-decoration: none; color: black; font-weight: 500; font-size: inherit;">{{ bounty_title }}</a></h3>
                             							                            							{% autoescape off %}{{ bounty_categories  }}{% endautoescape %}
                         </td>
 												<td valign="top" class="mcnTextContent" style="padding:24px 24px 0.25rem 24px; width: 30%;">
@@ -618,8 +618,8 @@
 											</tr>
 											<tr>
 												<td valign="top" class="mcnTextContent" style="position: relative; padding-left:24px; padding-right:24px; width: 10%; padding-bottom: 20px; border-bottom: 0px solid lightGrey; height: 2rem;">
-													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{{ from_user_profile_image }}">
-													<a href="{{ from_user_address_link }}" style="color: #4A93FF; font-size: 0.875rem; top: 0.25rem; position: absolute; margin-left: 1rem; display: inline-block;">{{ from_user_address }}</a>
+													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{{ user_profile_image }}">
+													<a href="{{ user_address_link }}" style="color: #4A93FF; font-size: 0.875rem; top: 0.25rem; position: absolute; margin-left: 1rem; display: inline-block;">{{ user_address }}</a>
 
 												</td>
 												<td valign="top" class="mcnTextContent" style="padding-left:24px; padding-right:24px; width: 90%; padding-bottom: 20px; border-bottom: 0px solid lightGrey;">
@@ -664,7 +664,7 @@
                     <tbody>
                         <tr>
                             <td align="center" valign="middle" class="mcnButtonContent" style="font-family: 'Inter UI', sans-serif; font-size: 18px; padding: 18px;">
-                                <a class="mcnButton " title="Find Out More" href="#" target="_blank" style="font-family:'Inter UI', sans-serif; font-weight: 400;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF; font-size: 1rem !important">View Bounty</a>
+                                <a class="mcnButton " title="Find Out More" href="{{ url }}" target="_blank" style="font-family:'Inter UI', sans-serif; font-weight: 400;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF; font-size: 1rem !important">View Bounty</a>
                             </td>
                         </tr>
                     </tbody>

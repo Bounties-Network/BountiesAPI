@@ -11,18 +11,6 @@ def create_bounty_notification(**kwargs):
     bounty = kwargs.get('bounty')
     bounty_url = bounty_url_for(
         bounty.bounty_id, bounty.platform) + kwargs.get('url_query', '')
-
-
-    print('-------------------------')
-    print()
-    print()
-    print('notifiation_helpers.py create_bounty_notification')
-    print(bounty_url)
-    print()
-    print()
-    print('-------------------------')
-    print('-------------------------')
-
     kwargs.update({
         'url': bounty_url,
         'platform': bounty.platform
@@ -32,36 +20,10 @@ def create_bounty_notification(**kwargs):
 
 def create_profile_updated_notification(*args, **kwargs):
     profile_url = profile_url_for(kwargs.get('user').public_address)
-
-    print('-------------------------')
-    print()
-    print()
-    print('notifiation_helpers.py create_profile_updated_notification')
-    print(profile_url)
-    print()
-    print()
-    print('-------------------------')
-    print('-------------------------')
-
     kwargs.update({'url': profile_url})
     create_notification(**kwargs)
 
 
-# @transaction.atomic
-# def create_notification(
-#         bounty,
-#         uid,
-#         notification_name,
-#         user,
-#         from_user,
-#         notification_created,
-#         string_data,
-#         subject,
-#         bounty_title='',
-#         is_activity=True,
-#         string_data_email=None,
-#         url='',
-#         platform=''):
 @transaction.atomic
 def create_notification(**kwargs):
 
@@ -81,6 +43,9 @@ def create_notification(**kwargs):
     # we never notify more than once
     if not created:
         return
+
+
+    # TODO: Re-enable other notifications
 
     # DashboardNotification.objects.create(
     #     notification=notification,
@@ -107,22 +72,19 @@ def create_notification(**kwargs):
     #     username = user.name
 
     if kwargs['notification_name'] not in Email.templates:
-        return # TODO: Still do regular notification without email?
-
+        return # TODO: Still do regular notification without email
 
     email = Email(**kwargs)
 
     email_html = email.render()
 
-    # Open a file
+    # TODO: Stop rendering to file and send email instead
     nn = kwargs['notification_name']
-    bid = kwargs['bounty_id']
-    fo = open('{}-{}.html'.format(nn, bid), 'wb')
+    b = kwargs['bounty']
+    bid = b.bounty_id
+    fo = open('{}-{}.html'.format(nn, bid), 'w')
     fo.write(email_html)
-
-    # Close opend file
     fo.close()
-
 
     # email_txt = 'Hello {}! \n {}'.format(
     #     username, string_data_email or string_data, )

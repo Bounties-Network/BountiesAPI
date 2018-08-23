@@ -619,7 +619,7 @@
 											<tr>
 												<td valign="top" class="mcnTextContent" style="position: relative; padding-left:24px; padding-right:24px; width: 10%; padding-bottom: 20px; border-bottom: 0px solid lightGrey; height: 2rem;">
 													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{{ user_profile_image }}">
-													<a href="{{ issuer_address_link }}" style="color: #4A93FF; font-size: 0.875rem; top: 0.25rem; position: absolute; margin-left: 1rem; display: inline-block;">{{ issuer_address }}</a>
+													<a href="{{ user_address_link }}" style="color: #4A93FF; font-size: 0.875rem; top: 0.25rem; position: absolute; margin-left: 1rem; display: inline-block;">{{ user_address }}</a>
 
 												</td>
 												<td valign="top" class="mcnTextContent" style="padding-left:24px; padding-right:24px; width: 90%; padding-bottom: 20px; border-bottom: 0px solid lightGrey;">
@@ -634,7 +634,7 @@
 
 														<p style="margin: 0px; display: inline-block; ">
 															<b style="color: #A09CA8; font-weight: 400; font-size: 12px;">Review:</b></br>
-															<b style="color: #4A93FF; font-size: 0.875rem; font-weight: 400; color: #615E67; ">This is a bounty rating This is a bounty rating This is a bounty rating This is a bounty rating This is a bounty rating This is a bounty rating</b>
+															<b style="color: #4A93FF; font-size: 0.875rem; font-weight: 400; color: #615E67; ">{{ review }}</b>
 														</p>
 
                         </td>
@@ -651,8 +651,8 @@
 
 													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{{ user_profile_picture }}">
 														<p style="top: 9px; position: absolute; margin-left: 1rem; display: inline-block;">
-														<b style="color: black; font-weight: 500; ">{{ user_full_name }}</b></br>
-														<a href="{{ user_address_link }}" style="color: #4A93FF; font-size: 0.875rem;">{{ user_address }}</a></p>
+														<b style="color: black; font-weight: 500; ">{{ from_user_full_name }}</b></br>
+														<a href="{{ from_user_address_link }}" style="color: #4A93FF; font-size: 0.875rem;">{{ from_user_address }}</a></p>
 
                         </td>
                     </tr>
@@ -662,7 +662,7 @@
 
                         <td valign="top" class="mcnTextContent" style="padding-top:2rem; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-                            <p style="font-size: 1rem !important; text-align: center;">Your average rating is now 5/5, with 5 ratings received.</p>
+                            <p style="font-size: 1rem !important; text-align: center;">Your average rating is now {{ average_rating }}, with {{ rating_count }} ratings received.</p>
                         </td>
                     </tr>
                 </tbody></table>

@@ -596,7 +596,7 @@
 
                         <td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-                            <p style="font-size: 1rem !important;">Someone just contributed 0.1 ETH (${{ usd_amount }}) to your bounty:</p>
+                            <p style="font-size: 1rem !important;">Someone just contributed {{ token_amount }} {{ token }} (${{ usd_amount }}) to your bounty:</p>
                         </td>
                     </tr>
                 </tbody></table>
@@ -618,8 +618,8 @@
 											</tr>
 											<tr>
 												<td valign="top" class="mcnTextContent" style="position: relative; padding-left:24px; padding-right:24px; width: 10%; padding-bottom: 20px; border-bottom: 0px solid lightGrey; height: 2rem;">
-													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{user_profile_picture}">
-													<a href="{{ user_address_link }}" style="color: #4A93FF; font-size: 0.875rem; top: 0.25rem; position: absolute; margin-left: 1rem; display: inline-block;">{{ user_address }}</a>
+													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{{ from_user_profile_image }}">
+													<a href="{{ from_user_address_link }}" style="color: #4A93FF; font-size: 0.875rem; top: 0.25rem; position: absolute; margin-left: 1rem; display: inline-block;">{{ from_user_address }}</a>
 
 												</td>
 												<td valign="top" class="mcnTextContent" style="padding-left:24px; padding-right:24px; width: 90%; padding-bottom: 20px; border-bottom: 0px solid lightGrey;">

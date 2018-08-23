@@ -596,7 +596,7 @@
 
                         <td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-                            <p style="font-size: 1rem !important;">The user {{ user_name }} just accepted your submission on their bounty:</p>
+                            <p style="font-size: 1rem !important;">The user {{ from_user_name }} just accepted your submission on their bounty:</p>
                         </td>
                     </tr>
                 </tbody></table>
@@ -605,7 +605,7 @@
 
                         <td valign="top" class="mcnTextContent" style="padding:24px 24px 0.25rem 24px; width: 70%;">
 
-                            <h3 style="font-weight: 500; color: black; font-size: 1rem"><a href="" style="text-decoration: none; color: black; font-weight: 500; font-size: inherit;">{{ bounty_title }}</a></h3>
+                            <h3 style="font-weight: 500; color: black; font-size: 1rem"><a href="#" style="text-decoration: none; color: black; font-weight: 500; font-size: inherit;">{{ bounty_title }}</a></h3>
                             							                            							{% autoescape off %}{{ bounty_categories  }}{% endautoescape %}
                         </td>
 												<td valign="top" class="mcnTextContent" style="padding:24px 24px 0.25rem 24px; width: 30%;">
@@ -618,8 +618,8 @@
 											</tr>
 											<tr>
 												<td valign="top" class="mcnTextContent" style="position: relative; padding-left:24px; padding-right:24px; width: 10%; padding-bottom: 20px; border-bottom: 0px solid lightGrey; height: 2rem;">
-													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{{ user_profile_image }}">
-													<a href="{{ issuer_address_link }}" style="color: #4A93FF; font-size: 0.875rem; top: 0.25rem; position: absolute; margin-left: 1rem; display: inline-block;">{{ issuer_address }}</a>
+													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{{ issuer_profile_image }}">
+													<a href="{{ from_user_address_link }}" style="color: #4A93FF; font-size: 0.875rem; top: 0.25rem; position: absolute; margin-left: 1rem; display: inline-block;">{{ issuer_address }}</a>
 
 												</td>
 												<td valign="top" class="mcnTextContent" style="padding-left:24px; padding-right:24px; width: 90%; padding-bottom: 20px; border-bottom: 0px solid lightGrey;">
@@ -650,9 +650,9 @@
 												<td valign="top" class="mcnTextContent" style="padding:24px; position: relative; width: 9rem">
 
 
-													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{user_profile_picture}">
+													<img style="background-color: #5A28C6; border-radius: 25px; height: 2rem; width: 2rem; " src="{{ user_profile_image }}">
 														<p style="top: 9px; position: absolute; margin-left: 1rem; display: inline-block;">
-														<b style="color: black; font-weight: 500; ">{{ user_full_name }}</b></br>
+														<b style="color: black; font-weight: 500; ">{{ user_name }}</b></br>
 														<a href="{{ user_address_link }}" style="color: #4A93FF; font-size: 0.875rem;">{{ user_address }}</a></p>
 
                         </td>
@@ -664,7 +664,7 @@
 
                         <td valign="top" class="mcnTextContent" style="padding-top:2rem; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-                            <p style="font-size: 1rem !important; text-align: center;">How was your experience with the issuer of this bounty? Submit your rating and feedback to help others know what it's like working with {{ issuer_address }}.</p>
+                            <p style="font-size: 1rem !important; text-align: center;">How was your experience with the issuer of this bounty? Submit your rating and feedback to help others know what it's like working with {{ issuer_name }}.</p>
                         </td>
                     </tr>
                 </tbody></table>

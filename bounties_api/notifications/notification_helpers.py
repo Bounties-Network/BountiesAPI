@@ -76,15 +76,10 @@ def create_notification(**kwargs):
 
     email = Email(**kwargs)
 
-    email_html = email.render()
+    # TODO: Remove this - only use while debugging
+    email.render_to_file()
 
-    # TODO: Stop rendering to file and send email instead
-    nn = kwargs['notification_name']
-    b = kwargs['bounty']
-    bid = b.bounty_id
-    fo = open('{}-{}.html'.format(nn, bid), 'w')
-    fo.write(email_html)
-    fo.close()
+    # email_html = email.render()
 
     # email_txt = 'Hello {}! \n {}'.format(
     #     username, string_data_email or string_data, )

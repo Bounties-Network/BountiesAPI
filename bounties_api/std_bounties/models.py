@@ -154,13 +154,13 @@ class Bounty(BountyAbstract):
             defaults={
                 'name': self.issuer_name,
                 'email': self.issuer_email,
-                'github_username': self.issuer_githubUsername,
+                'github': self.issuer_githubUsername,
             }
         )
         if not created and not user.profile_hash:
             user.name = self.issuer_name
             user.email = self.issuer_email
-            user.github_username = self.issuer_githubUsername
+            user.github = self.issuer_githubUsername
             user.save()
         self.user = user
         super(Bounty, self).save(*args, **kwargs)
@@ -244,7 +244,7 @@ class Fulfillment(models.Model):
             defaults={
                 'name': self.fulfiller_name,
                 'email': self.fulfiller_email,
-                'github_username': self.fulfiller_githubUsername,
+                'github': self.fulfiller_githubUsername,
             }
         )
         if not created and not user.profile_hash:

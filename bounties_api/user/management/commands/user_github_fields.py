@@ -20,7 +20,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             users = User.objects.filter(profile_hash='').exclude(
-                Q(github_username=''), Q(profileDirectoryHash='')
+                Q(github=''), Q(profileDirectoryHash='')
             )
 
             for user in users:
@@ -30,8 +30,8 @@ class Command(BaseCommand):
                     location = 'https://ipfs.infura.io/ipfs/{}/{}'.format(user.profileDirectoryHash, user.profileFileName)
                     image_r = requests.get(location)
 
-                if user.github_username:
-                    github_username = user.github_username
+                if user.github:
+                    github_username = user.github
                     if not github_username:
                         continue
                     url = 'https://api.github.com/users/{}'.format(github_username)

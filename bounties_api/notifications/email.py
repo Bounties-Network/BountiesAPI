@@ -1,4 +1,5 @@
 from decimal import Context
+from textwrap import wrap
 
 from django.template.loader import render_to_string
 
@@ -22,6 +23,8 @@ class Email:
 		constants.FULFILLMENT_UPDATED: 'fulfillmentUpdated.html',
 		constants.RATING_RECEIVED: 'receivedRating.html',
 	}
+	max_description_length = 240
+	max_title_length = 120
 
 	@staticmethod
 	def render_categories(categories):
@@ -57,6 +60,21 @@ class Email:
 		token_amount = create_decimal(
 			self.bounty.calculated_fulfillmentAmount).normalize()
 
+		description = self.bounty.description
+		if len(description) > self.max_description_length:
+			# Cut off at the closest word after the limit
+			description = wrap(
+				description, self.max_description_length)[0] + ' ...'
+
+		title = self.bounty.title
+		if len(title) > self.max_title_length:
+			# Cut off at the closest word after the limit
+			title = wrap(title, self.max_title_length)[0] + ' ...'
+
+		url = self.url
+		if not url:
+			url = bounty_url_for(bounty.bounty_id, bounty.platform)
+
 		self.__dict__.update({
 			# TODO: Find the best way to calculate
 			# self.usd_amount_remaining = create_decimal(
@@ -64,6 +82,8 @@ class Email:
 			# 	* bounty.tokenLockPrice
 			# ).normalize()
 
+			'bounty_title': title,
+			'url': url,
 			'usd_amount': create_decimal(self.bounty.usd_price).normalize(),
 			'token_amount': token_amount,
 			'token': self.bounty.tokenSymbol,
@@ -73,7 +93,7 @@ class Email:
 			# TODO: Refactor to remaining submissions on the bounty
 			'remaining_submissions': create_decimal(
 				remaining / token_amount).normalize(),
-			'submission_description': self.bounty.description,
+			'submission_description': description,
 			'issuer_name': issuer and issuer.name,
 			'issuer_address': issuer and issuer.public_address,
 			'issuer_profile_image': (issuer and issuer.profile_image

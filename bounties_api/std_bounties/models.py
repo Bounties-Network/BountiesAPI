@@ -157,7 +157,7 @@ class Bounty(BountyAbstract):
                 'github': self.issuer_githubUsername,
             }
         )
-        if not created and not user.profile_hash:
+        if not created and not user.profile_touched_manually:
             user.name = self.issuer_name
             user.email = self.issuer_email
             user.github = self.issuer_githubUsername
@@ -247,7 +247,7 @@ class Fulfillment(models.Model):
                 'github': self.fulfiller_githubUsername,
             }
         )
-        if not created and not user.profile_hash:
+        if not created and not user.profile_touched_manually:
             user.name = self.fulfiller_name if self.fulfiller_name else user.name
             user.email = self.fulfiller_email if self.fulfiller_email else user.email
             user.save()

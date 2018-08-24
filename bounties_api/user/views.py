@@ -92,10 +92,14 @@ class UserInfo(APIView):
 class UserProfile(APIView):
     def post(self, request, public_address):
         user = request.current_user
+
+        user.profile_touched_manually = True
         user.is_profile_image_dirty = request.data.get('profileDirectoryHash') != str(user.profileDirectoryHash)
+
         serializer = UserProfileSerializer(user, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
         user.save_and_clear_skills(request.data.get('skills'))
         user.save_and_clear_languages(request.data.get('languages'))
 

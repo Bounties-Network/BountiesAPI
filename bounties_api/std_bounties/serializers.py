@@ -38,7 +38,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = apps.get_model('user', 'user')
-        exclude = ('nonce', 'settings', 'profile_hash',)
+        exclude = ('nonce', 'settings', 'profile_touched_manually',)
 
 
 class ReviewSerializer(serializers.ModelSerializer):

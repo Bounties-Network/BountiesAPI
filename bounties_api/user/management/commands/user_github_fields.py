@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            users = User.objects.filter(profile_hash='').exclude(
+            users = User.objects.filter(profile_touched_manually=False).exclude(
                 Q(github=''), Q(profileDirectoryHash='')
             )
 

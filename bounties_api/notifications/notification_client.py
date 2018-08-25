@@ -21,7 +21,6 @@ class NotificationClient:
             user=bounty.user,
             from_user=None,
             string_data=string_data,
-            bounty_title=bounty.title,
             notification_created=event_date,
             subject='New bounty issued')
 
@@ -41,7 +40,6 @@ class NotificationClient:
             user=fulfillment.user,
             from_user=bounty.user,
             string_data=string_data_fulfiller,
-            bounty_title=bounty.title,
             notification_created=event_date,
             subject='New Submission')
         # to bounty issuer
@@ -53,7 +51,6 @@ class NotificationClient:
             from_user=fulfillment.user,
             string_data=string_data_issuer,
             subject='You Received a New Submission',
-            bounty_title=bounty.title,
             notification_created=event_date,
             is_activity=False)
 
@@ -68,7 +65,6 @@ class NotificationClient:
             user=bounty.user,
             from_user=None,
             string_data=string_data,
-            bounty_title=bounty.title,
             notification_created=event_date,
             subject='Bounty Activated')
 
@@ -84,7 +80,6 @@ class NotificationClient:
             user=bounty.user,
             from_user=None,
             string_data=string_data,
-            bounty_title=bounty.title,
             notification_created=event_date,
             subject='Bounty Issued and Activated')
 
@@ -109,7 +104,6 @@ class NotificationClient:
             string_data=string_data_issuer,
             subject='Submission Accepted',
             string_data_email=string_data_issuer_email,
-            bounty_title=bounty.title,
             notification_created=event_date,
             email_button_string='Rate Fulfiller')
         create_bounty_notification(
@@ -120,7 +114,6 @@ class NotificationClient:
             from_user=bounty.user,
             string_data=string_data_fulfiller,
             subject='Your Submission was Accepted',
-            bounty_title=bounty.title,
             is_activity=False,
             string_data_email=string_data_fulfiller_email,
             notification_created=event_date,
@@ -147,7 +140,6 @@ class NotificationClient:
             user=bounty.user,
             from_user=fulfillment.user,
             string_data=string_data_issuer,
-            bounty_title=bounty.title,
             subject='Submission was Updated',
             notification_created=event_date,
             is_activity=False)
@@ -159,7 +151,6 @@ class NotificationClient:
             user=fulfillment.user,
             from_user=bounty.user,
             string_data=string_data_fulfiller,
-            bounty_title=bounty.title,
             notification_created=event_date,
             subject='Submission Updated')
 
@@ -174,7 +165,6 @@ class NotificationClient:
             user=bounty.user,
             from_user=None,
             string_data=string_data,
-            bounty_title=bounty.title,
             notification_created=event_date,
             subject='Bounty Killed')
 
@@ -193,7 +183,6 @@ class NotificationClient:
             user=bounty.user,
             from_user=None,
             string_data=string_data,
-            bounty_title=bounty.title,
             notification_created=event_date,
             subject='Contribution Added')
 
@@ -208,7 +197,6 @@ class NotificationClient:
             user=bounty.user,
             from_user=None,
             string_data=string_data,
-            bounty_title=bounty.title,
             notification_created=event_date,
             subject='Deadline Extended')
 
@@ -223,7 +211,6 @@ class NotificationClient:
             user=bounty.user,
             from_user=None,
             string_data=string_data,
-            bounty_title=bounty.title,
             notification_created=event_date,
             subject='Bounty Updated')
 
@@ -249,7 +236,6 @@ class NotificationClient:
             user=original_user,
             from_user=bounty.user,
             string_data=string_data_transferrer,
-            bounty_title=bounty.title,
             notification_created=event_date,
             subject='Bounty Transferred')
         create_bounty_notification(
@@ -259,7 +245,6 @@ class NotificationClient:
             user=bounty.user,
             from_user=original_user,
             string_data=string_data_recipient,
-            bounty_title=bounty.title,
             subject='A Bounty was Transferred to You',
             notification_created=event_date,
             is_activity=False)
@@ -275,7 +260,6 @@ class NotificationClient:
             user=bounty.user,
             from_user=None,
             string_data=string_data,
-            bounty_title=bounty.title,
             notification_created=event_date,
             subject='Payout Increased')
 
@@ -291,7 +275,6 @@ class NotificationClient:
             from_user=None,
             string_data=string_data,
             subject='Bounty Expired',
-            bounty_title=bounty.title,
             notification_created=event_date,
             is_activity=False)
 
@@ -308,7 +291,6 @@ class NotificationClient:
             from_user=None,
             string_data=string_data,
             subject='You Commented on a Bounty',
-            bounty_title=bounty.title,
             notification_created=event_date,
             is_activity=True)
 
@@ -326,7 +308,6 @@ class NotificationClient:
                 from_user=comment.user,
                 string_data=string_data,
                 subject='Your Bounty Received a Comment',
-                bounty_title=bounty.title,
                 notification_created=event_date,
                 is_activity=False)
 
@@ -348,7 +329,6 @@ class NotificationClient:
             user=reviewer,
             from_user=reviewee,
             string_data=string_data,
-            bounty_title=bounty.title,
             notification_created=event_date,
             subject='You Issued a New Rating')
 
@@ -371,7 +351,6 @@ class NotificationClient:
             from_user=reviewer,
             string_data=string_data,
             subject='You Received a New Rating on Your Bounty',
-            bounty_title=bounty.title,
             notification_created=event_date,
             is_activity=False)
 

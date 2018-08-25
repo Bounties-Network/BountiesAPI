@@ -13,7 +13,7 @@ CHARSET = "UTF-8"
 client = boto3.client('ses', region_name=AWS_REGION)
 
 
-def send_email(receiver, subject, text, html):
+def send_email(receiver, subject, html):
     if settings.LOCAL:
         return
     if settings.ENVIRONMENT not in ['production', 'consensys', 'rinkstaging']:
@@ -26,19 +26,15 @@ def send_email(receiver, subject, text, html):
                 ],
             },
             Message={
+                'Subject': {
+                    'Charset': CHARSET,
+                    'Data': subject,
+                },
                 'Body': {
-                    'Text': {
-                        'Charset': CHARSET,
-                        'Data': text,
-                    },
                     'Html': {
                         'Charset': CHARSET,
                         'Data': html,
                     },
-                },
-                'Subject': {
-                    'Charset': CHARSET,
-                    'Data': subject,
                 },
             },
             Source=SENDER,

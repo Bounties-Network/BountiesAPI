@@ -4,7 +4,7 @@ from textwrap import wrap
 from django.template.loader import render_to_string
 
 from notifications import constants
-from std_bounties.models import Bounty, Category, Review
+from std_bounties.models import Bounty
 from bounties.utils import bounty_url_for, profile_url_for
 
 default_image = ('https://gallery.mailchimp.com/03351ad14a86e9637146ada2a'
@@ -35,13 +35,16 @@ class Email:
         return '\n'.join(map(str, map(render_category, categories)))
 
     def __init__(self, **kwargs):
-        if kwargs['notification_name'].__class__ != int:
+        notification_name = kwargs['notification_name']
+        bounty = kwargs['bounty']
+
+        if notification_name.__class__ != int:
             raise TypeError('notification_name must be of type int')
-        elif kwargs['notification_name'] not in Email.templates:
+        elif notification_name not in Email.templates:
             raise ValueError(
                 'notification_name {} must be a valid notification'.format(
-                    kwargs['notification_name']))
-        if kwargs['bounty'].__class__ != Bounty:
+                    notification_name))
+        if bounty.__class__ != Bounty:
             raise TypeError('bounty must be of type Bounty')
 
         self.__dict__.update(kwargs)
@@ -51,23 +54,23 @@ class Email:
         issuer = user
 
         # To fulfiller where issuer is where the notification came from
-        if (self.notification_name == constants.FULFILLMENT_ACCEPTED_FULFILLER
-                or self.notification_name == constants.RATING_RECEIVED
-                or self.notification_name == constants.TRANSFER_RECIPIENT):
+        if (notification_name == constants.FULFILLMENT_ACCEPTED_FULFILLER or
+                notification_name == constants.RATING_RECEIVED or
+                notification_name == constants.TRANSFER_RECIPIENT):
             issuer = from_user
 
         create_decimal = Context(prec=4).create_decimal
-        remaining = create_decimal(self.bounty.calculated_balance).normalize()
+        remaining = create_decimal(bounty.calculated_balance).normalize()
         token_amount = create_decimal(
-            self.bounty.calculated_fulfillmentAmount).normalize()
+            bounty.calculated_fulfillmentAmount).normalize()
 
-        description = self.bounty.description
+        description = bounty.description
         if len(description) > self.max_description_length:
             # Cut off at the closest word after the limit
             description = wrap(
                 description, self.max_description_length)[0] + ' ...'
 
-        title = self.bounty.title
+        title = bounty.title
         if len(title) > self.max_title_length:
             # Cut off at the closest word after the limit
             title = wrap(title, self.max_title_length)[0] + ' ...'
@@ -79,17 +82,17 @@ class Email:
         self.__dict__.update({
             # TODO: Find the best way to calculate
             # self.usd_amount_remaining = create_decimal(
-            # 	bounty.calculated_balance
-            # 	* bounty.tokenLockPrice
+            #   bounty.calculated_balance
+            #   * bounty.tokenLockPrice
             # ).normalize()
 
             'bounty_title': title,
             'url': url,
-            'usd_amount': create_decimal(self.bounty.usd_price).normalize(),
+            'usd_amount': create_decimal(bounty.usd_price).normalize(),
             'token_amount': token_amount,
-            'token': self.bounty.tokenSymbol,
+            'token': bounty.tokenSymbol,
             'bounty_categories': Email.render_categories(
-                self.bounty.data_categories),
+                bounty.data_categories),
             'token_amount_remaining': remaining,
             # TODO: Refactor to remaining submissions on the bounty
             'remaining_submissions': create_decimal(
@@ -97,20 +100,19 @@ class Email:
             'submission_description': description,
             'issuer_name': issuer and issuer.name,
             'issuer_address': issuer and issuer.public_address,
-            'issuer_profile_image': (issuer and issuer.profile_image
-                                     or default_image),
+            'issuer_profile_image': (
+                issuer and issuer.profile_image or default_image),
             'issuer_address_link': issuer and profile_url_for(
                 issuer.public_address),
             'user_name': user and user.name,
             'user_address': user and user.public_address,
-            'user_profile_image': (user and user.profile_image
-                                   or default_image),
+            'user_profile_image': (
+                user and user.profile_image or default_image),
             'user_address_link': user and profile_url_for(user.public_address),
             'from_user_name': from_user and from_user.name,
             'from_user_address': from_user and from_user.public_address,
-            'from_user_profile_image': from_user and from_user.profile_image,
-            'from_user_profile_image': (from_user and from_user.profile_image
-                                        or default_image),
+            'from_user_profile_image': (
+                from_user and from_user.profile_image or default_image),
             'from_user_address_link': from_user and profile_url_for(
                 from_user.public_address),
             'from_user_email': from_user and from_user.email

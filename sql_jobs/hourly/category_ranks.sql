@@ -20,7 +20,7 @@ AS (
 );
 
 
-CREATE TEMP TABLE category 
+CREATE TEMP TABLE category
 AS (
 	SELECT DISTINCT category.id, category.name, category.normalized_name
 	FROM bounty_category
@@ -32,7 +32,7 @@ AS (
 CREATE TABLE category_ranks_tmp
 AS SELECT * FROM category_ranks;
 
-DELETE FROM category_ranks_tmp WHERE platform='main';
+DELETE FROM category_ranks_tmp WHERE platform='bounties-network';
 
 INSERT INTO category_ranks_tmp
 (
@@ -41,7 +41,7 @@ INSERT INTO category_ranks_tmp
 		normalized_name,
 		name,
 		total_count,
-		'main' as platform
+		'bounties-network' as platform
 	FROM (
 		SELECT
 			duplicated_stats.normalized_name,

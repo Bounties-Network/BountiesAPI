@@ -1,5 +1,5 @@
 import rest_framework_filters as filters
-from std_bounties.models import Bounty, Category, Fulfillment, RankedCategory, Review
+from std_bounties.models import Bounty, Category, DraftBounty, Fulfillment, RankedCategory, Review
 
 
 class CategoriesFilter(filters.FilterSet):
@@ -28,7 +28,7 @@ class ReviewsFilter(filters.FilterSet):
         fields = {
             'reviewer__public_address': ['exact'],
             'reviewee__public_address': ['exact'],
-            'platform': ['exact'],
+            'platform': ['exact', 'in'],
         }
 
 
@@ -41,6 +41,14 @@ class FulfillmentsFilter(filters.FilterSet):
             'bounty': ['exact'],
             'bounty__user__public_address': ['exact'],
             'platform': ['exact', 'in'],
+        }
+
+
+class DraftBountiesFilter(filters.FilterSet):
+    class Meta:
+        model = DraftBounty
+        fields = {
+            'platform': ['in', 'exact'],
         }
 
 

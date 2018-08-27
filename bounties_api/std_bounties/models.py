@@ -192,6 +192,7 @@ class DraftBounty(BountyAbstract):
     data = models.CharField(max_length=128, null=True, blank=True)
     issuer = models.CharField(max_length=128, null=True, blank=True)
     on_chain = models.BooleanField(default=False)
+    platform = models.CharField(max_length=128, blank=True)
     data_categories = None
     data_issuer = None
     data_json = None

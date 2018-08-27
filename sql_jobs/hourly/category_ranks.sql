@@ -32,7 +32,7 @@ AS (
 CREATE TABLE category_ranks_tmp
 AS SELECT * FROM category_ranks;
 
-DELETE FROM category_ranks_tmp WHERE platform='bounties-network';
+DELETE FROM category_ranks_tmp WHERE platform='main';
 
 INSERT INTO category_ranks_tmp
 (
@@ -41,7 +41,7 @@ INSERT INTO category_ranks_tmp
 		normalized_name,
 		name,
 		total_count,
-		'bounties-network' as platform
+		'main' as platform
 	FROM (
 		SELECT
 			duplicated_stats.normalized_name,

@@ -18,7 +18,7 @@ class RankedCategoryFilter(filters.FilterSet):
     class Meta:
         model = RankedCategory
         fields = {
-            'platform': ['in', 'exact'],
+            'platform': ['exact'],
         }
 
 

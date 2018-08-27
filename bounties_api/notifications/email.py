@@ -86,13 +86,15 @@ class Email:
                 accepted=False,
             ).all().count()
 
-        self.__dict__.update({
-            # TODO: Find the best way to calculate
-            # self.usd_amount_remaining = create_decimal(
-            #   bounty.calculated_balance
-            #   * bounty.tokenLockPrice
-            # ).normalize()
+        remaining_usd = ' unknown'
+        if bounty.tokenLockPrice:
+            remaining_usd = create_decimal(
+                remaining * create_decimal(bounty.tokenLockPrice)).normalize()
+        elif bounty.token and bounty.token.price_usd:
+            remaining_usd = create_decimal(
+                remaining * create_decimal(bounty.token.price_usd)).normalize()
 
+        self.__dict__.update({
             'bounty': bounty,
             'bounty_title': title,
             'url': url,
@@ -105,7 +107,7 @@ class Email:
             'bounty_categories': Email.render_categories(
                 bounty.data_categories),
             'token_amount_remaining': remaining,
-            # TODO: Refactor to remaining submissions on the bounty
+            'usd_amount_remaining': remaining_usd,
             'remaining_submissions': remaining_submissions,
             'submission_description': description,
             'issuer_name': issuer and issuer.name,

@@ -38,7 +38,6 @@ def create_notification(**kwargs):
     is_activity = kwargs.get('is_activity', True)
     url = kwargs.get('url', '')
 
-
     notification, created = Notification.objects.get_or_create(
         uid=str(uid),
         defaults={

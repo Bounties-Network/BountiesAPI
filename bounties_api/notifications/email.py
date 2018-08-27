@@ -52,7 +52,6 @@ class Email:
         if bounty.__class__ != Bounty:
             raise TypeError('bounty must be of type Bounty')
 
-
         # To fulfiller where issuer is where the notification came from
         if (notification_name == constants.FULFILLMENT_ACCEPTED_FULFILLER or
                 notification_name == constants.RATING_RECEIVED or
@@ -113,20 +112,23 @@ class Email:
             'issuer_name': issuer and issuer.name,
             'issuer_address': issuer and shorten_address(
                 issuer.public_address),
-            'issuer_profile_image': (issuer and issuer.profile_image
-                or default_image),
+            'issuer_profile_image': (
+                issuer and issuer.profile_image or default_image
+            ),
             'issuer_address_link': issuer and profile_url_for(
                 issuer.public_address),
             'user_name': user and user.name,
             'user_address': user and shorten_address(user.public_address),
             'user_profile_image': (
-                user and user.profile_image or default_image),
+                user and user.profile_image or default_image
+            ),
             'user_address_link': user and profile_url_for(user.public_address),
             'from_user_name': from_user and from_user.name,
             'from_user_address': from_user and shorten_address(
                 from_user.public_address),
-            'from_user_profile_image': (from_user and from_user.profile_image
-                or default_image),
+            'from_user_profile_image': (
+                from_user and from_user.profile_image or default_image
+            ),
             'from_user_address_link': from_user and profile_url_for(
                 from_user.public_address),
             'from_user_email': from_user and from_user.email

@@ -4,7 +4,7 @@ from textwrap import wrap
 from django.template.loader import render_to_string
 
 from notifications import constants
-from std_bounties.models import Bounty
+from std_bounties.models import Bounty, Fulfillment
 from bounties.utils import bounty_url_for, profile_url_for, shorten_address
 from bounties.settings import ENVIRONMENT
 
@@ -78,6 +78,14 @@ class Email:
         if not url or len(url) == 0:
             url = bounty_url_for(bounty.bounty_id, bounty.platform)
 
+        remaining_submissions = 0
+
+        if notification_name == constants.BOUNTY_EXPIRED:
+            remaining_submissions = Fulfillment.objects.filter(
+                bounty_id=bounty.id,
+                accepted=False,
+            ).all().count()
+
         self.__dict__.update({
             # TODO: Find the best way to calculate
             # self.usd_amount_remaining = create_decimal(
@@ -98,8 +106,7 @@ class Email:
                 bounty.data_categories),
             'token_amount_remaining': remaining,
             # TODO: Refactor to remaining submissions on the bounty
-            'remaining_submissions': create_decimal(
-                remaining / token_amount).normalize(),
+            'remaining_submissions': remaining_submissions,
             'submission_description': description,
             'issuer_name': issuer and issuer.name,
             'issuer_address': issuer and shorten_address(

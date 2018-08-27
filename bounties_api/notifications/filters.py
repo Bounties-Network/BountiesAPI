@@ -7,7 +7,7 @@ class DashboardNotificationFilter(filters.FilterSet):
     class Meta:
         model = DashboardNotification
         fields = {
-            'notification__platform': ['exact']
+            'notification__platform': ['in', 'exact']
         }
 
 

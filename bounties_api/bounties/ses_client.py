@@ -9,7 +9,7 @@ logger = logging.getLogger('django')
 
 SENDER = 'Bounties Team <team@bounties.network>'
 AWS_REGION = 'us-east-1'
-CHARSET = "UTF-8"
+CHARSET = 'UTF-8'
 client = boto3.client('ses', region_name=AWS_REGION)
 
 

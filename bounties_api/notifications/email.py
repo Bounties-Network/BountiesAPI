@@ -35,8 +35,12 @@ class Email:
         return '\n'.join(map(str, map(render_category, categories)))
 
     def __init__(self, **kwargs):
-        notification_name = kwargs['notification_name']
         bounty = kwargs['bounty']
+        url = kwargs['url']
+        user = kwargs['user']
+        from_user = kwargs['from_user']
+        notification_name = kwargs['notification_name']
+        issuer = user
 
         if notification_name.__class__ != int:
             raise TypeError('notification_name must be of type int')
@@ -47,11 +51,6 @@ class Email:
         if bounty.__class__ != Bounty:
             raise TypeError('bounty must be of type Bounty')
 
-        self.__dict__.update(kwargs)
-
-        user = self.user
-        from_user = self.from_user
-        issuer = user
 
         # To fulfiller where issuer is where the notification came from
         if (notification_name == constants.FULFILLMENT_ACCEPTED_FULFILLER or
@@ -75,8 +74,7 @@ class Email:
             # Cut off at the closest word after the limit
             title = wrap(title, self.max_title_length)[0] + ' ...'
 
-        url = self.url
-        if not url:
+        if not url or len(url) == 0:
             url = bounty_url_for(bounty.bounty_id, bounty.platform)
 
         self.__dict__.update({
@@ -86,8 +84,10 @@ class Email:
             #   * bounty.tokenLockPrice
             # ).normalize()
 
+            'bounty': bounty,
             'bounty_title': title,
             'url': url,
+            'notification_name': notification_name,
             'usd_amount': create_decimal(bounty.usd_price).normalize(),
             'token_amount': token_amount,
             'token': bounty.tokenSymbol,

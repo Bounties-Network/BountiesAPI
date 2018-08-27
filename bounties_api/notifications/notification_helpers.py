@@ -26,18 +26,28 @@ def create_profile_updated_notification(*args, **kwargs):
 
 @transaction.atomic
 def create_notification(**kwargs):
+    uid = kwargs['uid']
+    notification_name = kwargs['notification_name']
     string_data = kwargs['string_data']
-    is_activity = kwargs['is_activity']
+    user = kwargs['user']
+    from_user = kwargs['from_user']
+    notification_created = kwargs['notification_created']
+    bounty = kwargs['bounty']
+    subject = kwargs['subject']
+    platform = kwargs.get('platform', '')
+    is_activity = kwargs.get('is_activity', True)
+    url = kwargs.get('url', '')
+
 
     notification, created = Notification.objects.get_or_create(
-        uid=str(kwargs['uid']),
+        uid=str(uid),
         defaults={
-            'notification_name': kwargs['notification_name'],
-            'user': kwargs['user'],
-            'from_user': kwargs['from_user'],
-            'notification_created': kwargs['notification_created'],
+            'notification_name': notification_name,
+            'user': user,
+            'from_user': from_user,
+            'notification_created': notification_created,
             'dashboard': True,
-            'platform': kwargs['platform'],
+            'platform': platform,
         },
     )
 
@@ -50,7 +60,10 @@ def create_notification(**kwargs):
         notification=notification,
         string_data=string_data,
         is_activity=is_activity,
-        data={'link': url, 'bounty_title': kwargs['bounty'].title},
+        data={
+            'link': url,
+            'bounty_title': bounty.title
+        },
     )
 
     email_settings = user.settings.emails
@@ -66,7 +79,7 @@ def create_notification(**kwargs):
     if notification.email_sent:
         return
 
-    if kwargs['notification_name'] not in Email.templates:
+    if notification_name not in Email.templates:
         return  # TODO: Still do regular notification without email
 
     email = Email(**kwargs)
@@ -76,6 +89,6 @@ def create_notification(**kwargs):
 
     email_html = email.render()
 
-    send_email(user.email, subject, email_txt, email_html)
+    send_email(user.email, subject, email_html)
     notification.email_sent = True
     notification.save()

@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from notifications import constants
 from std_bounties.models import Bounty
 from bounties.utils import bounty_url_for, profile_url_for, shorten_address
+from bounties.settings import ENVIRONMENT
 
 default_image = ('https://gallery.mailchimp.com/03351ad14a86e9637146ada2a'
                  '/images/fae20fec-36ab-4594-9753-643c04e0ab9a.png')
@@ -87,6 +88,8 @@ class Email:
             'bounty': bounty,
             'bounty_title': title,
             'url': url,
+            'preferences_link': 'https://{}bounties.network/settings'.format(
+                '' if ENVIRONMENT == 'production' else 'staging.'),
             'notification_name': notification_name,
             'usd_amount': create_decimal(bounty.usd_price).normalize(),
             'token_amount': token_amount,

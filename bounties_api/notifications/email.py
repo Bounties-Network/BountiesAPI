@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 
 from notifications import constants
 from std_bounties.models import Bounty
-from bounties.utils import bounty_url_for, profile_url_for
+from bounties.utils import bounty_url_for, profile_url_for, shorten_address
 
 default_image = ('https://gallery.mailchimp.com/03351ad14a86e9637146ada2a'
                  '/images/fae20fec-36ab-4594-9753-643c04e0ab9a.png')
@@ -99,20 +99,22 @@ class Email:
                 remaining / token_amount).normalize(),
             'submission_description': description,
             'issuer_name': issuer and issuer.name,
-            'issuer_address': issuer and issuer.public_address,
-            'issuer_profile_image': (
-                issuer and issuer.profile_image or default_image),
+            'issuer_address': issuer and shorten_address(
+                issuer.public_address),
+            'issuer_profile_image': (issuer and issuer.profile_image
+                or default_image),
             'issuer_address_link': issuer and profile_url_for(
                 issuer.public_address),
             'user_name': user and user.name,
-            'user_address': user and user.public_address,
+            'user_address': user and shorten_address(user.public_address),
             'user_profile_image': (
                 user and user.profile_image or default_image),
             'user_address_link': user and profile_url_for(user.public_address),
             'from_user_name': from_user and from_user.name,
-            'from_user_address': from_user and from_user.public_address,
-            'from_user_profile_image': (
-                from_user and from_user.profile_image or default_image),
+            'from_user_address': from_user and shorten_address(
+                from_user.public_address),
+            'from_user_profile_image': (from_user and from_user.profile_image
+                or default_image),
             'from_user_address_link': from_user and profile_url_for(
                 from_user.public_address),
             'from_user_email': from_user and from_user.email

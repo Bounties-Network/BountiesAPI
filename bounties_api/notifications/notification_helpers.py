@@ -32,7 +32,7 @@ def create_notification(**kwargs):
     user = kwargs['user']
     from_user = kwargs['from_user']
     notification_created = kwargs['notification_created']
-    bounty = kwargs['bounty']
+    bounty = kwargs.get('bounty')
     subject = kwargs['subject']
     platform = kwargs.get('platform', '')
     is_activity = kwargs.get('is_activity', True)
@@ -61,7 +61,7 @@ def create_notification(**kwargs):
         is_activity=is_activity,
         data={
             'link': url,
-            'bounty_title': bounty.title
+            'bounty_title': bounty and bounty.title or kwargs.get('subject')
         },
     )
 

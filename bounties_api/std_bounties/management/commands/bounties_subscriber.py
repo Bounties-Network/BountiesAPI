@@ -161,6 +161,20 @@ class Command(BaseCommand):
                         inputs=contract_method_inputs,
                         uid=message_deduplication_id)
 
+                if event == 'DraftCreated':
+                    master_client.draft_created(
+                        bounty_id,
+                        event_date=event_date,
+                        inputs=contract_method_inputs,
+                        uid=message_deduplication_id)
+
+                if event == 'DraftUpdated':
+                    master_client.draft_updated(
+                        bounty_id,
+                        event_date=event_date,
+                        inputs=contract_method_inputs,
+                        uid=message_deduplication_id)
+
                 logger.info(event)
 
                 # This means the contract subscriber will never send this event

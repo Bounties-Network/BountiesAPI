@@ -172,6 +172,7 @@ class NotificationClient:
             self,
             bounty_id,
             event_date,
+            inputs,
             transaction_from,
             uid,
             **kwargs):
@@ -191,6 +192,7 @@ class NotificationClient:
             from_user=from_user,
             string_data=string_data,
             notification_created=event_date,
+            inputs=inputs,
             subject='Contribution Added')
 
     def deadline_extended(self, bounty_id, event_date, uid, **kwargs):

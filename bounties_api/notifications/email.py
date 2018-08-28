@@ -5,7 +5,12 @@ from django.template.loader import render_to_string
 
 from notifications import constants
 from std_bounties.models import Bounty, Fulfillment
-from bounties.utils import bounty_url_for, profile_url_for, shorten_address
+from bounties.utils import (
+    bounty_url_for,
+    profile_url_for,
+    shorten_address,
+    calculate_token_value
+)
 from bounties.settings import ENVIRONMENT
 
 default_image = ('https://gallery.mailchimp.com/03351ad14a86e9637146ada2a'
@@ -94,6 +99,12 @@ class Email:
             remaining_usd = create_decimal(
                 remaining * create_decimal(bounty.token.price_usd)).normalize()
 
+        added_amount = 0
+        if notification_name == constants.CONTRIBUTION_ADDED:
+            inputs = kwargs.get('inputs')
+            added_amount = create_decimal(calculate_token_value(
+                bounty.tokenDecimals, inputs.fulfillmentAmount))
+
         self.__dict__.update({
             'bounty': bounty,
             'bounty_title': title,
@@ -108,6 +119,7 @@ class Email:
                 bounty.data_categories),
             'token_amount_remaining': remaining,
             'usd_amount_remaining': remaining_usd,
+            'added_amount': added_amount,
             'remaining_submissions': remaining_submissions,
             'submission_description': description,
             'issuer_name': issuer and issuer.name,

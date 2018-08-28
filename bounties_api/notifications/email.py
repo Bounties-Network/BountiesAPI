@@ -41,7 +41,7 @@ class Email:
         user = kwargs['user']
         from_user = kwargs['from_user']
         notification_name = kwargs['notification_name']
-        review = kwargs.get('review', None)
+        review = kwargs.get('review')
         issuer = user
 
         if notification_name.__class__ != int:

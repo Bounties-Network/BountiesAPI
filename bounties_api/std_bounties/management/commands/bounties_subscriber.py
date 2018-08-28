@@ -129,6 +129,7 @@ class Command(BaseCommand):
                         event_date=event_date,
                         inputs=contract_method_inputs,
                         event_timestamp=event_timestamp,
+                        transaction_from=transaction_from,
                         uid=message_deduplication_id)
 
                 if event == 'DeadlineExtended':

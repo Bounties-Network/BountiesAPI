@@ -41,6 +41,7 @@ class Email:
         user = kwargs['user']
         from_user = kwargs['from_user']
         notification_name = kwargs['notification_name']
+        review = kwargs.get('review', None)
         issuer = user
 
         if notification_name.__class__ != int:
@@ -131,7 +132,9 @@ class Email:
             ),
             'from_user_address_link': from_user and profile_url_for(
                 from_user.public_address),
-            'from_user_email': from_user and from_user.email
+            'from_user_email': from_user and from_user.email,
+            'review': review and review.review,
+            'rating': review and '{}/5'.format(review.rating)
         })
 
     def render(self):

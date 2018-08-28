@@ -314,7 +314,7 @@ class NotificationClient:
     def rating_issued(
             self,
             bounty_id,
-            event_date,
+            review,
             uid,
             reviewer,
             reviewee,
@@ -329,13 +329,13 @@ class NotificationClient:
             user=reviewer,
             from_user=reviewee,
             string_data=string_data,
-            notification_created=event_date,
-            subject='You Issued a New Rating')
+            notification_created=review.created,
+            review=review)
 
     def rating_received(
             self,
             bounty_id,
-            event_date,
+            review,
             uid,
             reviewer,
             reviewee,
@@ -350,8 +350,8 @@ class NotificationClient:
             user=reviewee,
             from_user=reviewer,
             string_data=string_data,
-            subject='You Received a New Rating on Your Bounty',
-            notification_created=event_date,
+            notification_created=review.created,
+            review=review,
             is_activity=False)
 
     def profile_updated(self, public_address):

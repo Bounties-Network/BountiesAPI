@@ -297,9 +297,17 @@ class NotificationClient:
     def comment_received(self, bounty_id, event_date, uid, **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)
         comment = Comment.objects.get(id=uid)
+        string_data = notification_templates['BountyCommentReceived'].format(
+            bounty_title=bounty.title)
+
+        users = filter(
+            lambda u: u != bounty.user and u != comment.user,
+            set(map(lambda c: c.user, bounty.comments)))
+
         if bounty.user != comment.user:
-            string_data = notification_templates['BountyCommentReceived'].format(
-                bounty_title=bounty.title)
+            users.append(bounty.user)
+
+        for user in users:
             create_bounty_notification(
                 bounty=bounty,
                 uid=uid,

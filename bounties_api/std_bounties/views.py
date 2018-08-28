@@ -108,8 +108,10 @@ class BountyComments(APIView):
     def post(self, request, bounty_id):
         bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
         serializer = CommentSerializer(
-            data=request.data, context={
-                'request': request})
+            data=request.data,
+            context={
+                'request': request
+            })
         serializer.is_valid(raise_exception=True)
         comment = serializer.save()
         bounty.comments.add(comment)

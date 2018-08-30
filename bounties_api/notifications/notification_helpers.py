@@ -79,7 +79,7 @@ def create_notification(**kwargs):
         return
 
     if notification_name not in Email.templates:
-        return  # TODO: Still do regular notification without email
+        return
 
     email = Email(**kwargs)
 

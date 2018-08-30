@@ -317,7 +317,7 @@ class NotificationClient:
 
         users = filter(
             lambda u: u != bounty.user and u != comment.user,
-            set(map(lambda c: c.user, bounty.comments)))
+            set(map(lambda c: c.user, bounty.comments.all())))
 
         if bounty.user != comment.user:
             users.append(bounty.user)

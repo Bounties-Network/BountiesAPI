@@ -319,7 +319,7 @@ class NotificationClient:
         for user in users:
             create_bounty_notification(
                 bounty=bounty,
-                uid=uid,
+                uid='{}-{}'.format(uid, user.id),
                 notification_name=notifications['BountyCommentReceived'],
                 user=bounty.user,
                 from_user=comment.user,

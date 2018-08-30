@@ -1,5 +1,4 @@
 from datetime import datetime
-from uuid import uuid4
 from std_bounties.models import Fulfillment, Bounty, Comment
 from user.models import User
 from notifications.constants import notifications
@@ -387,7 +386,7 @@ class NotificationClient:
         string_data = notification_templates['ProfileUpdated'].format(
             public_address=public_address)
         create_profile_updated_notification(
-            uid=str(uuid4()) + 'ProfileUpdated',
+            uid=str(user.id) + str(int(datetime.utcnow().timestamp())) + 'ProfileUpdated',
             notification_name=notifications['ProfileUpdated'],
             user=user,
             from_user=None,

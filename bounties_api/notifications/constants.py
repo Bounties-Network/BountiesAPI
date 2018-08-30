@@ -21,6 +21,8 @@ RATING_ISSUED = 19
 RATING_RECEIVED = 20
 PROFILE_UPDATED = 21
 BOUNTY_COMMENT = 22
+DRAFT_CREATED = 23
+DRAFT_UPDATED = 24
 
 NOTIFICATION_IDS = (
     (FULFILLMENT_SUBMITTED, 'FulfillmentSubmitted'),
@@ -46,6 +48,8 @@ NOTIFICATION_IDS = (
     (RATING_RECEIVED, 'RatingReceived'),
     (PROFILE_UPDATED, 'ProfileUpdated'),
     (BOUNTY_COMMENT, 'BountyComment'),
+    (DRAFT_CREATED, 'DraftCreated'),
+    (DRAFT_UPDATED, 'DraftUpdated'),
 )
 
 id_to_notification = dict(NOTIFICATION_IDS)

@@ -98,3 +98,7 @@ def bounty_url_for(bounty_id, platform=None):
 def profile_url_for(public_address, platform=None):
     url = '{}/profile/{}/'.format(base_url_for(platform), public_address)
     return url
+
+
+def shorten_address(address):
+    return '{}...{}'.format(address[:6], address[-4:])

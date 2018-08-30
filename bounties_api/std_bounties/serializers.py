@@ -1,10 +1,21 @@
 from django.apps import apps
+from django.db import transaction
 from rest_framework import serializers
+
 from bounties.serializers import CreatableSlugRelatedField
-from std_bounties.models import Bounty, Fulfillment, Category, RankedCategory, Token, DraftBounty, Comment, Review
+from std_bounties.models import (
+    Bounty,
+    Fulfillment,
+    Category,
+    RankedCategory,
+    Token,
+    DraftBounty,
+    Comment,
+    Review
+)
 from std_bounties.client_helpers import map_token_data
 from std_bounties.constants import STAGE_CHOICES
-from django.db import transaction
+from notifications.notification_client import NotificationClient
 
 
 class CustomSerializer(serializers.ModelSerializer):
@@ -191,6 +202,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         instance.usd_price = token_data.get('usd_price')
         instance.issuer = user.public_address
         instance.save()
+        NotificationClient.draft_created(instance.id, instance.created)
         return instance
 
     @transaction.atomic
@@ -209,4 +221,5 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         instance.token_id = token_data.get('token')
         instance.usd_price = token_data.get('usd_price')
         instance.save()
+        NotificationClient.draft_updated(instance.id, instance.modified)
         return instance

@@ -86,11 +86,9 @@ class SubmissionReviews(APIView):
             fulfillment.fulfiller_review = review
         fulfillment.save()
         notification_client.rating_issued(
-            bounty.bounty_id, review.created, str(
-                review.id) + 'issued', reviewer, reviewee)
+            bounty.bounty_id, review, reviewer, reviewee)
         notification_client.rating_received(
-            bounty.bounty_id, review.created, str(
-                review.id) + 'received', reviewer, reviewee)
+            bounty.bounty_id, review, reviewer, reviewee)
         return JsonResponse(data=serializer.data)
 
 
@@ -110,8 +108,10 @@ class BountyComments(APIView):
     def post(self, request, bounty_id):
         bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
         serializer = CommentSerializer(
-            data=request.data, context={
-                'request': request})
+            data=request.data,
+            context={
+                'request': request
+            })
         serializer.is_valid(raise_exception=True)
         comment = serializer.save()
         bounty.comments.add(comment)

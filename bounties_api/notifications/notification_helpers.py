@@ -83,9 +83,6 @@ def create_notification(**kwargs):
 
     email = Email(**kwargs)
 
-    # TODO: Remove this - only use while debugging
-    email.render_to_file()
-
     email_html = email.render()
 
     send_email(user.email, subject, email_html)

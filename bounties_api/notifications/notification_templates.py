@@ -21,8 +21,8 @@ notification_templates = {
     'RatingIssued': 'You left a review for your experience with: {bounty_title}.',
     'ProfileUpdated': 'You updated your profile assciated with: {public_address}.',
     'BountyComment': 'You issued a bounty for: {bounty_title}.',
-    'DraftCreated': 'You created a draft for: {bounty_title}.',
-    'DraftUpdated': 'You updated a draft for: {bounty_title}.'
+    'DraftCreated': 'You created draft {draft_id}.',
+    'DraftUpdated': 'You updated draft {draft_id}.'
 }
 
 email_templates = {

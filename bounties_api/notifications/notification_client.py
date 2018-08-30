@@ -1,9 +1,15 @@
 from datetime import datetime
-from std_bounties.models import Fulfillment, Bounty, Comment
+from std_bounties.models import Fulfillment, Bounty, Comment, DraftBounty
 from user.models import User
 from notifications.constants import notifications
-from notifications.notification_helpers import create_bounty_notification, create_profile_updated_notification
-from notifications.notification_templates import notification_templates, email_templates
+from notifications.notification_helpers import (
+    create_bounty_notification,
+    create_profile_updated_notification
+)
+from notifications.notification_templates import (
+    notification_templates,
+    email_templates
+)
 
 
 class NotificationClient:
@@ -384,30 +390,30 @@ class NotificationClient:
             string_data=string_data,
             subject='You Updated Your Profile')
 
-    def draft_created(self, bounty_id, event_date, inputs, uid, **kwargs):
-        bounty = Bounty.objects.get(id=bounty_id)
+    def draft_created(self, draft_id, event_date, uid, **kwargs):
+        draft = DraftBounty.objects.get(id=draft_id)
         string_data = notification_templates['DraftCreated'].format(
-            bounty_title=bounty.title)
+            draft_id=draft_id)
         create_bounty_notification(
-            bounty=bounty,
-            uid=uid,
+            uid=draft_id,
             notification_name=notifications['DraftCreated'],
-            user=bounty.user,
+            user=draft.issuer,
             from_user=None,
             string_data=string_data,
             notification_created=event_date,
-            subject='New draft created')
+            subject='Draft created',
+            is_activity=True)
 
-    def draft_updated(self, bounty_id, event_date, inputs, uid, **kwargs):
-        bounty = Bounty.objects.get(id=bounty_id)
+    def draft_updated(self, draft_id, event_date, **kwargs):
+        draft = DraftBounty.objects.get(id=draft_id)
         string_data = notification_templates['DraftUpdated'].format(
-            bounty_title=bounty.title)
+            draft_id=draft_id)
         create_bounty_notification(
-            bounty=bounty,
-            uid=uid,
+            uid='{}-{}'.format(draft_id, event_date),
             notification_name=notifications['DraftUpdated'],
-            user=bounty.user,
+            user=draft.issuer,
             from_user=None,
             string_data=string_data,
             notification_created=event_date,
-            subject='Draft updated')
+            subject='Draft updated',
+            is_activity=True)

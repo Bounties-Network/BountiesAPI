@@ -1,4 +1,3 @@
-import datetime
 from django.apps import apps
 from django.db import transaction
 from rest_framework import serializers
@@ -203,8 +202,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         instance.usd_price = token_data.get('usd_price')
         instance.issuer = user.public_address
         instance.save()
-        NotificationClient.draft_created(instance.id,
-            datetime.datetime.now().time())
+        NotificationClient.draft_created(instance.id, instance.created)
         return instance
 
     @transaction.atomic
@@ -223,6 +221,5 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         instance.token_id = token_data.get('token')
         instance.usd_price = token_data.get('usd_price')
         instance.save()
-        NotificationClient.draft_updated(instance.id,
-            datetime.datetime.now().time())
+        NotificationClient.draft_updated(instance.id, instance.modified)
         return instance

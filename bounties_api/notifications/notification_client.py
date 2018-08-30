@@ -332,6 +332,7 @@ class NotificationClient:
                 string_data=string_data,
                 subject='Your Bounty Received a Comment',
                 notification_created=event_date,
+                comment=comment,
                 is_activity=False)
 
     def rating_issued(

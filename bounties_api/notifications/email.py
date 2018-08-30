@@ -151,7 +151,7 @@ class Email:
             'from_user_email': from_user and from_user.email,
             'review': review and review.review,
             'rating': review and '{}/5'.format(review.rating),
-            'comment' comment and comment.text
+            'comment': comment and comment.text
         })
 
     def render(self):

@@ -2,7 +2,7 @@
 
 const delay = require('delay'),
 	  rollbar = require('./rollbar'),
-	{ StandardBounties } = require('./web3_config'),
+	{ StandardBounties, getBlock } = require('./web3_config'),
 	{ getAsync, writeAsync } = require('./redis_config'),
 	{ sendEvents } = require('./eventsRetriever');
 
@@ -15,9 +15,22 @@ async function handler() {
 
 			// StandardBounties latest events
 			let fromBlock = await getAsync('currentBlock') || 0;
-			let events = await StandardBounties.getPastEvents({fromBlock, toBlock: 'latest'});
-			let eventBlock = await sendEvents(events);
+			const latestBlockData = await getBlock('latest');
+			const latestBlock = latestBlockData.number;
+			console.log('fromBlock: ', fromBlock);
+			console.log('latestBlock: ', latestBlock)
+			let eventBlock;
+			while (fromBlock < latestBlock) {
+				let events = await StandardBounties.getPastEvents({fromBlock, toBlock: fromBlock + 100000});
+				console.log('currentCheck: ', fromBlock);
+				eventBlock = await sendEvents(events);
+				if (eventBlock) {
+					break;
+				}
+				fromBlock += 100000;
+			}
 
+			console.log('eventBlock: ', eventBlock);
 			if (eventBlock) {
 				await writeAsync('currentBlock', eventBlock);
 			}

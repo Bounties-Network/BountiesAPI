@@ -13,6 +13,7 @@ const StandardBounties = new web3.eth.Contract(
 
 abiDecoder.addABI(json.interfaces.StandardBounties);
 
+exports.getBlock = web3.eth.getBlock;
 exports.getTransaction = web3.eth.getTransaction;
 exports.getBlock = web3.eth.getBlock;
 exports.abiDecoder = abiDecoder;

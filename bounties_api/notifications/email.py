@@ -47,6 +47,7 @@ class Email:
         from_user = kwargs['from_user']
         notification_name = kwargs['notification_name']
         review = kwargs.get('review')
+        comment = kwargs.get('comment')
         issuer = user
 
         if notification_name.__class__ != int:
@@ -149,7 +150,8 @@ class Email:
                 from_user.public_address),  # TODO: Pass in platform here
             'from_user_email': from_user and from_user.email,
             'review': review and review.review,
-            'rating': review and '{}/5'.format(review.rating)
+            'rating': review and '{}/5'.format(review.rating),
+            'comment': comment and comment.text
         })
 
     def render(self):

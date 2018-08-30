@@ -1,3 +1,4 @@
+from datetime import datetime
 from std_bounties.models import Fulfillment, Bounty, Comment
 from user.models import User
 from notifications.constants import notifications
@@ -380,15 +381,15 @@ class NotificationClient:
             notification_created=event_date,
             is_activity=False)
 
-    def profile_updated(self, public_address, event_date, uid, **kwargs):
+    def profile_updated(self, public_address):
         user = User.objects.get(public_address=public_address)
         string_data = notification_templates['ProfileUpdated'].format(
             public_address=public_address)
         create_profile_updated_notification(
-            uid=uid,
+            uid=str(user.id) + str(int(datetime.utcnow().timestamp())) + 'ProfileUpdated',
             notification_name=notifications['ProfileUpdated'],
             user=user,
             from_user=None,
-            notification_created=event_date,
+            notification_created=datetime.utcnow(),
             string_data=string_data,
             subject='You Updated Your Profile')

@@ -14,8 +14,7 @@ class Notification(models.Model):
     uid = models.CharField(null=False, blank=False, max_length=512)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    notification_name = models.IntegerField(
-        choices=NOTIFICATION_IDS, null=False)
+    notification_name = models.IntegerField(choices=NOTIFICATION_IDS, null=False)
     notification_created = models.DateTimeField(null=False)
     email_sent = models.BooleanField(default=False, null=False)
     dashboard = models.BooleanField(default=True, null=False)

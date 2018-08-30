@@ -19,8 +19,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            users = User.objects.filter(profile_hash='').exclude(
-                Q(github_username=''), Q(profileDirectoryHash='')
+            users = User.objects.all().exclude(
+                Q(github=''), Q(profileDirectoryHash='')
             )
 
             for user in users:
@@ -30,8 +30,8 @@ class Command(BaseCommand):
                     location = 'https://ipfs.infura.io/ipfs/{}/{}'.format(user.profileDirectoryHash, user.profileFileName)
                     image_r = requests.get(location)
 
-                if user.github_username:
-                    github_username = user.github_username
+                elif user.github and not user.profile_touched_manually:
+                    github_username = user.github
                     if not github_username:
                         continue
                     url = 'https://api.github.com/users/{}'.format(github_username)
@@ -42,11 +42,7 @@ class Command(BaseCommand):
                     if r.status_code == 200:
                         github_data = r.json()
                         github_image = github_data.get('avatar_url')
-                        github_name = github_data.get('name')
-                        github_email = github_data.get('email')
-
-                        if image_r is None:
-                            image_r = requests.get(github_image)
+                        image_r = requests.get(github_image)
 
                 if image_r and image_r.status_code == 200:
                     try:
@@ -54,24 +50,21 @@ class Command(BaseCommand):
                         bucket = 'assets.bounties.network'
                         key = '{}/userimages/{}-{}.jpg'.format(
                             settings.ENVIRONMENT, user.public_address, nonce)
+
                         client.put_object(
                             Body=image_r.content,
                             ContentType=image_r.headers['content-type'],
                             Bucket=bucket,
                             ACL='public-read',
                             Key=key)
+
                         user.profile_image = 'https://{}/{}'.format(bucket, key)
-                        user.isProfileImageDirty = False
+                        user.is_profile_image_dirty = False
+                        user.save()
+
+                        logger.info('uploaded for: {}'.format(user.public_address))
                     except ClientError as e:
                         logger.error(e.response['Error']['Message'])
-
-                if not user.name and github_name:
-                    user.name = github_name
-                if not user.email and github_email:
-                    user.email = github_email
-
-                user.save()
-                logger.info('uploaded for: {}'.format(user.public_address))
 
         except Exception as e:
             # goes to rollbar

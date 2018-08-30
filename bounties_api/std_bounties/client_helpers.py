@@ -8,8 +8,7 @@ from web3.middleware import geth_poa_middleware
 from std_bounties.constants import rev_mapped_difficulties, BEGINNER
 from std_bounties.contract import data
 from std_bounties.models import Token
-from user.models import User
-from utils.functional_tools import pluck, prune
+from utils.functional_tools import pluck
 
 from django.conf import settings
 import ipfsapi
@@ -37,17 +36,6 @@ fulfillment_data_keys = [
     'sourceFileName',
     'sourceFileHash',
     'sourceDirectoryHash']
-user_data_keys = [
-    'name',
-    'email',
-    'languages',
-    'organization',
-    'skills']
-user_social_keys = [
-    'github',
-    'twitter',
-    'linkedin',
-    'dribble']
 
 
 def map_bounty_data(data_hash, bounty_id):
@@ -155,47 +143,6 @@ def map_fulfillment_data(data_hash, bounty_id, fulfillment_id):
         **plucked_data,
         **metadata,
     }
-
-
-def map_user_data(data_hash, public_address):
-    ipfs_hash = data_hash
-    if len(ipfs_hash) != 46 or not ipfs_hash.startswith('Qm'):
-        logger.error(
-            'Data Hash Incorrect for user data on address: {}'.format(
-                public_address))
-        data_JSON = "{}"
-    else:
-        data_JSON = ipfs.cat(ipfs_hash)
-    if len(ipfs_hash) == 0:
-        ipfs_hash = 'invalid'
-
-    data = json.loads(data_JSON)
-
-    plucked_data = pluck(data, user_data_keys)
-    plucked_social = pluck(data.get('social', {}), user_social_keys)
-
-    profileDirectoryHash = data.get('profilePhoto', {}).get('fileDirectoryHash', None)
-
-    user = {
-        **plucked_data,
-        **plucked_social,
-        'website': data.get('social', {}).get('personalWebsite', None),
-        'profileFileName': data.get('profilePhoto', {}).get('fileName', None),
-        'profileDirectoryHash': profileDirectoryHash,
-        'is_profile_image_dirty': is_profile_image_dirty(profileDirectoryHash, public_address),
-        'profile_hash': data_hash
-    }
-
-    return prune(user)
-
-
-def is_profile_image_dirty(ipfs_hash, public_address):
-    try:
-        user = User.objects.get(public_address=public_address.lower())
-    except User.DoesNotExist:
-        return False
-
-    return user.profileDirectoryHash != ipfs_hash
 
 
 def calculate_token_quantity(value, decimals):

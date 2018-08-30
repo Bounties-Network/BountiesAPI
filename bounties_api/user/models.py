@@ -54,7 +54,10 @@ class Settings(models.Model):
 
 
 class User(models.Model):
-    profile_hash = models.CharField(max_length=128, blank=True)
+    # once a user's profiles has been touched manually, we should no longer
+    # update their infomation based on data attached to bounties
+    profile_touched_manually = models.BooleanField(default=False)
+
     public_address = models.TextField(max_length=500, blank=True, unique=True)
     nonce = models.UUIDField(default=uuid.uuid4, null=False, blank=False)
     categories = models.ManyToManyField('std_bounties.Category')
@@ -73,7 +76,6 @@ class User(models.Model):
     github = models.CharField(max_length=128, blank=True)
     linkedin = models.CharField(max_length=128, blank=True)
     dribble = models.CharField(max_length=128, blank=True)
-    github_username = models.CharField(max_length=128, blank=True)
     settings = models.ForeignKey(Settings, null=True)
 
     def save(self, *args, **kwargs):

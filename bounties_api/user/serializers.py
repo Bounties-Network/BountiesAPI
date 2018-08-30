@@ -105,7 +105,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ('nonce', 'profile_hash',)
+        exclude = ('nonce', 'profile_touched_manually',)
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
@@ -126,7 +126,33 @@ class UserInfoSerializer(serializers.ModelSerializer):
         exclude = (
             'id',
             'nonce',
-            'profile_hash',
+            'profile_touched_manually',
             'categories',
             'settings',
+        )
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    def validate(self, data):
+        twitter = data.get('twitter')
+        github = data.get('github')
+
+        if twitter and twitter[0] == '@' or github and github[0] == '@':
+            raise serializers.ValidationError("social media handles must not include @ symbol")
+
+        return data
+
+    class Meta:
+        model = User
+        fields = (
+            'name',
+            'email',
+            'organization',
+            'profileFileName',
+            'profileDirectoryHash',
+            'is_profile_image_dirty',
+            'website',
+            'twitter',
+            'github',
+            'linkedin',
         )

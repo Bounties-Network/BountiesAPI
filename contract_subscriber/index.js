@@ -2,7 +2,7 @@
 
 const delay = require('delay'),
 	  rollbar = require('./rollbar'),
-	{ StandardBounties, ETHProfiles } = require('./web3_config'),
+	{ StandardBounties } = require('./web3_config'),
 	{ getAsync, writeAsync } = require('./redis_config'),
 	{ sendEvents } = require('./eventsRetriever');
 
@@ -20,15 +20,6 @@ async function handler() {
 
 			if (eventBlock) {
 				await writeAsync('currentBlock', eventBlock);
-			}
-
-			// ETHProfiles latest events
-			fromBlock = await getAsync('ethProfilesCurrentBlock') || 0;
-			events = await ETHProfiles.getPastEvents({fromBlock, toBlock: 'latest'});
-			eventBlock = await sendEvents(events);
-
-			if (eventBlock) {
-				await writeAsync('ethProfilesCurrentBlock', eventBlock + 1);
 			}
 
 			await delay(1000);

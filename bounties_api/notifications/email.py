@@ -146,7 +146,7 @@ class Email:
             ),
             # TODO: Pass in platform here
             'from_user_address_link': from_user and profile_url_for(
-                from_user.public_address), # TODO: Pass in platform here
+                from_user.public_address),  # TODO: Pass in platform here
             'from_user_email': from_user and from_user.email,
             'review': review and review.review,
             'rating': review and '{}/5'.format(review.rating)

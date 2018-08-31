@@ -204,7 +204,6 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         instance.usd_price = token_data.get('usd_price')
         instance.issuer = user.public_address
         instance.save()
-        notification_client.draft_created(instance.id, instance.created)
         return instance
 
     @transaction.atomic
@@ -223,5 +222,4 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         instance.token_id = token_data.get('token')
         instance.usd_price = token_data.get('usd_price')
         instance.save()
-        notification_client.draft_updated(instance.id, instance.modified)
         return instance

@@ -17,6 +17,8 @@ from std_bounties.client_helpers import map_token_data
 from std_bounties.constants import STAGE_CHOICES
 from notifications.notification_client import NotificationClient
 
+notification_client = NotificationClient()
+
 
 class CustomSerializer(serializers.ModelSerializer):
 
@@ -202,7 +204,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         instance.usd_price = token_data.get('usd_price')
         instance.issuer = user.public_address
         instance.save()
-        NotificationClient.draft_created(instance.id, instance.created)
+        notification_client.draft_created(instance.id, instance.created)
         return instance
 
     @transaction.atomic
@@ -221,5 +223,5 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         instance.token_id = token_data.get('token')
         instance.usd_price = token_data.get('usd_price')
         instance.save()
-        NotificationClient.draft_updated(instance.id, instance.modified)
+        notification_client.draft_updated(instance.id, instance.modified)
         return instance

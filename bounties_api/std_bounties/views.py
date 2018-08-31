@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework import mixins
 from django.db import connection
 from django.db.models import Count
 from django.http import JsonResponse, Http404, HttpResponse
@@ -92,18 +93,19 @@ class SubmissionReviews(APIView):
         return JsonResponse(data=serializer.data)
 
 
-class BountyComments(APIView):
+class BountyComments(mixins.ListModelMixin,
+                     viewsets.GenericViewSet):
+
+    serializer_class = CommentSerializer
+
     def get_permissions(self):
         permission_classes = []
         if self.request.method == 'POST':
             permission_classes = [AuthenticationPermission]
         return [permission() for permission in permission_classes]
 
-    def get(self, request, bounty_id):
-        get_object_or_404(Bounty, bounty_id=bounty_id)
-        comments = Comment.objects.filter(bounty__id=bounty_id)
-        serializer = CommentSerializer(comments, many=True)
-        return JsonResponse(serializer.data, safe=False)
+    def get_queryset(self):
+        return Comment.objects.filter(bounty__id=self.kwargs['bounty_id']).order_by('-created')
 
     def post(self, request, bounty_id):
         bounty = get_object_or_404(Bounty, bounty_id=bounty_id)

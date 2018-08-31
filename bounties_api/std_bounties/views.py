@@ -105,7 +105,7 @@ class BountyComments(mixins.ListModelMixin,
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
-        return Comment.objects.filter(bounty__id=self.kwargs['bounty_id'])
+        return Comment.objects.filter(bounty__id=self.kwargs['bounty_id']).order_by('-created')
 
     def post(self, request, bounty_id):
         bounty = get_object_or_404(Bounty, bounty_id=bounty_id)

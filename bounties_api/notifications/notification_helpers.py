@@ -30,7 +30,7 @@ def create_notification(**kwargs):
     notification_name = kwargs['notification_name']
     string_data = kwargs['string_data']
     user = kwargs['user']
-    from_user = kwargs['from_user']
+    from_user = kwargs.get('from_user')
     notification_created = kwargs['notification_created']
     bounty = kwargs.get('bounty')
     subject = kwargs['subject']

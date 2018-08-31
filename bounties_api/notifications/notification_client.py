@@ -395,7 +395,7 @@ class NotificationClient:
         draft = DraftBounty.objects.get(id=draft_id)
         string_data = notification_templates['DraftCreated'].format(
             draft_id=draft_id)
-        create_bounty_notification(
+        create_notification(
             uid=draft_id,
             notification_name=notifications['DraftCreated'],
             user=draft.issuer,
@@ -409,7 +409,7 @@ class NotificationClient:
         draft = DraftBounty.objects.get(id=draft_id)
         string_data = notification_templates['DraftUpdated'].format(
             draft_id=draft_id)
-        create_bounty_notification(
+        create_notification(
             uid='{}-{}'.format(draft_id, event_date),
             notification_name=notifications['DraftUpdated'],
             user=draft.issuer,

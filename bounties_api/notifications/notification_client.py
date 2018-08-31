@@ -1,5 +1,5 @@
 from datetime import datetime
-from std_bounties.models import Fulfillment, Bounty, Comment, DraftBounty
+from std_bounties.models import Fulfillment, Bounty, Comment
 from user.models import User
 from notifications.constants import notifications
 from notifications.notification_helpers import (
@@ -390,31 +390,3 @@ class NotificationClient:
             notification_created=datetime.utcnow(),
             string_data=string_data,
             subject='You Updated Your Profile')
-
-    def draft_created(self, draft_id, event_date, **kwargs):
-        draft = DraftBounty.objects.get(id=draft_id)
-        string_data = notification_templates['DraftCreated'].format(
-            draft_id=draft_id)
-        create_bounty_notification(
-            uid=draft_id,
-            notification_name=notifications['DraftCreated'],
-            user=draft.issuer,
-            from_user=None,
-            string_data=string_data,
-            notification_created=event_date,
-            subject='Draft created',
-            is_activity=True)
-
-    def draft_updated(self, draft_id, event_date, **kwargs):
-        draft = DraftBounty.objects.get(id=draft_id)
-        string_data = notification_templates['DraftUpdated'].format(
-            draft_id=draft_id)
-        create_bounty_notification(
-            uid='{}-{}'.format(draft_id, event_date),
-            notification_name=notifications['DraftUpdated'],
-            user=draft.issuer,
-            from_user=None,
-            string_data=string_data,
-            notification_created=event_date,
-            subject='Draft updated',
-            is_activity=True)

@@ -391,7 +391,7 @@ class NotificationClient:
             string_data=string_data,
             subject='You Updated Your Profile')
 
-    def draft_created(self, draft_id, event_date, uid, **kwargs):
+    def draft_created(self, draft_id, event_date, **kwargs):
         draft = DraftBounty.objects.get(id=draft_id)
         string_data = notification_templates['DraftCreated'].format(
             draft_id=draft_id)

@@ -17,6 +17,8 @@ from std_bounties.client_helpers import map_token_data
 from std_bounties.constants import STAGE_CHOICES
 from notifications.notification_client import NotificationClient
 
+notification_client = NotificationClient()
+
 
 class CustomSerializer(serializers.ModelSerializer):
 

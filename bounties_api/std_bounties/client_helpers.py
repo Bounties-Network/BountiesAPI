@@ -90,6 +90,7 @@ def map_bounty_data(data_hash, bounty_id):
         'issuer_address': data_issuer.get(
             'address',
             ''),
+        'revisions': data.get('revisions', None),
         'data_issuer': data_issuer,
         'data': ipfs_hash,
         'data_json': str(data_JSON),

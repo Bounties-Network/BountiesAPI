@@ -48,6 +48,7 @@ class Email:
         notification_name = kwargs['notification_name']
         review = kwargs.get('review')
         comment = kwargs.get('comment')
+        fulfillment_description = kwargs.get('fulfillment_description', '')
         issuer = user
 
         if notification_name.__class__ != int:
@@ -151,7 +152,8 @@ class Email:
             'from_user_email': from_user and from_user.email,
             'review': review and review.review,
             'rating': review and '{}/5'.format(review.rating),
-            'comment': comment and comment.text
+            'comment': comment and comment.text,
+            'fulfillment_description': fulfillment_description
         })
 
     def render(self):

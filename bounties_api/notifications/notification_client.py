@@ -348,7 +348,7 @@ class NotificationClient:
             bounty_title=bounty.title)
         create_bounty_notification(
             bounty=bounty,
-            uid=uid,
+            uid='{}-{}'.format(uid, reviewer.id),
             notification_name=notifications['RatingIssued'],
             user=reviewer,
             from_user=reviewee,
@@ -369,7 +369,7 @@ class NotificationClient:
             bounty_title=bounty.title)
         create_bounty_notification(
             bounty=bounty,
-            uid=uid,
+            uid='{}-{}'.format(uid, reviewee.id),
             notification_name=notifications['RatingReceived'],
             user=reviewee,
             from_user=reviewer,

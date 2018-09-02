@@ -109,19 +109,10 @@ class Email:
 
         added_amount = 0
         if notification_name == constants.CONTRIBUTION_ADDED:
-            print('----------------------------------')
-            print('Inside email.py for CONTRIBUTION_ADDED with inputs:')
             inputs = kwargs['inputs']
-            print(inputs)
-            token_amount_decimal = create_decimal(inputs.get('value', '0'))
-            print('and token_amount_decimal:')
-            print(token_amount_decimal)
-            print('----------------------------------')
             added_amount = create_decimal(calculate_token_value(
-                bounty.tokenDecimals, token_amount_decimal)).normalize()
+                int(inputs['value']), bounty.tokenDecimals)).normalize()
 
-        print('updating internal dict, before: ')
-        print(self.__dict__)
         self.__dict__.update({
             'bounty': bounty,
             'bounty_title': title,
@@ -171,9 +162,6 @@ class Email:
             'comment': comment and comment.text,
             'MC_PREVIEW_TEXT': preview_text
         })
-
-        print('dict after:')
-        print(self.__dict__)
 
     def render(self):
         template = self.templates[self.notification_name]

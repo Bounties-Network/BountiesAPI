@@ -81,24 +81,10 @@ def create_notification(**kwargs):
     if notification_name not in Email.templates:
         return
 
-    print('--------------------')
-    print('before creating email')
     email = Email(**kwargs)
-    print('--------------------')
 
-    print('--------------------')
-    print('before rendering email')
     email_html = email.render()
-    print('--------------------')
 
-
-    print('--------------------')
-    print('before sending email')
     send_email(user.email, subject, email_html)
     notification.email_sent = True
-    print('--------------------')
-
-    print('--------------------')
-    print('before saving notification')
     notification.save()
-    print('--------------------')

@@ -57,7 +57,7 @@ class NotificationClient:
             from_user=fulfillment.user,
             string_data=string_data_issuer,
             subject='You Received a New Submission',
-            description=fulfillment.description,
+            fulfillment_description=fulfillment.description,
             notification_created=event_date,
             is_activity=False)
 
@@ -121,6 +121,7 @@ class NotificationClient:
             from_user=bounty.user,
             string_data=string_data_fulfiller,
             subject='Your Submission was Accepted',
+            fulfillment_description=fulfillment.description,
             is_activity=False,
             string_data_email=string_data_fulfiller_email,
             notification_created=event_date,

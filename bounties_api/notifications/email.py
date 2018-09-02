@@ -75,12 +75,11 @@ class Email:
         remaining = create_decimal(bounty.calculated_balance).normalize()
         token_amount = create_decimal(
             bounty.calculated_fulfillmentAmount).normalize()
-
-        description = bounty.description
-        if len(description) > self.max_description_length:
+        
+        if len(fulfillment_description) > self.max_description_length:
             # Cut off at the closest word after the limit
-            description = wrap(
-                description, self.max_description_length)[0] + ' ...'
+            fulfillment_description = wrap(fulfillment_description,
+                self.max_description_length)[0] + ' ...'
 
         title = bounty.title
         if len(title) > self.max_title_length:
@@ -128,7 +127,7 @@ class Email:
             'usd_amount_remaining': remaining_usd,
             'added_amount': added_amount,
             'remaining_submissions': remaining_submissions,
-            'submission_description': description,
+            'fulfillment_description': fulfillment_description,
             'issuer_name': issuer and issuer.name,
             'issuer_address': issuer and shorten_address(
                 issuer.public_address),
@@ -159,7 +158,6 @@ class Email:
             'rating': review and '{}/5'.format(review.rating),
             'rating_color': review and Email.rating_color(review.rating),
             'comment': comment and comment.text,
-            'fulfillment_description': fulfillment_description,
             'MC_PREVIEW_TEXT': preview_text
         })
 

@@ -26,15 +26,15 @@ def send_email(receiver, subject, text, html):
                 ],
             },
             Message={
-                'Text': {
-                    'Charset': CHARSET,
-                    'Data': text,
-                },
                 'Subject': {
                     'Charset': CHARSET,
                     'Data': subject,
                 },
                 'Body': {
+                    'Text': {
+                        'Charset': CHARSET,
+                        'Data': text,
+                    },
                     'Html': {
                         'Charset': CHARSET,
                         'Data': html,

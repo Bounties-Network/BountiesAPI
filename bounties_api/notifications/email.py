@@ -58,7 +58,6 @@ class Email:
         review = kwargs.get('review')
         comment = kwargs.get('comment')
         fulfillment_description = kwargs.get('fulfillment_description', '')
-        issuer = user
 
         if notification_name.__class__ != int:
             raise TypeError('notification_name must be of type int')
@@ -69,11 +68,7 @@ class Email:
         if bounty.__class__ != Bounty:
             raise TypeError('bounty must be of type Bounty')
 
-        # To fulfiller where issuer is where the notification came from
-        if (notification_name == constants.FULFILLMENT_ACCEPTED_FULFILLER or
-                notification_name == constants.RATING_RECEIVED or
-                notification_name == constants.TRANSFER_RECIPIENT):
-            issuer = from_user
+        issuer = bounty.user
 
         create_decimal = Context(prec=4).create_decimal
         remaining = create_decimal(bounty.calculated_balance).normalize()

@@ -84,8 +84,7 @@ def create_notification(**kwargs):
     email = Email(**kwargs)
 
     email_html = email.render()
-    email_txt = 'Hello {}!\n{}'.format(kwargs.get('username', ''), string_data)
 
-    send_email(user.email, subject, email_txt, email_html)
+    send_email(user.email, subject, email_html)
     notification.email_sent = True
     notification.save()

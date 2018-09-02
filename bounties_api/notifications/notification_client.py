@@ -355,6 +355,7 @@ class NotificationClient:
             from_user=reviewee,
             string_data=string_data,
             notification_created=review.created,
+            subject='You Wrote a Review',
             review=review)
 
     def rating_received(
@@ -377,6 +378,7 @@ class NotificationClient:
             string_data=string_data,
             notification_created=review.created,
             review=review,
+            subject='You Received a Review',
             is_activity=False)
 
     def profile_updated(self, public_address):

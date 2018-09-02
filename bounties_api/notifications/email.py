@@ -58,6 +58,7 @@ class Email:
         review = kwargs.get('review')
         comment = kwargs.get('comment')
         fulfillment_description = kwargs.get('fulfillment_description', '')
+        preview_text = kwargs.get('string_data', '')
 
         if notification_name.__class__ != int:
             raise TypeError('notification_name must be of type int')
@@ -158,7 +159,8 @@ class Email:
             'rating': review and '{}/5'.format(review.rating),
             'rating_color': review and Email.rating_color(review.rating),
             'comment': comment and comment.text,
-            'fulfillment_description': fulfillment_description
+            'fulfillment_description': fulfillment_description,
+            'MC_PREVIEW_TEXT': preview_text
         })
 
     def render(self):

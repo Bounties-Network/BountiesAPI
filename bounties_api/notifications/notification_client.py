@@ -390,4 +390,4 @@ class NotificationClient:
             from_user=None,
             notification_created=datetime.utcnow(),
             string_data=string_data,
-            subject='You Updated Your Profile')
+            subject='')

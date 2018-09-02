@@ -164,7 +164,11 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = FulfillmentSerializer
     queryset = Fulfillment.objects.all().select_related('bounty')
     filter_class = FulfillmentsFilter
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (OrderingFilter, DjangoFilterBackend,)
+    ordering_fields = (
+        'fulfillment_created',
+        'usd_price'
+    )
 
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):

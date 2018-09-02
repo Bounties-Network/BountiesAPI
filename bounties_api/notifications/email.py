@@ -120,6 +120,8 @@ class Email:
             added_amount = create_decimal(calculate_token_value(
                 bounty.tokenDecimals, token_amount_int)).normalize()
 
+        print('updating internal dict, before: ')
+        print(self.__dict__)
         self.__dict__.update({
             'bounty': bounty,
             'bounty_title': title,
@@ -169,6 +171,9 @@ class Email:
             'comment': comment and comment.text,
             'MC_PREVIEW_TEXT': preview_text
         })
+
+        print('dict after:')
+        print(self.__dict__)
 
     def render(self):
         template = self.templates[self.notification_name]

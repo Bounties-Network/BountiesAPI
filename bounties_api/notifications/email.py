@@ -116,16 +116,6 @@ class Email:
             added_amount = create_decimal(calculate_token_value(
                 bounty.tokenDecimals, inputs.fulfillmentAmount))
 
-        print('-------------------------------------')
-        print('sending email with these image references:')
-        print('issuer - {} - {}'.format(issuer and issuer.name, 
-                issuer and issuer.profile_image))
-        print('user - {} - {}'.format(user and user.name, 
-                user and user.profile_image))
-        print('from_user - {} - {}'.format(from_user and from_user.name, 
-                from_user and from_user.profile_image))
-        print('-------------------------------------')
-
         self.__dict__.update({
             'bounty': bounty,
             'bounty_title': title,

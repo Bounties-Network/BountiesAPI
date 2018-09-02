@@ -87,9 +87,17 @@ class SubmissionReviews(APIView):
             fulfillment.fulfiller_review = review
         fulfillment.save()
         notification_client.rating_issued(
-            bounty.bounty_id, review, fulfillment.id, reviewer, reviewee)
+            bounty_id=bounty_id,
+            review=review,
+            uid=fulfillment_id,
+            reviewer=reviewer,
+            reviewee=reviewee)
         notification_client.rating_received(
-            bounty.bounty_id, review, fulfillment.id, reviewer, reviewee)
+            bounty_id=bounty_id,
+            review=review,
+            uid=fulfillment_id,
+            reviewer=reviewer,
+            reviewee=reviewee)
         return JsonResponse(data=serializer.data)
 
 

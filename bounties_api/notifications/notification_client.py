@@ -317,11 +317,11 @@ class NotificationClient:
             bounty_title=bounty.title)
 
         users = list(filter(
-            lambda u: u != bounty.issuer and u != comment.user,
+            lambda u: u != bounty.user and u != comment.user,
             map(lambda c: c.user, bounty.comments.all())))
 
-        if bounty.issuer != comment.user:
-            users.append(bounty.issuer)
+        if bounty.user != comment.user:
+            users.append(bounty.user)
 
         for user in set(users):
             create_bounty_notification(
@@ -331,7 +331,7 @@ class NotificationClient:
                 user=user,
                 from_user=comment.user,
                 string_data=string_data,
-                subject='Your Bounty Received a Comment',
+                subject='You Received a Comment',
                 notification_created=event_date,
                 comment=comment,
                 is_activity=False)

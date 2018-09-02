@@ -40,6 +40,15 @@ class Email:
 
         return '\n'.join(map(str, map(render_category, categories)))
 
+    @staticmethod
+    def rating_color(rating):
+        if rating >= 0.8:
+            return '#6FC78D'  # 'brand-green'
+        elif rating >= 0.5:
+            return '#FBAA31'  # 'brand-orange'
+        else:
+            return '#D14545'  # 'brand-red'
+
     def __init__(self, **kwargs):
         bounty = kwargs['bounty']
         url = kwargs['url']
@@ -152,6 +161,7 @@ class Email:
             'from_user_email': from_user and from_user.email,
             'review': review and review.review,
             'rating': review and '{}/5'.format(review.rating),
+            'rating_color': review and Email.rating_color(review.rating),
             'comment': comment and comment.text,
             'fulfillment_description': fulfillment_description
         })

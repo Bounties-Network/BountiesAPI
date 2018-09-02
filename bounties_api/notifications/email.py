@@ -57,7 +57,7 @@ class Email:
         notification_name = kwargs['notification_name']
         review = kwargs.get('review')
         comment = kwargs.get('comment')
-        fulfillment_description = kwargs.get('fulfillment_description', '')
+        description = kwargs.get('fulfillment_description', '')
         preview_text = kwargs.get('string_data', '')
 
         if notification_name.__class__ != int:
@@ -75,11 +75,13 @@ class Email:
         remaining = create_decimal(bounty.calculated_balance).normalize()
         token_amount = create_decimal(
             bounty.calculated_fulfillmentAmount).normalize()
-        
-        if len(fulfillment_description) > self.max_description_length:
+
+        if len(description) > self.max_description_length:
             # Cut off at the closest word after the limit
-            fulfillment_description = wrap(fulfillment_description,
-                self.max_description_length)[0] + ' ...'
+            description = wrap(
+                description,
+                self.max_description_length
+            )[0] + ' ...'
 
         title = bounty.title
         if len(title) > self.max_title_length:
@@ -127,7 +129,7 @@ class Email:
             'usd_amount_remaining': remaining_usd,
             'added_amount': added_amount,
             'remaining_submissions': remaining_submissions,
-            'fulfillment_description': fulfillment_description,
+            'fulfillment_description': description,
             'issuer_name': issuer and issuer.name,
             'issuer_address': issuer and shorten_address(
                 issuer.public_address),

@@ -113,12 +113,12 @@ class Email:
             print('Inside email.py for CONTRIBUTION_ADDED with inputs:')
             inputs = kwargs['inputs']
             print(inputs)
-            token_amount_int = int(inputs.get('value', '0'))
-            print('and token_amount_int:')
-            print(token_amount_int)
+            token_amount_decimal = create_decimal(inputs.get('value', '0'))
+            print('and token_amount_decimal:')
+            print(token_amount_decimal)
             print('----------------------------------')
             added_amount = create_decimal(calculate_token_value(
-                bounty.tokenDecimals, token_amount_int)).normalize()
+                bounty.tokenDecimals, token_amount_decimal)).normalize()
 
         print('updating internal dict, before: ')
         print(self.__dict__)

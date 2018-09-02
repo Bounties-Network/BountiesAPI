@@ -317,11 +317,11 @@ class NotificationClient:
             bounty_title=bounty.title)
 
         users = list(filter(
-            lambda u: u != bounty.issuer and u != comment.user,
+            lambda u: u != bounty.user and u != comment.user,
             map(lambda c: c.user, bounty.comments.all())))
 
-        if bounty.issuer != comment.user:
-            users.append(bounty.issuer)
+        if bounty.user != comment.user:
+            users.append(bounty.user)
 
         for user in set(users):
             create_bounty_notification(

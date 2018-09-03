@@ -11,7 +11,9 @@ from notifications.notification_templates import (
     notification_templates,
     email_templates
 )
+from bounties.utils import calculate_token_value
 import logging
+
 
 logger = logging.getLogger('django')
 
@@ -207,21 +209,18 @@ class NotificationClient:
             bounty.tokenSymbol,
             bounty.calculated_fulfillmentAmount)
 
-        print('about to convert')
-        print(amount)
-        create_decimal = Context(prec=6).create_decimal
-        dec_amount = create_decimal(amount).normalize() 
-        print(dec_amount)
-        string_data = notification_templates['ContributionAdded'].format(
-            bounty_title=bounty.title,
-            amount=dec_amount)
-
         try:
             from_user = transaction_from and User.objects.get(
                 public_address=transaction_from.lower())
         except User.DoesNotExist:
             logger.error('No user for address: {}'.format(transaction_from.lower()))
             return
+
+        added_amount = Context(prec=6).create_decimal(calculate_token_value(
+            int(inputs['value']), bounty.tokenDecimals)).normalize()
+
+        string_data = notification_templates['ContributionAdded'].format(
+            bounty_title=bounty.title, amount=added_amount)
 
         if bounty.user == from_user:
             # activity to bounty issuer

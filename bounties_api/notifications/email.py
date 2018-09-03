@@ -109,9 +109,9 @@ class Email:
 
         added_amount = 0
         if notification_name == constants.CONTRIBUTION_ADDED:
-            inputs = kwargs.get('inputs')
+            inputs = kwargs['inputs']
             added_amount = create_decimal(calculate_token_value(
-                bounty.tokenDecimals, inputs.fulfillmentAmount))
+                int(inputs['value']), bounty.tokenDecimals)).normalize()
 
         self.__dict__.update({
             'bounty': bounty,

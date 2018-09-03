@@ -1,17 +1,83 @@
+from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.db import connection
 from django.db.models import Count
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404, HttpResponse
+from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
 from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList
 from std_bounties.constants import STAGE_CHOICES
-from std_bounties.models import Bounty, Fulfillment, RankedCategory, Token
+from std_bounties.models import Bounty, DraftBounty, Fulfillment, RankedCategory, Token, Comment
 from std_bounties.queries import LEADERBOARD_QUERY
-from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardSerializer, TokenSerializer
+from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer, ReviewSerializer
 from std_bounties.filters import BountiesFilter, FulfillmentsFilter, RankedCategoryFilter
+from authentication.permissions import AuthenticationPermission, UserObjectPermissions
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
+
+
+class SubmissionReviews(APIView):
+    permission_classes = [AuthenticationPermission]
+
+    def post(self, request, bounty_id, fulfillment_id):
+        bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
+        fulfillment = get_object_or_404(Fulfillment, bounty=bounty, fulfillment_id=fulfillment_id, accepted=True)
+        current_user = request.current_user
+        reviewer = None
+        reviewee = None
+        if fulfillment.user == current_user and not fulfillment.issuer_review:
+            reviewer = fulfillment.user
+            reviewee = bounty.user
+
+        if bounty.user == current_user and not fulfillment.fulfiller_review:
+            reviewer = bounty.user
+            reviewee = fulfillment.user
+
+        if not reviewer:
+            return HttpResponse('Unauthorized', status=401)
+
+        serializer = ReviewSerializer(request.data)
+        serializer.is_valid(raise_exception=True)
+        review = serializer.save(reviewer=reviewer, reviewee=reviewee)
+        return JsonResponse(data=serializer.data)
+
+
+
+class BountyComments(APIView):
+    permission_classes = [AuthenticationPermission]
+
+    def get(self, request, bounty_id):
+        get_object_or_404(Bounty, bounty_id=bounty_id)
+        comments = Comment.objects.filter(bounty__id=bounty_id)
+        serializer = CommentSerializer(comments, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+
+    def post(self, request, bounty_id):
+        bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
+        serializer = CommentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        comment = serializer.save()
+        bounty.comments.add(comment)
+        return JsonResponse(serializer.data)
+
+
+class DraftBountyWriteViewSet(viewsets.ModelViewSet):
+    queryset = DraftBounty.objects.filter(on_chain=False)
+    serializer_class = DraftBountyWriteSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('user_id',)
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            permission_classes = []
+        elif self.action == 'create':
+            permission_classes = [AuthenticationPermission]
+        else:
+            permission_classes = [AuthenticationPermission, UserObjectPermissions]
+        return [permission() for permission in permission_classes]
 
 
 class BountyViewSet(viewsets.ReadOnlyModelViewSet):
@@ -45,27 +111,6 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ('normalized_name',)
 
 
-class UserProfile(APIView):
-    def get(self, request, address=''):
-        platform_in = extractInParams(request, 'platform', 'platform__in')
-        extra_filters = {}
-        if platform_in:
-            extra_filters['platform__in'] = platform_in
-        ordered_fulfillments = Fulfillment.objects.filter(
-            fulfiller=address.lower(), **extra_filters).order_by('-created')
-        if not ordered_fulfillments.exists():
-            raise Http404("Address does not exist")
-
-        latest_fulfillment = ordered_fulfillments[0]
-        user_profile = {
-            "address": address,
-            "name": latest_fulfillment.fulfiller_name,
-            "email": latest_fulfillment.fulfiller_email,
-            "githubUsername": latest_fulfillment.fulfiller_githubUsername,
-        }
-        return JsonResponse(user_profile)
-
-
 class Leaderboard(APIView):
     def get(self, request):
         sql_param = ''
@@ -84,41 +129,6 @@ class Leaderboard(APIView):
         query_result = dictfetchall(cursor)
         serializer = LeaderboardSerializer(query_result, many=True)
         return JsonResponse(serializer.data, safe=False)
-
-
-class BountyStats(APIView):
-    def get(self, request, address=''):
-        bounty_stats = {}
-        extra_filters_bounty = {}
-        extra_filters_fulfillment = {}
-        platform_in = extractInParams(request, 'platform', 'platform__in')
-        if platform_in:
-            extra_filters_bounty['platform__in'] = platform_in
-            extra_filters_fulfillment['platform__in'] = platform_in
-        user_bounties = Bounty.objects.filter(issuer=address.lower(), **extra_filters_bounty)
-        for stage in STAGE_CHOICES:
-            bounty_stats[stage[1]] = user_bounties.filter(
-                bountyStage=stage[0]).count()
-        bounties_count = user_bounties.count()
-        bounties_accepted_count = user_bounties.filter(
-            fulfillments__accepted=True).count()
-        bounties_acceptance_rate = bounties_accepted_count / \
-            bounties_count if bounties_accepted_count > 0 else 0
-        user_submissions = Fulfillment.objects.filter(fulfiller=address, **extra_filters_fulfillment)
-        submissions_count = user_submissions.count()
-        submissions_accepted_count = user_submissions.filter(
-            accepted=True).count()
-        submissions_acceptance_rate = submissions_accepted_count / \
-            submissions_count if submissions_count > 0 else 0
-        profile_stats = {
-            'bounties': bounties_count,
-            'bounties_accepted': bounties_accepted_count,
-            'bounties_acceptance_rate': bounties_acceptance_rate,
-            'submissions': submissions_count,
-            'submissions_accepted_count': submissions_accepted_count,
-            'submissions_acceptance_rate': submissions_acceptance_rate,
-        }
-        return JsonResponse({**bounty_stats, **profile_stats})
 
 
 class Tokens(APIView):

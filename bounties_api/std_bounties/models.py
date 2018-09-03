@@ -2,11 +2,20 @@
 from __future__ import unicode_literals
 from django.contrib.postgres.fields import JSONField
 
+import uuid
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from authentication.models import User
-from std_bounties.constants import STAGE_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
+from std_bounties.constants import STAGE_CHOICES, DIFFICULTY_CHOICES, INTERMEDIATE, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
+
+
+class Review(models.Model):
+    reviewer = models.ForeignKey(User, related_name='reviews')
+    reviewee = models.ForeignKey(User, related_name='reviewees')
+    rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])
+    review = models.TextField()
 
 
 class Category(models.Model):
@@ -16,6 +25,13 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         self.normalized_name = self.name.lower().strip()
         super(Category, self).save(*args, **kwargs)
+
+
+class Comment(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey('authentication.User')
+    text = models.TextField()
 
 
 class Token(models.Model):
@@ -51,16 +67,12 @@ class BountyState(models.Model):
         get_latest_by = 'change_date'
 
 
-class Bounty(models.Model):
-    id = models.IntegerField(primary_key=True)
+class BountyAbstract(models.Model):
     user = models.ForeignKey('authentication.User', null=True)
-    bounty_id = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField(Category, null=True)
     deadline = models.DateTimeField()
-    data = models.CharField(max_length=128)
-    issuer = models.CharField(max_length=128)
     arbiter = models.CharField(max_length=128, null=True)
     fulfillmentAmount = models.DecimalField(decimal_places=0, max_digits=64)
     calculated_fulfillmentAmount = models.DecimalField(
@@ -69,10 +81,9 @@ class Bounty(models.Model):
         null=True,
         default=0)
     paysTokens = models.BooleanField()
-    bountyStage = models.IntegerField(
-        choices=STAGE_CHOICES, default=DRAFT_STAGE)
-    old_balance = models.DecimalField(
-        decimal_places=0, max_digits=64, null=True)
+    experienceLevel = models.IntegerField(
+        choices=DIFFICULTY_CHOICES, null=True)
+    revisions = models.IntegerField(null=True)
     balance = models.DecimalField(
         decimal_places=0,
         max_digits=70,
@@ -85,11 +96,9 @@ class Bounty(models.Model):
         default=0)
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField(blank=True)
-    bounty_created = models.DateTimeField(null=True)
     token = models.ForeignKey(Token, null=True)
     tokenSymbol = models.CharField(max_length=128, default='ETH')
     tokenDecimals = models.IntegerField(default=18)
-    tokenLockPrice = models.FloatField(null=True, blank=True)
     tokenContract = models.CharField(
         max_length=128,
         default='0x0000000000000000000000000000000000000000')
@@ -105,6 +114,24 @@ class Bounty(models.Model):
     platform = models.CharField(max_length=128, blank=True)
     schemaVersion = models.CharField(max_length=64, blank=True)
     schemaName = models.CharField(max_length=128, null=True)
+
+    class Meta:
+        abstract = True
+
+
+class Bounty(BountyAbstract):
+    id = models.IntegerField(primary_key=True)
+    uid = models.UUIDField(null=True)
+    bounty_created = models.DateTimeField(null=True)
+    bountyStage = models.IntegerField(
+        choices=STAGE_CHOICES, default=DRAFT_STAGE)
+    comments = models.ManyToManyField(Comment, null=True, related_name='bounty')
+    bounty_id = models.IntegerField()
+    data = models.CharField(max_length=128)
+    issuer = models.CharField(max_length=128)
+    old_balance = models.DecimalField(
+        decimal_places=0, max_digits=64, null=True)
+    tokenLockPrice = models.FloatField(null=True, blank=True)
     data_categories = JSONField(null=True)
     data_issuer = JSONField(null=True)
     data_json = JSONField(null=True)
@@ -147,6 +174,27 @@ class Bounty(models.Model):
                         self.categories.create(name=category.strip())
 
 
+class DraftBounty(BountyAbstract):
+    uid = models.UUIDField(default=uuid.uuid4)
+    data = models.CharField(max_length=128, null=True, blank=True)
+    issuer = models.CharField(max_length=128, null=True, blank=True)
+    on_chain = models.BooleanField(default=False)
+    data_categories = None
+    data_issuer = None
+    data_json = None
+
+    class Meta:
+        ordering = ['-created']
+
+    def save(self, *args, **kwargs):
+        fulfillmentAmount = self.fulfillmentAmount
+        balance = self.balance
+        decimals = self.tokenDecimals
+        self.calculated_balance = calculate_token_value(balance, decimals)
+        self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
+        super(DraftBounty, self).save(*args, **kwargs)
+
+
 class Fulfillment(models.Model):
     fulfillment_id = models.IntegerField()
     user = models.ForeignKey('authentication.User', null=True)
@@ -154,6 +202,8 @@ class Fulfillment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     fulfillment_created = models.DateTimeField(null=True)
+    fulfiller_review = models.ForeignKey(Review, related_name='fulfillment_review', null=True)
+    issuer_review = models.ForeignKey(Review, related_name='issuer_review', null=True)
     data = models.CharField(max_length=128)
     accepted = models.BooleanField()
     accepted_date = models.DateTimeField(null=True)
@@ -175,7 +225,7 @@ class Fulfillment(models.Model):
 
     def save(self, *args, **kwargs):
         user = User.objects.get_or_create(
-            public_address = self.fulfiller_address,
+            public_address = self.fulfiller,
             defaults={
                 'name': self.fulfiller_name,
                 'email': self.fulfiller_email

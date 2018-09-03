@@ -11,3 +11,13 @@ STAGE_CHOICES = (
     (COMPLETED_STAGE, 'Completed'),
     (EXPIRED_STAGE, 'Expired'),
 )
+
+BEGINNER = 0
+INTERMEDIATE = 1
+ADVANCED = 2
+
+DIFFICULTY_CHOICES = (
+    (BEGINNER, 'Beginner'),
+    (INTERMEDIATE, 'Intermediate'),
+    (ADVANCED, 'Advanced'),
+)

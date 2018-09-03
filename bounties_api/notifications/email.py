@@ -23,6 +23,7 @@ class Email:
         constants.FULFILLMENT_SUBMITTED_ISSUER: 'completedBounty.html',
         constants.FULFILLMENT_ACCEPTED_FULFILLER: 'submissionAccepted.html',
         constants.CONTRIBUTION_ADDED: 'contributionReceived.html',
+        constants.CONTRIBUTION_RECEIVED: 'contributionReceived.html',
         constants.ISSUER_TRANSFERRED: 'bountyTransferSent.html',
         constants.TRANSFER_RECIPIENT: 'bountyTransferReceived.html',
         constants.BOUNTY_EXPIRED: 'bountyExpired.html',

@@ -71,9 +71,10 @@ class Email:
 
         issuer = bounty.user
 
-        create_decimal = Context(prec=4).create_decimal
-        remaining = create_decimal(bounty.calculated_balance).normalize()
-        token_amount = create_decimal(
+        token_decimals = Context(prec=6).create_decimal
+        usd_decimals = Context(prec=3).create_decimal
+        remaining = token_decimals(bounty.calculated_balance).normalize()
+        token_amount = token_decimals(
             bounty.calculated_fulfillmentAmount).normalize()
 
         if len(description) > self.max_description_length:
@@ -101,16 +102,16 @@ class Email:
 
         remaining_usd = ' unknown'
         if bounty.tokenLockPrice:
-            remaining_usd = create_decimal(
-                remaining * create_decimal(bounty.tokenLockPrice)).normalize()
+            remaining_usd = usd_decimals(
+                remaining * usd_decimals(bounty.tokenLockPrice)).normalize()
         elif bounty.token and bounty.token.price_usd:
-            remaining_usd = create_decimal(
-                remaining * create_decimal(bounty.token.price_usd)).normalize()
+            remaining_usd = usd_decimals(
+                remaining * usd_decimals(bounty.token.price_usd)).normalize()
 
         added_amount = 0
         if notification_name == constants.CONTRIBUTION_ADDED:
             inputs = kwargs['inputs']
-            added_amount = create_decimal(calculate_token_value(
+            added_amount = token_decimals(calculate_token_value(
                 int(inputs['value']), bounty.tokenDecimals)).normalize()
 
         rating_url = url
@@ -125,7 +126,7 @@ class Email:
             'preferences_link': 'https://{}bounties.network/settings'.format(
                 '' if ENVIRONMENT == 'production' else 'staging.'),
             'notification_name': notification_name,
-            'usd_amount': create_decimal(bounty.usd_price).normalize(),
+            'usd_amount': usd_decimals(bounty.usd_price).normalize(),
             'token_amount': token_amount,
             'token': bounty.tokenSymbol,
             'bounty_categories': Email.render_categories(

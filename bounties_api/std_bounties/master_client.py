@@ -71,8 +71,8 @@ def contribution_added(bounty_id, **kwargs):
     inputs = kwargs.get('inputs', {})
     is_issue_and_activate = inputs.get('issuer', None)
     bounty_client.add_contribution(bounty, **kwargs)
-    notification_client.contribution_added(bounty_id, **kwargs)
     if not is_issue_and_activate:
+        notification_client.contribution_added(bounty_id, **kwargs)
         slack_client.contribution_added(bounty)
 
 

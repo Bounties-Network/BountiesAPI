@@ -113,6 +113,11 @@ class Email:
             added_amount = create_decimal(calculate_token_value(
                 int(inputs['value']), bounty.tokenDecimals)).normalize()
 
+        rating_url = url
+        if notification_name == constants.FULFILLMENT_ACCEPTED_FULFILLER:
+            rating_url = '{}/?fulfillment_id={}&rating=true'.format(url,
+                kwargs['fulfillment_id'])
+
         self.__dict__.update({
             'bounty': bounty,
             'bounty_title': title,
@@ -160,7 +165,8 @@ class Email:
             'rating': review and '{}/5'.format(review.rating),
             'rating_color': review and Email.rating_color(review.rating),
             'comment': comment and comment.text,
-            'MC_PREVIEW_TEXT': preview_text
+            'MC_PREVIEW_TEXT': preview_text,
+            'rating_url': rating_url
         })
 
     def render(self):

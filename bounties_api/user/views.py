@@ -115,11 +115,11 @@ class UserProfile(APIView):
         except User.DoesNotExist:
             return JsonResponse({'user': None, 'stats': {}})
 
-        platform = request.GET.get('platform', None)
+        platform = request.GET.get('platform__in', None)
         additional_filters = {}
 
         if platform:
-            additional_filters.update({'platform': platform})
+            additional_filters.update({'platform__in': platform.split(',')})
 
         user_bounties = user.bounty_set.filter(**additional_filters)
         user_fulfillments = user.fulfillment_set.filter(**additional_filters)

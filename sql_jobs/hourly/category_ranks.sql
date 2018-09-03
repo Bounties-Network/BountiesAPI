@@ -20,7 +20,7 @@ AS (
 );
 
 
-CREATE TEMP TABLE category 
+CREATE TEMP TABLE category
 AS (
 	SELECT DISTINCT category.id, category.name, category.normalized_name
 	FROM bounty_category

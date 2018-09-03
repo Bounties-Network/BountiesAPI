@@ -192,6 +192,7 @@ class NotificationClient:
             bounty_title=bounty.title, amount=amount)
         from_user = transaction_from and User.objects.get(
             public_address=transaction_from.lower())
+
         if bounty.user == from_user:
             # activity to bounty issuer
             create_bounty_notification(
@@ -209,8 +210,8 @@ class NotificationClient:
             # notification to bounty issuer
             create_bounty_notification(
                 bounty=bounty,
-                uid='{}-{}-notification'.format(uid,
-                    bounty.user.public_address),
+                uid='{}-{}-notification'.format(
+                    uid, bounty.user.public_address),
                 notification_name=notifications['ContributionReceived'],
                 user=bounty.user,
                 from_user=from_user,

@@ -207,9 +207,14 @@ class NotificationClient:
             bounty.tokenSymbol,
             bounty.calculated_fulfillmentAmount)
 
+        print('about to convert')
+        print(amount)
+        create_decimal = Context(prec=6).create_decimal
+        dec_amount = create_decimal(amount).normalize() 
+        print(dec_amount)
         string_data = notification_templates['ContributionAdded'].format(
             bounty_title=bounty.title,
-            amount=Context(prec=6).create_decimal(amount).normalize())
+            amount=dec_amount)
 
         try:
             from_user = transaction_from and User.objects.get(

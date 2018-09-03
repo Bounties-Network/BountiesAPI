@@ -211,13 +211,13 @@ class NotificationClient:
                 bounty=bounty,
                 uid='{}-{}-notification'.format(uid,
                     bounty.user.public_address),
-                notification_name=notifications['ContributionAdded'],
+                notification_name=notifications['ContributionReceived'],
                 user=bounty.user,
                 from_user=from_user,
                 string_data=string_data,
                 notification_created=event_date,
                 inputs=inputs,
-                subject='Contribution Added',
+                subject='Contribution Received',
                 is_activity=False)
             # activity to user contributing to the bounty
             create_bounty_notification(

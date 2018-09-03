@@ -218,4 +218,7 @@ PLATFORM_MAPPING = {
     'colorado': 'https://colorado.bounties.network',
     'consensys': 'https://consensys.bounties.network',
     'hiring': 'https://hiring.bounties.network',
+    'bounties': 'https://beta.bounties.network',
+    'berlin': 'https://berlin.bounties.network',
+    'bees': 'https://bees.bounties.network',
 }

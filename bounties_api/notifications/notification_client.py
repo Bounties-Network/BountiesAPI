@@ -209,7 +209,7 @@ class NotificationClient:
 
         string_data = notification_templates['ContributionAdded'].format(
             bounty_title=bounty.title,
-            amount=Context(prec=5).create_decimal(amount).normalize())
+            amount=Context(prec=6).create_decimal(amount).normalize())
 
         try:
             from_user = transaction_from and User.objects.get(

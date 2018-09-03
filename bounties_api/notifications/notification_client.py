@@ -204,9 +204,6 @@ class NotificationClient:
             uid,
             **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)
-        amount = '{} {}'.format(
-            bounty.tokenSymbol,
-            bounty.calculated_fulfillmentAmount)
 
         try:
             from_user = transaction_from and User.objects.get(
@@ -215,11 +212,13 @@ class NotificationClient:
             logger.error('No user for address: {}'.format(transaction_from.lower()))
             return
 
-        added_amount = Context(prec=6).create_decimal(calculate_token_value(
-            int(inputs['value']), bounty.tokenDecimals)).normalize()
+        token_decimal = Context(prec=6).create_decimal
+        amount = '{} {}'.format(bounty.tokenSymbol, token_decimal(
+            calculate_token_value(int(inputs['value']), bounty.tokenDecimals)
+        ).normalize())
 
         string_data = notification_templates['ContributionAdded'].format(
-            bounty_title=bounty.title, amount=added_amount)
+            bounty_title=bounty.title, amount=amount)
 
         if bounty.user == from_user:
             # activity to bounty issuer

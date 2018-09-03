@@ -10,6 +10,9 @@ from notifications.notification_templates import (
     notification_templates,
     email_templates
 )
+import logging
+
+logger = logging.getLogger('django')
 
 
 class NotificationClient:
@@ -30,7 +33,13 @@ class NotificationClient:
             notification_created=event_date,
             subject='New bounty issued')
 
-    def bounty_fulfilled(self, bounty_id, fulfillment_id, uid, event_date, **kwargs):
+    def bounty_fulfilled(
+            self,
+            bounty_id,
+            fulfillment_id,
+            uid,
+            event_date,
+            **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)
         fulfillment = Fulfillment.objects.get(
             fulfillment_id=fulfillment_id, bounty=bounty)
@@ -90,7 +99,13 @@ class NotificationClient:
             notification_created=event_date,
             subject='Bounty Issued and Activated')
 
-    def fulfillment_accepted(self, bounty_id, fulfillment_id, uid, event_date, **kwargs):
+    def fulfillment_accepted(
+            self,
+            bounty_id,
+            fulfillment_id,
+            uid,
+            event_date,
+            **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)
         fulfillment = Fulfillment.objects.get(
             bounty_id=bounty, fulfillment_id=fulfillment_id)
@@ -192,8 +207,12 @@ class NotificationClient:
             bounty.calculated_fulfillmentAmount)
         string_data = notification_templates['ContributionAdded'].format(
             bounty_title=bounty.title, amount=amount)
-        from_user = transaction_from and User.objects.get(
-            public_address=transaction_from.lower())
+
+        try:
+            from_user = transaction_from and User.objects.get(
+                public_address=transaction_from.lower())
+        except User.DoesNotExist:
+            logger.error('No user for address: {}'.format(transaction_from.lower()))
 
         if bounty.user == from_user:
             # activity to bounty issuer

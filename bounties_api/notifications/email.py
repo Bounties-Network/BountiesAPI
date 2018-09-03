@@ -115,8 +115,8 @@ class Email:
 
         rating_url = url
         if notification_name == constants.FULFILLMENT_ACCEPTED_FULFILLER:
-            rating_url = '{}/?fulfillment_id={}&rating=true'.format(url,
-                kwargs['fulfillment_id'])
+            rating_url = '{}/?fulfillment_id={}&rating=true'.format(
+                url, kwargs['fulfillment_id'])
 
         self.__dict__.update({
             'bounty': bounty,

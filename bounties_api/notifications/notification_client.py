@@ -110,6 +110,7 @@ class NotificationClient:
             from_user=fulfillment.user,
             string_data=string_data_issuer,
             subject='Submission Accepted',
+            fulfillment_id=fulfillment_id,
             string_data_email=string_data_issuer_email,
             notification_created=event_date,
             email_button_string='Rate Fulfiller')
@@ -122,6 +123,7 @@ class NotificationClient:
             string_data=string_data_fulfiller,
             subject='Your Submission was Accepted',
             fulfillment_description=fulfillment.description,
+            fulfillment_id=fulfillment_id,
             is_activity=False,
             string_data_email=string_data_fulfiller_email,
             notification_created=event_date,

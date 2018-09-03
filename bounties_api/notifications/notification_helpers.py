@@ -1,5 +1,6 @@
 from django.db import transaction
 
+from bounties import settings
 from bounties.ses_client import send_email
 from bounties.utils import bounty_url_for, profile_url_for
 
@@ -73,6 +74,9 @@ def create_notification(**kwargs):
 
     if (not is_activity and
             notification_name not in user.settings.accepted_email_settings()):
+        return
+
+    if platform not in settings.PLATFORM_MAPPING:
         return
 
     if notification.email_sent:

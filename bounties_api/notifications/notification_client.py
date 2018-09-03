@@ -1,3 +1,4 @@
+from decimal import Context
 from datetime import datetime
 from std_bounties.models import Fulfillment, Bounty, Comment
 from user.models import User
@@ -10,6 +11,7 @@ from notifications.notification_templates import (
     notification_templates,
     email_templates
 )
+from bounties.utils import calculate_token_value
 import logging
 
 logger = logging.getLogger('django')
@@ -202,11 +204,6 @@ class NotificationClient:
             uid,
             **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)
-        amount = '{} {}'.format(
-            bounty.tokenSymbol,
-            bounty.calculated_fulfillmentAmount)
-        string_data = notification_templates['ContributionAdded'].format(
-            bounty_title=bounty.title, amount=amount)
 
         try:
             from_user = transaction_from and User.objects.get(
@@ -214,6 +211,14 @@ class NotificationClient:
         except User.DoesNotExist:
             logger.error('No user for address: {}'.format(transaction_from.lower()))
             return
+
+        token_decimal = Context(prec=6).create_decimal
+        amount = '{} {}'.format(bounty.tokenSymbol, token_decimal(
+            calculate_token_value(int(inputs['value']), bounty.tokenDecimals)
+        ).normalize())
+
+        string_data = notification_templates['ContributionAdded'].format(
+            bounty_title=bounty.title, amount=amount)
 
         if bounty.user == from_user:
             # activity to bounty issuer

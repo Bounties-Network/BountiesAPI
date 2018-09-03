@@ -71,8 +71,8 @@ class Email:
 
         issuer = bounty.user
 
-        token_decimals = Context(prec=5).create_decimal
-        usd_decimals = Context(prec=2).create_decimal
+        token_decimals = Context(prec=6).create_decimal
+        usd_decimals = Context(prec=3).create_decimal
         remaining = token_decimals(bounty.calculated_balance).normalize()
         token_amount = token_decimals(
             bounty.calculated_fulfillmentAmount).normalize()

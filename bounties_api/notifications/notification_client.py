@@ -192,16 +192,45 @@ class NotificationClient:
             bounty_title=bounty.title, amount=amount)
         from_user = transaction_from and User.objects.get(
             public_address=transaction_from.lower())
-        create_bounty_notification(
-            bounty=bounty,
-            uid=uid,
-            notification_name=notifications['ContributionAdded'],
-            user=bounty.user,
-            from_user=from_user,
-            string_data=string_data,
-            notification_created=event_date,
-            inputs=inputs,
-            subject='Contribution Added')
+        if bounty.user == from_user:
+            # activity to bounty issuer
+            create_bounty_notification(
+                bounty=bounty,
+                uid='{}-{}-activity'.format(uid, bounty.user.public_address),
+                notification_name=notifications['ContributionAdded'],
+                user=bounty.user,
+                from_user=None,
+                string_data=string_data,
+                notification_created=event_date,
+                inputs=inputs,
+                subject='Contribution Added',
+                is_activity=True)
+        else:
+            # notification to bounty issuer
+            create_bounty_notification(
+                bounty=bounty,
+                uid='{}-{}-notification'.format(uid,
+                    bounty.user.public_address),
+                notification_name=notifications['ContributionAdded'],
+                user=bounty.user,
+                from_user=from_user,
+                string_data=string_data,
+                notification_created=event_date,
+                inputs=inputs,
+                subject='Contribution Added',
+                is_activity=False)
+            # activity to user contributing to the bounty
+            create_bounty_notification(
+                bounty=bounty,
+                uid='{}-{}-activity'.format(uid, from_user.public_address),
+                notification_name=notifications['ContributionAdded'],
+                user=from_user,
+                from_user=None,
+                string_data=string_data,
+                notification_created=event_date,
+                inputs=inputs,
+                subject='Contribution Added',
+                is_activity=True)
 
     def deadline_extended(self, bounty_id, event_date, uid, **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)

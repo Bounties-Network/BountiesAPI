@@ -213,6 +213,7 @@ class NotificationClient:
                 public_address=transaction_from.lower())
         except User.DoesNotExist:
             logger.error('No user for address: {}'.format(transaction_from.lower()))
+            return
 
         if bounty.user == from_user:
             # activity to bounty issuer

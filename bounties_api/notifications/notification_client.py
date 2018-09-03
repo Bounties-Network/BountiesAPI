@@ -14,7 +14,6 @@ from notifications.notification_templates import (
 from bounties.utils import calculate_token_value
 import logging
 
-
 logger = logging.getLogger('django')
 
 

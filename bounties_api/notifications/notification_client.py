@@ -1,4 +1,4 @@
-from decimal import Context
+from decimal import Decimal, Context
 from datetime import datetime
 from std_bounties.models import Fulfillment, Bounty, Comment
 from user.models import User
@@ -214,7 +214,7 @@ class NotificationClient:
 
         token_decimal = Context(prec=6).create_decimal
         amount = '{} {}'.format(bounty.tokenSymbol, token_decimal(
-            calculate_token_value(int(inputs['value']), bounty.tokenDecimals)
+            calculate_token_value(int(Decimal(inputs['value'])), bounty.tokenDecimals)
         ).normalize())
 
         string_data = notification_templates['ContributionAdded'].format(

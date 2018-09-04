@@ -22,7 +22,8 @@ notification_templates = {
     'ProfileUpdated': 'You updated your profile assciated with: {public_address}.',
     'BountyComment': 'You issued a bounty for: {bounty_title}.',
     'DraftCreated': 'You created draft {draft_id}.',
-    'DraftUpdated': 'You updated draft {draft_id}.'
+    'DraftUpdated': 'You updated draft {draft_id}.',
+    'ContributionReceived': '{bounty_title} received {amount} in contribution'
 }
 
 email_templates = {

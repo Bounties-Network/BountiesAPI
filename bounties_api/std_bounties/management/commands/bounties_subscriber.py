@@ -12,6 +12,11 @@ from std_bounties.models import Event
 from notifications.models import Transaction
 import logging
 
+from std_bounties.bounty_client import BountyClient
+from notifications.notification_client import NotificationClient
+from std_bounties.slack_client import SlackMessageClient
+from std_bounties.models import Bounty
+
 
 logger = logging.getLogger('django')
 
@@ -192,6 +197,53 @@ class Command(BaseCommand):
                     QueueUrl=settings.QUEUE_URL,
                     ReceiptHandle=receipt_handle,
                 )
+
+                if event == 'BountyActivated':
+                    bounty = Bounty.objects.get(bounty_id=bounty_id)
+                    is_issue_and_activate = contract_method_inputs.get(
+                        'issuer', None)
+                    if is_issue_and_activate:
+                        slack_client.bounty_issued_and_activated(bounty)
+                        notification_client.bounty_issued_and_activated(bounty_id, 
+                            event_date=event_date,
+                            inputs=contract_method_inputs,
+                            event_timestamp=event_timestamp,
+                            uid=message_deduplication_id)
+                    else:
+                        notification_client.bounty_activated(bounty_id, 
+                            event_date=event_date,
+                            inputs=contract_method_inputs,
+                            event_timestamp=event_timestamp,
+                            uid=message_deduplication_id)
+                        slack_client.bounty_activated(bounty)
+
+                if event == 'ContributionAdded':
+                    bounty = Bounty.objects.get(bounty_id=bounty_id)
+                    is_issue_and_activate = contract_method_inputs.get('issuer', None)
+                    bounty_client.add_contribution(bounty, 
+                        event_date=event_date,
+                        inputs=contract_method_inputs,
+                        event_timestamp=event_timestamp,
+                        transaction_from=transaction_from,
+                        uid=message_deduplication_id)
+
+                    if not is_issue_and_activate:
+                        notification_client.contribution_added(bounty_id, 
+                            event_date=event_date,
+                            inputs=contract_method_inputs,
+                            event_timestamp=event_timestamp,
+                            transaction_from=transaction_from,
+                            uid=message_deduplication_id)
+                        slack_client.contribution_added(bounty)
+
+                if event == 'PayoutIncreased':
+                    notification_client.payout_increased(bounty_id, 
+                        event_date=event_date,
+                        inputs=contract_method_inputs,
+                        uid=message_deduplication_id)
+                    slack_client.payout_increased(bounty)
+
+
         except Exception as e:
             # goes to rollbar
             logger.exception(e)

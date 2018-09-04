@@ -40,10 +40,8 @@ class Command(BaseCommand):
                 # poll by the second
                 if not settings.LOCAL:
                     time.sleep(1)
-                    
+
                 retry_blacklist -= 1
-                logger.info('done processing regular message, retry_blacklist is now: {}'.format(
-                    retry_blacklist))
 
                 # TODO - All should be a transaction atomic function
                 response = sqs_client.receive_message(

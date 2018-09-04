@@ -14,6 +14,15 @@ from std_bounties.models import Event
 from std_bounties.message import Message
 from notifications.models import Transaction
 
+from std_bounties.bounty_client import BountyClient
+from notifications.notification_client import NotificationClient
+from std_bounties.slack_client import SlackMessageClient
+from std_bounties.models import Bounty
+
+bounty_client = BountyClient()
+notification_client = NotificationClient()
+slack_client = SlackMessageClient()
+
 
 logger = logging.getLogger('django')
 
@@ -187,6 +196,50 @@ class Command(BaseCommand):
                 'linkText': transaction_link_text,
                 'message': transaction_message,
             })
+
+        if message.event == 'BountyActivated':
+            bounty = Bounty.objects.get(bounty_id=bounty_id)
+            is_issue_and_activate = message.contract_method_inputs.get(
+                'issuer', None)
+            if is_issue_and_activate:
+                slack_client.bounty_issued_and_activated(bounty)
+                notification_client.bounty_issued_and_activated(
+                    bounty_id,
+                    event_date=message.event_date,
+                    inputs=message.contract_method_inputs,
+                    event_timestamp=message.event_timestamp,
+                    uid=message.message_deduplication_id)
+            else:
+                notification_client.bounty_activated(
+                    bounty_id,
+                    event_date=message.event_date,
+                    inputs=message.contract_method_inputs,
+                    event_timestamp=message.event_timestamp,
+                    uid=message.message_deduplication_id)
+                slack_client.bounty_activated(bounty)
+
+        if message.event == 'ContributionAdded':
+            bounty = Bounty.objects.get(bounty_id=bounty_id)
+            is_issue_and_activate = message.contract_method_inputs.get(
+                'issuer', None)
+            if not is_issue_and_activate:
+                notification_client.contribution_added(
+                    bounty_id,
+                    event_date=message.event_date,
+                    inputs=message.contract_method_inputs,
+                    event_timestamp=message.event_timestamp,
+                    transaction_from=message.transaction_from,
+                    uid=message.message_deduplication_id)
+                slack_client.contribution_added(bounty)
+
+        if message.event == 'PayoutIncreased':
+            bounty = Bounty.objects.get(bounty_id=bounty_id)
+            notification_client.payout_increased(
+                bounty_id,
+                event_date=message.event_date,
+                inputs=message.contract_method_inputs,
+                uid=message.message_deduplication_id)
+            slack_client.payout_increased(bounty)
 
     def notify_master_client(self, message):
         event = message.event

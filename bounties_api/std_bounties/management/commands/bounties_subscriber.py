@@ -17,6 +17,10 @@ from notifications.notification_client import NotificationClient
 from std_bounties.slack_client import SlackMessageClient
 from std_bounties.models import Bounty
 
+bounty_client = BountyClient()
+notification_client = NotificationClient()
+slack_client = SlackMessageClient()
+
 
 logger = logging.getLogger('django')
 

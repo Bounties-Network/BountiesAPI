@@ -224,13 +224,6 @@ class Command(BaseCommand):
                 if event == 'ContributionAdded':
                     bounty = Bounty.objects.get(bounty_id=bounty_id)
                     is_issue_and_activate = contract_method_inputs.get('issuer', None)
-                    bounty_client.add_contribution(bounty, 
-                        event_date=event_date,
-                        inputs=contract_method_inputs,
-                        event_timestamp=event_timestamp,
-                        transaction_from=transaction_from,
-                        uid=message_deduplication_id)
-
                     if not is_issue_and_activate:
                         notification_client.contribution_added(bounty_id, 
                             event_date=event_date,
@@ -241,6 +234,7 @@ class Command(BaseCommand):
                         slack_client.contribution_added(bounty)
 
                 if event == 'PayoutIncreased':
+                    bounty = Bounty.objects.get(bounty_id=bounty_id)
                     notification_client.payout_increased(bounty_id, 
                         event_date=event_date,
                         inputs=contract_method_inputs,

@@ -18,6 +18,7 @@ logger = logging.getLogger('django')
 
 
 class NotificationClient:
+
     def __init__(self):
         pass
 
@@ -209,7 +210,8 @@ class NotificationClient:
             from_user = transaction_from and User.objects.get(
                 public_address=transaction_from.lower())
         except User.DoesNotExist:
-            logger.error('No user for address: {}'.format(transaction_from.lower()))
+            logger.error('No user for address: {}'.format(
+                transaction_from.lower()))
             return
 
         token_decimal = Context(prec=6).create_decimal
@@ -217,8 +219,11 @@ class NotificationClient:
             calculate_token_value(int(Decimal(inputs['value'])), bounty.tokenDecimals)
         ).normalize())
 
-        string_data = notification_templates['ContributionAdded'].format(
+        added_string_data = notification_templates['ContributionAdded'].format(
             bounty_title=bounty.title, amount=amount)
+        received_string_data = notification_templates[
+            'ContributionReceived'].format(bounty_title=bounty.title,
+                                           amount=amount)
 
         if bounty.user == from_user:
             # activity to bounty issuer
@@ -228,7 +233,7 @@ class NotificationClient:
                 notification_name=notifications['ContributionAdded'],
                 user=bounty.user,
                 from_user=None,
-                string_data=string_data,
+                string_data=added_string_data,
                 notification_created=event_date,
                 inputs=inputs,
                 subject='Contribution Added',
@@ -242,7 +247,7 @@ class NotificationClient:
                 notification_name=notifications['ContributionReceived'],
                 user=bounty.user,
                 from_user=from_user,
-                string_data=string_data,
+                string_data=received_string_data,
                 notification_created=event_date,
                 inputs=inputs,
                 subject='Contribution Received',
@@ -254,7 +259,7 @@ class NotificationClient:
                 notification_name=notifications['ContributionAdded'],
                 user=from_user,
                 from_user=None,
-                string_data=string_data,
+                string_data=added_string_data,
                 notification_created=event_date,
                 inputs=inputs,
                 subject='Contribution Added',
@@ -444,7 +449,8 @@ class NotificationClient:
         string_data = notification_templates['ProfileUpdated'].format(
             public_address=public_address)
         create_profile_updated_notification(
-            uid=str(user.id) + str(int(datetime.utcnow().timestamp())) + 'ProfileUpdated',
+            uid=str(user.id) +
+            str(int(datetime.utcnow().timestamp())) + 'ProfileUpdated',
             notification_name=notifications['ProfileUpdated'],
             user=user,
             from_user=None,

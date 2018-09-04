@@ -223,7 +223,7 @@ class NotificationClient:
             bounty_title=bounty.title, amount=amount)
         received_string_data = notification_templates[
             'ContributionReceived'].format(bounty_title=bounty.title,
-                                        amount=amount)
+                                           amount=amount)
 
         if bounty.user == from_user:
             # activity to bounty issuer

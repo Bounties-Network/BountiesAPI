@@ -30,7 +30,7 @@ class Command(BaseCommand):
                     location = 'https://ipfs.infura.io/ipfs/{}/{}'.format(user.profileDirectoryHash, user.profileFileName)
                     image_r = requests.get(location)
 
-                elif user.github and not user.profile_touched_manually:
+                elif user.github and not user.profile_touched_manually and not user.profile_image:
                     github_username = user.github
                     if not github_username:
                         continue

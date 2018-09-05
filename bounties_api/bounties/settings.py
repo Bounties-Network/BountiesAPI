@@ -256,7 +256,7 @@ PLATFORM_MAPPING = {
     'hiring': 'https://hiring.bounties.network',
     'berlin': 'https://berlin.bounties.network',
     'beeess': 'https://bees.bounties.network',
-    'bounties-network': 'https://beta.bounties.network'
+    'bounties-network': 'https://explorer.bounties.network'
 }
 
 if not DEBUG:

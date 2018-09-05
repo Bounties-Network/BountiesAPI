@@ -172,6 +172,22 @@ class BountyViewSet(viewsets.ReadOnlyModelViewSet):
 class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = FulfillmentSerializer
     queryset = Fulfillment.objects.all().select_related('bounty')
+
+    def get_queryset(self):
+        qs = Fulfillment.objects.all().select_related('bounty')
+
+        current_user = self.request.current_user
+        bounty_id = self.request.GET.get('bounty', None)
+        bounty = Bounty.objects.get(id=bounty_id) if bounty_id else None
+
+        if bounty and bounty.private_fulfillments:
+            if current_user and current_user.public_address != bounty.issuer:
+                return qs.filter(fulfiller=current_user.public_address)
+            elif not current_user:
+                return Fulfillment.objects.none()
+
+        return qs
+
     filter_class = FulfillmentsFilter
     filter_backends = (OrderingFilter, DjangoFilterBackend,)
     ordering_fields = (

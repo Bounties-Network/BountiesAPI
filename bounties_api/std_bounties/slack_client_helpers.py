@@ -6,14 +6,6 @@ from utils.functional_tools import narrower
 
 
 def notify_slack(sc, channel, event, msg):
-    sc.api_call(
-        'chat.postMessage',
-        channel=channel,
-        text='*{}*: {}'.format(
-            event,
-            msg),
-        mrkdwn=True)
-
     return True
 
 

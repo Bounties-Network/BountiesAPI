@@ -20,10 +20,10 @@ class TimelineBounties(APIView):
         platform = queryset.get('platform', 'all')
 
         try:
-            since_date = datetime.strptime(since, "%Y-%m-%d").date()
+            since_date = datetime.strptime(since, '%Y-%m-%d').date()
 
             if not isinstance(until, date):
-                until_date = datetime.strptime(until, "%Y-%m-%d").date()
+                until_date = datetime.strptime(until, '%Y-%m-%d').date()
             else:
                 until_date = until
 
@@ -78,6 +78,6 @@ class TimelineBounties(APIView):
             pass
 
         res = {
-            "error": 400,
-            "message": "The fields since & until needs being formated as YYYY-MM-DD"}
+            'error': 400,
+            'message': 'The fields since & until needs being formated as YYYY-MM-DD'}
         return Response(json.dumps(res), status=status.HTTP_200_OK)

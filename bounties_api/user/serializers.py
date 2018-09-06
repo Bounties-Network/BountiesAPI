@@ -138,7 +138,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         github = data.get('github')
 
         if twitter and twitter[0] == '@' or github and github[0] == '@':
-            raise serializers.ValidationError("social media handles must not include @ symbol")
+            raise serializers.ValidationError('social media handles must not include @ symbol')
 
         return data
 

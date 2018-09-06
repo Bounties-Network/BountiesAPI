@@ -25,6 +25,7 @@ slack_client = SlackMessageClient()
 logger = logging.getLogger('django')
 pp = pprint.PrettyPrinter(indent=4)
 
+
 class Command(BaseCommand):
     help = 'Listen to SQS queue for contract events'
 

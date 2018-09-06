@@ -11,8 +11,8 @@ class Command(BaseCommand):
         fake.seed(4321)
 
         for datetime in fake.time_series(
-                start_date="-60d",
-                end_date="now",
+                start_date='-60d',
+                end_date='now',
                 precision=None,
                 distrib=None,
                 tzinfo=None):

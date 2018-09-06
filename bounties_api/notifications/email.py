@@ -15,8 +15,8 @@ from bounties.settings import ENVIRONMENT
 
 default_image = ('https://gallery.mailchimp.com/03351ad14a86e9637146ada2a'
                  '/images/fae20fec-36ab-4594-9753-643c04e0ab9a.png')
-token_decimals = Context(prec=6).create_decimal
-usd_decimals = Context(prec=3).create_decimal
+create_token_decimals = Context(prec=6).create_decimal
+create_usd_decimals = Context(prec=3).create_decimal
 
 
 class Email:
@@ -38,13 +38,13 @@ class Email:
 
     @staticmethod
     def token_decimals(tokens):
-        return token_decimals(tokens).normalize().quantize(
-            Decimal('.01'), rounding=ROUND_HALF_UP)
+        return create_token_decimals(tokens).quantize(
+            Decimal('.00001'), rounding=ROUND_HALF_UP).normalize()
 
     @staticmethod
     def usd_decimals(tokens):
-        return usd_decimals(tokens).normalize().quantize(
-            Decimal('.00001'), rounding=ROUND_HALF_UP)
+        return create_usd_decimals(tokens).quantize(
+            Decimal('.01'), rounding=ROUND_HALF_UP).normalize()
 
     @staticmethod
     def render_categories(categories):

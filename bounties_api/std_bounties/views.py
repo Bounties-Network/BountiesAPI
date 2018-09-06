@@ -222,14 +222,14 @@ class UserProfile(APIView):
         ordered_fulfillments = Fulfillment.objects.filter(
             fulfiller=address.lower(), **extra_filters).order_by('-created')
         if not ordered_fulfillments.exists():
-            raise Http404("Address does not exist")
+            raise Http404('Address does not exist')
 
         latest_fulfillment = ordered_fulfillments[0]
         user_profile = {
-            "address": address,
-            "name": latest_fulfillment.fulfiller_name,
-            "email": latest_fulfillment.fulfiller_email,
-            "githubUsername": latest_fulfillment.fulfiller_githubUsername,
+            'address': address,
+            'name': latest_fulfillment.fulfiller_name,
+            'email': latest_fulfillment.fulfiller_email,
+            'githubUsername': latest_fulfillment.fulfiller_githubUsername,
         }
         return JsonResponse(user_profile)
 
@@ -242,9 +242,9 @@ class LeaderboardIssuer(APIView):
         if platform_in:
             sql_param = 'AND ( '
             sql_param += sqlGenerateOrList(
-                'fulfillment.\"platform\"', len(platform_in), '=')
+                'fulfillment.\'platform\'', len(platform_in), '=')
             sql_param += ' OR '
-            sql_param += sqlGenerateOrList('bounty.\"platform\"',
+            sql_param += sqlGenerateOrList('bounty.\'platform\'',
                                            len(platform_in), '=')
             sql_param += ' )'
         platform_in = platform_in + platform_in
@@ -266,9 +266,9 @@ class LeaderboardFulfiller(APIView):
         if platform_in:
             sql_param = 'AND ( '
             sql_param += sqlGenerateOrList(
-                'fulfillment.\"platform\"', len(platform_in), '=')
+                'fulfillment.\'platform\'', len(platform_in), '=')
             sql_param += ' OR '
-            sql_param += sqlGenerateOrList('bounty.\"platform\"',
+            sql_param += sqlGenerateOrList('bounty.\'platform\'',
                                            len(platform_in), '=')
             sql_param += ' )'
         platform_in = platform_in + platform_in

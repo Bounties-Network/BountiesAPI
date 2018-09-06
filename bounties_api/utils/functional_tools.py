@@ -83,14 +83,14 @@ def pipe(initial_value, functions):
 
             if current_result is None:
                 logger.warning(
-                    "{} returns None with the given arg: {}".format(
+                    '{} returns None with the given arg: {}'.format(
                         f.__name__, current_result))
                 return
         except serializers.ValidationError:
             raise
         except Exception as e:
             logger.error(
-                "{} - {} raised exception with the given arg: {}, ".format(str(e),
+                '{} - {} raised exception with the given arg: {}, '.format(str(e),
                                                                            f.__name__, current_result),
                 exc_info=True)
             return

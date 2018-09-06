@@ -29,7 +29,7 @@ jobs:
 
       - run:
           name: Run django tests
-          command: docker-compose -f docker-compose-circleci-test.yml run bash -c "sleep 5 && bounties_api python manage.py test"
+          command: docker-compose -f docker-compose-circleci-test.yml run bounties_api bash -c "sleep 5 && python manage.py test"
 
 
       # - run:

@@ -4,6 +4,7 @@ from django.db import connection
 from django.db.models import Count
 from django.http import JsonResponse, Http404, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from rest_framework.views import APIView
 from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList, limitOffsetParams
 from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_FULFILLER_QUERY
@@ -177,7 +178,17 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
         qs = Fulfillment.objects.all().select_related('bounty')
 
         current_user = self.request.current_user
-        bounty_id = self.request.GET.get('bounty', '')
+        bounty_id = self.request.GET.get('bounty', None)
+
+        if bounty_id is None:
+            if current_user:
+                return qs.filter(
+                    Q(fulfiller=current_user.public_address) |
+                    Q(bounty__issuer=current_user.public_address) |
+                    Q(bounty__private_fulfillments=False)
+                )
+            else:
+                return Fulfillment.objects.filter(bounty__private_fulfillments=False)
 
         try:
             bounty_id = int(bounty_id)
@@ -187,15 +198,19 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
         try:
             bounty = Bounty.objects.get(id=bounty_id)
         except Bounty.DoesNotExist:
-            raise Fulfillment.objects.none()
+            return Fulfillment.objects.none()
 
-        if bounty and bounty.private_fulfillments:
+        if bounty.private_fulfillments:
             if current_user and current_user.public_address != bounty.issuer:
-                return qs.filter(fulfiller=current_user.public_address)
-            elif not current_user:
+                return bounty.fulfillments.filter(fulfiller=current_user.public_address)
+
+            if not current_user:
                 return Fulfillment.objects.none()
 
-        return qs
+            if current_user and current_user.public_address == bounty.issuer:
+                return bounty.fulfillments
+
+        return Fulfillment.objects.none()
 
     filter_class = FulfillmentsFilter
     filter_backends = (OrderingFilter, DjangoFilterBackend,)

@@ -48,9 +48,14 @@ jobs:
       # https://nose.readthedocs.io
 
       - run:
+          name: build docker image
+          command: |
+            docker build ./bounties_api --tag consensysbounties/std_bounties:$CIRCLE_SHA1
+
+      - run:
           name: run django tests
           command: |
-            docker-compose -f docker-compose-test.yml run bounties_api python manage.py test
+            docker-compose -f docker-compose-circleci-test.yml run bounties_api python manage.py test
 
       - run:
           name: codecov upload
@@ -61,17 +66,12 @@ jobs:
           path: test-reports
           destination: test-reports
 
-      - run:
-          name: build docker image
-          command: |
-            docker build ./bounties_api --tag consensysbounties/std_bounties:$CIRCLE_SHA1
+      # - run:
+      #     name: log in to docker hub
+      #     command: |
+      #       docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
 
-      - run:
-          name: log in to docker hub
-          command: |
-            docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-
-      - run:
-          name: upload docker image
-          command: |
-            docker push consensysbounties/std_bounties:$CIRCLE_SHA1
+      # - run:
+      #     name: upload docker image
+      #     command: |
+      #       docker push consensysbounties/std_bounties:$CIRCLE_SHA1

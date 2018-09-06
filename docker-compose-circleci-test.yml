@@ -10,6 +10,12 @@ services:
       - psql_bounties:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+  redis:
+    image: "redis"
+    volumes:
+      - redis_bounties:/data
+    ports:
+      - "6379:6379"
   bounties_api:
     image: consensysbounties/std_bounties:${CIRCLE_SHA1}
     restart: always
@@ -24,4 +30,6 @@ services:
       - db
 volumes:
   psql_bounties:
+    external: true
+  redis_bounties:
     external: true

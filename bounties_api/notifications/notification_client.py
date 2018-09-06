@@ -1,4 +1,4 @@
-from decimal import Decimal, Context
+from decimal import Decimal
 from datetime import datetime
 from std_bounties.models import Fulfillment, Bounty, Comment
 from user.models import User
@@ -11,7 +11,11 @@ from notifications.notification_templates import (
     notification_templates,
     email_templates
 )
-from bounties.utils import calculate_token_value
+from bounties.utils import (
+    calculate_token_value
+    token_decimals,
+    usd_decimals
+)
 import logging
 
 logger = logging.getLogger('django')
@@ -214,10 +218,9 @@ class NotificationClient:
                 transaction_from.lower()))
             return
 
-        token_decimal = Context(prec=6).create_decimal
-        amount = '{} {}'.format(bounty.tokenSymbol, token_decimal(
-            calculate_token_value(int(Decimal(inputs['value'])), bounty.tokenDecimals)
-        ).normalize())
+        amount = '{} {}'.format(bounty.tokenSymbol, token_decimals(
+            calculate_token_value(
+                int(Decimal(inputs['value'])), bounty.tokenDecimals)))
 
         added_string_data = notification_templates['ContributionAdded'].format(
             bounty_title=bounty.title, amount=amount)

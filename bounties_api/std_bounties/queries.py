@@ -1,11 +1,12 @@
 # If we used django for this, it would be quite complicated and inefficient.
 # By inputting raw SQL - we get a very fast output
-LEADERBOARD_QUERY = """
+LEADERBOARD_FULFILLER_QUERY = """
 SELECT
 	fulfillment.fulfiller as address,
-	fulfillment_profiles.fulfiller_name as name,
-	fulfillment_profiles.fulfiller_email as email,
-	fulfillment_profiles."fulfiller_githubUsername" as githubUsername,
+	profile.name as name,
+	profile.email as email,
+	profile.github as githubUsername,
+	profile.profile_image as profile_image,
 	SUM(bounty."fulfillmentAmount") as total,
 	SUM(fulfillment.usd_price) as total_usd,
 	COUNT(bounty) as bounties_fulfilled,
@@ -13,26 +14,31 @@ SELECT
 FROM std_bounties_fulfillment fulfillment
 JOIN std_bounties_bounty bounty
 ON fulfillment.bounty_id = bounty.id
-JOIN
-(
-	SELECT
-		fulfillments.fulfiller,
-		fulfiller_name,
-		fulfiller_email,
-		"fulfiller_githubUsername"
-	FROM std_bounties_fulfillment fulfillments
-	INNER JOIN (
-		SELECT
-			fulfiller,
-			MAX(created) as max_date
-		FROM std_bounties_fulfillment
-		GROUP BY fulfiller
-	) max_date_fulfillment
-	ON fulfillments.fulfiller = max_date_fulfillment.fulfiller
-		AND fulfillments.created = max_date_fulfillment.max_date
-) fulfillment_profiles
-ON fulfillment.fulfiller = fulfillment_profiles.fulfiller
+JOIN user_user profile
+ON fulfillment.fulfiller = profile.public_address
 WHERE fulfillment.accepted = true {}
-GROUP BY fulfillment.fulfiller, fulfillment_profiles.fulfiller_name, fulfillment_profiles.fulfiller_email, fulfillment_profiles."fulfiller_githubUsername"
+GROUP BY fulfillment.fulfiller, profile.name, profile.email, profile.github, profile.profile_image
+ORDER BY total_usd desc, total desc
+"""
+
+
+LEADERBOARD_ISSUER_QUERY = """
+SELECT
+	bounty.issuer as address,
+	profile.name as name,
+	profile.email as email,
+	profile.github as githubUsername,
+	profile.profile_image as profile_image,
+	SUM(bounty."fulfillmentAmount") as total,
+	SUM(fulfillment.usd_price) as total_usd,
+	COUNT(distinct(bounty.id)) as bounties_issued,
+	COUNT(fulfillment) as fulfillments_paid
+FROM std_bounties_fulfillment fulfillment
+JOIN std_bounties_bounty bounty
+ON fulfillment.bounty_id = bounty.id
+JOIN user_user profile
+ON bounty.issuer = profile.public_address
+WHERE fulfillment.accepted = true {}
+GROUP BY bounty.issuer, profile.name, profile.email, profile.github, profile.profile_image
 ORDER BY total_usd desc, total desc
 """

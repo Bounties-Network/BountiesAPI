@@ -5,11 +5,11 @@ from decimal import Decimal
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from web3.middleware import geth_poa_middleware
+from std_bounties.constants import rev_mapped_difficulties, BEGINNER
 from std_bounties.contract import data
 from std_bounties.models import Token
 from utils.functional_tools import pluck
 
-from rest_framework.reverse import reverse
 from django.conf import settings
 import ipfsapi
 import logging
@@ -18,11 +18,12 @@ import logging
 logger = logging.getLogger('django')
 
 web3 = Web3(HTTPProvider(settings.ETH_NETWORK_URL))
-if settings.ETH_NETWORK in ['rinkeby', 'consensysrinkeby']:
+if settings.ETH_NETWORK in ['rinkeby', 'consensysrinkeby', 'rinkebystaging']:
     web3.middleware_stack.inject(geth_poa_middleware, layer=0)
 bounties_json = json.loads(data)
 ipfs = ipfsapi.connect(host='https://ipfs.infura.io')
 bounty_data_keys = [
+    'uid',
     'description',
     'title',
     'sourceFileName',
@@ -31,6 +32,7 @@ bounty_data_keys = [
     'webReferenceURL']
 fulfillment_data_keys = [
     'description',
+    'url',
     'sourceFileName',
     'sourceFileHash',
     'sourceDirectoryHash']
@@ -48,9 +50,20 @@ def map_bounty_data(data_hash, bounty_id):
         ipfs_hash = 'invalid'
 
     data = json.loads(data_JSON)
-    metadata = data.get('meta', {})
+    meta = data.get('meta', {})
+
     if 'payload' in data:
         data = data.get('payload')
+
+    metadata = data.get('metadata', {})
+
+    experienceLevel = metadata.get('experienceLevel') or data.get('difficulty') or ''
+    experienceLevel = 'Advanced' if experienceLevel == 'Expert' else experienceLevel
+
+    formattedExperienceLevel = str(experienceLevel).lower().strip().capitalize()
+
+    metadata.update({'experienceLevel': rev_mapped_difficulties.get(
+        formattedExperienceLevel, BEGINNER)})
 
     data_issuer = data.get('issuer', {})
     if isinstance(data_issuer, str):
@@ -60,9 +73,11 @@ def map_bounty_data(data_hash, bounty_id):
     categories = data.get('categories', [])
     plucked_data = pluck(data, bounty_data_keys)
 
-    return {
+    bounty = {
         **plucked_data,
+        **meta,
         **metadata,
+        'private_fulfillments': data.get('privateFulfillments', True),
         'issuer_name': data_issuer.get(
             'name',
             ''),
@@ -77,11 +92,18 @@ def map_bounty_data(data_hash, bounty_id):
         'issuer_address': data_issuer.get(
             'address',
             ''),
+        'revisions': data.get('revisions', None),
         'data_issuer': data_issuer,
         'data': ipfs_hash,
         'data_json': str(data_JSON),
         'data_categories': categories,
     }
+
+    # if 'platform' is gitcoin, also return deadline
+    if metadata.get('platform', '') is 'gitcoin':
+        bounty.update({'deadline': data.get('expire_date', '')})
+
+    return bounty
 
 
 def map_fulfillment_data(data_hash, bounty_id, fulfillment_id):
@@ -132,8 +154,7 @@ def calculate_token_quantity(value, decimals):
 
 
 def calculate_usd_price(value, decimals, usd_rate):
-    return ((Decimal(value) / Decimal(pow(10, decimals)))
-            * Decimal(usd_rate)).quantize(Decimal(10) ** -8)
+    return ((Decimal(value) / Decimal(pow(10, decimals))) * Decimal(usd_rate)).quantize(Decimal(10) ** -8)
 
 
 def get_token_pricing(token_symbol, token_decimals, value):
@@ -156,7 +177,8 @@ def get_historic_pricing(token_symbol, token_decimals, value, timestamp):
     r.raise_for_status()
     coin_data = r.json()
     if coin_data.get('Response', None) == 'Error':
-        usd_price, token_model = get_token_pricing(token_symbol, token_decimals, value)
+        usd_price, token_model = get_token_pricing(
+            token_symbol, token_decimals, value)
         token_price = token_model.price_usd if token_model else 0
         return usd_price, token_price
     token_price = coin_data[token_symbol]['USD']

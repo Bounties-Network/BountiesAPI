@@ -7,12 +7,13 @@ from std_bounties.bounty_client import BountyClient
 from std_bounties.client_helpers import calculate_token_quantity, \
     calculate_usd_price, get_token_pricing, map_bounty_data, \
     map_fulfillment_data
-from std_bounties.constants import ACTIVE_STAGE, DRAFT_STAGE, EXPIRED_STAGE
-from std_bounties.models import Bounty, BountyState, Token
+from std_bounties.constants import ACTIVE_STAGE, DRAFT_STAGE
+from std_bounties.models import Bounty, Token
 from std_bounties.message import Message
 
 
 class TestCalculationHelpers(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.eth_token = Token(
@@ -89,6 +90,7 @@ class TestCalculationHelpers(unittest.TestCase):
 
 
 class TestMapBountyData(unittest.TestCase):
+
     def get_ipfs_data(self):
         issuer = {
             'name': 'issuer name',
@@ -166,6 +168,7 @@ class TestMapBountyData(unittest.TestCase):
 
 
 class TestMapFullfilmentData(unittest.TestCase):
+
     def get_ipfs_data(self):
         fulfiller = {
             'name': 'fulfiller name',
@@ -233,6 +236,7 @@ class TestMapFullfilmentData(unittest.TestCase):
 
 
 class TestBountyClient(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.client = BountyClient()
@@ -296,7 +300,9 @@ class TestBountyClient(unittest.TestCase):
             pk=self.bounty_to_extend_deadline_id)
         self.assertEqual(result, bounty_to_extend_deadline_from_db)
 
+
 class TestEventMessage(unittest.TestCase):
+
     def setUp(self):
         self.maxDiff = None
 
@@ -311,14 +317,14 @@ class TestEventMessage(unittest.TestCase):
         self.event_timestamp = '1513709342'
         self.event_date = datetime(2017, 12, 19, 18, 49, 2)
         self.contract_method_inputs = {
-            "issuer": "0x4242424242424242424242424242424242424242",
-            "deadline": "1550529106",
-            "data": "QmQjchBM6tjAvXzkDEpWgLUv9Ui4jwqtxsEzB6LxB2WqFL",
-            "fulfillmentAmount": "42000000000000000",
-            "arbiter": "0x0000000000000000000000000000000000000000",
-            "paysTokens": False,
-            "tokenContract": "0x0000000000000000000000000000000000000000",
-            "value": "42000000000000000"
+            'issuer': '0x4242424242424242424242424242424242424242',
+            'deadline': '1550529106',
+            'data': 'QmQjchBM6tjAvXzkDEpWgLUv9Ui4jwqtxsEzB6LxB2WqFL',
+            'fulfillmentAmount': '42000000000000000',
+            'arbiter': '0x0000000000000000000000000000000000000000',
+            'paysTokens': False,
+            'tokenContract': '0x0000000000000000000000000000000000000000',
+            'value': '42000000000000000'
         }
 
         self.dict_values = {
@@ -399,7 +405,7 @@ class TestEventMessage(unittest.TestCase):
                 }
             }
         }
-    
+
     def test_from_kwargs(self):
         message = Message(
             receipt_handle=self.receipt_handle,

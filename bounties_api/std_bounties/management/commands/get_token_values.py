@@ -3,8 +3,9 @@ from math import pow
 from decimal import Decimal
 from django.core.management.base import BaseCommand
 from std_bounties.constants import DEAD_STAGE, COMPLETED_STAGE
-from std_bounties.models import Token, Bounty
+from std_bounties.models import Token, Bounty, DraftBounty
 import logging
+import sys
 
 logger = logging.getLogger('django')
 
@@ -48,6 +49,22 @@ class Command(BaseCommand):
                     token_model = Token.objects.get(symbol=bounty.tokenSymbol)
                     bounty.token = token_model
                     bounty.save()
+
+            all_draft_bounties = DraftBounty.objects.filter(on_chain=False)
+            for draft_bounty in all_draft_bounties:
+                price = token_cache.get(draft_bounty.tokenSymbol, None)
+                if price is not None:
+                    decimals = draft_bounty.tokenDecimals
+                    fulfillmentAmount = draft_bounty.fulfillmentAmount
+                    draft_bounty.usd_price = (
+                        fulfillmentAmount / Decimal(pow(10, decimals))) * Decimal(price)
+                    draft_bounty.save()
+                # maybe a token was not added to coinmarketcap until later
+                if price is not None and not draft_bounty.token:
+                    token_model = Token.objects.get(
+                        symbol=draft_bounty.tokenSymbol)
+                    draft_bounty.token = token_model
+                    draft_bounty.save()
 
         except Exception as e:
             # goes to rollbar

@@ -12,13 +12,19 @@ async function handler() {
 			// I use past events vs. subscribe in order to preserve ordering - FIFO
 			// Also, subscribe is just polling - the socket connection does not provide the additional behavior, so these
 			// are essentially accomplishing the same thing
+
+			// StandardBounties latest events
 			let fromBlock = await getAsync('currentBlock') || 0;
+			fromBlock = parseInt(fromBlock);
 			const latestBlockData = await getBlock('latest');
 			const latestBlock = latestBlockData.number;
 			console.log('fromBlock: ', fromBlock);
 			console.log('latestBlock: ', latestBlock)
 			let eventBlock;
 			while (fromBlock < latestBlock) {
+				if (fromBlock === 4762524) {
+					fromBlock += 1000;
+				}
 				let events = await StandardBounties.getPastEvents({fromBlock, toBlock: fromBlock + 100000});
 				console.log('currentCheck: ', fromBlock);
 				eventBlock = await sendEvents(events);

@@ -1,29 +1,94 @@
-from django.template.loader import render_to_string
-from notifications.models import Notification, DashboardNotification
+from django.db import transaction
+
+from bounties import settings
 from bounties.ses_client import send_email
-from bounties.utils import bounty_url_for
+from bounties.utils import bounty_url_for, profile_url_for
+
+from notifications.models import Notification, DashboardNotification
+from notifications.email import Email
 
 
-def create_notification(bounty, notification_name, user, notification_created, string_data, subject, is_activity=True, email=False, should_send_email=False):
-    bounty_url = bounty_url_for(bounty.bounty_id, bounty.platform)
-    notification = Notification.objects.create(
-        notification_name=notification_name,
-        user=user,
-        notification_created=notification_created,
-        email=email,
-        dashboard=True
+def create_bounty_notification(**kwargs):
+    bounty = kwargs.get('bounty')
+    bounty_url = bounty_url_for(
+        bounty.bounty_id, bounty.platform) + kwargs.get('url_query', '')
+    kwargs.update({
+        'url': bounty_url,
+        'platform': bounty.platform
+    })
+    create_notification(**kwargs)
+
+
+def create_profile_updated_notification(*args, **kwargs):
+    profile_url = profile_url_for(kwargs.get('user').public_address)
+    kwargs.update({'url': profile_url})
+    create_notification(**kwargs)
+
+
+@transaction.atomic
+def create_notification(**kwargs):
+    uid = kwargs['uid']
+    notification_name = kwargs['notification_name']
+    string_data = kwargs['string_data']
+    user = kwargs['user']
+    from_user = kwargs['from_user']
+    notification_created = kwargs['notification_created']
+    bounty = kwargs.get('bounty')
+    subject = kwargs['subject']
+    platform = kwargs.get('platform', '')
+    is_activity = kwargs.get('is_activity', True)
+    url = kwargs.get('url', '')
+
+    notification, created = Notification.objects.get_or_create(
+        uid=str(uid),
+        defaults={
+            'notification_name': notification_name,
+            'user': user,
+            'from_user': from_user,
+            'notification_created': notification_created,
+            'dashboard': True,
+            'platform': platform,
+        },
     )
+
+    # this function is atomic, so this is a good way to be sure
+    # we never notify more than once
+    if not created:
+        return
+
     DashboardNotification.objects.create(
         notification=notification,
         string_data=string_data,
         is_activity=is_activity,
-        data={'link': bounty_url},
+        data={
+            'link': url,
+            'bounty_title': bounty and bounty.title or kwargs.get('subject')
+        },
     )
-    bounty_user = bounty.user
-    username = 'bounty hunter'
-    if bounty_user and bounty_user.name:
-        username = bounty_user.name
-    email_html = render_to_string('base_notification.html', context={'link': bounty_url, 'username': username, 'message_string': string_data})
-    email_txt = 'Hello {}! \n {} \n View in app: {}'.format(username, string_data, bounty_url)
-    if bounty.platform != 'gitcoin' and should_send_email:
-        send_email(bounty.user.email, subject, email_txt, email_html)
+
+    email_settings = user.settings.emails
+    activity_emails = email_settings['activity']
+
+    if is_activity and not activity_emails:
+        return
+
+    if (not is_activity and
+            notification_name not in user.settings.accepted_email_settings()):
+        return
+
+    if platform not in settings.PLATFORM_MAPPING:
+        return
+
+    if notification.email_sent:
+        return
+
+    if notification_name not in Email.templates:
+        return
+
+    email = Email(**kwargs)
+
+    email_html = email.render()
+
+    send_email(user.email, subject, email_html)
+    notification.email_sent = True
+    notification.save()

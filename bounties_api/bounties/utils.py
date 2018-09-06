@@ -30,8 +30,29 @@ def extractInParams(request, equals_param, in_param):
         includes = includes_raw.split(',')
         included_values = included_values + includes
     if len(included_values) == 0:
-        return None
+        return []
     return included_values
+
+
+def limitOffsetParams(request):
+    offset = request.GET.get('offset', 0)
+    try:
+        offset = int(offset)
+    except ValueError as verr:
+        offset = 0
+    except Exception as ex:
+        offset = 0
+
+    limit = request.GET.get('limit', -1)
+    try:
+        limit = int(limit)
+    except ValueError as verr:
+        limit = -1
+    except Exception as ex:
+        limit = -1
+
+    end_index = -1 if limit == -1 else (offset + limit)
+    return offset, end_index
 
 
 def getDateTimeFromTimestamp(timestamp):
@@ -55,13 +76,29 @@ def dictfetchall(cursor):
         for row in cursor.fetchall()
     ]
 
+
 def calculate_token_value(value, decimals):
-    return (Decimal(value) / Decimal(pow(10, decimals))).quantize(Decimal(10) ** -decimals)
+    return (Decimal(value) / Decimal(pow(10, decimals))
+            ).quantize(Decimal(10) ** -decimals)
 
 
-def bounty_url_for(bounty_id, platform=None):
+def base_url_for(platform=None):
     base_url = settings.DEPLOY_URL
     if platform in settings.PLATFORM_MAPPING:
         base_url = settings.PLATFORM_MAPPING[platform]
-    url = '{}/bounty/v1/{}/'.format(base_url, bounty_id)
+
+    return base_url
+
+
+def bounty_url_for(bounty_id, platform=None):
+    url = '{}/bounty/{}/'.format(base_url_for(platform), bounty_id)
     return url
+
+
+def profile_url_for(public_address, platform=None):
+    url = '{}/profile/{}/'.format(base_url_for(platform), public_address)
+    return url
+
+
+def shorten_address(address):
+    return '{}...{}'.format(address[:6], address[-4:])

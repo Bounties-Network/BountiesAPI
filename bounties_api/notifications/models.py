@@ -4,13 +4,21 @@ from notifications.constants import NOTIFICATION_IDS
 
 
 class Notification(models.Model):
-    user = models.ForeignKey('authentication.User', null=False)
+    user = models.ForeignKey('user.User', null=False)
+    from_user = models.ForeignKey(
+        'user.User',
+        default=None,
+        null=True,
+        related_name="from_user"
+    )
+    uid = models.CharField(null=False, blank=False, max_length=512)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     notification_name = models.IntegerField(choices=NOTIFICATION_IDS, null=False)
     notification_created = models.DateTimeField(null=False)
-    email = models.BooleanField(default=False, null=False)
+    email_sent = models.BooleanField(default=False, null=False)
     dashboard = models.BooleanField(default=True, null=False)
+    platform = models.CharField(max_length=128, blank=True)
 
 
 class DashboardNotification(models.Model):
@@ -21,3 +29,19 @@ class DashboardNotification(models.Model):
     viewed = models.BooleanField(default=False, null=False)
     string_data = models.CharField(max_length=512, blank=True)
     data = JSONField(null=True)
+
+
+class Transaction(models.Model):
+    user = models.ForeignKey('user.User', null=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    tx_hash = models.CharField(
+        max_length=256,
+        null=False,
+        blank=False,
+        unique=True)
+    failed = models.BooleanField(default=False, null=False)
+    completed = models.BooleanField(default=False, null=False)
+    viewed = models.BooleanField(default=False, null=False)
+    data = JSONField(default=dict, null=False)
+    platform = models.CharField(max_length=128, blank=True)

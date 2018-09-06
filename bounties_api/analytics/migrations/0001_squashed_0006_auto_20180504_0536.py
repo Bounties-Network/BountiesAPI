@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('bounties_issued_cum', models.PositiveIntegerField(default=0)),
                 ('fulfillments_accepted_cum', models.PositiveIntegerField(default=0)),
                 ('fulfillments_submitted_cum', models.PositiveIntegerField(default=0)),
-                ('schema', models.CharField(blank=True, max_length=64)),
+                ('platform', models.CharField(blank=True, max_length=64)),
             ],
         ),
     ]

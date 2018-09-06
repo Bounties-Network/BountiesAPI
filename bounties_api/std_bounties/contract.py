@@ -18,6 +18,11 @@ data = """{
 			"v1":"0x12708d61650c2462f2e10276e0e65239d9b0df4e"
 			}
 	},
+	"rinkebystaging": {
+		"standardBountiesAddress": {
+			"v1":"0xdd1636b88e9071507e859e61991ed4be6647f420"
+		}
+	},
 	"localhost": {
 		"userCommentsAddress": "0xd0a170ba138d1cfe95fd4aba5a897bc4a1b53379",
 		"standardBountiesAddress": {

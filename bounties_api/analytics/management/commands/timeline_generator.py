@@ -15,7 +15,6 @@ DEFAULT_PLATFORM = 'bounties-network'
 DEFAULT_PLATFORM_QUERY = Q(bounty__platform=DEFAULT_PLATFORM) | Q(bounty__platform=None) | Q(bounty__platform='')
 
 
-
 def diff_time(since, until):
     return until - since
 
@@ -31,6 +30,7 @@ def day_bounds(day):
 
     return floor.datetime, ceil.datetime
 
+
 def week_bounds(day):
     utc_day = arrow.get(day).to('utc')
     floor = utc_day.floor('week')
@@ -38,18 +38,22 @@ def week_bounds(day):
 
     return floor.datetime, ceil.datetime
 
+
 def range_days(since, until):
     return arrow.Arrow.range('day', since, until)
 
+
 def range_weeks(since, until):
     return arrow.Arrow.range('week', since, until)
+
 
 def get_date(time_frame):
     return time_frame.last().change_date
 
 
 def add_on(stage):
-    return lambda current, next_value: current + 1 if next_value.bountyStage == stage else current
+    return lambda current, next_value: current + \
+        1 if next_value.bountyStage == stage else current
 
 
 def get_bounties_issued(time_frame):
@@ -66,22 +70,27 @@ def get_fulfillments_accepted(time_frame):
 
 def get_fulfillment_acceptance_rate(time_frame, accepted_date=datetime.now()):
     counter = time_frame.count()
-    return time_frame.filter(accepted_date__lte=accepted_date).count() / counter if counter else 0
+    return time_frame.filter(
+        accepted_date__lte=accepted_date).count() / counter if counter else 0
 
 
 def get_bounty_fulfilled_rate(time_frame, bounties):
     counter = bounties.count()
-    return time_frame.distinct('bounty').count() / bounties.count() if counter else 0
+    return time_frame.distinct('bounty').count() / \
+        bounties.count() if counter else 0
 
 
-def get_avg_fulfiller_acceptance_rate(time_frame, accepted_date=datetime.now()):
-    fulfillers = [b['fulfiller'] for b in time_frame.values('fulfiller').distinct()]
+def get_avg_fulfiller_acceptance_rate(
+        time_frame, accepted_date=datetime.now()):
+    fulfillers = [b['fulfiller']
+                  for b in time_frame.values('fulfiller').distinct()]
     counter = 0
     accumulator = 0
 
     for fulfiller in fulfillers:
         fulfillments = time_frame.filter(fulfiller=fulfiller)
-        accepted_fulfillments = fulfillments.filter(accepted=True, accepted_date__lte=accepted_date).count()
+        accepted_fulfillments = fulfillments.filter(
+            accepted=True, accepted_date__lte=accepted_date).count()
         accumulator += accepted_fulfillments / fulfillments.count()
         counter += 1
 
@@ -89,17 +98,25 @@ def get_avg_fulfiller_acceptance_rate(time_frame, accepted_date=datetime.now()):
 
 
 def get_avg_fulfillment_amount(time_frame):
-    completed_bounties = filter(lambda bounty: bounty.bountyStage == COMPLETED_STAGE, time_frame)
-    (total, count) = reduce(lambda prev, current: (prev[0] + current.bounty.usd_price, prev[1] + 1),
-                            completed_bounties,
-                            (0, 0))
+    completed_bounties = filter(
+        lambda bounty: bounty.bountyStage == COMPLETED_STAGE,
+        time_frame)
+    (total, count) = reduce(lambda prev, current: (
+        prev[0] + current.bounty.usd_price, prev[1] + 1), completed_bounties, (0, 0))
 
     return total / count if count > 0 else 0
 
 
 def get_total_fulfillment_amount(time_frame):
-    completed_bounties = filter(lambda bounty: bounty.bountyStage == COMPLETED_STAGE, time_frame)
-    return reduce(lambda prev, current: prev + current.bounty.fulfillmentAmount, completed_bounties, 0)
+    completed_bounties = filter(
+        lambda bounty: bounty.bountyStage == COMPLETED_STAGE,
+        time_frame)
+    return reduce(
+        lambda prev,
+        current: prev +
+        current.bounty.fulfillmentAmount,
+        completed_bounties,
+        0)
 
 
 def get_bounty_draft(time_frame):
@@ -141,12 +158,16 @@ def build_stages(time_frame):
     **Each total correspond to the last stages of the bounties in the given time frame**
     """
     # TODO: Queries optimization
-    unique_bounties = [b['bounty'] for b in time_frame.values('bounty').distinct()]
+    unique_bounties = [b['bounty']
+                       for b in time_frame.values('bounty').distinct()]
 
     stages = [0, 0, 0, 0, 0]
     bounty_stages = {}
     for bounty_id in unique_bounties:
-        bounty_states = time_frame.filter(bounty=bounty_id).order_by('-change_date', '-bountyStage')
+        bounty_states = time_frame.filter(
+            bounty=bounty_id).order_by(
+            '-change_date',
+            '-bountyStage')
         bounty_stages[bounty_id] = map(lambda b: b.bountyStage, bounty_states)
         current_stage = bounty_states.first().bountyStage
         stages[current_stage] = stages[current_stage] + 1
@@ -200,27 +221,33 @@ def generate_timeline(time_frame, platform=DEFAULT_PLATFORM):
     bounties_issued = get_bounties_issued(bounties_state_frame_day)
     bounties_issued_cum = get_bounties_issued(bounties_state_frame)
 
-    fulfillments_submitted = get_fulfillments_submitted(fulfillment_submitted_frame_day)
-    fulfillments_submitted_cum = get_fulfillments_submitted(fulfillment_submitted_frame)
+    fulfillments_submitted = get_fulfillments_submitted(
+        fulfillment_submitted_frame_day)
+    fulfillments_submitted_cum = get_fulfillments_submitted(
+        fulfillment_submitted_frame)
 
-    fulfillments_accepted = get_fulfillments_accepted(fulfillment_accepted_frame_day)
-    fulfillments_accepted_cum = get_fulfillments_accepted(fulfillment_accepted_frame)
+    fulfillments_accepted = get_fulfillments_accepted(
+        fulfillment_accepted_frame_day)
+    fulfillments_accepted_cum = get_fulfillments_accepted(
+        fulfillment_accepted_frame)
 
     # Also - a bounty can be active and still have an accepted fulfillment.
     # For example, a bounty may have a high balance to output multiple fulfillments.
     # So there is a slight error here.
     # Also, we probably want to not include bounties from the count that never were in an active state.
-    # ie. a bounty that was in draft forever, or was killed after being in draft.
+    # ie. a bounty that was in draft forever, or was killed after being in
+    # draft.
 
-    fulfillment_acceptance_rate = get_fulfillment_acceptance_rate(fulfillment_submitted_frame, date)
+    fulfillment_acceptance_rate = get_fulfillment_acceptance_rate(
+        fulfillment_submitted_frame, date)
 
-    bounty_fulfilled_rate = get_bounty_fulfilled_rate(fulfillment_submitted_frame,
-                                                      bounties_state_frame
-                                                      .distinct('bounty')
-                                                      .exclude(bounty__in=noise_bounties)
-                                                      )
+    bounty_fulfilled_rate = get_bounty_fulfilled_rate(
+        fulfillment_submitted_frame,
+        bounties_state_frame .distinct('bounty') .exclude(
+            bounty__in=noise_bounties))
 
-    avg_fulfiller_acceptance_rate = get_avg_fulfiller_acceptance_rate(fulfillment_submitted_frame, date)
+    avg_fulfiller_acceptance_rate = get_avg_fulfiller_acceptance_rate(
+        fulfillment_submitted_frame, date)
 
     avg_fulfillment_amount = get_avg_fulfillment_amount(bounties_state_frame)
     total_fulfillment_amount = get_total_fulfillment_amount(
@@ -234,7 +261,8 @@ def generate_timeline(time_frame, platform=DEFAULT_PLATFORM):
         fulfillments_submitted=fulfillments_submitted,
         fulfillments_accepted_cum=fulfillments_accepted_cum,
         fulfillments_accepted=fulfillments_accepted,
-        fulfillments_pending_acceptance=fulfillments_submitted_cum - fulfillments_accepted_cum,
+        fulfillments_pending_acceptance=fulfillments_submitted_cum -
+        fulfillments_accepted_cum,
         fulfillment_acceptance_rate=fulfillment_acceptance_rate,
         bounty_fulfilled_rate=bounty_fulfilled_rate,
         avg_fulfiller_acceptance_rate=avg_fulfiller_acceptance_rate,
@@ -263,7 +291,11 @@ class Command(BaseCommand):
             last_date = datetime.utcnow()
 
             if needs_genesis:
-                bounties_by_day = range_days(first_date.change_date, last_date + timedelta(days=1))
+                bounties_by_day = range_days(
+                    first_date.change_date,
+                    last_date +
+                    timedelta(
+                        days=1))
 
                 for day in bounties_by_day:
                     bounty_day = generate_timeline(
@@ -278,7 +310,8 @@ class Command(BaseCommand):
 
                 # Instead of calculate the last 5 min, we update all day until now
                 # this approach provides more flexibility and simplicity in calculating more stats in the future
-                # and provides a better way to expose by day or by hour in case of been needed
+                # and provides a better way to expose by day or by hour in case
+                # of been needed
                 for day in days:
                     bounty_day = generate_timeline(
                         day_bounds(day), platform=platform)
@@ -299,8 +332,9 @@ class Command(BaseCommand):
             last_date = datetime.utcnow()
 
             if needs_genesis:
-                bounties_by_week = range_weeks(first_date.change_date, last_date + timedelta(days=7))
-                
+                bounties_by_week = range_weeks(
+                    first_date.change_date, last_date + timedelta(days=7))
+
                 for week in bounties_by_week:
                     bounty_week = generate_timeline(
                         week_bounds(week), platform=platform)

@@ -11,6 +11,13 @@ def pluck(dictionary, fields):
     """Extract fields from dict and return a dict"""
     return {key: dictionary.get(key, '') for key in fields}
 
+
+def prune(dictionary):
+    """Removes keys which point to None values"""
+    return {key: dictionary.get(key, '')
+            for key, value in dictionary.items() if value}
+
+
 def narrower(obj, fields):
     """Extract fields from obj and return a dict"""
     narrowed_fields = {}
@@ -19,7 +26,7 @@ def narrower(obj, fields):
         key = field
         current_obj = obj
 
-        if type(field) is tuple:
+        if isinstance(field, tuple):
             attr = field[0]
             key = field[1]
 
@@ -57,7 +64,9 @@ def flatten(l):
     """Flat irregular list
     Credits to: https://stackoverflow.com/questions/2158395/flatten-an-irregular-list-of-lists"""
     for el in l:
-        if isinstance(el, collections.Iterable) and not isinstance(el, (str, bytes)):
+        if isinstance(
+                el, collections.Iterable) and not isinstance(
+                el, (str, bytes)):
             yield from flatten(el)
         else:
             yield el
@@ -73,7 +82,9 @@ def pipe(initial_value, functions):
             # logger.warning("--- {} -> {}".format(f.__name__, current_result))
 
             if current_result is None:
-                logger.warning("{} returns None with the given arg: {}".format(f.__name__, current_result))
+                logger.warning(
+                    "{} returns None with the given arg: {}".format(
+                        f.__name__, current_result))
                 return
         except serializers.ValidationError:
             raise

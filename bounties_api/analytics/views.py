@@ -1,17 +1,15 @@
 from datetime import datetime, date
 import json
 
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Count
 
 from analytics.filters import BountiesTimelineFilter
-from .serializers import BountiesTimelineSerializer, TimelineCategorySerializer, TokenListSerializer
+from .serializers import BountiesTimelineSerializer, TimelineCategorySerializer
 from .models import BountiesTimeline
 from std_bounties.models import Category, RankedCategory
-from std_bounties.views import Tokens
 
 
 class TimelineBounties(APIView):
@@ -24,21 +22,21 @@ class TimelineBounties(APIView):
         try:
             since_date = datetime.strptime(since, "%Y-%m-%d").date()
 
-            if type(until) is not date:
+            if not isinstance(until, date):
                 until_date = datetime.strptime(until, "%Y-%m-%d").date()
             else:
                 until_date = until
 
-            if type(since_date) is date and type(until_date) is date:
+            if isinstance(since_date, date) and isinstance(until_date, date):
                 queryset['until'] = until_date
                 queryset['since'] = since_date
 
-                bounties_timeline = BountiesTimelineFilter(queryset,
-                                                           BountiesTimeline.objects.all().order_by('date'),
-                                                           request=request)
+                bounties_timeline = BountiesTimelineFilter(
+                    queryset, BountiesTimeline.objects.all().order_by('date'), request=request)
 
-
-                serialized = BountiesTimelineSerializer(bounties_timeline.qs, many=True, context={'request': request})
+                serialized = BountiesTimelineSerializer(
+                    bounties_timeline.qs, many=True, context={
+                        'request': request})
 
                 if platform == 'all':
                     ranked_category_list = RankedCategory.objects.distinct().values('normalized_name', 'name')
@@ -57,6 +55,7 @@ class TimelineBounties(APIView):
                     ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
 
                     queryset = gitcoinQuery | standardQuery
+                    categories = TimelineCategorySerializer(queryset, many=True, context={'ranked_categories': ranked_categories})
 
                 else:
                     ranked_category_list = RankedCategory.objects.distinct().values('normalized_name', 'name')
@@ -66,16 +65,11 @@ class TimelineBounties(APIView):
                         bounty__bounty_created__lte=until_date,
                         bounty__platform__exact=platform
                     ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
-
-                categories = TimelineCategorySerializer(queryset, many=True, context={'ranked_categories': ranked_categories})
-
-                token_list = json.loads(Tokens.get(self, request).getvalue())
-                tokens = TokenListSerializer(token_list, many=True)
+                    categories = TimelineCategorySerializer(queryset, many=True, context={'ranked_categories': ranked_categories})
 
                 data = {
                     'timeline': serialized.data,
-                    'categories': categories.data,
-                    'tokens': tokens.data
+                    'categories': categories.data
                 }
 
                 return Response(data)
@@ -83,5 +77,7 @@ class TimelineBounties(APIView):
         except ValueError:
             pass
 
-        res = {"error": 400, "message": "The fields since & until needs being formated as YYYY-MM-DD"}
-        return JsonResponse(res, status=status.HTTP_400_BAD_REQUEST)
+        res = {
+            "error": 400,
+            "message": "The fields since & until needs being formated as YYYY-MM-DD"}
+        return Response(json.dumps(res), status=status.HTTP_200_OK)

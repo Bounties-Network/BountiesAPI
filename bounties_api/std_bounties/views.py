@@ -210,6 +210,9 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
             if current_user and current_user.public_address == bounty.issuer:
                 return bounty.fulfillments
 
+        if not bounty.private_fulfillments:
+            return bounty.fulfillments
+
         return Fulfillment.objects.none()
 
     filter_class = FulfillmentsFilter

@@ -180,12 +180,12 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
         bounty_id = self.request.GET.get('bounty', None)
 
         if type(bounty_id) is not int:
-            return HttpResponse('Not Found', status=404)
+            return Fulfillment.objects.none()
 
         try:
             bounty = Bounty.objects.get(id=bounty_id)
         except Bounty.DoesNotExist:
-            return HttpResponse('Not Found', status=404)
+            raise Fulfillment.objects.none()
 
         if bounty and bounty.private_fulfillments:
             if current_user and current_user.public_address != bounty.issuer:

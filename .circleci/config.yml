@@ -26,15 +26,6 @@ jobs:
             pip install codecov==2.0.15
 
       - run:
-          name: Install Docker Compose
-          command: |
-            curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-            docker volume create --name redis_bounties
-            docker volume create --name psql_bounties
-
-      - run:
           name: python linter
           command: |
             pyenv global 3.5.2
@@ -51,6 +42,11 @@ jobs:
           name: build docker image
           command: |
             docker build ./bounties_api --tag consensysbounties/std_bounties:$CIRCLE_SHA1
+            
+      - run:
+          name: Create docker postgres volume
+          command: |
+            docker volume create --name psql_bounties
 
       - run:
           name: run django tests

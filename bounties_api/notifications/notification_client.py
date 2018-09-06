@@ -379,9 +379,13 @@ class NotificationClient:
         string_data = notification_templates['BountyCommentReceived'].format(
             bounty_title=bounty.title)
 
+        commenters = list(map(lambda c: c.user, bounty.comments.all()))
+        fulfillers = list(map(lambda f: f.user, bounty.fulfillments.all()))
+
         users = list(filter(
             lambda u: u != bounty.user and u != comment.user,
-            map(lambda c: c.user, bounty.comments.all())))
+            commenters + fulfillers
+        ))
 
         if bounty.user != comment.user:
             users.append(bounty.user)

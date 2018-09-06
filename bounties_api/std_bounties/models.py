@@ -79,7 +79,7 @@ class BountyAbstract(models.Model):
     categories = models.ManyToManyField(Category)
     deadline = models.DateTimeField()
     arbiter = models.CharField(max_length=128, null=True)
-    private_fulfillments = models.BooleanField(default=False)
+    private_fulfillments = models.BooleanField(default=True)
     fulfillmentAmount = models.DecimalField(decimal_places=0, max_digits=64)
     calculated_fulfillmentAmount = models.DecimalField(
         decimal_places=30,

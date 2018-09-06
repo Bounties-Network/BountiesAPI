@@ -76,7 +76,7 @@ def map_bounty_data(data_hash, bounty_id):
         **plucked_data,
         **meta,
         **metadata,
-        'private_fulfillments': data.get('privateFulfillments', False),
+        'private_fulfillments': data.get('privateFulfillments', True),
         'issuer_name': data_issuer.get(
             'name',
             ''),

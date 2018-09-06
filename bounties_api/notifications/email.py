@@ -1,4 +1,3 @@
-from decimal import Context
 from textwrap import wrap
 
 from django.template.loader import render_to_string
@@ -9,7 +8,9 @@ from bounties.utils import (
     bounty_url_for,
     profile_url_for,
     shorten_address,
-    calculate_token_value
+    calculate_token_value,
+    token_decimals,
+    usd_decimals
 )
 from bounties.settings import ENVIRONMENT
 
@@ -72,11 +73,9 @@ class Email:
 
         issuer = bounty.user
 
-        token_decimals = Context(prec=6).create_decimal
-        usd_decimals = Context(prec=3).create_decimal
-        remaining = token_decimals(bounty.calculated_balance).normalize()
+        remaining = token_decimals(bounty.calculated_balance)
         token_amount = token_decimals(
-            bounty.calculated_fulfillmentAmount).normalize()
+            bounty.calculated_fulfillmentAmount)
 
         if len(description) > self.max_description_length:
             # Cut off at the closest word after the limit
@@ -104,16 +103,16 @@ class Email:
         remaining_usd = ' unknown'
         if bounty.tokenLockPrice:
             remaining_usd = usd_decimals(
-                remaining * usd_decimals(bounty.tokenLockPrice)).normalize()
+                remaining * usd_decimals(bounty.tokenLockPrice))
         elif bounty.token and bounty.token.price_usd:
             remaining_usd = usd_decimals(
-                remaining * usd_decimals(bounty.token.price_usd)).normalize()
+                remaining * usd_decimals(bounty.token.price_usd))
 
         added_amount = 0
         if notification_name == constants.CONTRIBUTION_ADDED:
             inputs = kwargs['inputs']
             added_amount = token_decimals(calculate_token_value(
-                int(inputs['value']), bounty.tokenDecimals)).normalize()
+                int(inputs['value']), bounty.tokenDecimals))
 
         rating_url = url
         if notification_name == constants.FULFILLMENT_ACCEPTED_FULFILLER:
@@ -127,7 +126,7 @@ class Email:
             'preferences_link': 'https://{}bounties.network/settings'.format(
                 '' if ENVIRONMENT == 'production' else 'staging.'),
             'notification_name': notification_name,
-            'usd_amount': usd_decimals(bounty.usd_price).normalize(),
+            'usd_amount': usd_decimals(bounty.usd_price),
             'token_amount': token_amount,
             'token': bounty.tokenSymbol,
             'bounty_categories': Email.render_categories(

@@ -12,9 +12,8 @@ from notifications.notification_templates import (
     email_templates
 )
 from bounties.utils import (
-    calculate_token_value
-    token_decimals,
-    usd_decimals
+    calculate_token_value,
+    token_decimals
 )
 import logging
 

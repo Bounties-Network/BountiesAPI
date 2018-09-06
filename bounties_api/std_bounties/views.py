@@ -177,7 +177,7 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
         qs = Fulfillment.objects.all().select_related('bounty')
 
         current_user = self.request.current_user
-        bounty_id = self.request.GET.get('bounty', None)
+        bounty_id = self.request.GET.get('bounty', '')
 
         try:
             bounty_id = int(bounty_id)

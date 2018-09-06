@@ -1,4 +1,4 @@
-from decimal import Context
+from decimal import Context, Decimal, ROUND_HALF_UP
 from textwrap import wrap
 
 from django.template.loader import render_to_string
@@ -15,6 +15,8 @@ from bounties.settings import ENVIRONMENT
 
 default_image = ('https://gallery.mailchimp.com/03351ad14a86e9637146ada2a'
                  '/images/fae20fec-36ab-4594-9753-643c04e0ab9a.png')
+token_decimals = Context(prec=6).create_decimal
+usd_decimals = Context(prec=3).create_decimal
 
 
 class Email:
@@ -33,6 +35,16 @@ class Email:
     }
     max_description_length = 240
     max_title_length = 120
+
+    @staticmethod
+    def token_decimals(tokens):
+        return token_decimals(tokens).normalize().quantize(
+            Decimal('.01'), rounding=ROUND_HALF_UP)
+
+    @staticmethod
+    def usd_decimals(tokens):
+        return usd_decimals(tokens).normalize().quantize(
+            Decimal('.00001'), rounding=ROUND_HALF_UP)
 
     @staticmethod
     def render_categories(categories):
@@ -72,11 +84,9 @@ class Email:
 
         issuer = bounty.user
 
-        token_decimals = Context(prec=6).create_decimal
-        usd_decimals = Context(prec=3).create_decimal
-        remaining = token_decimals(bounty.calculated_balance).normalize()
-        token_amount = token_decimals(
-            bounty.calculated_fulfillmentAmount).normalize()
+        remaining = Email.token_decimals(bounty.calculated_balance)
+        token_amount = Email.token_decimals(
+            bounty.calculated_fulfillmentAmount)
 
         if len(description) > self.max_description_length:
             # Cut off at the closest word after the limit
@@ -103,17 +113,17 @@ class Email:
 
         remaining_usd = ' unknown'
         if bounty.tokenLockPrice:
-            remaining_usd = usd_decimals(
-                remaining * usd_decimals(bounty.tokenLockPrice)).normalize()
+            remaining_usd = Email.usd_decimals(
+                remaining * Email.usd_decimals(bounty.tokenLockPrice))
         elif bounty.token and bounty.token.price_usd:
-            remaining_usd = usd_decimals(
-                remaining * usd_decimals(bounty.token.price_usd)).normalize()
+            remaining_usd = Email.usd_decimals(
+                remaining * Email.usd_decimals(bounty.token.price_usd))
 
         added_amount = 0
         if notification_name == constants.CONTRIBUTION_ADDED:
             inputs = kwargs['inputs']
-            added_amount = token_decimals(calculate_token_value(
-                int(inputs['value']), bounty.tokenDecimals)).normalize()
+            added_amount = Email.token_decimals(calculate_token_value(
+                int(inputs['value']), bounty.tokenDecimals))
 
         rating_url = url
         if notification_name == constants.FULFILLMENT_ACCEPTED_FULFILLER:
@@ -127,7 +137,7 @@ class Email:
             'preferences_link': 'https://{}bounties.network/settings'.format(
                 '' if ENVIRONMENT == 'production' else 'staging.'),
             'notification_name': notification_name,
-            'usd_amount': usd_decimals(bounty.usd_price).normalize(),
+            'usd_amount': Email.usd_decimals(bounty.usd_price),
             'token_amount': token_amount,
             'token': bounty.tokenSymbol,
             'bounty_categories': Email.render_categories(

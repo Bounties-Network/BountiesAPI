@@ -143,25 +143,23 @@ class Email:
             'issuer_profile_image': (
                 issuer and issuer.profile_image or default_image
             ),
-            # TODO: Pass in platform here
             'issuer_address_link': issuer and profile_url_for(
-                issuer.public_address),
+                issuer.public_address, bounty.platform),
             'user_name': user and user.name,
             'user_address': user and shorten_address(user.public_address),
             'user_profile_image': (
                 user and user.profile_image or default_image
             ),
-            # TODO: Pass in platform here
-            'user_address_link': user and profile_url_for(user.public_address),
+            'user_address_link': user and profile_url_for(
+                user.public_address, bounty.platform),
             'from_user_name': from_user and from_user.name,
             'from_user_address': from_user and shorten_address(
                 from_user.public_address),
             'from_user_profile_image': (
                 from_user and from_user.profile_image or default_image
             ),
-            # TODO: Pass in platform here
             'from_user_address_link': from_user and profile_url_for(
-                from_user.public_address),  # TODO: Pass in platform here
+                from_user.public_address, bounty.platform),
             'from_user_email': from_user and from_user.email,
             'review': review and review.review,
             'rating': review and '{}/5'.format(review.rating),

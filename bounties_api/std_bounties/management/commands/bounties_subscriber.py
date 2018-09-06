@@ -22,9 +22,8 @@ from std_bounties.models import Bounty
 bounty_client = BountyClient()
 notification_client = NotificationClient()
 slack_client = SlackMessageClient()
-
-
 logger = logging.getLogger('django')
+pp = pprint.PrettyPrinter(indent=4)
 
 
 class Command(BaseCommand):
@@ -165,9 +164,10 @@ class Command(BaseCommand):
             'event_date': message.event_date,
         }
 
-        logger.info('For bounty id {}, running get_or_create with '
-                    'defaults:{}'.format(message.bounty_id,
-                                         pprint.pprint(event_arguments)))
+        logger.info(
+            'For bounty id {}, running get_or_create with defaults'.format(
+                message.bounty_id))
+        pp.pprint(event_arguments)
 
         Event.objects.get_or_create(
             event=message.event,

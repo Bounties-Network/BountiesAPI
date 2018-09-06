@@ -255,7 +255,7 @@ PLATFORM_MAPPING = {
     'consensys': 'https://consensys.bounties.network',
     'hiring': 'https://hiring.bounties.network',
     'berlin': 'https://berlin.bounties.network',
-    'beeess': 'https://bees.bounties.network',
+    'beees': 'https://bees.bounties.network',
     'bounties-network': 'https://explorer.bounties.network'
 }
 

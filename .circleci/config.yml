@@ -57,7 +57,21 @@ jobs:
           command: |
             bash <(curl -s https://codecov.io/bash)
 
-
       - store_artifacts:
           path: test-reports
           destination: test-reports
+
+      - run:
+          name: build docker image
+          command: |
+            docker build ./bounties_api --tag consensysbounties/std_bounties:$CIRCLE_SHA1
+
+      - run:
+          name: log in to docker hub
+          command: |
+            docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+
+      - run:
+          name: upload docker image
+          command: |
+            docker push consensysbounties/std_bounties:$CIRCLE_SHA1

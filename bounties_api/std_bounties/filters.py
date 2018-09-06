@@ -48,6 +48,7 @@ class DraftBountiesFilter(filters.FilterSet):
     class Meta:
         model = DraftBounty
         fields = {
+            'issuer': ['exact'],
             'platform': ['in', 'exact'],
         }
 

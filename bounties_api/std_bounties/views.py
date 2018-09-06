@@ -179,7 +179,9 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
         current_user = self.request.current_user
         bounty_id = self.request.GET.get('bounty', None)
 
-        if type(bounty_id) is not int:
+        try:
+            bounty_id = int(bounty_id)
+        except ValueError:
             return Fulfillment.objects.none()
 
         try:

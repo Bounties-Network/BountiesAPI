@@ -178,40 +178,15 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
         qs = Fulfillment.objects.all().select_related('bounty')
 
         current_user = self.request.current_user
-        bounty_id = self.request.GET.get('bounty', None)
 
-        if bounty_id is None:
-            if current_user:
-                return qs.filter(
-                    Q(fulfiller=current_user.public_address) |
-                    Q(bounty__issuer=current_user.public_address) |
-                    Q(bounty__private_fulfillments=False)
-                )
-            else:
-                return Fulfillment.objects.filter(bounty__private_fulfillments=False)
-
-        try:
-            bounty_id = int(bounty_id)
-        except ValueError:
-            return Fulfillment.objects.none()
-
-        try:
-            bounty = Bounty.objects.get(id=bounty_id)
-        except Bounty.DoesNotExist:
-            return Fulfillment.objects.none()
-
-        if bounty.private_fulfillments:
-            if current_user and current_user.public_address != bounty.issuer:
-                return bounty.fulfillments.filter(fulfiller=current_user.public_address)
-
-            if not current_user:
-                return Fulfillment.objects.none()
-
-            if current_user and current_user.public_address == bounty.issuer:
-                return bounty.fulfillments
-
-        if not bounty.private_fulfillments:
-            return bounty.fulfillments
+        if current_user:
+            return qs.filter(
+                Q(fulfiller=current_user.public_address) |
+                Q(bounty__issuer=current_user.public_address) |
+                Q(bounty__private_fulfillments=False)
+            )
+        else:
+            return Fulfillment.objects.filter(bounty__private_fulfillments=False)
 
         return Fulfillment.objects.none()
 

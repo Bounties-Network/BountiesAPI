@@ -37,7 +37,4 @@ def logout(request):
 
 
 def get_user(public_address):
-    try:
-        return User.objects.get(public_address=public_address.lower())
-    except User.DoesNotExist:
-        return None
+    return User.objects.get_or_create(public_address=public_address.lower())[0]

@@ -109,7 +109,8 @@ class Email:
                 remaining * usd_decimals(bounty.token.price_usd))
 
         added_amount = 0
-        if notification_name == constants.CONTRIBUTION_ADDED:
+        if (notification_name == constants.CONTRIBUTION_RECEIVED or
+                notification_name == constants.CONTRIBUTION_ADDED):
             inputs = kwargs['inputs']
             added_amount = token_decimals(calculate_token_value(
                 int(inputs['value']), bounty.tokenDecimals))

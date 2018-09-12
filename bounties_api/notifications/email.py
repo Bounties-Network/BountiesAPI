@@ -94,7 +94,9 @@ class Email:
 
         remaining_submissions = 0
 
-        if notification_name == constants.BOUNTY_EXPIRED:
+        if (notification_name == constants.BOUNTY_EXPIRED or
+                notification_name == constants.CONTRIBUTION_RECEIVED or
+                notification_name == constants.CONTRIBUTION_ADDED):
             remaining_submissions = Fulfillment.objects.filter(
                 bounty_id=bounty.id,
                 accepted=False,

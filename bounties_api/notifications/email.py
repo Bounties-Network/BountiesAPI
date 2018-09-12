@@ -1,4 +1,5 @@
 from textwrap import wrap
+from decimal import Decimal
 
 from django.template.loader import render_to_string
 
@@ -113,7 +114,7 @@ class Email:
                 notification_name == constants.CONTRIBUTION_ADDED):
             inputs = kwargs['inputs']
             added_amount = token_decimals(calculate_token_value(
-                int(inputs['value']), bounty.tokenDecimals))
+                int(Decimal(inputs['value'])), bounty.tokenDecimals))
 
         rating_url = url
         if notification_name == constants.FULFILLMENT_ACCEPTED_FULFILLER:

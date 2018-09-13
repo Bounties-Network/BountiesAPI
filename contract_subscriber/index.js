@@ -46,6 +46,9 @@ async function handler() {
 
 				// exit with error so kubernettes will automatically restart the job
 				process.exit(1);
+			} else {
+				// try again in a little while
+				await delay(5000);
 			}
 		}
 	}

@@ -1,19 +1,8 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
 version: 2
 jobs:
   build:
     machine:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
       image: circleci/classic:latest
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
 
     working_directory: ~/repo
 
@@ -21,42 +10,45 @@ jobs:
       - checkout
 
       - run:
-          name: Install codecov
-          command: |
-            pip install codecov==2.0.15
-
-      - run:
-          name: Install Docker Compose
-          command: |
-            curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-            docker volume create --name redis_bounties
-            docker volume create --name psql_bounties
-
-      - run:
-          name: python linter
+          name: Install flake8 for python linting
           command: |
             pyenv global 3.5.2
             pip3 install flake8==3.5.0
-            flake8 --ignore=E501,F405,W191
-
-      # run tests!
-      # this example uses Django's built-in test-runner
-      # other common Python testing frameworks include pytest and nose
-      # https://pytest.org
-      # https://nose.readthedocs.io
 
       - run:
-          name: run django tests
-          command: |
-            docker-compose -f docker-compose-test.yml run bounties_api python manage.py test
+          name: Lint python code
+          command: flake8 --ignore=E501,F405,W191
 
       - run:
-          name: codecov upload
-          command: |
-            bash <(curl -s https://codecov.io/bash)
+          name: Build docker image
+          command: docker build ./bounties_api --tag consensysbounties/std_bounties:$CIRCLE_SHA1
 
+      - run:
+          name: Create docker postgres volume
+          command: docker volume create --name psql_bounties
+
+      - run:
+          name: Run django tests
+          command: docker-compose -f docker-compose-circleci-test.yml run bounties_api bash -c "sleep 5 && python manage.py test"
+
+
+      - run:
+          name: log in to docker hub
+          command: |
+            docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+
+      - run:
+          name: upload docker image
+          command: |
+            docker push consensysbounties/std_bounties:$CIRCLE_SHA1
+
+      - run:
+          name: Install codecov
+          command: pip install codecov==2.0.15
+
+      - run:
+          name: Run and upload code coverage
+          command: bash <(curl -s https://codecov.io/bash)
 
       - store_artifacts:
           path: test-reports

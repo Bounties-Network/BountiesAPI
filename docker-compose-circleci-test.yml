@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: bounties
+    volumes:
+      - psql_bounties:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  bounties_api:
+    image: consensysbounties/std_bounties:${CIRCLE_SHA1}
+    restart: always
+    env_file:
+      - .env
+    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:83"
+    volumes:
+      - ./bounties_api:/code
+    ports:
+      - "8000:83"
+    depends_on:
+      - db
+volumes:
+  psql_bounties:
+    external: true

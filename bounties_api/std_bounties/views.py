@@ -136,6 +136,7 @@ class BountyComments(mixins.ListModelMixin,
 class DraftBountyWriteViewSet(viewsets.ModelViewSet):
     queryset = DraftBounty.objects.filter(on_chain=False)
     serializer_class = DraftBountyWriteSerializer
+    lookup_field = 'uid'
     filter_class = DraftBountiesFilter
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('issuer',)

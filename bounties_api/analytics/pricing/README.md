@@ -15,13 +15,13 @@ which may be very useful in the future to help curate a great market.
 `contract_subscriber`.
 2. Filter un-closed and small bounties (< 10$ currently)
 3. Feature generation: bounty description text cleaning
-  1. Strip stopwords using `nltk`s English stopwords file
-  2. Replace non-alnum characters and URLs
-  3. Strip all repeated spacing characters (but retaining `\ ` and `\n`)
-  4. Convert all letters to lowercase
+  - Strip stopwords using `nltk`s English stopwords file
+  - Replace non-alnum characters and URLs
+  - Strip all repeated spacing characters (but retaining `\ ` and `\n`)
+  - Convert all letters to lowercase
 4. Feature generation for titles and descriptions
-  1. Convert all characters to lowercase
-  2. Strip all leading and trailing and repeated spaces
+  - Convert all characters to lowercase
+  - Strip all leading and trailing and repeated spaces
 5. Other categorical variables (bounty type, difficulty level,
 token type, bounty platform)
 6. Compute days to deadline, replacing null
@@ -29,13 +29,13 @@ deadlines with 0
 7. Compute doc2vec model for description, word2vec model for
 description, title and categories. Compute description length in words.
 8. Create matrix, split for training/testing 80%/20%
-9. 9. Grid search and optimal model selection. Compared:
-  1. Gradient Boosted Trees (`XGBoost`)
-  2. Random Forests (`sklearn`)
-  3. Linear regression (`sklearn`)
-  4. Lasso regression (`sklearn`)
-  5. Ridge regression (`sklearn`)
-  6. Elastic Net regression (`sklearn`)
+9. Grid search and optimal model selection. Compared:
+  - Gradient Boosted Trees (`XGBoost`)
+  - Random Forests (`sklearn`)
+  - Linear regression (`sklearn`)
+  - Lasso regression (`sklearn`)
+  - Ridge regression (`sklearn`)
+  - Elastic Net regression (`sklearn`)
 
 ## Results
 

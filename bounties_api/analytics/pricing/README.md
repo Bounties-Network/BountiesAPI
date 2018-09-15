@@ -78,19 +78,19 @@ The `gitcoin` platform contained 412 closed bounties, while on the `bounties-net
 
 #### Platform price distribution
 
-![platform_price_dist.png](../data/platform_price_dist.png "Platform price distribution")
+![platform_price_dist.png](data/platform_price_dist.png "Platform price distribution")
 
 #### Issue type price distribution
 
-![type_price_dist.png](../data/type_price_dist.png "Issue type price distribution")
+![type_price_dist.png](data/type_price_dist.png "Issue type price distribution")
 
 #### Experience level price distribution
 
-![exp_level_price_dist.png](../data/exp_level_price_dist.png "Experience level price distribution")
+![exp_level_price_dist.png](data/exp_level_price_dist.png "Experience level price distribution")
 
 #### Bounty category price distribution
 
-[It's a big figure](../data/category_price_dist.png)
+[It's a big figure](data/category_price_dist.png)
 
 ## Discussion
 

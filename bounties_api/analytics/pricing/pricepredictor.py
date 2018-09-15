@@ -138,8 +138,8 @@ class PricePredictor:
         targets, regressors = (platform, self.description_d2vmodel.infer_vector(tagged_doc.words, steps=20))
         return (targets, regressors)
 
-    def generate_feature_array(self, description, title, categories, deadline_timestamp, experience_level,
-                              difficulty, deadline, token_type, platform):
+    def generate_feature_array(self, title, description, categories, deadline_timestamp, experience_level,
+                              difficulty, token_type, platform):
         # munge timestamp
         days_to_deadline = get_days_to_deadline(deadline_timestamp)
         # apply text cleaning
@@ -149,7 +149,7 @@ class PricePredictor:
         data_categories_clean = [x.strip().lower() for x in categories]
 
         # first, doc2vec of description
-        new_row = get_doc2_vec_array(description_clean) # doc2vec of desc.
+        new_row = get_doc2_vec_array(platform, description_clean) # doc2vec of desc.
         new_row = np.concatenate((new_row, np.array([days_to_deadline, description_length])), axis = None)
 
         # categorical features (one-hot encoded)
@@ -169,9 +169,14 @@ class PricePredictor:
         return new_row
 
     def predict(self, title, description, categories, difficulty,
-                revisions, deadline, token_type, platform):
-        # TODO: use loaded w2v and d2v models to generate matrix
-        pass
+                deadline, token_type, platform):
+        features = generate_feature_array(title, description, categories,
+            deadline_timestamp, experience_level, difficulty, token_type, platform)
+        result = self.prediction_model.predict(features)
+        if result < 0:
+            return 0
+        else:
+            return result
 
     def retrain():
         raise NotImplementedError("Not implemented yet!")

@@ -1,13 +1,16 @@
 import re
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import mean_squared_error
-from nltk.corpus import stopwords
+# needed for retraining
+# from sklearn.model_selection import train_test_split
+# from sklearn.metrics import accuracy_score
+# from sklearn.metrics import mean_squared_error
 import nltk
+from nltk.corpus import stopwords
 from gensim.models.doc2vec import TaggedDocument, Doc2Vec
 from gensim.utils import simple_preprocess
+from gensim.models import Word2Vec
 from datetime import datetime
+import pickle
 
 class PricePredictor:
     """
@@ -31,7 +34,13 @@ class PricePredictor:
 
 
     def __init__(self):
-        ## TODO: load the pickles and loudly fail if they're not there
+        self.categories_w2vmodel = Word2Vec.load("data/categories_w2v.pkl")
+        self.titles_w2vmodel = Word2Vec.load("data/titles_w2v.pkl")
+        self.description_w2vmodel = Word2Vec.load("data/description_w2v.pkl")
+        self.description_d2vmodel = doc2vec.load("data/description_d2v.pkl")
+        self.prediction_model = pickle.load(open("dats/elasticnet_model.pkl"))
+        # or:
+        # self.prediction_model = pickle.load(open("dats/xgboost_model.pkl"))
         nltk.download('stopwords')
         return
 
@@ -124,9 +133,10 @@ class PricePredictor:
             return 0
         return days_to_deadline
 
-    def get_doc2_vec_array():
-        # TODO!
-        pass
+    def get_doc2_vec_array(self, platform, description_clean):
+        tagged_doc = tag_doc(description_clean, platform)
+        targets, regressors = (platform, self.description_d2vmodel.infer_vector(tagged_doc.words, steps=20))
+        return (targets, regressors)
 
     def generate_feature_array(self, description, title, categories, deadline_timestamp, experience_level,
                               difficulty, deadline, token_type, platform):

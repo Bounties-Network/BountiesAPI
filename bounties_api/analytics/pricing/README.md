@@ -22,7 +22,7 @@ which may be very useful in the future to help curate a great market.
 4. Feature generation for titles and descriptions
   - Convert all characters to lowercase
   - Strip all leading and trailing and repeated spaces
-5. Other categorical variables (bounty type, difficulty level,
+5. One-hot encode other categorical variables (bounty type, difficulty level,
 token type, bounty platform)
 6. Compute days to deadline, replacing null
 deadlines with 0

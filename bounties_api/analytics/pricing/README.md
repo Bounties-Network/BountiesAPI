@@ -57,6 +57,15 @@ The best performance (minimum MSE) was found when as many features are possible 
 
 Elastic net regression did the best. Ensemble based approaches (XGBoost and Random forests) didn't do as well. Ne-aural networks weren't tried, but I'm guessing they won't work too well if the other ensemble methods didn't work well. However, text based neural networks is a big kettle of fish for another time.
 
+Model type                                                   | Best MSE
+------------------------------------------------------------ | ---------
+XGBoost, 15 estimators, 0.95 alpha, 0.95 lambda, max depth 8 | 279813.87
+Random forest, 400 estimators                                | 208707.85
+Linear regression, defaults                                  | 314852.41
+Ridge regression                                             | 176667.52
+Lasso regression                                             | 156791.91
+Elastic Net (alpha = 3018.55966106)                          | 156833.92
+
 ### Market properties
 
 Overall there's large variability between markets. The majority of closed bounties have been on gitcoin. Interestingly, there doesn't seem to be too much difference between different skill levels or feature types.
@@ -65,7 +74,27 @@ Across all platforms, there were 435 closed bounties. The average deadline is 19
 
 The `gitcoin` platform contained 412 closed bounties, while on the `bounties-network` platform, there were 23 closed bounties. The average closing price was 163$ and 23$ respectively (with standard deviations of 534$ and 146$ respectively).
 
+### Figures
+
+#### Platform price distribution
+
+![platform_price_dist.png](../data/platform_price_dist.png "Platform price distribution")
+
+#### Issue type price distribution
+
+![type_price_dist.png](../data/type_price_dist.png "Issue type price distribution")
+
+#### Experience level price distribution
+
+![exp_level_price_dist.png](../data/exp_level_price_dist.png "Experience level price distribution")
+
+#### Bounty category price distribution
+
+[It's a big figure](../data/category_price_dist.png)
+
 ## Discussion
+
+The big finding from this research seems to be that there isn't a big difference between bounty type, difficulty or category, and there aren't many bounties. Our not so hot performance is probably due to data insufficiency more than anything else.
 
 ### Short and Long descriptions appear to result in expensive bounties
 
@@ -73,19 +102,23 @@ Example: Reddit Bot bounty
 
 ### Data insufficiency is a challenge
 
-Overall, I just don't think there's enough data for a good fit. For example, the Bounties Network only has
+Overall, I just don't think there's enough data for a good fit. For example, the Bounties Network only has 23 closed bounties. On gitcoin it's a bit bigger, but still there's a lot of variability between bounties. The biggest sign of trouble I see is that there's not a big distinction between
 
 ### Tokens explain a lot of the price variability, since we fit on USD
 
-Could use other stablecoin or ETH but need a common denominator. Alternatively produce models for each coin (though including this feature already kinda does that). Could also produce multiple predictions (instead of just one, in this case, USD)
+I would guess that a lot of noise (and therefore, bad predictions) are really just artifacts of an unstable token/USD exchange. If there are few bounties, not many people use them yet as a primary source of income, and the exchange rate between tokens and USD fluctuates, people may be thinking of bounties as "side money" and are not sensitive to the final closing price. One improvement here would be to predict prices in ETH. However, a good prediction needs a common denominator. Alternatively produce models for each coin (though having "token type" in the features helps a lot). Another option is to produce multiple predictions (in all tokens, instead of just USD)
 
-### NLP might not be the best option right now, econometric approaches are likely
+### MSE is probably not the best error metric
 
-### better for the platform now
+Here, I used MSE for fitting the models and evaluating their performance. The "mean squared error" is hard to interpret for any individual prediction. There are other options but it would need some thought to use them correctly.
 
-When there are more bounties it will work better, but I believe in the short term a statistical approach that works on percentile is probably the best choice. Would suggest slicing by category (if big enough) and log-normalized-and-binned days to deadline.
+### A less fun statistical approach is better for the platform now
+
+I believe in the short term a statistical approach that works on percentile is probably the best choice. Would suggest slicing by category (if big enough) and log-normalized-and-binned days to deadline. An example input would be "Javascipt, 30 days" and a distribution of closing prices would be presented to the user. For example a user would input their bounty and would be shown that the 50th percentile is 150$ and 90th percentile is 450$. This would allow users to price their own bounties using their own intuition. This is a less exciting solution but may be the right choice for the market in the short term.
 
 ## Future research
+
+There's a lot more that could be done if this line of inquiry is to be expanded. Here are just a few areas that can be built upon. Many large online marketplaces (e.g. Airbnb, EBay, Amazon) use these techniques to great success to run stable, efficient and profitable markets. The methods used here are built on papers produced by these companies working to solve exactly these problems.
 
 1. RNN/CNN on text
 2. More rigorous grid search

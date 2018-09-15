@@ -39,7 +39,7 @@ class PricePredictor:
         self.titles_w2vmodel = Word2Vec.load("data/titles_w2v.pkl")
         self.description_w2vmodel = Word2Vec.load("data/description_w2v.pkl")
         self.description_d2vmodel = Doc2Vec.load("data/description_d2v.pkl")
-        self.prediction_model = pickle.load(open("dats/elasticnet_model.pkl"))
+        self.prediction_model = pickle.load(open("data/elasticnet_model.pkl"))
         # or:
         # self.prediction_model = pickle.load(open("dats/xgboost_model.pkl"))
         nltk.download('stopwords')

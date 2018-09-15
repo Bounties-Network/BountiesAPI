@@ -39,7 +39,7 @@ class PricePredictor:
         self.titles_w2vmodel = Word2Vec.load("data/titles_w2v.pkl")
         self.description_w2vmodel = Word2Vec.load("data/description_w2v.pkl")
         self.description_d2vmodel = Doc2Vec.load("data/description_d2v.pkl")
-        self.prediction_model = pickle.load(open("data/elasticnet_model.pkl"))
+        self.prediction_model = pickle.load(open("data/elasticnet_model.pkl", 'rb'))
         # or:
         # self.prediction_model = pickle.load(open("dats/xgboost_model.pkl"))
         nltk.download('stopwords')
@@ -162,7 +162,7 @@ class PricePredictor:
 
         # first, doc2vec of description
         # doc2vec of desc.
-        new_row = self.get_doc2_vec_array(platform, description_clean)
+        new_row = self.get_doc2_vec_array(platform, description_clean)[1]
         new_row = np.concatenate(
             (new_row, np.array([days_to_deadline, description_length])), axis=None)
 
@@ -194,7 +194,7 @@ class PricePredictor:
                 deadline, token_type, bounty_type, platform):
         """ Predicts a closing price (in USD) for a bounty """
         features = self.generate_feature_array(title, description, categories,
-                                               deadline, experience_level, bounty_type, token_type, platform)
+                                               experience_level, deadline, token_type, bounty_type, platform)
         result = self.prediction_model.predict(features)
         if result < 0:
             return 0

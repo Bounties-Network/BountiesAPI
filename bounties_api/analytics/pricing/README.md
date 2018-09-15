@@ -47,7 +47,7 @@ Once the features are all encoded, it's a fairly straightforward matter of putti
 
 ## Results
 
-The TLDR is that the best MSE was around 25,000\. Over the approximately 350 bounties that closed with a closing price greater than 10$, that would be a typical misprediction in the neighborhood of 150$.
+The TLDR is that the best MSE was 156,791\. Over the approximately 350 bounties that closed with a closing price greater than 10$, that would be a typical misprediction in the neighborhood of 150$.
 
 ### Feature engineering
 
@@ -57,14 +57,14 @@ The best performance (minimum MSE) was found when as many features are possible 
 
 Elastic net regression did the best. Ensemble based approaches (XGBoost and Random forests) didn't do as well. Ne-aural networks weren't tried, but I'm guessing they won't work too well if the other ensemble methods didn't work well. However, text based neural networks is a big kettle of fish for another time.
 
-Model type                                                   | Best MSE
------------------------------------------------------------- | ---------
-XGBoost, 15 estimators, 0.95 alpha, 0.95 lambda, max depth 8 | 279813.87
-Random forest, 400 estimators                                | 208707.85
-Linear regression, defaults                                  | 314852.41
-Ridge regression                                             | 176667.52
-Lasso regression                                             | 156791.91
-Elastic Net (alpha = 3018.55966106)                          | 156833.92
+Model type                                                                           | Best MSE
+------------------------------------------------------------------------------------ | ---------
+XGBoost, 35 estimators, alpha 0.1 , lambda 0.95, max depth 5, lr 0.05, subsample 0.1 | 275517.77
+Random forest, 400 estimators                                                        | 25016.25
+Linear regression, defaults                                                          | 137812.74
+Ridge regression (alpha = 10.00)                                                     | 29095.24
+Lasso regression (alpha = 29.93)                                                     | 17590.36
+Elastic Net (alpha = 2.25)                                                           | 15941.21
 
 ### Market properties
 

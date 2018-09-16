@@ -98,7 +98,27 @@ The big finding from this research seems to be that there isn't a big difference
 
 ### Short and Long descriptions appear to result in expensive bounties
 
-Example: Reddit Bot bounty
+In certain iterations of model evaluation, I've noticed that short and long bounty texts can produce erratic predictions. Also, missing data due to schema evolution can be problematic. It may be wise to enforce at the API level some data quality filtering rules. An example of one that has been problematic with gradient boosted trees, but seems to have simmered down a lot with regularized regressions:
+
+```python
+Python 3.6.5 (default, Apr 25 2018, 14:23:58)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 6.5.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: import pricepredictor, datetime
+
+In [2]: pp = pricepredictor.PricePredictor()
+[nltk_data] Downloading package stopwords to /Users/mike/nltk_data...
+[nltk_data]   Package stopwords is already up-to-date!
+
+In [3]: pp.predict(title="Reddit /r/bounties bot",description="The /r/bounties subreddit is looking awfully empty… we should fill it. Build a service which listens for events from the StandardBounties contract, and
+   ...:  posts newly activated bounties to the subreddit. The description of the post should have all of the relevant details (pulled from IPFS), including any relevant links to files which were included. To see so
+   ...: me sample code about how this is currently implemented in the Bounties Network Explorer, take a look at https://github.com/ConsenSys/BountiesFactory/blob/master/src/components/BountyPage/BountyPage.js. The
+   ...: bot should also comment on the reddit post in question every time a new action is made, including updates to the bounty (ie extended deadline, increased payout), along with any submissions (again, using the
+   ...:  submitted hash to pull the relevant submission).", categories=["Code", "javascript", "nodejs"], experience_level=None, deadline=datetime.datetime(2018,12,11), token_type='ETH', bounty_type=None, platform='
+   ...: bounties-network' )
+Out[3]: array([ 169.62307171])
+```
 
 ### Data insufficiency is a challenge
 

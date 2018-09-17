@@ -2,24 +2,24 @@
 
 ## Abstract
 
-The goal of this work is to predict a bounty's closing price based on the textual content of the bounty. The main hypothesis is that an issue's text is able to predict its price. As it turns out, this is only partially true, and there are some features (token type, description length, and categories) that explain some of the variance in the pricing. These hint at a number of areas which may be very useful in the future to help curate a great market.
+The goal of this work is to predict a bounty's closing price based on its description. The main hypothesis is that an issue's text is able to predict its price. As it turns out, this is only partially true, but there are some non-text features (token type, description length, and categories) that explain some of the variance in the pricing. These hint at a number of areas which may be very useful in the future to help curate a great market.
 
 ## Methods
 
 All data analyzed was collected from a `pg_dump` of the bounties API database that was taken on August 30 2018.
 
-The training pipeline is a standard who's who of NLP techniques. First, all the URLs, non alpha-numeric characters and repeated space are all stripped out. Then, `nltk` is used for stopwrd removal. At that point, `gensim` is used to train word2vec and doc2vec modesl of titles, descriptions and categories. Word2vec and doc2vec are two state-of-the-art to convert a string of text (i.e. a document) into a dimensionality reduced array. Although the arrays themselves are not meanignful to humans, their similarity is. For example, after training a word2vec model on a large corpus of english words, you would find that the vector for the word "king" minus the vector for the word "man" would result in a vector very close to "queen". Word2vec works a word at a time, while doc2vec is a modified algorithm that works on the entire text, and is aware of sentences and paragraphs.
+The training pipeline is a standard who's who of NLP techniques. First, all the URLs, non alpha-numeric characters and repeated space are all stripped out. Then, `nltk` is used for stopword removal. At that point, `gensim` is used to train word2vec and doc2vec models of titles, descriptions and categories. Word2vec and doc2vec are two state-of-the-art methods to convert a string of text (i.e. a document) into an array of few dimensions. Although the arrays themselves are not meaningful to humans, their similarity is. For example, after training a word2vec model on a large corpus of English words, you would find that the vector for the word "king" minus the vector for the word "man" would result in a vector very close to "queen". Word2vec works a word at a time, while doc2vec is a modified algorithm that works on the entire text, and is aware of sentences and paragraphs (which theoretically should result in better encoding of a word's meaning in context).
 
-For this pipeline, we use vectors of 350 for word2vec and doc2vec encoding of the description, and 100 for word2vec encoding of the titles and categories. Using these feature vectors, it's possible to enocde similarity of different categories (e.g. TypeScript and JavaScript may be similar, because they're often written about together). Additionally, I make the assumption that token types, difficulty level and platform are predictive of bounty price. This also assumes that certain platforms will have particular markets and properties, and sets us up well for a future expansion. For example, if there were a platform for design work, its unique vocab and market dynamics would be captured by these features.
+For this pipeline, I used vectors of 350 for word2vec and doc2vec encoding of the description, and 100 for word2vec encoding of the titles and categories. The hope is that titles, categories and descriptions will explain some of the bounty price. Additionally, I added token types, difficulty level, deadline and platform to further predict price. The rationale of including platform as a feature is that certain platforms may have particular markets and properties. For example, if there were a platform for design work, its unique vocab and market dynamics would be captured by these features.
 
-Once the features are all encoded, it's a fairly straightforward matter of putting them into Scikit learn, and finding how well they perform. Here, the question of distance metric is an import one. I chose "mean square error", which is the average of the squared difference between a prediction and it's true (i.e. closing) price. There's more about this down below.
+Once the features are all encoded, it's a fairly straightforward matter of fitting models and assessing performance. Here, the question of distance metric is an import one. I chose "mean square error", which is the average of the squared difference between a prediction and it's true (i.e. closing) price. There's more about this down below.
 
 1. Load all bounties from `pg_dump` of `bounties` database, derived from `contract_subscriber`.
 2. Filter un-closed and small bounties (< 10$ currently)
 3. Feature generation: bounty description text cleaning
 
-  - Strip stopwords using `nltk`s English stopwords file
-  - Replace non-alnum characters and URLs
+  - Strip stopwords using `nltk`\'s English stopwords file
+  - Replace non-alphanumeric characters and URLs
   - Strip all repeated spacing characters (but retaining `\` and `\n`)
   - Convert all letters to lowercase
 
@@ -47,15 +47,15 @@ Once the features are all encoded, it's a fairly straightforward matter of putti
 
 ## Results
 
-The TLDR is that the best MSE was 156,791\. Over the approximately 350 bounties that closed with a closing price greater than 10$, that would be a typical misprediction in the neighborhood of 150$.
+The tldr; is that the best MSE was 15,941\. Over the approximately 350 bounties in the training set that closed with a closing price greater than 10$, that would be a typical misprediction in the neighborhood of 50$.
 
 ### Feature engineering
 
-The best performance (minimum MSE) was found when as many features are possible were included in the training data. I conducted a manual grid search for all the different combinations of word2vec and doc2vec on the descriptions, titles, categories, difficulty levels, deadlines, and token types. More was found to be better. Anecdotally, the length of the description and the token type both explained a lot of the price variability.
+The best performance (minimum MSE) was found when as many features are possible were included in the training data. I conducted a manual grid search for all the different combinations of word2vec and doc2vec on the descriptions, titles, categories, difficulty levels, deadlines, and token types. More was found to be better.
 
 ### Model performance
 
-Elastic net regression did the best. Ensemble based approaches (XGBoost and Random forests) didn't do as well. Ne-aural networks weren't tried, but I'm guessing they won't work too well if the other ensemble methods didn't work well. However, text based neural networks is a big kettle of fish for another time.
+Elastic net regression did the best. Ensemble based approaches (XGBoost and Random forests) didn't do as well. Neural networks weren't tried, but bad performance of the ensemble methods is not a good sign. Additionally, text based neural networks are a complex approach compared to the straightforward regularized regressions which did best here.
 
 Model type                                                                           | Best MSE
 ------------------------------------------------------------------------------------ | ---------
@@ -94,13 +94,14 @@ The `gitcoin` platform contained 412 closed bounties, while on the `bounties-net
 
 ## Discussion
 
-The big finding from this research seems to be that there isn't a big difference between bounty type, difficulty or category, and there aren't many bounties. Our not so hot performance is probably due to data insufficiency more than anything else.
+The big finding from this research is that there isn't a big difference between bounty type, difficulty or category, and there aren't many bounties. Our not-so-hot performance is probably due to data insufficiency more than anything else.
 
 ### Short and Long descriptions appear to result in expensive bounties
 
-In certain iterations of model evaluation, I've noticed that short and long bounty texts can produce erratic predictions. Also, missing data due to schema evolution can be problematic. It may be wise to enforce at the API level some data quality filtering rules. An example of one that has been problematic with gradient boosted trees, but seems to have simmered down a lot with regularized regressions:
+In certain iterations of model evaluation, I've noticed that short and long bounty texts can produce erratic predictions in certain model types. Also, missing data due to schema evolution can be problematic. It may be wise to enforce at the API level some data quality filtering rules. An example of one that has been problematic with gradient boosted trees, but seems to have simmered down a lot with regularized regressions:
 
 ```python
+
 Python 3.6.5 (default, Apr 25 2018, 14:23:58)
 Type 'copyright', 'credits' or 'license' for more information
 IPython 6.5.0 -- An enhanced Interactive Python. Type '?' for help.
@@ -122,11 +123,11 @@ Out[3]: array([ 169.62307171])
 
 ### Data insufficiency is a challenge
 
-Overall, I just don't think there's enough data for a good fit. For example, the Bounties Network only has 23 closed bounties. On gitcoin it's a bit bigger, but still there's a lot of variability between bounties. The biggest sign of trouble I see is that there's not a big distinction between
+Overall, I just don't think there's enough data for a good fit. For example, the Bounties Network only has 23 closed bounties. On gitcoin it's a bit bigger, but bounties price still has high variability. The biggest sign of trouble I see is that there's not a big distinction between the distributions of bounty closing price when grouping by difficuly. Intuitively this suggests that the market doesn't behave in a particularly rational manner at this point in time.
 
-### Tokens explain a lot of the price variability, since we fit on USD
+### Tokens explain a lot of the price variability, since predictions fit on USD
 
-I would guess that a lot of noise (and therefore, bad predictions) are really just artifacts of an unstable token/USD exchange. If there are few bounties, not many people use them yet as a primary source of income, and the exchange rate between tokens and USD fluctuates, people may be thinking of bounties as "side money" and are not sensitive to the final closing price. One improvement here would be to predict prices in ETH. However, a good prediction needs a common denominator. Alternatively produce models for each coin (though having "token type" in the features helps a lot). Another option is to produce multiple predictions (in all tokens, instead of just USD)
+I would guess that a lot of noise (and therefore, bad predictions) are really just artifacts of an unstable token/USD exchange. If there are few bounties, not many people use them yet as a primary source of income, and the exchange rate between tokens and USD fluctuates, people may be thinking of bounties as "side money" and are not sensitive to the final closing price. One improvement here would be to predict prices in ETH. However, a good prediction needs a common denominator. Alternatively it may be possible to produce models for each coin. Another option is to produce multiple predictions (in all tokens, instead of just USD)
 
 ### MSE is probably not the best error metric
 
@@ -134,11 +135,11 @@ Here, I used MSE for fitting the models and evaluating their performance. The "m
 
 ### A less fun statistical approach is better for the platform now
 
-I believe in the short term a statistical approach that works on percentile is probably the best choice. Would suggest slicing by category (if big enough) and log-normalized-and-binned days to deadline. An example input would be "Javascipt, 30 days" and a distribution of closing prices would be presented to the user. For example a user would input their bounty and would be shown that the 50th percentile is 150$ and 90th percentile is 450$. This would allow users to price their own bounties using their own intuition. This is a less exciting solution but may be the right choice for the market in the short term.
+I believe in the short term, a statistical approach based on percentile is probably the best choice. Slicing by category (if big enough) and log-normalized-and-binned days to deadline would probably be best. An example input would be "Javascipt, 30 days" and a distribution of closing prices would be presented to the user. For example a user would input their bounty and would be shown that the 50th percentile is 150$ and 90th percentile is 450$. The user could price their own bounties using their intuition with a guide from the data. This is a less exciting solution but may be the right choice for the market in the short term.
 
 ## Future research
 
-There's a lot more that could be done if this line of inquiry is to be expanded. Here are just a few areas that can be built upon. Many large online marketplaces (e.g. Airbnb, EBay, Amazon) use these techniques to great success to run stable, efficient and profitable markets. The methods used here are built on papers produced by these companies working to solve exactly these problems.
+There's a lot more that could be done if this line of inquiry is to be expanded. Here are just a few areas that can be built upon. Many large online marketplaces (e.g. Airbnb, eBay, Amazon) use these techniques to great success to run stable, efficient and profitable markets. The methods used here are built on papers produced by these companies working to solve exactly these problems.
 
 1. RNN/CNN on text
 2. More rigorous grid search

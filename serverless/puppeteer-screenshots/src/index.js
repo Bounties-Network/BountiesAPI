@@ -5,13 +5,14 @@ exports.handler = async (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
   const url = event.url;
   const key = event.key;
-  const browser = await setup.getBrowser();
-  try {
-    const result = await exports.run(browser, url, key);
-    callback(null, result);
-  } catch (e) {
-    callback(e);
+  if (url && key) {
+    callback(null, 'success');
+  } else {
+    callback('Must include url and key in the event');
   }
+
+  const browser = await setup.getBrowser();
+  await exports.run(browser, url, key);
 };
 
 exports.run = async (browser, url, key) => {

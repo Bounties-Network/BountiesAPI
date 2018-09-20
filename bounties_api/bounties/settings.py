@@ -78,7 +78,11 @@ INSTALLED_APPS = [
     'user',
     'notifications',
     'django_nose',
+    'django.contrib.sites',
+    'django.contrib.sitemaps'
 ]
+
+SITE_ID = 1
 
 # Use nose to run all tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

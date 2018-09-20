@@ -16,8 +16,18 @@ Including another URLconf
 from django.views.generic.base import TemplateView
 from django.conf.urls import url, include
 from django.contrib import admin
+from bounties.views import custom_sitemap_index
+from bounties.sitemaps import BountyMap, ProfileMap, StaticMap
+
+sitemaps = {
+    'BountyMap': BountyMap,
+    'ProfileMap': ProfileMap,
+    'StaticMap': StaticMap
+}
 
 urlpatterns = [
+    url(r'^sitemap\.xml$', custom_sitemap_index, 
+        {'sitemaps': sitemaps}, name='custom_sitemap_index'),
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('user.auth_urls', namespace='auth')),
     url(r'^user/', include('user.user_urls', namespace='user')),

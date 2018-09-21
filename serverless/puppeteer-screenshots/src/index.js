@@ -3,16 +3,16 @@ const setup = require('./configs/setup');
 exports.handler = async (event, context, callback) => {
   // For keeping the browser launch
   context.callbackWaitsForEmptyEventLoop = false;
-  const url = event.url;
-  const key = event.key;
-  if (url && key) {
-    callback(null, 'success');
-  } else {
-    callback('Must include url and key in the event');
+  const message = JSON.parse(event.Records[0].Sns.Message);
+  const url = message.url;
+  const key = message.key;
+  if (!url || !key) {
+    return callback('Must include url and key in the event');
   }
 
   const browser = await setup.getBrowser();
   await exports.run(browser, url, key);
+  return callback(null, 'success');
 };
 
 exports.run = async (browser, url, key) => {

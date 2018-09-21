@@ -1,4 +1,4 @@
-service: ssl-services
+service: ssr-services
 
 provider:
   name: aws
@@ -12,11 +12,21 @@ provider:
         - "s3:PutObject"
         - "s3:PutObjectAcl"
       Resource: "arn:aws:s3:::*"
+   -  Effect: Allow
+      Action:
+        - sns:Publish
+      Resource: "arn:aws:sns:us-east-1:802922962628:*"
   environment:
     PRERENDER_TOKEN: ${s3:bounty-secrets/PRERENDER_TOKEN}
 
 functions:
   uploadSitemap:
     handler: handler.uploadSitemap
+    events:
+      - sns:
+          arn: "arn:aws:sns:us-east-1:802922962628:sitemap"
   setCache:
     handler: handler.setCache
+    events:
+      - sns:
+          arn: "arn:aws:sns:us-east-1:802922962628:ssrcache"

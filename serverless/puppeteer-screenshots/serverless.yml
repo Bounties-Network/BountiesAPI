@@ -10,11 +10,18 @@ provider:
       Action:
         - "s3:PutObject"
         - "s3:PutObjectAcl"
-      Resource: "arn:aws:s3:::assets.bounties.network/*"  
+      Resource: "arn:aws:s3:::assets.bounties.network/*"
+   -  Effect: Allow
+      Action:
+        - sns:Publish
+      Resource: "arn:aws:sns:us-east-1:802922962628:*"
 
 functions:
   snap-page:
     handler: index.handler
+    events:
+      - sns:
+          arn: "arn:aws:sns:us-east-1:802922962628:screenshot"
     environment:
       DEBUG: 0
 

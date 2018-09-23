@@ -18,6 +18,6 @@ def sns_publish(receiver, message):
     if settings.ENVIRONMENT not in ['production', 'rinkstaging', 'rinkeby']:
         return
     try:
-        client.publish('arn:aws:sns:us-east-1:802922962628:' + receiver, Message=json.dumps(message))
+        client.publish(settings.SNS_ADDRESS ':' + receiver, Message=json.dumps(message))
     except ClientError as e:
         logger.error(e.response['Error']['Message'])

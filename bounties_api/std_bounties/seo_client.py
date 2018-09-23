@@ -1,0 +1,42 @@
+from bounties import settings
+from bounties.sns_client import sns_publish
+from bounties.utils import base_url_for
+from std_bounties.models import Bounty
+from user.models import User
+from uuid import uuid4
+
+
+class SEOClient:
+
+    def __init__(self):
+        pass
+
+    def publish_new_sitemap(self, platform):
+        url = base_url_for(platform)
+        sns_publish('sitemap', {'url': url, 'bucket': url.replace('https://', '')})
+        sns_publish('ssrcache', {'url': url + '/explorer'})
+        sns_publish('ssrcache', {'url': url + '/'})
+        sns_publish('ssrcache', {'url': url})
+
+    def clear_cache(self, platform, bounty_id):
+        base_url = base_url_for(platform)
+        bounty_url = bounty_url_for(bounty_id, platform)
+        sns_publish('ssrcache', {'url': bounty_url})
+
+    def bounty_preview_screenshot(self, platform, bounty_id):
+        bounty = Bounty.objects.get(bounty_id=bounty_id)
+        bounty_url = bounty_url_for(bounty_id, platform)
+        image_uuid = uuid4()
+        image_path = '{}/bounty_preview/{}-{}.png'.format(settings.ENVIRONMENT, str(bounty_id), image_uuid)
+        image_url = 'https://assets.bounties.network/' + image_path
+        sns_publish('screenshot', {'url': bounty_url, 'key': image_path})
+        bounty.image_preview = image_path
+        bounty.save()
+
+    def profile_preview_screenshot(self, platform, user_id):
+        user = User.objects.get(id=user_id)
+        profile_url = profile_url_for(user.public_address, platform)
+        image_uuid = uuid4()
+        image_path = '{}/profile_preview/{}-{}.png'.format(settings.ENVIRONMENT, user.public_address, image_uuid)
+        image_url = 'https://assets.bounties.network/' + image_path
+        sns_publish('screenshot', {'url': profile_url, 'key': image_path})

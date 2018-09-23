@@ -1,6 +1,6 @@
 from bounties import settings
 from bounties.sns_client import sns_publish
-from bounties.utils import base_url_for
+from bounties.utils import base_url_for, bounty_url_for, profile_url_for
 from std_bounties.models import Bounty
 from user.models import User
 from uuid import uuid4
@@ -17,7 +17,14 @@ class SEOClient:
         if platform not in PLATFORM_MAPPING and platform != 'gitcoin':
             return
         url = base_url_for(platform)
-        sns_publish('sitemap', {'url': url, 'bucket': url.replace('https://', '')})
+        base_api_url = 'https://new.api.bounties.network/'
+        sitemap_url = base_api_url + 'sitemap.xml'
+        if settings.ENVIRONMENT == 'rinkeby':
+            base_api_url = 'https://newrinkeby.api.bounties.network/'
+        if url != 'https://explorer.bounties.network':
+            sitemap_url = '{}?platform__in={}'.format(sitemap_url, platform)
+
+        sns_publish('sitemap', {'url': sitemap_url, 'bucket': url.replace('https://', '')})
         sns_publish('ssrcache', {'url': url + '/explorer'})
         sns_publish('ssrcache', {'url': url + '/'})
         sns_publish('ssrcache', {'url': url})

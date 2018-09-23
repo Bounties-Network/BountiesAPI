@@ -12,6 +12,10 @@ class SEOClient:
         pass
 
     def publish_new_sitemap(self, platform):
+        if (platform == 'bounties-network' or platform == 'gitcoin') and settings.ENVIRONMENT == 'rinkeby':
+            return
+        if platform not in PLATFORM_MAPPING and platform != 'gitcoin':
+            return
         url = base_url_for(platform)
         sns_publish('sitemap', {'url': url, 'bucket': url.replace('https://', '')})
         sns_publish('ssrcache', {'url': url + '/explorer'})
@@ -39,4 +43,6 @@ class SEOClient:
         image_uuid = uuid4()
         image_path = '{}/profile_preview/{}-{}.png'.format(settings.ENVIRONMENT, user.public_address, image_uuid)
         image_url = 'https://assets.bounties.network/' + image_path
+        user.page_preview = image_url
+        user.save()
         sns_publish('screenshot', {'url': profile_url, 'key': image_path})

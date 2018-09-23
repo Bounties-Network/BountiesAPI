@@ -22,9 +22,9 @@ def bounty_issued(bounty_id, **kwargs):
     if not is_issue_and_activate:
         notification_client.bounty_issued(bounty_id, **kwargs)
         slack_client.bounty_issued(created_bounty)
-        seo_client.publish_new_sitemap(created_bounty.platform)
         seo_client.clear_cache(bounty.platform, bounty_id)
         seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+        seo_client.publish_new_sitemap(created_bounty.platform)
 
 
 def bounty_activated(bounty_id, **kwargs):

@@ -9,8 +9,10 @@ from django.http import JsonResponse, HttpResponse
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
 from notifications.notification_client import NotificationClient
+from std_bounties.seo_client import SEOClient
 
 notification_client = NotificationClient()
+seo_client = SEOClient()
 
 
 class Login(APIView):
@@ -106,6 +108,7 @@ class UserProfile(APIView):
         user.save()
 
         notification_client.profile_updated(user.public_address.lower())
+        seo_client.profile_preview_screenshot(user.id)
 
         return JsonResponse(UserProfileSerializer(user).data)
 

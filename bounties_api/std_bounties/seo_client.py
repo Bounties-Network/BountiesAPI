@@ -37,9 +37,9 @@ class SEOClient:
         bounty.image_preview = image_path
         bounty.save()
 
-    def profile_preview_screenshot(self, platform, user_id):
+    def profile_preview_screenshot(self, user_id):
         user = User.objects.get(id=user_id)
-        profile_url = profile_url_for(user.public_address, platform)
+        profile_url = profile_url_for(user.public_address)
         image_uuid = uuid4()
         image_path = '{}/profile_preview/{}-{}.png'.format(settings.ENVIRONMENT, user.public_address, image_uuid)
         image_url = 'https://assets.bounties.network/' + image_path

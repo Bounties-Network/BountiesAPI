@@ -12,7 +12,12 @@ class SiteMapDomainMixin(Sitemap):
 
     def get_urls(self, page=1, site=None, protocol=None):
         site = Site(domain=self.domain, name=self.domain)
-        return super(SiteMapDomainMixin, self).get_urls(page, site, protocol=None)
+        return super(
+            SiteMapDomainMixin,
+            self).get_urls(
+            page,
+            site,
+            protocol=None)
 
 
 class BountyMap(SiteMapDomainMixin):
@@ -25,7 +30,8 @@ class BountyMap(SiteMapDomainMixin):
         super().__init__()
 
     def items(self):
-        return Bounty.objects.filter(**self.platform_filter).exclude(bountyStage=DRAFT_STAGE).order_by('-modified')
+        return Bounty.objects.filter(
+            **self.platform_filter).exclude(bountyStage=DRAFT_STAGE).order_by('-modified')
 
     def priority(self, obj):
         if obj.bountyStage == ACTIVE_STAGE:
@@ -47,7 +53,6 @@ class BountyMap(SiteMapDomainMixin):
         if obj.bountyStage == EXPIRED_STAGE:
             return 'daily'
 
-
     def lastmod(self, obj):
         return obj.modified
 
@@ -68,7 +73,14 @@ class ProfileMap(SiteMapDomainMixin):
     priority = .1
 
     def items(self):
-        return User.objects.filter(**self.platform_filter).annotate(bounty_count=Count('bounty')).annotate(fulfillment_count=Count('fulfillment')).filter(Q(bounty_count__gt=0) | Q(fulfillment_count__gt=0) | Q(profile_image__gt=''))
+        return User.objects.filter(
+            **self.platform_filter).annotate(
+            bounty_count=Count('bounty')).annotate(
+            fulfillment_count=Count('fulfillment')).filter(
+                Q(
+                    bounty_count__gt=0) | Q(
+                        fulfillment_count__gt=0) | Q(
+                            profile_image__gt=''))
 
     def location(self, obj):
         return '/profile/' + obj.public_address
@@ -76,7 +88,7 @@ class ProfileMap(SiteMapDomainMixin):
 
 class StaticMap(SiteMapDomainMixin):
     def __init__(self, platform_filters, domain):
-        self.platform_filter=platform_filters
+        self.platform_filter = platform_filters
         self.domain = domain
         super().__init__()
 
@@ -101,9 +113,7 @@ class StaticMap(SiteMapDomainMixin):
             frequency = 'always'
         return frequency
 
-
     def location(self, obj):
         if obj == 'main':
             return ''
         return '/' + obj
-

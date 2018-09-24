@@ -31,7 +31,6 @@ class SEOClient:
         sns_publish('ssrcache', {'url': url})
 
     def clear_cache(self, platform, bounty_id):
-        base_url = base_url_for(platform)
         bounty_url = bounty_url_for(bounty_id, platform)
         sns_publish('ssrcache', {'url': bounty_url})
 

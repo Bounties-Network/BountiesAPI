@@ -26,7 +26,7 @@ sitemaps = {
 }
 
 urlpatterns = [
-    url(r'^sitemap\.xml$', custom_sitemap_index, 
+    url(r'^sitemap\.xml$', custom_sitemap_index,
         {'sitemaps': sitemaps}, name='custom_sitemap_index'),
     url(r'^admin/', admin.site.urls),
     url(r'^auth/', include('user.auth_urls', namespace='auth')),

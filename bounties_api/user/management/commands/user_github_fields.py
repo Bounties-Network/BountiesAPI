@@ -2,12 +2,11 @@ import requests
 import boto3
 from random import random
 from django.core.management.base import BaseCommand
-from django.db.models import Q
+from django.db.models import Q, Count
 from botocore.exceptions import ClientError
 from user.models import User
 from django.conf import settings
 from std_bounties.seo_client import SEOClient
-from django.db.models import Q, Count
 import logging
 
 

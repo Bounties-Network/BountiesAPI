@@ -22,4 +22,3 @@ def custom_sitemap_index(request, sitemaps, section=None, template_name='sitemap
             sitemaps_copy[section] = site(platform_filters=platform_filters, domain=domain)
 
     return django_sitemaps_views.sitemap(request, sitemaps_copy, None, template_name, content_type)
-

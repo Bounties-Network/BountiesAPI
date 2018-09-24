@@ -8,13 +8,16 @@ provider:
   iamRoleStatements:
    -  Effect: "Allow"
       Action:
+        - "s3:GetObject"
         - "s3:PutObject"
         - "s3:PutObjectAcl"
-      Resource: "arn:aws:s3:::assets.bounties.network/*"
+      Resource: "arn:aws:s3:::*"
    -  Effect: Allow
       Action:
         - sns:Publish
       Resource: "arn:aws:sns:us-east-1:802922962628:*"
+  environment:
+    PRERENDER_TOKEN: ${s3:bounty-secrets/PRERENDER_TOKEN}
 
 functions:
   snap-page:

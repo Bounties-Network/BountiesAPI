@@ -47,5 +47,9 @@ exports.run = async (browser, url, key) => {
     ACL: 'public-read',
   }).promise();
   await page.close();
+  await axios.post('https://api.prerender.io/recache', {
+    prerenderToken: process.env.PRERENDER_TOKEN,
+    url: url,
+  });
   return 'done';
 };

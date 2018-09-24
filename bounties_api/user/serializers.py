@@ -101,6 +101,8 @@ class UserSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    page_preview = serializers.CharField(max_length=256, read_only=True)
+
     settings = SettingsSerializer()
 
     class Meta:

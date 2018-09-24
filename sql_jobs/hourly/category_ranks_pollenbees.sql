@@ -13,7 +13,7 @@ AS (
     JOIN std_bounties_bounty_categories bnty_category
         ON bounty.bounty_id = bnty_category.bounty_id
     WHERE
-        bounty.platform = 'beees'
+        bounty.platform = 'pollenbees'
 );
 
 
@@ -29,7 +29,7 @@ AS (
 CREATE TABLE category_ranks_tmp
 AS SELECT * FROM category_ranks;
 
-DELETE FROM category_ranks_tmp WHERE platform='beees';
+DELETE FROM category_ranks_tmp WHERE platform='pollenbees';
 
 INSERT INTO category_ranks_tmp
 (
@@ -38,7 +38,7 @@ INSERT INTO category_ranks_tmp
         normalized_name,
         name,
         total_count,
-        'beees' as platform
+        'pollenbees' as platform
     FROM (
         SELECT
             duplicated_stats.normalized_name,

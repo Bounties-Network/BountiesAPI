@@ -30,10 +30,12 @@ def bounty_activated(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.activate_bounty(bounty, **kwargs)
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
-    # inputs = kwargs.get('inputs', {})
-    # is_issue_and_activate = inputs.get('issuer', None)
+    inputs = kwargs.get('inputs', {})
+    is_issue_and_activate = inputs.get('issuer', None)
+    if is_issue_and_activate:
+        seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+        seo_client.publish_new_sitemap(bounty.platform)
     # HOTFIX REMOVED
-    # if is_issue_and_activate:
     #     slack_client.bounty_issued_and_activated(bounty)
     #     notification_client.bounty_issued_and_activated(bounty_id, **kwargs)
     # else:
@@ -77,13 +79,13 @@ def bounty_killed(bounty_id, **kwargs):
 def contribution_added(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.add_contribution(bounty, **kwargs)
-    # inputs = kwargs.get('inputs', {})
-    # is_issue_and_activate = inputs.get('issuer', None)
+    inputs = kwargs.get('inputs', {})
+    is_issue_and_activate = inputs.get('issuer', None)
+    if not is_issue_and_activate:
+        seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
     # HOTFIX REMOVED
-    # if not is_issue_and_activate:
     #     notification_client.contribution_added(bounty_id, **kwargs)
     #     slack_client.contribution_added(bounty)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
 
 
 def deadline_extended(bounty_id, **kwargs):

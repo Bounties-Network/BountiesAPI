@@ -15,7 +15,7 @@ client = boto3.client('sns', region_name=AWS_REGION)
 def sns_publish(receiver, message):
     if settings.LOCAL:
         return
-    if settings.ENVIRONMENT not in ['production', 'rinkstaging', 'rinkeby']:
+    if settings.ENVIRONMENT not in ['production', 'rinkeby']:
         return
     try:
         client.publish(TargetArn='{}:{}'.format(settings.SNS_ADDRESS, receiver), Message=json.dumps(message))

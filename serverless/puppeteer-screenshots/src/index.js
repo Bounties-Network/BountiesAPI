@@ -1,4 +1,5 @@
 const setup = require('./configs/setup');
+const axios = require('axios');
 
 exports.handler = async (event, context, callback) => {
   // For keeping the browser launch

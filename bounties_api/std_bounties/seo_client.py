@@ -17,14 +17,15 @@ class SEOClient:
         if platform not in PLATFORM_MAPPING and platform != 'gitcoin':
             return
         url = base_url_for(platform)
-        base_api_url = 'https://new.api.bounties.network/'
-        sitemap_url = base_api_url + 'sitemap.xml'
+        domain = url.replace('https://', '')
+        base_api_url = 'https://rinkebystaging.api.bounties.network/'
         if settings.ENVIRONMENT == 'rinkeby':
-            base_api_url = 'https://newrinkeby.api.bounties.network/'
+            base_api_url = 'https://rinkebystaging.api.bounties.network/'
+        sitemap_url = '{}sitemap.xml?domain={}'.format(base_api_url, domain)
         if url != 'https://explorer.bounties.network':
-            sitemap_url = '{}?platform__in={}'.format(sitemap_url, platform)
+            sitemap_url = '{}&platform__in={}'.format(sitemap_url, platform)
 
-        sns_publish('sitemap', {'url': sitemap_url, 'bucket': url.replace('https://', '')})
+        sns_publish('sitemap', {'url': sitemap_url, 'bucket': domain})
         sns_publish('ssrcache', {'url': url + '/explorer'})
         sns_publish('ssrcache', {'url': url + '/'})
         sns_publish('ssrcache', {'url': url})
@@ -41,7 +42,7 @@ class SEOClient:
         image_path = '{}/bounty_preview/{}-{}.png'.format(settings.ENVIRONMENT, str(bounty_id), image_uuid)
         image_url = 'https://assets.bounties.network/' + image_path
         sns_publish('screenshot', {'url': bounty_url, 'key': image_path})
-        bounty.image_preview = image_path
+        bounty.image_preview = image_url
         bounty.save()
 
     def profile_preview_screenshot(self, user_id):

@@ -7,6 +7,7 @@ from botocore.exceptions import ClientError
 from user.models import User
 from django.conf import settings
 from std_bounties.seo_client import SEOClient
+from django.db.models import Q, Count
 import logging
 
 

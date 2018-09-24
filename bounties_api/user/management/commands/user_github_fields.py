@@ -2,11 +2,15 @@ import requests
 import boto3
 from random import random
 from django.core.management.base import BaseCommand
-from django.db.models import Q
+from django.db.models import Q, Count
 from botocore.exceptions import ClientError
 from user.models import User
 from django.conf import settings
+from std_bounties.seo_client import SEOClient
 import logging
+
+
+seo_client = SEOClient()
 
 
 AWS_REGION = 'us-east-1'
@@ -66,6 +70,9 @@ class Command(BaseCommand):
                     except ClientError as e:
                         logger.error(e.response['Error']['Message'])
 
+            users_for_screenshots = User.objects.annotate(bounty_count=Count('bounty')).annotate(fulfillment_count=Count('fulfillment')).filter(Q(bounty_count__gt=0) | Q(fulfillment_count__gt=0) | Q(profile_image__gt='')).filter(page_preview='')
+            for user in users_for_screenshots:
+                seo_client.profile_preview_screenshot(user.id)
         except Exception as e:
             # goes to rollbar
             logger.exception(e)

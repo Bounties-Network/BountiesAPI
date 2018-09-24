@@ -78,7 +78,11 @@ INSTALLED_APPS = [
     'user',
     'notifications',
     'django_nose',
+    'django.contrib.sites',
+    'django.contrib.sitemaps'
 ]
+
+SITE_ID = 1
 
 # Use nose to run all tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -235,6 +239,7 @@ LOCAL = os.environ.get('local') == 'true'
 ETH_NETWORK = os.environ.get('eth_network', 'mainNet')
 DEPLOY_URL = os.environ.get('deploy_url', 'http://127.0.0.1')
 GITHUB_TOKEN = os.environ.get('github_token', '')
+SNS_ADDRESS = os.environ.get('sns_address', '')
 
 networks = {
     'mainNet': 'https://mainnet.infura.io/',

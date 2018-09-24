@@ -1,0 +1,40 @@
+service: puppeteer-screenshots
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  memorySize: 3008
+  timeout: 180
+  iamRoleStatements:
+   -  Effect: "Allow"
+      Action:
+        - "s3:GetObject"
+        - "s3:PutObject"
+        - "s3:PutObjectAcl"
+      Resource: "arn:aws:s3:::*"
+   -  Effect: Allow
+      Action:
+        - sns:Publish
+      Resource: "arn:aws:sns:us-east-1:802922962628:*"
+  environment:
+    PRERENDER_TOKEN: ${s3:bounty-secrets/PRERENDER_TOKEN}
+
+functions:
+  snap-page:
+    handler: index.handler
+    events:
+      - sns:
+          arn: "arn:aws:sns:us-east-1:802922962628:screenshot"
+    environment:
+      DEBUG: 0
+
+package:
+  artifact: ./package.zip
+  
+plugins:
+  - serverless-hooks-plugin
+
+custom:
+  hooks:
+    package:initialize:
+      - npm run package

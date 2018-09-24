@@ -1,0 +1,32 @@
+service: ssr-services
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  memorySize: 1536
+  timeout: 180
+  iamRoleStatements:
+   -  Effect: "Allow"
+      Action:
+        - "s3:GetObject"
+        - "s3:PutObject"
+        - "s3:PutObjectAcl"
+      Resource: "arn:aws:s3:::*"
+   -  Effect: Allow
+      Action:
+        - sns:Publish
+      Resource: "arn:aws:sns:us-east-1:802922962628:*"
+  environment:
+    PRERENDER_TOKEN: ${s3:bounty-secrets/PRERENDER_TOKEN}
+
+functions:
+  uploadSitemap:
+    handler: handler.uploadSitemap
+    events:
+      - sns:
+          arn: "arn:aws:sns:us-east-1:802922962628:sitemap"
+  setCache:
+    handler: handler.setCache
+    events:
+      - sns:
+          arn: "arn:aws:sns:us-east-1:802922962628:ssrcache"

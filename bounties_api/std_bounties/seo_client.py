@@ -14,13 +14,13 @@ class SEOClient:
     def publish_new_sitemap(self, platform):
         if (platform == 'bounties-network' or platform == 'gitcoin') and settings.ENVIRONMENT == 'rinkeby':
             return
-        if platform not in PLATFORM_MAPPING and platform != 'gitcoin':
+        if platform not in settings.PLATFORM_MAPPING and platform != 'gitcoin':
             return
         url = base_url_for(platform)
         domain = url.replace('https://', '')
-        base_api_url = 'https://rinkebystaging.api.bounties.network/'
+        base_api_url = 'https://new.api.bounties.network/'
         if settings.ENVIRONMENT == 'rinkeby':
-            base_api_url = 'https://rinkebystaging.api.bounties.network/'
+            base_api_url = 'https://newrinkeby.api.bounties.network/'
         sitemap_url = '{}sitemap.xml?domain={}'.format(base_api_url, domain)
         if url != 'https://explorer.bounties.network':
             sitemap_url = '{}&platform__in={}'.format(sitemap_url, platform)

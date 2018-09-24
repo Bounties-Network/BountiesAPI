@@ -93,12 +93,12 @@ def base_url_for(platform=None):
 
 
 def bounty_url_for(bounty_id, platform=None):
-    url = '{}/bounty/{}/'.format(base_url_for(platform), bounty_id)
+    url = '{}/bounty/{}'.format(base_url_for(platform), bounty_id)
     return url
 
 
 def profile_url_for(public_address, platform=None):
-    url = '{}/profile/{}/'.format(base_url_for(platform), public_address)
+    url = '{}/profile/{}'.format(base_url_for(platform), public_address)
     return url
 
 

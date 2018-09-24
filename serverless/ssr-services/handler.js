@@ -20,7 +20,7 @@ exports.uploadSitemap = async (event, context, callback) => {
     // no cache so we do not have to invalidate cloudfront
     CacheControl: 'no-cache',
   }).promise();
-  await axios.get('https://www.google.com/webmasters/tools/ping?sitemap=' + url);
+  await axios.get('https://ww.google.com/webmasters/tools/ping?sitemap=' + url);
   return callback(null, 'success');
 };
 
@@ -34,6 +34,17 @@ exports.setCache = async (event, context, callback) => {
   await axios.post('https://api.prerender.io/recache', {
     prerenderToken: process.env.PRERENDER_TOKEN,
     url: url,
+  });
+  const lastLetterOfUrl = url.slice(-1);
+  let secondaryUrl;
+  if (lastLetterOfUrl === '/') {
+    secondaryUrl = url.slice(0, -1);
+  } else {
+    secondaryUrl = url + '/';
+  }
+  await axios.post('https://api.prerender.io/recache', {
+    prerenderToken: process.env.PRERENDER_TOKEN,
+    url: secondaryUrl,
   });
   callback(null, 'success');
 }

@@ -52,5 +52,16 @@ exports.run = async (browser, url, key) => {
     prerenderToken: process.env.PRERENDER_TOKEN,
     url: url,
   });
+  const lastLetterOfUrl = url.slice(-1);
+  let secondaryUrl;
+  if (lastLetterOfUrl === '/') {
+    secondaryUrl = url.slice(0, -1);
+  } else {
+    secondaryUrl = url + '/';
+  }
+  await axios.post('https://api.prerender.io/recache', {
+    prerenderToken: process.env.PRERENDER_TOKEN,
+    url: secondaryUrl,
+  });
   return 'done';
 };

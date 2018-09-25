@@ -24,6 +24,8 @@ class SEOClient:
         sitemap_url = '{}sitemap.xml?domain={}'.format(base_api_url, domain)
         if url != 'https://explorer.bounties.network':
             sitemap_url = '{}&platform__in={}'.format(sitemap_url, platform)
+        else:
+            sitemap_url = '{}&platform__in={}'.format(sitemap_url, 'gitcoin,bounties-network')
 
         sns_publish('sitemap', {'url': sitemap_url, 'bucket': domain})
         sns_publish('ssrcache', {'url': url + '/explorer'})

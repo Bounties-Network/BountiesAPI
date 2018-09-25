@@ -20,7 +20,7 @@ exports.uploadSitemap = async (event, context, callback) => {
     // no cache so we do not have to invalidate cloudfront
     CacheControl: 'no-cache',
   }).promise();
-  await axios.get('https://ww.google.com/webmasters/tools/ping?sitemap=' + url);
+  await axios.get('https://ww.google.com/webmasters/tools/ping?sitemap=https://' + bucket + '/sitemap.xml');
   return callback(null, 'success');
 };
 

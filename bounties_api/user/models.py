@@ -63,7 +63,7 @@ class User(models.Model):
     categories = models.ManyToManyField('std_bounties.Category')
     name = models.CharField(max_length=128, blank=True)
     email = models.CharField(max_length=128, blank=True)
-    email_interest = models.BooleanField(default=False)
+    wants_marketing_emails = models.BooleanField(default=False)
     organization = models.CharField(max_length=128, blank=True)
     languages = models.ManyToManyField('user.Language')
     skills = models.ManyToManyField('user.Skill')

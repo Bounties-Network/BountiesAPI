@@ -149,6 +149,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = (
             'name',
             'email',
+            'wants_marketing_emails',
             'organization',
             'profileFileName',
             'profileDirectoryHash',

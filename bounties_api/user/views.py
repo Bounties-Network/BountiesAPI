@@ -3,13 +3,17 @@ from rest_framework import viewsets
 from user.backend import authenticate, login, logout
 from user.serializers import LanguageSerializer, UserSerializer, UserInfoSerializer, UserProfileSerializer, SettingsSerializer, RankedSkillSerializer
 from user.models import Language, User, RankedSkill
+from user.permissions import AuthenticationPermission
 from std_bounties.models import Fulfillment
+from django.conf import settings
 from django.db.models import Sum, Avg, Count
 from django.http import JsonResponse, HttpResponse
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
 from notifications.notification_client import NotificationClient
 from std_bounties.seo_client import SEOClient
+from random import random
+import boto3
 
 notification_client = NotificationClient()
 seo_client = SEOClient()
@@ -46,6 +50,44 @@ class UserView(APIView):
             return JsonResponse(UserSerializer(request.current_user).data)
         return HttpResponse('Unauthorized', status=401)
 
+class RequestProfileImageUploadURL(APIView):
+    #permission_classes = [AuthenticationPermission]
+
+    def get(self, request):
+        AWS_REGION = 'us-east-1'
+        client = boto3.client('s3', region_name=AWS_REGION)
+
+        current_user = request.current_user
+        nonce = int(random() * 1000)
+        bucket = 'assets.bounties.network'
+
+        sm_key = '{}/userimages/{}-sm-{}.png'.format(settings.ENVIRONMENT, current_user.public_address, nonce)
+        lg_key = '{}/userimages/{}-lg-{}.png'.format(settings.ENVIRONMENT, current_user.public_address, nonce)
+
+        sm_put_url = client.generate_presigned_url(
+            'put_object',
+            Params={
+                'ContentType': 'image/png',
+                'Bucket': bucket,
+                'ACL': 'public-read',
+                'Key': sm_key}
+        )
+
+        lg_put_url = client.generate_presigned_url(
+            'put_object',
+            Params={
+                'ContentType': 'image/png',
+                'Bucket': bucket,
+                'ACL': 'public-read',
+                'Key': lg_key}
+        )
+
+        return JsonResponse({
+            'sm_url': 'https://{}/{}'.format(bucket, sm_key),
+            'sm_put_url': sm_put_url,
+            'lg_url': 'https://{}/{}'.format(bucket, lg_key),
+            'lg_put_url': lg_put_url
+        })
 
 class SettingsView(APIView):
     def post(self, request):
@@ -96,7 +138,6 @@ class UserProfile(APIView):
         user = request.current_user
 
         user.profile_touched_manually = True
-        user.is_profile_image_dirty = request.data.get('profileDirectoryHash') != str(user.profileDirectoryHash)
 
         serializer = UserProfileSerializer(user, data=request.data)
         serializer.is_valid(raise_exception=True)

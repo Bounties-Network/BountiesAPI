@@ -45,9 +45,9 @@ class Email:
 
     @staticmethod
     def rating_color(rating):
-        if rating >= 0.8:
+        if rating >= 4:
             return '#6FC78D'  # 'brand-green'
-        elif rating >= 0.5:
+        elif rating >= 3:
             return '#FBAA31'  # 'brand-orange'
         else:
             return '#D14545'  # 'brand-red'

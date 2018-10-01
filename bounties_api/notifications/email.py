@@ -139,7 +139,7 @@ class Email:
 
         rating_count = ratings and ratings.count() or 0
         average_rating = ratings and ratings.aggregate(
-            Avg('rating')).get('rating__avg') or '?'
+            Avg('rating')).get('rating__avg') or 0
 
         self.__dict__.update({
             'bounty': bounty,

@@ -416,10 +416,11 @@ class NotificationClient:
         bounty = Bounty.objects.get(id=bounty_id)
         string_data = notification_templates['RatingIssued'].format(
             bounty_title=bounty.title)
+        notification_name = notifications['RatingIssued']
         create_bounty_notification(
             bounty=bounty,
-            uid='{}-{}'.format(uid, reviewer.id),
-            notification_name=notifications['RatingIssued'],
+            uid='{}-{}-{}'.format(uid, reviewer.id, notification_name),
+            notification_name=notification_name,
             user=reviewer,
             from_user=reviewee,
             string_data=string_data,
@@ -438,10 +439,11 @@ class NotificationClient:
         bounty = Bounty.objects.get(id=bounty_id)
         string_data = notification_templates['RatingReceived'].format(
             bounty_title=bounty.title)
+        notification_name = notifications['RatingReceived']
         create_bounty_notification(
             bounty=bounty,
-            uid='{}-{}'.format(uid, reviewee.id),
-            notification_name=notifications['RatingReceived'],
+            uid='{}-{}-{}'.format(uid, reviewee.id, notification_name),
+            notification_name=notification_name,
             user=reviewee,
             from_user=reviewer,
             string_data=string_data,

@@ -2,6 +2,7 @@ from textwrap import wrap
 from decimal import Decimal
 
 from django.template.loader import render_to_string
+from django.db.models import Avg
 
 from notifications import constants
 from std_bounties.models import Bounty, Fulfillment
@@ -45,9 +46,9 @@ class Email:
 
     @staticmethod
     def rating_color(rating):
-        if rating >= 0.8:
+        if rating >= 4:
             return '#6FC78D'  # 'brand-green'
-        elif rating >= 0.5:
+        elif rating >= 3:
             return '#FBAA31'  # 'brand-orange'
         else:
             return '#D14545'  # 'brand-red'
@@ -123,6 +124,23 @@ class Email:
             rating_url = '{}?fulfillment_id={}&rating=true'.format(
                 url, kwargs['fulfillment_id'])
 
+        ratings = None
+        if notification_name == constants.RATING_RECEIVED:
+            user_reviewees = user.reviewees.filter(platform=bounty.platform)
+
+            if user.public_address == issuer.public_address:
+                # Rating for the issuer from the fulfiller
+                ratings = user_reviewees.filter(
+                    issuer_review__isnull=False)
+            else:
+                # Rating for the fulfiller from the issuer
+                ratings = user_reviewees.filter(
+                    fulfillment_review__isnull=False)
+
+        rating_count = ratings and ratings.count() or 0
+        average_rating = ratings and ratings.aggregate(
+            Avg('rating')).get('rating__avg') or 0
+
         self.__dict__.update({
             'bounty': bounty,
             'bounty_title': title,
@@ -169,7 +187,9 @@ class Email:
             'rating_color': review and Email.rating_color(review.rating),
             'comment': comment and comment.text,
             'MC_PREVIEW_TEXT': preview_text,
-            'rating_url': rating_url
+            'rating_url': rating_url,
+            'average_rating': usd_decimals(average_rating),
+            'rating_count': rating_count
         })
 
     def render(self):

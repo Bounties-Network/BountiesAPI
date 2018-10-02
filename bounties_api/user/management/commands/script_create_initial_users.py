@@ -24,8 +24,8 @@ class Command(BaseCommand):
                 user, updated = User.objects.update_or_create(
                     public_address=public_address,
                     defaults={
-                        "name": name,
-                        "email": email,
+                        'name': name,
+                        'email': email,
                     }
                 )
                 bounty.user = user
@@ -41,8 +41,8 @@ class Command(BaseCommand):
                 user, updated = User.objects.update_or_create(
                     public_address=public_address,
                     defaults={
-                        "name": name,
-                        "email": email,
+                        'name': name,
+                        'email': email,
                     }
                 )
                 fulfillment.user = user

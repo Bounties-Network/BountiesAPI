@@ -5,8 +5,8 @@ from analytics.models import BountiesTimeline
 
 
 class BountiesTimelineFilter(FilterSet):
-    since = filters.DateFilter(name="date", lookup_expr='gte')
-    until = filters.DateFilter(name="date", lookup_expr='lte')
+    since = filters.DateFilter(name='date', lookup_expr='gte')
+    until = filters.DateFilter(name='date', lookup_expr='lte')
 
     class Meta:
         model = BountiesTimeline

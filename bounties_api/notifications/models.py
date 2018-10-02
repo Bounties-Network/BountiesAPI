@@ -9,7 +9,7 @@ class Notification(models.Model):
         'user.User',
         default=None,
         null=True,
-        related_name="from_user"
+        related_name='from_user'
     )
     uid = models.CharField(null=False, blank=False, max_length=512)
     created = models.DateTimeField(auto_now_add=True)

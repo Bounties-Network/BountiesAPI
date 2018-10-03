@@ -50,8 +50,9 @@ class UserView(APIView):
             return JsonResponse(UserSerializer(request.current_user).data)
         return HttpResponse('Unauthorized', status=401)
 
+
 class RequestProfileImageUploadURL(APIView):
-    #permission_classes = [AuthenticationPermission]
+    permission_classes = [AuthenticationPermission]
 
     def get(self, request):
         AWS_REGION = 'us-east-1'
@@ -88,6 +89,7 @@ class RequestProfileImageUploadURL(APIView):
             'lg_url': 'https://{}/{}'.format(bucket, lg_key),
             'lg_put_url': lg_put_url
         })
+
 
 class SettingsView(APIView):
     def post(self, request):

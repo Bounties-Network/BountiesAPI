@@ -24,17 +24,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             users = User.objects.all().exclude(
-                Q(github=''), Q(profileDirectoryHash='')
+                Q(github=''), Q(large_profile_image_url='')
             )
 
             for user in users:
                 image_r = None
 
-                if user.profileDirectoryHash:
-                    location = 'https://ipfs.infura.io/ipfs/{}/{}'.format(user.profileDirectoryHash, user.profileFileName)
-                    image_r = requests.get(location)
-
-                elif user.github and not user.profile_touched_manually and not user.profile_image:
+                if user.github and not user.profile_touched_manually and not user.profile_image:
                     github_username = user.github
                     if not github_username:
                         continue
@@ -62,8 +58,9 @@ class Command(BaseCommand):
                             ACL='public-read',
                             Key=key)
 
-                        user.profile_image = 'https://{}/{}'.format(bucket, key)
-                        user.is_profile_image_dirty = False
+                        user.small_profile_image_url = 'https://{}/{}'.format(bucket, key)
+                        user.large_profile_image_url = 'https://{}/{}'.format(bucket, key)
+
                         user.save()
 
                         logger.info('uploaded for: {}'.format(user.public_address))

@@ -16,6 +16,7 @@ AS (
 		bounty.platform = 'bounties-network' OR
 		bounty.platform = 'gitcoin' OR
 		bounty.platform = 'hiring' OR
+		bounty.platform = 'sf' OR
 		bounty.platform is NULL
 );
 

@@ -69,6 +69,8 @@ class RequestProfileImageUploadURL(APIView):
             'put_object',
             Params={
                 'ContentType': 'image/png',
+                'CacheControl': 'max-age=31536000',
+                'ContentDisposition': 'attachment; filename="{}"'.format('testy.png'),
                 'Bucket': bucket,
                 'ACL': 'public-read',
                 'Key': sm_key}
@@ -78,6 +80,8 @@ class RequestProfileImageUploadURL(APIView):
             'put_object',
             Params={
                 'ContentType': 'image/png',
+                'CacheControl': 'max-age=31536000',
+                'ContentDisposition': 'attachment; filename="filename.png"',
                 'Bucket': bucket,
                 'ACL': 'public-read',
                 'Key': lg_key}

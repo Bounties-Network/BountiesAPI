@@ -8,9 +8,9 @@ from django.db.models import Q
 from rest_framework.views import APIView
 from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList, limitOffsetParams
 from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_FULFILLER_QUERY
-from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer, ReviewSerializer
-from std_bounties.models import Bounty, DraftBounty, Fulfillment, RankedCategory, Token, Comment, Review
-from std_bounties.filters import BountiesFilter, DraftBountiesFilter, FulfillmentsFilter, RankedCategoryFilter, ReviewsFilter
+from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedTagSerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer, ReviewSerializer
+from std_bounties.models import Bounty, DraftBounty, Fulfillment, RankedTag, Token, Comment, Review
+from std_bounties.filters import BountiesFilter, DraftBountiesFilter, FulfillmentsFilter, RankedTagFilter, ReviewsFilter
 from user.permissions import AuthenticationPermission, UserObjectPermissions
 from notifications.notification_client import NotificationClient
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -156,7 +156,7 @@ class DraftBountyWriteViewSet(viewsets.ModelViewSet):
 class BountyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = BountySerializer
     queryset = Bounty.objects.all().prefetch_related(
-        'categories').select_related('token').distinct()
+        'tags').select_related('token').distinct()
     filter_class = BountiesFilter
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
     ordering_fields = (
@@ -167,7 +167,7 @@ class BountyViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = (
         'title',
         'description',
-        'categories__normalized_name',
+        'tags__normalized_name',
         'issuer')
 
 
@@ -199,10 +199,10 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
     )
 
 
-class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = RankedCategorySerializer
-    queryset = RankedCategory.objects.all()
-    filter_class = RankedCategoryFilter
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = RankedTagSerializer
+    queryset = RankedTag.objects.all()
+    filter_class = RankedTagFilter
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
     ordering_fields = ('total_count',)
     ordering = ('-total_count',)

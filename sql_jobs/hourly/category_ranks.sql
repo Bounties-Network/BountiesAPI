@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS category_ranks (
+CREATE TABLE IF NOT EXISTS tag_ranks (
  	id bigint,
 	normalized_name varchar(128),
 	name varchar(128),
@@ -6,12 +6,12 @@ CREATE TABLE IF NOT EXISTS category_ranks (
 	platform varchar(128)
 );
 
-CREATE TEMP TABLE bounty_category
+CREATE TEMP TABLE bounty_tag
 AS (
-	SELECT bnty_category.id, bnty_category.bounty_id, bnty_category.category_id
+	SELECT bnty_tag.id, bnty_tag.bounty_id, bnty_tag.tag_id
 	FROM std_bounties_bounty bounty
-	JOIN std_bounties_bounty_categories bnty_category
-		ON bounty.bounty_id = bnty_category.bounty_id
+	JOIN std_bounties_bounty_tags bnty_tag
+		ON bounty.bounty_id = bnty_tag.bounty_id
 	WHERE
 		bounty.platform = 'bounties-network' OR
 		bounty.platform = 'gitcoin' OR
@@ -22,21 +22,21 @@ AS (
 );
 
 
-CREATE TEMP TABLE category
+CREATE TEMP TABLE tag
 AS (
-	SELECT DISTINCT category.id, category.name, category.normalized_name
-	FROM bounty_category
-	JOIN std_bounties_category category
-		ON bounty_category.category_id = category.id
+	SELECT DISTINCT tag.id, tag.name, tag.normalized_name
+	FROM bounty_tag
+	JOIN std_bounties_tag tag
+		ON bounty_tag.tag_id = tag.id
 );
 
 
-CREATE TABLE category_ranks_tmp
-AS SELECT * FROM category_ranks;
+CREATE TABLE tag_ranks_tmp
+AS SELECT * FROM tag_ranks;
 
-DELETE FROM category_ranks_tmp WHERE platform='main';
+DELETE FROM tag_ranks_tmp WHERE platform='main';
 
-INSERT INTO category_ranks_tmp
+INSERT INTO tag_ranks_tmp
 (
 	SELECT
 	 	ROW_NUMBER() over (ORDER BY name) as id,
@@ -62,17 +62,17 @@ INSERT INTO category_ranks_tmp
 					sum(count) as total_count
 				FROM (
 					SELECT
-						category_id,
+						tag_id,
 						count(*) as count
-					FROM bounty_category
-					GROUP BY category_id
-				) category_counts
-				JOIN category
-				ON category.id = category_counts.category_id
+					FROM bounty_tag
+					GROUP BY tag_id
+				) tag_counts
+				JOIN tag
+				ON tag.id = tag_counts.tag_id
 				GROUP BY normalized_name
 			) names_and_normalized_counts
-			JOIN category
-			ON names_and_normalized_counts.normalized_name = category.normalized_name
+			JOIN tag
+			ON names_and_normalized_counts.normalized_name = tag.normalized_name
 		) duplicated_stats
 		JOIN (
 			SELECT
@@ -80,13 +80,13 @@ INSERT INTO category_ranks_tmp
 				sum(count) as name_count
 			FROM (
 				SELECT
-					category_id,
+					tag_id,
 					count(*) as count
-				FROM bounty_category
-				GROUP BY category_id
-			) category_counts
-			JOIN category
-			ON category.id = category_counts.category_id
+				FROM bounty_tag
+				GROUP BY tag_id
+			) tag_counts
+			JOIN tag
+			ON tag.id = tag_counts.tag_id
 			GROUP BY name
 		) defined_names
 		ON duplicated_stats.name = defined_names.name
@@ -95,5 +95,5 @@ INSERT INTO category_ranks_tmp
 	ORDER BY total_count desc
 );
 
-DROP TABLE IF EXISTS category_ranks;
-ALTER TABLE category_ranks_tmp RENAME TO category_ranks;
+DROP TABLE IF EXISTS tag_ranks;
+ALTER TABLE tag_ranks_tmp RENAME TO tag_ranks;

@@ -39,11 +39,11 @@ class Email:
     max_title_length = 120
 
     @staticmethod
-    def render_categories(categories):
-        def render_category(c):
-            return render_to_string('category.html', context={'category': c})
+    def render_tags(tags):
+        def render_tag(c):
+            return render_to_string('tag.html', context={'tag': c})
 
-        return '\n'.join(map(str, map(render_category, categories)))
+        return '\n'.join(map(str, map(render_tag, tags)))
 
     @staticmethod
     def rating_color(rating):
@@ -159,8 +159,8 @@ class Email:
             'usd_amount': usd_decimals(bounty.usd_price),
             'token_amount': token_amount,
             'token': bounty.tokenSymbol,
-            'bounty_categories': Email.render_categories(
-                bounty.data_categories),
+            'bounty_tags': Email.render_tags(
+                bounty.data_tags),
             'token_amount_remaining': remaining,
             'usd_amount_remaining': remaining_usd,
             'added_amount': added_amount,

@@ -1,10 +1,10 @@
 import rest_framework_filters as filters
-from std_bounties.models import Bounty, Category, DraftBounty, Fulfillment, RankedCategory, Review
+from std_bounties.models import Bounty, Tag, DraftBounty, Fulfillment, RankedTag, Review
 
 
-class CategoriesFilter(filters.FilterSet):
+class TagsFilter(filters.FilterSet):
     class Meta:
-        model = Category
+        model = Tag
         fields = {
             'normalized_name': [
                 'exact',
@@ -14,9 +14,9 @@ class CategoriesFilter(filters.FilterSet):
                 'in']}
 
 
-class RankedCategoryFilter(filters.FilterSet):
+class RankedTagFilter(filters.FilterSet):
     class Meta:
-        model = RankedCategory
+        model = RankedTag
         fields = {
             'platform': ['exact'],
         }
@@ -54,10 +54,10 @@ class DraftBountiesFilter(filters.FilterSet):
 
 
 class BountiesFilter(filters.FilterSet):
-    categories = filters.RelatedFilter(
-        CategoriesFilter,
-        name='categories',
-        queryset=Category.objects.all())
+    tags = filters.RelatedFilter(
+        TagsFilter,
+        name='tags',
+        queryset=Tag.objects.all())
     fulfillments = filters.RelatedFilter(
         FulfillmentsFilter,
         name='fulfillments',

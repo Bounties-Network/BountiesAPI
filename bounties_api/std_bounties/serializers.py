@@ -6,8 +6,8 @@ from bounties.serializers import CreatableSlugRelatedField
 from std_bounties.models import (
     Bounty,
     Fulfillment,
-    Category,
-    RankedCategory,
+    Tag,
+    RankedTag,
     Token,
     DraftBounty,
     Comment,
@@ -35,16 +35,16 @@ class CustomSerializer(serializers.ModelSerializer):
             return expanded_fields
 
 
-class RankedCategorySerializer(serializers.ModelSerializer):
+class RankedTagSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = RankedCategory
+        model = RankedTag
         fields = '__all__'
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class TagSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Category
+        model = Tag
         fields = '__all__'
 
 
@@ -121,7 +121,7 @@ class TokenSerializer(serializers.ModelSerializer):
 
 class BountySerializer(CustomSerializer):
     bountyStage = serializers.ChoiceField(choices=STAGE_CHOICES)
-    categories = CategorySerializer(read_only=True, many=True)
+    tags = TagSerializer(read_only=True, many=True)
     current_market_token_data = TokenSerializer(read_only=True, source='token')
     user = UserSerializer(read_only=True)
     fulfillment_count = serializers.ReadOnlyField(source='fulfillments.count')
@@ -132,7 +132,7 @@ class BountySerializer(CustomSerializer):
         exclude = ('comments',)
         extra_fields = ['id']
         extra_kwargs = {
-            'data_categories': {'write_only': True},
+            'data_tags': {'write_only': True},
             'data_issuer': {'write_only': True},
             'data_json': {'write_only': True},
         }
@@ -164,8 +164,8 @@ class LeaderboardIssuerSerializer(serializers.Serializer):
 
 class DraftBountyWriteSerializer(serializers.ModelSerializer):
     # In general try and not have all this logic in a serializer
-    categories = CreatableSlugRelatedField(
-        many=True, slug_field='name', queryset=Category.objects.all())
+    tags = CreatableSlugRelatedField(
+        many=True, slug_field='name', queryset=Tag.objects.all())
     tokenContract = serializers.CharField(required=False, allow_blank=True)
     tokenSymbol = serializers.CharField(read_only=True)
     tokenDecimals = serializers.IntegerField(read_only=True)

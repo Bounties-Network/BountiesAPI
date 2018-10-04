@@ -70,7 +70,8 @@ def map_bounty_data(data_hash, bounty_id):
         logger.error('Issuer schema incorrect for: {:d}'.format(bounty_id))
         data_issuer = {}
 
-    categories = data.get('categories', [])
+    # TODO: handle new ipfs schema
+    tags = data.get('categories', [])
     plucked_data = pluck(data, bounty_data_keys)
 
     bounty = {
@@ -96,7 +97,7 @@ def map_bounty_data(data_hash, bounty_id):
         'data_issuer': data_issuer,
         'data': ipfs_hash,
         'data_json': str(data_JSON),
-        'data_categories': categories,
+        'data_tags': tags,
     }
 
     # if 'platform' is gitcoin, also return deadline

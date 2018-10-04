@@ -59,8 +59,8 @@ class BountyClient:
                 **token_data})
         bounty_serializer.is_valid(raise_exception=True)
         saved_bounty = bounty_serializer.save()
-        saved_bounty.save_and_clear_categories(
-            ipfs_data.get('data_categories'))
+        saved_bounty.save_and_clear_tags(
+            ipfs_data.get('data_tags'))
         saved_bounty.record_bounty_state(event_date)
         uid = saved_bounty.uid
         if uid:
@@ -235,8 +235,8 @@ class BountyClient:
         saved_bounty = bounty_serializer.save()
 
         if data_hash:
-            saved_bounty.save_and_clear_categories(
-                updated_data.get('data_categories'))
+            saved_bounty.save_and_clear_tags(
+                updated_data.get('data_tags'))
 
         if fulfillmentAmount:
             usd_price = get_token_pricing(

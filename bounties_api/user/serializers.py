@@ -83,12 +83,6 @@ class SettingsSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    categories = CreatableSlugRelatedField(
-        many=True,
-        slug_field='name',
-        read_only=True
-    )
-
     languages = CreatableSlugRelatedField(
         many=True,
         slug_field='name',
@@ -129,7 +123,6 @@ class UserInfoSerializer(serializers.ModelSerializer):
             'id',
             'nonce',
             'profile_touched_manually',
-            'categories',
             'settings',
         )
 

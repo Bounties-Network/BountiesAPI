@@ -417,7 +417,7 @@ class NotificationClient:
         string_data = notification_templates['RatingIssued'].format(
             bounty_title=bounty.title)
         notification_name = notifications['RatingIssued']
-        create_bounty_notification(
+        create_rating_notification(
             bounty=bounty,
             uid='{}-{}-{}'.format(uid, reviewer.id, notification_name),
             notification_name=notification_name,
@@ -440,7 +440,7 @@ class NotificationClient:
         string_data = notification_templates['RatingReceived'].format(
             bounty_title=bounty.title)
         notification_name = notifications['RatingReceived']
-        create_bounty_notification(
+        create_rating_notification(
             bounty=bounty,
             uid='{}-{}-{}'.format(uid, reviewee.id, notification_name),
             notification_name=notification_name,

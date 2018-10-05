@@ -24,6 +24,22 @@ def create_profile_updated_notification(*args, **kwargs):
     kwargs.update({'url': profile_url})
     create_notification(**kwargs)
 
+def create_rating_notification(**kwargs):
+    bounty = kwargs.get('bounty')
+    user = kwargs.get('user')
+    issuer = bounty.user
+
+    reviewee = 'fulfiller'
+    if user.public_address == issuer.public_address:
+        # Rating for the issuer from the fulfiller
+        reviewee = 'issuer'
+
+    profile_url = profile_url_for(user.public_address)
+    kwargs.update({
+        'url': profile_url + '?reviews=true&{}=true'.format(reviewee),
+        'platform': bounty.platform
+    })
+    create_notification(**kwargs)
 
 @transaction.atomic
 def create_notification(**kwargs):

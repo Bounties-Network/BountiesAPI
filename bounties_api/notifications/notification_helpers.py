@@ -24,6 +24,7 @@ def create_profile_updated_notification(*args, **kwargs):
     kwargs.update({'url': profile_url})
     create_notification(**kwargs)
 
+
 def create_rating_notification(**kwargs):
     bounty = kwargs.get('bounty')
     user = kwargs.get('user')
@@ -40,6 +41,7 @@ def create_rating_notification(**kwargs):
         'platform': bounty.platform
     })
     create_notification(**kwargs)
+
 
 @transaction.atomic
 def create_notification(**kwargs):

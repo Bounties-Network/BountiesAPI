@@ -5,7 +5,8 @@ from user.models import User
 from notifications.constants import notifications
 from notifications.notification_helpers import (
     create_bounty_notification,
-    create_profile_updated_notification
+    create_profile_updated_notification,
+    create_rating_notification
 )
 from notifications.notification_templates import (
     notification_templates,

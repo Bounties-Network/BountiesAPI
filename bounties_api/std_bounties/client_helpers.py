@@ -158,7 +158,7 @@ def calculate_usd_price(value, decimals, usd_rate):
 
 def get_token_pricing(token_symbol, token_decimals, value):
     try:
-        token_model = Token.objects.get(symbol=token_symbol)
+        token_model = Token.objects.filter(symbol=token_symbol).earliest('id')
         usd_price = calculate_usd_price(
             value, token_decimals, token_model.price_usd)
     except Token.DoesNotExist:

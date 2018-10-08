@@ -66,6 +66,10 @@ def create_notification(**kwargs):
         },
     )
 
+    # from here on out, all we care about is email
+    if not user.email:
+        return
+
     email_settings = user.settings.emails
     activity_emails = email_settings['activity']
 

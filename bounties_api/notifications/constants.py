@@ -24,6 +24,7 @@ BOUNTY_COMMENT = 22
 DRAFT_CREATED = 23
 DRAFT_UPDATED = 24
 CONTRIBUTION_RECEIVED = 25
+BOUNTY_COMPLETED = 26
 
 NOTIFICATION_IDS = (
     (FULFILLMENT_SUBMITTED, 'FulfillmentSubmitted'),
@@ -52,6 +53,7 @@ NOTIFICATION_IDS = (
     (DRAFT_CREATED, 'DraftCreated'),
     (DRAFT_UPDATED, 'DraftUpdated'),
     (CONTRIBUTION_RECEIVED, 'ContributionReceived'),
+    (BOUNTY_COMPLETED, 'BountyCompleted')
 )
 
 id_to_notification = dict(NOTIFICATION_IDS)
@@ -65,7 +67,8 @@ push_notification_options = {
             TRANSFER_RECIPIENT,
             BOUNTY_EXPIRED,
             BOUNTY_COMMENT_RECEIVED,
-            CONTRIBUTION_RECEIVED]],
+            CONTRIBUTION_RECEIVED,
+            BOUNTY_COMPLETED]],
     'fulfiller': [
         id_to_notification[notif] for notif in [FULFILLMENT_ACCEPTED_FULFILLER]],
     'both': [

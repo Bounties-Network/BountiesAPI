@@ -9,7 +9,9 @@ from user.models import User
 from std_bounties.constants import STAGE_CHOICES, DIFFICULTY_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
+from notifications.notification_client import NotificationClient
 
+notification_client = NotificationClient()
 
 class Review(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -169,6 +171,7 @@ class Bounty(BountyAbstract):
 
     def record_bounty_state(self, event_date):
         """Makes sure no duplicates are created"""
+        notification_client.bounty_completed(self)
         # Need to make this a post_event signal. The only problem is we need a better event system
         # since this call requires an event_date
         return BountyState.objects.get_or_create(

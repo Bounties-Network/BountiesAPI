@@ -13,6 +13,7 @@ from notifications.notification_client import NotificationClient
 
 notification_client = NotificationClient()
 
+
 class Review(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)

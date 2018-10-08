@@ -30,7 +30,7 @@ class Command(BaseCommand):
             for user in users:
                 image_r = None
 
-                if user.github and not user.profile_touched_manually and not user.profile_image:
+                if user.github and not user.profile_touched_manually and not user.large_profile_image_url:
                     github_username = user.github
                     if not github_username:
                         continue
@@ -67,7 +67,7 @@ class Command(BaseCommand):
                     except ClientError as e:
                         logger.error(e.response['Error']['Message'])
 
-            users_for_screenshots = User.objects.annotate(bounty_count=Count('bounty')).annotate(fulfillment_count=Count('fulfillment')).filter(Q(bounty_count__gt=0) | Q(fulfillment_count__gt=0) | Q(profile_image__gt='')).filter(page_preview='')
+            users_for_screenshots = User.objects.annotate(bounty_count=Count('bounty')).annotate(fulfillment_count=Count('fulfillment')).filter(Q(bounty_count__gt=0) | Q(fulfillment_count__gt=0) | Q(large_profile_image_url__gt='')).filter(page_preview='')
             for user in users_for_screenshots:
                 seo_client.profile_preview_screenshot(user.id)
         except Exception as e:

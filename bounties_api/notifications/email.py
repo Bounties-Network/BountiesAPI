@@ -149,9 +149,6 @@ class Email:
         average_rating = ratings and ratings.aggregate(
             Avg('rating')).get('rating__avg') or 0
 
-        if notification_name == constants.BOUNTY_COMPLETED:
-            url += '?contribute=true'
-
         self.__dict__.update({
             'bounty': bounty,
             'bounty_title': title,
@@ -200,7 +197,8 @@ class Email:
             'rating_url': rating_url,
             'average_rating': usd_decimals(average_rating),
             'rating_count': rating_count,
-            'rating_link': rating_link
+            'rating_link': rating_link,
+            'contribute_url': url + '?contribute=true'
         })
 
     def render(self):

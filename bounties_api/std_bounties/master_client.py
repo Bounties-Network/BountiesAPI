@@ -66,8 +66,6 @@ def fulfillment_accepted(bounty_id, **kwargs):
     notification_client.fulfillment_accepted(bounty_id, **kwargs)
     slack_client.fulfillment_accepted(bounty, fulfillment_id)
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
-    if bounty.balance < bounty.fulfillmentAmount:
-        notification_client.bounty_completed(bounty, fulfillment_id)
 
 
 def bounty_killed(bounty_id, **kwargs):

@@ -469,8 +469,9 @@ class NotificationClient:
 
     def bounty_completed(self, bounty, fulfillment_id):
         string_data = notification_templates['BountyCompleted'].format(
-            bounty.title)
+            bounty_title=bounty.title)
         create_bounty_notification(
+            bounty=bounty,
             uid='{}-{}-completed'.format(bounty.id, fulfillment_id),
             notification_name=notifications['BountyCompleted'],
             user=bounty.user,

@@ -125,9 +125,15 @@ class Email:
             rating_url = '{}?fulfillment_id={}&rating=true'.format(
                 url, kwargs['fulfillment_id'])
 
+        user_address_link = (
+            user and profile_url_for(user.public_address, bounty.platform)
+        )
+
         ratings = None
+        rating_link = None
         if notification_name == constants.RATING_RECEIVED:
             user_reviewees = user.reviewees.filter(platform=bounty.platform)
+            rating_link = user_address_link + '?reviews=true'
 
             if user.public_address == issuer.public_address:
                 # Rating for the issuer from the fulfiller
@@ -137,6 +143,7 @@ class Email:
                 # Rating for the fulfiller from the issuer
                 ratings = user_reviewees.filter(
                     fulfillment_review__isnull=False)
+                rating_link += '&fulfiller=true'
 
         rating_count = ratings and ratings.count() or 0
         average_rating = ratings and ratings.aggregate(
@@ -175,8 +182,7 @@ class Email:
             'user_profile_image': (
                 user and user.profile_image or default_image
             ),
-            'user_address_link': user and profile_url_for(
-                user.public_address, bounty.platform),
+            'user_address_link': user_address_link,
             'from_user_name': from_user and from_user.name,
             'from_user_address': from_user and shorten_address(
                 from_user.public_address),
@@ -193,7 +199,8 @@ class Email:
             'MC_PREVIEW_TEXT': preview_text,
             'rating_url': rating_url,
             'average_rating': usd_decimals(average_rating),
-            'rating_count': rating_count
+            'rating_count': rating_count,
+            'rating_link': rating_link
         })
 
     def render(self):

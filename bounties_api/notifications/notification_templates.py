@@ -23,8 +23,7 @@ notification_templates = {
     'BountyComment': 'You wrote a comment for: {bounty_title}.',
     'DraftCreated': 'You created draft {draft_id}.',
     'DraftUpdated': 'You updated draft {draft_id}.',
-    'ContributionReceived': '{bounty_title} received {amount} in contribution',
-    'BountyCompleted': '{bounty_title} is out of funds'
+    'ContributionReceived': '{bounty_title} received {amount} in contribution'
 }
 
 email_templates = {

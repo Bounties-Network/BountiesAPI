@@ -465,3 +465,15 @@ class NotificationClient:
             notification_created=datetime.utcnow(),
             string_data=string_data,
             subject='')
+
+    def bounty_completed(self, bounty, fulfillment_id):
+        string_data = notification_templates['BountyCompleted'].format(
+            bounty.title)
+        create_bounty_notification(
+            uid='{}-{}-completed'.format(bounty.id, fulfillment_id),
+            notification_name=notifications['BountyCompleted'],
+            user=bounty.user,
+            from_user=None,
+            notification_created=datetime.utcnow(),
+            string_data=string_data,
+            subject='Your Bounty Completed')

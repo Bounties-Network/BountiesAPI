@@ -1,6 +1,6 @@
 import requests
 import boto3
-from random import random
+from uuid import uuid4
 from django.core.management.base import BaseCommand
 from django.db.models import Q, Count
 from botocore.exceptions import ClientError
@@ -47,7 +47,7 @@ class Command(BaseCommand):
 
                 if large_image_response.status_code == 200 and small_image_response.status_code == 200:
                     try:
-                        nonce = int(random() * 1000)
+                        nonce = str(uuid4())[:4]
                         bucket = 'assets.bounties.network'
 
                         small_key = '{}/userimages/{}-sm-{}.png'.format(settings.ENVIRONMENT, user.public_address, nonce)

@@ -12,7 +12,7 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
 from notifications.notification_client import NotificationClient
 from std_bounties.seo_client import SEOClient
-from random import random
+from uuid import uuid4
 import boto3
 
 notification_client = NotificationClient()
@@ -59,7 +59,7 @@ class RequestProfileImageUploadURL(APIView):
         client = boto3.client('s3', region_name=AWS_REGION)
 
         current_user = request.current_user
-        nonce = int(random() * 1000)
+        nonce = str(uuid4())[:4]
         bucket = 'assets.bounties.network'
 
         sm_key = '{}/userimages/{}-sm-{}.png'.format(settings.ENVIRONMENT, current_user.public_address, nonce)

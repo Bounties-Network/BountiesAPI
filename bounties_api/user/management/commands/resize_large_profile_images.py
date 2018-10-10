@@ -45,8 +45,7 @@ class Command(BaseCommand):
                         client.put_object(
                             Body=resized_image_content.getvalue(),
                             ContentType=response.headers['content-type'],
-                            CacheControl=response.headers['cache-control'],
-                            ContentDisposition=response.headers['content-disposition'],
+                            CacheControl='max-age=31536000',
                             Bucket=bucket,
                             ACL='public-read',
                             Key=key)

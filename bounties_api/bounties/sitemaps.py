@@ -80,7 +80,7 @@ class ProfileMap(SiteMapDomainMixin):
                 Q(
                     bounty_count__gt=0) | Q(
                         fulfillment_count__gt=0) | Q(
-                            profile_image__gt=''))
+                            small_profile_image_url__gt=''))
 
     def location(self, obj):
         return '/profile/' + obj.public_address

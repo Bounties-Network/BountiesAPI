@@ -3,7 +3,7 @@ from functools import reduce
 
 import arrow
 from django.core.management import BaseCommand
-from django.db.models import Q
+from django.db.models import Q, Sum
 
 from analytics.models import BountiesTimeline
 from std_bounties.constants import EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, ACTIVE_STAGE, DRAFT_STAGE
@@ -97,6 +97,20 @@ def get_avg_fulfiller_acceptance_rate(
     return accumulator / counter if counter > 0 else 0
 
 
+def get_total_amount_paid(time_frame, accepted_date=datetime.now()):
+    fulfillers = [b['fulfiller']
+                  for b in time_frame.values('fulfiller').distinct()]
+
+    total = 0
+    for fulfiller in fulfillers:
+        fulfillments = time_frame.filter(fulfiller=fulfiller)
+        accepted_fulfillments = fulfillments.filter(
+            accepted=True, accepted_date__lte=accepted_date)
+        sum_fulfillments = accepted_fulfillments.aggregate(Sum('usd_price')).get('usd_price__sum')
+        total += sum_fulfillments if sum_fulfillments is not None else 0
+    return total
+
+
 def get_avg_fulfillment_amount(time_frame):
     completed_bounties = filter(
         lambda bounty: bounty.bountyStage == COMPLETED_STAGE,
@@ -117,6 +131,14 @@ def get_total_fulfillment_amount(time_frame):
         current.bounty.fulfillmentAmount,
         completed_bounties,
         0)
+
+
+def get_total_unique_issuers(time_frame):
+    return time_frame.distinct('bounty').values('bounty__issuer_address').distinct().count()
+
+
+def get_total_unique_fulfillers(time_frame):
+    return time_frame.values('fulfiller').distinct().count()
 
 
 def get_bounty_draft(time_frame):
@@ -250,8 +272,12 @@ def generate_timeline(time_frame, platform=DEFAULT_PLATFORM):
         fulfillment_submitted_frame, date)
 
     avg_fulfillment_amount = get_avg_fulfillment_amount(bounties_state_frame)
-    total_fulfillment_amount = get_total_fulfillment_amount(
-        bounties_state_frame)
+    total_fulfillment_amount = get_total_amount_paid(fulfillment_accepted_frame, date)
+
+    total_unique_issuers = get_total_unique_issuers(bounties_state_frame_day)
+    total_unique_issuers_cum = get_total_unique_issuers(bounties_state_frame)
+    total_unique_fulfillers = get_total_unique_fulfillers(fulfillment_submitted_frame_day)
+    total_unique_fulfillers_cum = get_total_unique_fulfillers(fulfillment_submitted_frame)
 
     bounty_frame = BountiesTimeline(
         date=time_frame[0],
@@ -268,6 +294,10 @@ def generate_timeline(time_frame, platform=DEFAULT_PLATFORM):
         avg_fulfiller_acceptance_rate=avg_fulfiller_acceptance_rate,
         avg_fulfillment_amount=avg_fulfillment_amount,
         total_fulfillment_amount=total_fulfillment_amount,
+        total_unique_issuers=total_unique_issuers,
+        total_unique_issuers_cum=total_unique_issuers_cum,
+        total_unique_fulfillers=total_unique_fulfillers,
+        total_unique_fulfillers_cum=total_unique_fulfillers_cum,
         bounty_draft=stages[DRAFT_STAGE],
         bounty_active=stages[ACTIVE_STAGE],
         bounty_completed=stages[COMPLETED_STAGE],

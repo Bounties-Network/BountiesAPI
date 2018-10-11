@@ -28,7 +28,11 @@ class Migration(migrations.Migration):
                 ('bounty_fulfilled_rate', models.FloatField(default=0)),
                 ('avg_fulfiller_acceptance_rate', models.FloatField(default=0)),
                 ('avg_fulfillment_amount', models.FloatField(default=0)),
-                ('total_fulfillment_amount', models.DecimalField(decimal_places=0, default=0, max_digits=64)),
+                ('total_fulfillment_amount', models.FloatField(default=0)),
+                ('total_unique_issuers', models.PositiveIntegerField(default=0)),
+                ('total_unique_issuers_cum', models.PositiveIntegerField(default=0)),
+                ('total_unique_fulfillers', models.PositiveIntegerField(default=0)),
+                ('total_unique_fulfillers_cum', models.PositiveIntegerField(default=0)),
                 ('bounty_draft', models.PositiveIntegerField(default=0)),
                 ('bounty_active', models.PositiveIntegerField(default=0)),
                 ('bounty_completed', models.PositiveIntegerField(default=0)),
@@ -38,6 +42,16 @@ class Migration(migrations.Migration):
                 ('fulfillments_accepted_cum', models.PositiveIntegerField(default=0)),
                 ('fulfillments_submitted_cum', models.PositiveIntegerField(default=0)),
                 ('platform', models.CharField(blank=True, max_length=64)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Tokens',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('token_symbol', models.CharField(max_length=128)),
+                ('token_contract', models.CharField(max_length=128)),
+                ('total_count', models.PositiveIntegerField(default=0)),
+                ('usd_price', models.FloatField(default=0))
             ],
         ),
     ]

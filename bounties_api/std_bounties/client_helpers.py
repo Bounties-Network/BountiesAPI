@@ -43,9 +43,10 @@ def map_bounty_data(data_hash, bounty_id):
     ipfs_hash = data_hash
     if len(ipfs_hash) != 46 or not ipfs_hash.startswith('Qm'):
         logger.error('Data Hash Incorrect for bounty: {:d}'.format(bounty_id))
-        data_JSON = "{}"
+        data_JSON = '{}'
     else:
         data_JSON = ipfs.cat(ipfs_hash)
+
     if len(ipfs_hash) == 0:
         ipfs_hash = 'invalid'
 
@@ -112,9 +113,10 @@ def map_fulfillment_data(data_hash, bounty_id, fulfillment_id):
         logger.error(
             'Data Hash Incorrect for fulfillment on bounty: {:d} fulfillment: {:d}'.format(
                 bounty_id, fulfillment_id))
-        data_JSON = "{}"
+        data_JSON = '{}'
     else:
         data_JSON = ipfs.cat(ipfs_hash)
+
     if len(ipfs_hash) == 0:
         ipfs_hash = 'invalid'
 

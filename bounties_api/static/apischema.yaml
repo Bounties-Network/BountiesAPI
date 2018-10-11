@@ -128,7 +128,7 @@ paths:
   /auth/login/:
     post:
       operationId: auth_login
-      description: ''
+      description: 'Log a user in'
       consumes:
         - application/json
       parameters:
@@ -159,7 +159,7 @@ paths:
   /auth/logout/:
     get:
       operationId: auth_logout
-      description: ''
+      description: 'Log a user out'
       responses:
         '200':
           description: ''
@@ -195,7 +195,7 @@ paths:
       parameters: []
       responses:
         '200':
-          description: 'Get current user information'
+          description: 'Update current user information'
           schema:
             $ref: '#/definitions/UserSettings'
         '401':
@@ -210,7 +210,7 @@ paths:
       parameters: []
       responses:
         '200':
-          description: 'Get current user information'
+          description: 'Update current user information'
           schema:
             $ref: '#/definitions/UserSettings'
         '401':
@@ -228,6 +228,17 @@ paths:
 
 
   /user/{address}/profile/:
+    post:
+      operationId: user_update_profile_by_address
+      description: 'Update user profile by address'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserUpdateProfileByAddress'
+      tags:
+        - user
     get:
       operationId: user_profile
       description: ''
@@ -411,15 +422,14 @@ paths:
         description: A unique value identifying this bounty.
         required: true
         type: integer
-
-
+  
   /bounty/{id}/comment/:
     get:
       operationId: bounty_comment
       description: Get bounty by id
       responses:
         '200':
-          description: ''
+          description: 'Get bounty comments by id'
           schema:
             type: array
             items:
@@ -443,7 +453,7 @@ paths:
                 description: Comment body
       responses:
         '201':
-          description: ''
+          description: 'Add comment to bounty by id'
           schema:
             type: array
             items:
@@ -564,7 +574,7 @@ paths:
       description: Get reviews for fulfillment from bounty by id
       responses:
         '200':
-          description: ''
+          description: 'Get reviews for fulfillment from bounty by id'
           schema:
             type: array
             items:
@@ -590,7 +600,7 @@ paths:
                 type: string
       responses:
         '201':
-          description: ''
+          description: 'Returns added review for fulfillment to bounty by id'
           schema:
             type: array
             items:
@@ -643,7 +653,7 @@ paths:
           type: integer
       responses:
         '200':
-          description: ''
+          description: 'Returns list of fulfillments'
           schema:
             required:
               - count
@@ -674,7 +684,7 @@ paths:
       parameters: []
       responses:
         '200':
-          description: ''
+          description: 'Returns a fulfillment by id'
           schema:
             $ref: '#/definitions/Fulfillment'
       tags:
@@ -685,6 +695,30 @@ paths:
         description: A unique integer value identifying this fulfillment.
         required: true
         type: integer
+
+
+  /fulfiller/{address}/:
+    get:
+      operationId: bounty_fulfiller_profile
+      description: Get bounty fulfiller by address
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/BountyFulfillerProfile'
+      tags:
+        - user
+    parameters:
+      - name: address
+        in: path
+        description: The address of the fulfiller.
+        required: true
+      - name: platform
+        in: query
+        description: Platform that created the bounty
+        required: false
+        type: string
 
 
   /category/:
@@ -715,7 +749,7 @@ paths:
           type: integer
       responses:
         '200':
-          description: ''
+          description: 'Returns all categories sorted by categories most frequently used'
           schema:
             required:
               - count
@@ -746,7 +780,7 @@ paths:
       parameters: []
       responses:
         '200':
-          description: ''
+          description: 'Returns a category by id'
           schema:
             $ref: '#/definitions/RankedCategory'
       tags:
@@ -803,7 +837,7 @@ paths:
   /token/:
     get:
       operationId: token_list
-      description: ''
+      description: 'Get list of tokens that have been used at least once in a contract'
       parameters: []
       responses:
         '200':

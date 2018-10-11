@@ -23,7 +23,7 @@ default_image = ('https://gallery.mailchimp.com/03351ad14a86e9637146ada2a'
 class Email:
     # Supported notification types that have an email template:
     templates = {
-        constants.FULFILLMENT_SUBMITTED_ISSUER: 'completedBounty.html',
+        constants.FULFILLMENT_SUBMITTED_ISSUER: 'fulfillmentSubmitted.html',
         constants.FULFILLMENT_ACCEPTED_FULFILLER: 'submissionAccepted.html',
         constants.CONTRIBUTION_ADDED: 'contributionReceived.html',
         constants.CONTRIBUTION_RECEIVED: 'contributionReceived.html',
@@ -33,6 +33,7 @@ class Email:
         constants.BOUNTY_COMMENT_RECEIVED: 'commentOnBounty.html',
         constants.FULFILLMENT_UPDATED: 'fulfillmentUpdated.html',
         constants.RATING_RECEIVED: 'receivedRating.html',
+        constants.BOUNTY_COMPLETED: 'bountyCompleted.html'
     }
     max_description_length = 240
     max_title_length = 120
@@ -196,7 +197,8 @@ class Email:
             'rating_url': rating_url,
             'average_rating': usd_decimals(average_rating),
             'rating_count': rating_count,
-            'rating_link': rating_link
+            'rating_link': rating_link,
+            'contribute_url': url + '?contribute=true'
         })
 
     def render(self):

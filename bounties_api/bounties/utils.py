@@ -1,5 +1,5 @@
 import datetime
-from decimal import Decimal
+from decimal import Decimal, Context, ROUND_HALF_UP
 import time
 import logging
 from django.conf import settings
@@ -7,6 +7,8 @@ from django.conf import settings
 logger = logging.getLogger('django')
 max_datetime = datetime.datetime(9999, 12, 31, 23, 59, 59, 999999)
 max_time_stamp = time.mktime(max_datetime.timetuple())
+create_token_decimals = Context(prec=6).create_decimal
+create_usd_decimals = Context(prec=3).create_decimal
 
 
 def sqlGenerateOrList(param_name, count, operation):
@@ -91,14 +93,24 @@ def base_url_for(platform=None):
 
 
 def bounty_url_for(bounty_id, platform=None):
-    url = '{}/bounty/{}/'.format(base_url_for(platform), bounty_id)
+    url = '{}/bounty/{}'.format(base_url_for(platform), bounty_id)
     return url
 
 
 def profile_url_for(public_address, platform=None):
-    url = '{}/profile/{}/'.format(base_url_for(platform), public_address)
+    url = '{}/profile/{}'.format(base_url_for(platform), public_address)
     return url
 
 
 def shorten_address(address):
     return '{}...{}'.format(address[:6], address[-4:])
+
+
+def token_decimals(tokens):
+    return create_token_decimals(tokens).quantize(
+        Decimal('.00001'), rounding=ROUND_HALF_UP).normalize()
+
+
+def usd_decimals(tokens):
+    return create_usd_decimals(tokens).quantize(
+        Decimal('.01'), rounding=ROUND_HALF_UP).normalize()

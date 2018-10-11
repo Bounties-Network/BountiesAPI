@@ -1,12 +1,16 @@
 import requests
 import boto3
-from random import random
+from uuid import uuid4
 from django.core.management.base import BaseCommand
-from django.db.models import Q
+from django.db.models import Q, Count
 from botocore.exceptions import ClientError
 from user.models import User
 from django.conf import settings
+from std_bounties.seo_client import SEOClient
 import logging
+
+
+seo_client = SEOClient()
 
 
 AWS_REGION = 'us-east-1'
@@ -20,52 +24,63 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             users = User.objects.all().exclude(
-                Q(github=''), Q(profileDirectoryHash='')
+                Q(github='') |
+                Q(profile_touched_manually=True)
+            ).filter(
+                large_profile_image_url=''
             )
 
             for user in users:
-                image_r = None
+                url = 'https://api.github.com/users/{}'.format(user.github)
+                response = requests.get(url, headers={'Authorization': 'token ' + settings.GITHUB_TOKEN})
 
-                if user.profileDirectoryHash:
-                    location = 'https://ipfs.infura.io/ipfs/{}/{}'.format(user.profileDirectoryHash, user.profileFileName)
-                    image_r = requests.get(location)
+                if response.status_code != 200:
+                    continue
 
-                elif user.github and not user.profile_touched_manually and not user.profile_image:
-                    github_username = user.github
-                    if not github_username:
-                        continue
-                    url = 'https://api.github.com/users/{}'.format(github_username)
-                    r = requests.get(
-                        url, headers={
-                            'Authorization': 'token ' + settings.GITHUB_TOKEN})
+                github_data = response.json()
 
-                    if r.status_code == 200:
-                        github_data = r.json()
-                        github_image = github_data.get('avatar_url')
-                        image_r = requests.get(github_image)
+                large_image_url = github_data.get('avatar_url') + '&s=300'
+                small_image_url = github_data.get('avatar_url') + '&s=64'
 
-                if image_r and image_r.status_code == 200:
+                large_image_response = requests.get(large_image_url)
+                small_image_response = requests.get(small_image_url)
+
+                if large_image_response.status_code == 200 and small_image_response.status_code == 200:
                     try:
-                        nonce = int(random() * 1000)
+                        nonce = str(uuid4())[:4]
                         bucket = 'assets.bounties.network'
-                        key = '{}/userimages/{}-{}.jpg'.format(
-                            settings.ENVIRONMENT, user.public_address, nonce)
+
+                        small_key = '{}/userimages/{}-sm-{}.png'.format(settings.ENVIRONMENT, user.public_address, nonce)
+                        large_key = '{}/userimages/{}-lg-{}.png'.format(settings.ENVIRONMENT, user.public_address, nonce)
 
                         client.put_object(
-                            Body=image_r.content,
-                            ContentType=image_r.headers['content-type'],
+                            Body=small_image_response.content,
+                            ContentType=small_image_response.headers['content-type'],
+                            CacheControl='max-age=31536000',
                             Bucket=bucket,
                             ACL='public-read',
-                            Key=key)
+                            Key=small_key)
 
-                        user.profile_image = 'https://{}/{}'.format(bucket, key)
-                        user.is_profile_image_dirty = False
+                        client.put_object(
+                            Body=large_image_response.content,
+                            ContentType=large_image_response.headers['content-type'],
+                            CacheControl='max-age=31536000',
+                            Bucket=bucket,
+                            ACL='public-read',
+                            Key=large_key)
+
+                        user.small_profile_image_url = 'https://{}/{}'.format(bucket, small_key)
+                        user.large_profile_image_url = 'https://{}/{}'.format(bucket, large_key)
+
                         user.save()
 
                         logger.info('uploaded for: {}'.format(user.public_address))
                     except ClientError as e:
                         logger.error(e.response['Error']['Message'])
 
+            users_for_screenshots = User.objects.annotate(bounty_count=Count('bounty')).annotate(fulfillment_count=Count('fulfillment')).filter(Q(bounty_count__gt=0) | Q(fulfillment_count__gt=0) | Q(large_profile_image_url__gt='')).filter(page_preview='')
+            for user in users_for_screenshots:
+                seo_client.profile_preview_screenshot(user.id)
         except Exception as e:
             # goes to rollbar
             logger.exception(e)

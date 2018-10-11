@@ -1,7 +1,8 @@
-from decimal import Context
 from textwrap import wrap
+from decimal import Decimal
 
 from django.template.loader import render_to_string
+from django.db.models import Avg
 
 from notifications import constants
 from std_bounties.models import Bounty, Fulfillment
@@ -9,7 +10,9 @@ from bounties.utils import (
     bounty_url_for,
     profile_url_for,
     shorten_address,
-    calculate_token_value
+    calculate_token_value,
+    token_decimals,
+    usd_decimals
 )
 from bounties.settings import ENVIRONMENT
 
@@ -20,7 +23,7 @@ default_image = ('https://gallery.mailchimp.com/03351ad14a86e9637146ada2a'
 class Email:
     # Supported notification types that have an email template:
     templates = {
-        constants.FULFILLMENT_SUBMITTED_ISSUER: 'completedBounty.html',
+        constants.FULFILLMENT_SUBMITTED_ISSUER: 'fulfillmentSubmitted.html',
         constants.FULFILLMENT_ACCEPTED_FULFILLER: 'submissionAccepted.html',
         constants.CONTRIBUTION_ADDED: 'contributionReceived.html',
         constants.CONTRIBUTION_RECEIVED: 'contributionReceived.html',
@@ -30,6 +33,7 @@ class Email:
         constants.BOUNTY_COMMENT_RECEIVED: 'commentOnBounty.html',
         constants.FULFILLMENT_UPDATED: 'fulfillmentUpdated.html',
         constants.RATING_RECEIVED: 'receivedRating.html',
+        constants.BOUNTY_COMPLETED: 'bountyCompleted.html'
     }
     max_description_length = 240
     max_title_length = 120
@@ -43,9 +47,9 @@ class Email:
 
     @staticmethod
     def rating_color(rating):
-        if rating >= 0.8:
+        if rating >= 4:
             return '#6FC78D'  # 'brand-green'
-        elif rating >= 0.5:
+        elif rating >= 3:
             return '#FBAA31'  # 'brand-orange'
         else:
             return '#D14545'  # 'brand-red'
@@ -72,11 +76,9 @@ class Email:
 
         issuer = bounty.user
 
-        token_decimals = Context(prec=6).create_decimal
-        usd_decimals = Context(prec=3).create_decimal
-        remaining = token_decimals(bounty.calculated_balance).normalize()
+        remaining = token_decimals(bounty.calculated_balance)
         token_amount = token_decimals(
-            bounty.calculated_fulfillmentAmount).normalize()
+            bounty.calculated_fulfillmentAmount)
 
         if len(description) > self.max_description_length:
             # Cut off at the closest word after the limit
@@ -95,7 +97,9 @@ class Email:
 
         remaining_submissions = 0
 
-        if notification_name == constants.BOUNTY_EXPIRED:
+        if (notification_name == constants.BOUNTY_EXPIRED or
+                notification_name == constants.CONTRIBUTION_RECEIVED or
+                notification_name == constants.CONTRIBUTION_ADDED):
             remaining_submissions = Fulfillment.objects.filter(
                 bounty_id=bounty.id,
                 accepted=False,
@@ -104,21 +108,46 @@ class Email:
         remaining_usd = ' unknown'
         if bounty.tokenLockPrice:
             remaining_usd = usd_decimals(
-                remaining * usd_decimals(bounty.tokenLockPrice)).normalize()
+                remaining * usd_decimals(bounty.tokenLockPrice))
         elif bounty.token and bounty.token.price_usd:
             remaining_usd = usd_decimals(
-                remaining * usd_decimals(bounty.token.price_usd)).normalize()
+                remaining * usd_decimals(bounty.token.price_usd))
 
         added_amount = 0
-        if notification_name == constants.CONTRIBUTION_ADDED:
+        if (notification_name == constants.CONTRIBUTION_RECEIVED or
+                notification_name == constants.CONTRIBUTION_ADDED):
             inputs = kwargs['inputs']
             added_amount = token_decimals(calculate_token_value(
-                int(inputs['value']), bounty.tokenDecimals)).normalize()
+                int(Decimal(inputs['value'])), bounty.tokenDecimals))
 
         rating_url = url
         if notification_name == constants.FULFILLMENT_ACCEPTED_FULFILLER:
             rating_url = '{}?fulfillment_id={}&rating=true'.format(
                 url, kwargs['fulfillment_id'])
+
+        user_address_link = (
+            user and profile_url_for(user.public_address, bounty.platform)
+        )
+
+        ratings = None
+        rating_link = None
+        if notification_name == constants.RATING_RECEIVED:
+            user_reviewees = user.reviewees.filter(platform=bounty.platform)
+            rating_link = user_address_link + '?reviews=true'
+
+            if user.public_address == issuer.public_address:
+                # Rating for the issuer from the fulfiller
+                ratings = user_reviewees.filter(
+                    issuer_review__isnull=False)
+            else:
+                # Rating for the fulfiller from the issuer
+                ratings = user_reviewees.filter(
+                    fulfillment_review__isnull=False)
+                rating_link += '&fulfiller=true'
+
+        rating_count = ratings and ratings.count() or 0
+        average_rating = ratings and ratings.aggregate(
+            Avg('rating')).get('rating__avg') or 0
 
         self.__dict__.update({
             'bounty': bounty,
@@ -127,7 +156,7 @@ class Email:
             'preferences_link': 'https://{}bounties.network/settings'.format(
                 '' if ENVIRONMENT == 'production' else 'staging.'),
             'notification_name': notification_name,
-            'usd_amount': usd_decimals(bounty.usd_price).normalize(),
+            'usd_amount': usd_decimals(bounty.usd_price),
             'token_amount': token_amount,
             'token': bounty.tokenSymbol,
             'bounty_categories': Email.render_categories(
@@ -141,22 +170,21 @@ class Email:
             'issuer_address': issuer and shorten_address(
                 issuer.public_address),
             'issuer_profile_image': (
-                issuer and issuer.profile_image or default_image
+                issuer and issuer.small_profile_image_url or default_image
             ),
             'issuer_address_link': issuer and profile_url_for(
                 issuer.public_address, bounty.platform),
             'user_name': user and user.name,
             'user_address': user and shorten_address(user.public_address),
             'user_profile_image': (
-                user and user.profile_image or default_image
+                user and user.small_profile_image_url or default_image
             ),
-            'user_address_link': user and profile_url_for(
-                user.public_address, bounty.platform),
+            'user_address_link': user_address_link,
             'from_user_name': from_user and from_user.name,
             'from_user_address': from_user and shorten_address(
                 from_user.public_address),
             'from_user_profile_image': (
-                from_user and from_user.profile_image or default_image
+                from_user and from_user.small_profile_image_url or default_image
             ),
             'from_user_address_link': from_user and profile_url_for(
                 from_user.public_address, bounty.platform),
@@ -166,7 +194,11 @@ class Email:
             'rating_color': review and Email.rating_color(review.rating),
             'comment': comment and comment.text,
             'MC_PREVIEW_TEXT': preview_text,
-            'rating_url': rating_url
+            'rating_url': rating_url,
+            'average_rating': usd_decimals(average_rating),
+            'rating_count': rating_count,
+            'rating_link': rating_link,
+            'contribute_url': url + '?contribute=true'
         })
 
     def render(self):

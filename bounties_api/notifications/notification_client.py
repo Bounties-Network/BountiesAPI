@@ -1,17 +1,21 @@
-from decimal import Decimal, Context
+from decimal import Decimal
 from datetime import datetime
 from std_bounties.models import Fulfillment, Bounty, Comment
 from user.models import User
 from notifications.constants import notifications
 from notifications.notification_helpers import (
     create_bounty_notification,
-    create_profile_updated_notification
+    create_profile_updated_notification,
+    create_rating_notification
 )
 from notifications.notification_templates import (
     notification_templates,
     email_templates
 )
-from bounties.utils import calculate_token_value
+from bounties.utils import (
+    calculate_token_value,
+    token_decimals
+)
 import logging
 
 logger = logging.getLogger('django')
@@ -214,10 +218,9 @@ class NotificationClient:
                 transaction_from.lower()))
             return
 
-        token_decimal = Context(prec=6).create_decimal
-        amount = '{} {}'.format(bounty.tokenSymbol, token_decimal(
-            calculate_token_value(int(Decimal(inputs['value'])), bounty.tokenDecimals)
-        ).normalize())
+        amount = '{} {}'.format(bounty.tokenSymbol, token_decimals(
+            calculate_token_value(
+                int(Decimal(inputs['value'])), bounty.tokenDecimals)))
 
         added_string_data = notification_templates['ContributionAdded'].format(
             bounty_title=bounty.title, amount=amount)
@@ -414,10 +417,11 @@ class NotificationClient:
         bounty = Bounty.objects.get(id=bounty_id)
         string_data = notification_templates['RatingIssued'].format(
             bounty_title=bounty.title)
-        create_bounty_notification(
+        notification_name = notifications['RatingIssued']
+        create_rating_notification(
             bounty=bounty,
-            uid='{}-{}'.format(uid, reviewer.id),
-            notification_name=notifications['RatingIssued'],
+            uid='{}-{}-{}'.format(uid, reviewer.id, notification_name),
+            notification_name=notification_name,
             user=reviewer,
             from_user=reviewee,
             string_data=string_data,
@@ -436,10 +440,11 @@ class NotificationClient:
         bounty = Bounty.objects.get(id=bounty_id)
         string_data = notification_templates['RatingReceived'].format(
             bounty_title=bounty.title)
-        create_bounty_notification(
+        notification_name = notifications['RatingReceived']
+        create_rating_notification(
             bounty=bounty,
-            uid='{}-{}'.format(uid, reviewee.id),
-            notification_name=notifications['RatingReceived'],
+            uid='{}-{}-{}'.format(uid, reviewee.id, notification_name),
+            notification_name=notification_name,
             user=reviewee,
             from_user=reviewer,
             string_data=string_data,
@@ -461,3 +466,17 @@ class NotificationClient:
             notification_created=datetime.utcnow(),
             string_data=string_data,
             subject='')
+
+    def bounty_completed(self, bounty, fulfillment_id):
+        string_data = notification_templates['BountyCompleted'].format(
+            bounty_title=bounty.title)
+        create_bounty_notification(
+            bounty=bounty,
+            uid='{}-{}-completed'.format(bounty.id, fulfillment_id),
+            notification_name=notifications['BountyCompleted'],
+            user=bounty.user,
+            from_user=None,
+            notification_created=datetime.utcnow(),
+            string_data=string_data,
+            subject='Your Bounty Completed',
+            is_activity=False)

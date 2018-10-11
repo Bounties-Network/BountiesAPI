@@ -20,10 +20,11 @@ notification_templates = {
     'RatingReceived': 'You received a review for your experience with: {bounty_title}.',
     'RatingIssued': 'You left a review for your experience with: {bounty_title}.',
     'ProfileUpdated': 'You updated your profile assciated with: {public_address}.',
-    'BountyComment': 'You issued a bounty for: {bounty_title}.',
+    'BountyComment': 'You wrote a comment for: {bounty_title}.',
     'DraftCreated': 'You created draft {draft_id}.',
     'DraftUpdated': 'You updated draft {draft_id}.',
-    'ContributionReceived': '{bounty_title} received {amount} in contribution'
+    'ContributionReceived': '{bounty_title} received {amount} in contribution',
+    'BountyCompleted': '{bounty_title} is out of funds'
 }
 
 email_templates = {

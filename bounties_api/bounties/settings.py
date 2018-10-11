@@ -78,7 +78,11 @@ INSTALLED_APPS = [
     'user',
     'notifications',
     'django_nose',
+    'django.contrib.sites',
+    'django.contrib.sitemaps'
 ]
+
+SITE_ID = 1
 
 # Use nose to run all tests
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -235,6 +239,7 @@ LOCAL = os.environ.get('local') == 'true'
 ETH_NETWORK = os.environ.get('eth_network', 'mainNet')
 DEPLOY_URL = os.environ.get('deploy_url', 'http://127.0.0.1')
 GITHUB_TOKEN = os.environ.get('github_token', '')
+SNS_ADDRESS = os.environ.get('sns_address', '')
 
 networks = {
     'mainNet': 'https://mainnet.infura.io/',
@@ -251,11 +256,10 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 NOTIFICATIONS_SLACK_CHANNEL = '#bounty_notifs' if ENVIRONMENT == 'production' else ENVIRONMENT + '_bounty_notifs'
 
 PLATFORM_MAPPING = {
-    'colorado': 'https://colorado.bounties.network',
-    'consensys': 'https://consensys.bounties.network',
     'hiring': 'https://hiring.bounties.network',
+    'sf': 'https://sf.bounties.network',
     'berlin': 'https://berlin.bounties.network',
-    'beeess': 'https://bees.bounties.network',
+    'pollenbees': 'https://bees.bounties.network',
     'bounties-network': 'https://explorer.bounties.network'
 }
 

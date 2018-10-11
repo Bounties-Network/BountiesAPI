@@ -101,6 +101,8 @@ class UserSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    page_preview = serializers.CharField(max_length=256, read_only=True)
+
     settings = SettingsSerializer()
 
     class Meta:
@@ -147,10 +149,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = (
             'name',
             'email',
+            'wants_marketing_emails',
             'organization',
-            'profileFileName',
-            'profileDirectoryHash',
-            'is_profile_image_dirty',
+            'small_profile_image_url',
+            'large_profile_image_url',
             'website',
             'twitter',
             'github',

@@ -1,6 +1,7 @@
 import json
 import requests
 from decimal import Decimal
+from datetime import datetime
 
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
@@ -100,8 +101,8 @@ def map_bounty_data(data_hash, bounty_id):
     }
 
     # if 'platform' is gitcoin, also return deadline
-    if metadata.get('platform', '') is 'gitcoin':
-        bounty.update({'deadline': data.get('expire_date', '')})
+    if meta.get('platform', '') == 'gitcoin' and 'expire_date' in data:
+        bounty.update({'deadline': datetime.utcfromtimestamp(int(data.get('expire_date')))})
 
     return bounty
 
@@ -159,7 +160,7 @@ def calculate_usd_price(value, decimals, usd_rate):
 
 def get_token_pricing(token_symbol, token_decimals, value):
     try:
-        token_model = Token.objects.get(symbol=token_symbol)
+        token_model = Token.objects.filter(symbol=token_symbol).earliest('id')
         usd_price = calculate_usd_price(
             value, token_decimals, token_model.price_usd)
     except Token.DoesNotExist:

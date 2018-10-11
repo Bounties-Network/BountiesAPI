@@ -149,7 +149,7 @@ class Command(BaseCommand):
         self.notify_master_client(message)
 
         fulfillment_id = message.fulfillment_id
-        if fulfillment_id != -1:
+        if fulfillment_id == -1:
             fulfillment_id = None
 
         bounty_id = message.bounty_id

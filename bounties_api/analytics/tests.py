@@ -87,6 +87,7 @@ class TimelineTest(unittest.TestCase):
                    fulfillmentAmount=x,
                    usd_price=x,
                    deadline=accepted_date,
+                   platform='bounties-network',
                    paysTokens=True) for x in range(0, 25)
         ]
         bountyStages = [
@@ -100,6 +101,7 @@ class TimelineTest(unittest.TestCase):
             Fulfillment(fulfillment_id=x,
                         accepted_date=accepted_date if x % 2 == 0 else None,
                         bounty=bounties[x],
+                        usd_price=bounties[x].usd_price,
                         fulfiller=x % 3,
                         accepted=x % 2 == 0,
                         fulfillment_created=accepted_date) for x in range(0, 5)
@@ -160,7 +162,7 @@ class TimelineTest(unittest.TestCase):
             result.avg_fulfiller_acceptance_rate,
             0.6666666666666666)
         self.assertEqual(result.avg_fulfillment_amount, 2)
-        self.assertEqual(result.total_fulfillment_amount, 10)
+        self.assertEqual(result.total_fulfillment_amount, 6)
         self.assertEqual(result.bounty_draft, 5)
         self.assertEqual(result.bounty_active, 5)
         self.assertEqual(result.bounty_completed, 5)

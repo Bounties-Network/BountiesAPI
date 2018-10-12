@@ -60,7 +60,7 @@ class TimelineBounties(APIView):
                 else:
                     ranked_tag_list = RankedTag.objects.distinct().values('normalized_name', 'name')
                     ranked_tags = dict(map(lambda x: (x['normalized_name'], x['name']), ranked_tag_list))
-                    queryset = Tags.objects.select_related('bounty').filter(
+                    queryset = Tag.objects.select_related('bounty').filter(
                         bounty__bounty_created__gte=since_date,
                         bounty__bounty_created__lte=until_date,
                         bounty__platform__exact=platform

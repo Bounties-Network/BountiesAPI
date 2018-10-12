@@ -259,6 +259,7 @@ PLATFORM_MAPPING = {
     'hiring': 'https://hiring.bounties.network',
     'sf': 'https://sf.bounties.network',
     'berlin': 'https://berlin.bounties.network',
+    'prague': 'https://prague.bounties.network',
     'pollenbees': 'https://bees.bounties.network',
     'bounties-network': 'https://explorer.bounties.network'
 }

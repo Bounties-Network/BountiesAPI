@@ -241,7 +241,7 @@ DEPLOY_URL = os.environ.get('deploy_url', 'http://127.0.0.1')
 GITHUB_TOKEN = os.environ.get('github_token', '')
 SNS_ADDRESS = os.environ.get('sns_address', '')
 
-networks = {
+NETWORKS = {
     'mainNet': 'https://mainnet.infura.io/',
     'rinkeby': 'https://rinkeby.infura.io/',
     'consensysrinkeby': 'https://rinkeby.infura.io/',
@@ -249,7 +249,7 @@ networks = {
     'localhost': 'localhost:8545',
 }
 
-ETH_NETWORK_URL = networks[ETH_NETWORK]
+ETH_NETWORK_URL = NETWORKS[ETH_NETWORK]
 SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 

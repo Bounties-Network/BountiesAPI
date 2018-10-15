@@ -195,7 +195,7 @@ paths:
       parameters: []
       responses:
         '200':
-          description: 'Update current user information'
+          description: 'Update user email settings'
           schema:
             $ref: '#/definitions/UserSettings'
         '401':
@@ -204,13 +204,19 @@ paths:
             type: string
       tags:
         - user
+    parameters:
+      - name: UserSettings
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/UserSettings'
     put:
       operationId: user_update_settings
       description: ''
       parameters: []
       responses:
         '200':
-          description: 'Update current user information'
+          description: 'Update user email settings'
           schema:
             $ref: '#/definitions/UserSettings'
         '401':
@@ -695,31 +701,6 @@ paths:
         description: A unique integer value identifying this fulfillment.
         required: true
         type: integer
-
-
-  /fulfiller/{address}/:
-    get:
-      operationId: bounty_fulfiller_profile
-      description: Get bounty fulfiller by address
-      parameters: []
-      responses:
-        '200':
-          description: ''
-          schema:
-            $ref: '#/definitions/BountyFulfillerProfile'
-      tags:
-        - user
-    parameters:
-      - name: address
-        in: path
-        description: The address of the fulfiller.
-        required: true
-      - name: platform
-        in: query
-        description: Platform that created the bounty
-        required: false
-        type: string
-
 
   /category/:
     get:

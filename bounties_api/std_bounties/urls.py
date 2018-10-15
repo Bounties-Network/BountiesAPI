@@ -15,7 +15,6 @@ router.register(r'^bounty/(?P<bounty_id>\d+)/comment', views.BountyComments, 'bo
 urlpatterns = [
     url(r'^leaderboard/issuer/$', views.LeaderboardIssuer.as_view()),
     url(r'^leaderboard/fulfiller/$', views.LeaderboardFulfiller.as_view()),
-    url(r'^fulfiller/(?P<address>\d+)', views.UserProfile.as_view()),
     url(r'^token/$', views.Tokens.as_view()),
     url(r'^bounty/(?P<bounty_id>\d+)/fulfillment/(?P<fulfillment_id>\d+)/review/$', views.SubmissionReviews.as_view()),
     url(r'^', include(router.urls)),

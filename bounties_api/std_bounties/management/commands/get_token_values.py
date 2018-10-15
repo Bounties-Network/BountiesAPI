@@ -37,6 +37,13 @@ class Command(BaseCommand):
                 bountyStage__in=[DEAD_STAGE, COMPLETED_STAGE])
             for bounty in all_bounties:
                 price = token_cache.get(bounty.tokenSymbol, None)
+                if not price:
+                    try:
+                        current_token = Token.objects.get(symbol=bounty.tokenSymbol)
+                        price = current_token.price_usd
+                    except Token.DoesNotExist:
+                        price = None
+
                 if price is not None:
                     decimals = bounty.tokenDecimals
                     fulfillmentAmount = bounty.fulfillmentAmount

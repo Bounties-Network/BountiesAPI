@@ -20,3 +20,6 @@
  djangorestframework-queryfields==1.0.0
  pillow
  pyjwt==1.6.4
+ dominate==2.3.4
+ PyYAML==3.13 
+ swaggertools==0.0.4

@@ -7,8 +7,8 @@ from std_bounties.bounty_client import BountyClient
 from std_bounties.client_helpers import calculate_token_quantity, \
     calculate_usd_price, get_token_pricing, map_bounty_data, \
     map_fulfillment_data
-from std_bounties.constants import ACTIVE_STAGE, DRAFT_STAGE
-from std_bounties.models import Bounty, Token
+from std_bounties.constants import ACTIVE_STAGE, DRAFT_STAGE, DEAD_STAGE, COMPLETED_STAGE
+from std_bounties.models import Bounty, Token, Fulfillment
 from std_bounties.message import Message
 
 
@@ -266,6 +266,98 @@ class TestBountyClient(unittest.TestCase):
         bounty_to_extend_deadline.save()
         cls.bounty_to_extend_deadline_id = bounty_to_extend_deadline.id
 
+        bounty_to_fulfill = Bounty(
+            id=3,
+            bounty_id=3,
+            balance=1,
+            fulfillmentAmount=1,
+            usd_price=10,
+            deadline=deadline,
+            paysTokens=True,
+            created=created,
+            bountyStage=ACTIVE_STAGE)
+        bounty_to_fulfill.save()
+        cls.bounty_to_fulfill_id = bounty_to_fulfill.id
+
+        fulfillment_to_update = Fulfillment(
+            fulfillment_id=1,
+            fulfiller='0x4242424242424242424242424242424242424242',
+            bounty=bounty_to_fulfill,
+            accepted=True,
+            created=created)
+        fulfillment_to_update.save()
+        cls.fulfillment_to_update_id = fulfillment_to_update.id
+
+        fulfillment_to_accept = Fulfillment(
+            fulfillment_id=2,
+            fulfiller='0x4242424242424242424242424242424242424242',
+            bounty=bounty_to_fulfill,
+            accepted=True,
+            created=created)
+        fulfillment_to_accept.save()
+        cls.fulfillment_to_accept_id = fulfillment_to_accept.id
+
+        bounty_to_kill = Bounty(
+            id=4,
+            bounty_id=4,
+            balance=1,
+            fulfillmentAmount=1,
+            usd_price=10,
+            paysTokens=True,
+            created=created,
+            deadline=deadline,
+            bountyStage=ACTIVE_STAGE)
+        bounty_to_kill.save()
+        cls.bounty_to_kill_id = bounty_to_kill.id
+
+        bounty_to_top_up = Bounty(
+            id=5,
+            bounty_id=5,
+            balance=1,
+            fulfillmentAmount=1,
+            usd_price=10,
+            paysTokens=True,
+            created=created,
+            deadline=deadline,
+            bountyStage=COMPLETED_STAGE)
+        bounty_to_top_up.save()
+        cls.bounty_to_top_up_id = bounty_to_top_up.id
+
+        bounty_to_change = Bounty(
+            id=6,
+            bounty_id=6,
+            balance=1,
+            fulfillmentAmount=1,
+            usd_price=10,
+            paysTokens=True,
+            created=created,
+            deadline=deadline,
+            bountyStage=ACTIVE_STAGE)
+        bounty_to_change.save()
+        cls.bounty_to_change_id = bounty_to_change.id
+
+        bounty_to_transfer_issuer = Bounty(
+            id=7,
+            bounty_id=7,
+            fulfillmentAmount=1,
+            paysTokens=True,
+            created=created,
+            deadline=deadline,
+            issuer='0x4242424242424242424242424242424242424242')
+        bounty_to_transfer_issuer.save()
+        cls.bounty_to_transfer_issuer_id = bounty_to_transfer_issuer.id
+
+        bounty_to_increase_payout = Bounty(
+            id=7,
+            bounty_id=7,
+            balance=10,
+            paysTokens=True,
+            created=created,
+            deadline=deadline,
+            fulfillmentAmount=5)
+        bounty_to_increase_payout.save()
+        cls.bounty_to_increase_payout_id = bounty_to_increase_payout.id
+
     def test_activate_bounty(self):
         activation_timestamp = '1517536922'
         bounty_to_activate = Bounty.objects.get(pk=self.bounty_to_activate_id)
@@ -280,6 +372,71 @@ class TestBountyClient(unittest.TestCase):
         activated_bounty_from_db = Bounty.objects.get(
             pk=self.bounty_to_activate_id)
         self.assertEqual(result, activated_bounty_from_db)
+
+    def test_fulfill_bounty(self):
+        bounty_to_fulfill = Bounty.objects.get(pk=self.bounty_to_fulfill_id)
+        fulfillment_timestamp = '1517536922'
+        fulfillment_datetime = datetime.fromtimestamp(int(fulfillment_timestamp))
+        fulfillment_id = 10
+        issuer = '0x4242424242424242424242424242424242424242'
+        inputs = {
+            'data': 'QmQjchBM6tjAvXzkDEpWgLUv9Ui4jwqtxsEzB6LxB2WqFL'
+        }
+        fulfillment = self.client.fulfill_bounty(
+            bounty=bounty_to_fulfill,
+            fulfillment_id=fulfillment_id,
+            inputs=inputs,
+            event_timestamp=fulfillment_timestamp,
+            transaction_issuer=issuer)
+
+        self.assertEqual(fulfillment.fulfillment_id, fulfillment_id)
+        self.assertEqual(fulfillment.bounty.id, self.bounty_to_fulfill_id)
+        self.assertEqual(fulfillment.accepted, False)
+        self.assertEqual(fulfillment.fulfiller, issuer)
+        self.assertEqual(fulfillment.fulfillment_created, fulfillment_datetime)
+
+        # Try fulfill with duplicate id
+        fulfillment = self.client.fulfill_bounty(
+            bounty=bounty_to_fulfill,
+            fulfillment_id=fulfillment_id,
+            inputs=inputs,
+            event_timestamp=fulfillment_timestamp,
+            transaction_issuer=issuer)
+        self.assertIsNone(fulfillment)
+
+    def test_accept_fulfillment(self):
+        bounty_to_fulfill = Bounty.objects.get(pk=self.bounty_to_fulfill_id)
+        fulfillment_timestamp = '1517536922'
+        fulfillment_datetime = datetime.fromtimestamp(int(fulfillment_timestamp))
+        fulfillment_to_accept = Fulfillment.objects.get(pk=self.fulfillment_to_accept_id)
+        fulfillment = self.client.accept_fulfillment(
+            bounty=bounty_to_fulfill,
+            fulfillment_id=fulfillment_to_accept.fulfillment_id,
+            event_timestamp=fulfillment_timestamp)
+        self.assertEqual(fulfillment.bounty.bountyStage, COMPLETED_STAGE)
+        self.assertEqual(fulfillment.accepted, True)
+        self.assertEqual(fulfillment.accepted_date, fulfillment_datetime)
+        self.assertEqual(bounty_to_fulfill.balance, 0)
+
+    def test_kill_bounty(self):
+        bounty_to_kill = Bounty.objects.get(pk=self.bounty_to_kill_id)
+        fulfillment_timestamp = '1517536922'
+        bounty = self.client.kill_bounty(
+            bounty=bounty_to_kill,
+            event_timestamp=fulfillment_timestamp)
+        self.assertEqual(bounty.bountyStage, COMPLETED_STAGE)
+
+    def test_add_contribution(self):
+        bounty_to_top_up = Bounty.objects.get(pk=self.bounty_to_top_up_id)
+        inputs = {
+            'value': 1
+        }
+        fulfillment_timestamp = '1517536922'
+        bounty = self.client.add_contribution(
+            bounty=bounty_to_top_up,
+            inputs=inputs,
+            event_timestamp=fulfillment_timestamp)
+        self.assertEqual(bounty.bountyStage, ACTIVE_STAGE)
 
     def test_extend_deadline(self):
         event_timestamp = '1517536922'
@@ -299,6 +456,46 @@ class TestBountyClient(unittest.TestCase):
         bounty_to_extend_deadline_from_db = Bounty.objects.get(
             pk=self.bounty_to_extend_deadline_id)
         self.assertEqual(result, bounty_to_extend_deadline_from_db)
+
+    def test_change_bounty(self):
+        bounty_to_change = Bounty.objects.get(pk=self.bounty_to_change_id)
+        inputs = {
+            'data': 'QmQjchBM6tjAvXzkDEpWgLUv9Ui4jwqtxsEzB6LxB2WqFL',
+            'newDeadline': '1517536923',
+            'newFulfillmentAmount': 2,
+            'newArbiter': '0x4444444444444444444422222222222222222222'
+        }
+        deadline = datetime.fromtimestamp(int(inputs['newDeadline']))
+        result = self.client.change_bounty(
+            bounty=bounty_to_change,
+            inputs=inputs)
+        self.assertEqual(result.deadline, deadline)
+        self.assertEqual(result.fulfillmentAmount, inputs['newFulfillmentAmount'])
+        self.assertEqual(result.arbiter, inputs['newArbiter'])
+
+    def test_transfer_issuer(self):
+        bounty_to_transfer_issuer = Bounty.objects.get(pk=self.bounty_to_transfer_issuer_id)
+        inputs = {
+            'newIssuer': '0x4444444444444444444422222222222222222222'
+        }
+        result = self.client.transfer_issuer(
+            bounty=bounty_to_transfer_issuer,
+            inputs=inputs)
+        self.assertEqual(result.issuer, inputs['newIssuer'])
+
+    def test_increase_payout(self):
+        bounty_to_increase_payout = Bounty.objects.get(pk=self.bounty_to_increase_payout_id)
+        old_balance = bounty_to_increase_payout.balance
+        inputs = {
+            'value': 20,
+            'newFulfillmentAmount': 5
+        }
+        result = self.client.increase_payout(
+            bounty=bounty_to_increase_payout,
+            inputs=inputs)
+        new_balance = old_balance + inputs['value']
+        self.assertEqual(result.balance, new_balance)
+        self.assertEqual(result.fulfillmentAmount, inputs['newFulfillmentAmount'])
 
 
 class TestEventMessage(unittest.TestCase):

@@ -279,15 +279,6 @@ class TestBountyClient(unittest.TestCase):
         bounty_to_fulfill.save()
         cls.bounty_to_fulfill_id = bounty_to_fulfill.id
 
-        fulfillment_to_update = Fulfillment(
-            fulfillment_id=1,
-            fulfiller='0x4242424242424242424242424242424242424242',
-            bounty=bounty_to_fulfill,
-            accepted=True,
-            created=created)
-        fulfillment_to_update.save()
-        cls.fulfillment_to_update_id = fulfillment_to_update.id
-
         fulfillment_to_accept = Fulfillment(
             fulfillment_id=2,
             fulfiller='0x4242424242424242424242424242424242424242',
@@ -348,8 +339,8 @@ class TestBountyClient(unittest.TestCase):
         cls.bounty_to_transfer_issuer_id = bounty_to_transfer_issuer.id
 
         bounty_to_increase_payout = Bounty(
-            id=7,
-            bounty_id=7,
+            id=8,
+            bounty_id=8,
             balance=10,
             paysTokens=True,
             created=created,
@@ -357,6 +348,29 @@ class TestBountyClient(unittest.TestCase):
             fulfillmentAmount=5)
         bounty_to_increase_payout.save()
         cls.bounty_to_increase_payout_id = bounty_to_increase_payout.id
+
+    def test_issue_bounty(self):
+        bounty_id = 25
+        issuer = '0x4242424242424242424242424242424242424242'
+        inputs = {
+            'data': 'QmQjchBM6tjAvXzkDEpWgLUv9Ui4jwqtxsEzB6LxB2WqFL',
+            'paysTokens': False,
+            'tokenContract': '0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359',
+            'fulfillmentAmount': 1,
+            'issuer': issuer,
+            'deadline': '1550529106',
+        }
+        issue_timestamp = '1517536922'
+        issue_datetime = datetime.fromtimestamp(int(issue_timestamp))
+        bounty = self.client.issue_bounty(
+            bounty_id=bounty_id,
+            inputs=inputs,
+            event_timestamp=issue_timestamp)
+        self.assertEqual(bounty.id, bounty_id)
+        self.assertEqual(bounty.bounty_id, bounty_id)
+        self.assertEqual(bounty.bounty_created, issue_datetime)
+        self.assertEqual(bounty.bountyStage, DRAFT_STAGE)
+        self.assertEqual(bounty.issuer, issuer)
 
     def test_activate_bounty(self):
         activation_timestamp = '1517536922'

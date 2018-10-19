@@ -3,12 +3,7 @@ info:
   title: Bounties Network API
   description: Bounties Network API documentation
   termsOfService: https://explorer.bounties.network/tos
-  contact:
-    email: contact@bounties.network
-  license:
-    name: MIT License
   version: v1
-host: localhost:8000
 schemes:
   - http
 basePath: /
@@ -25,10 +20,11 @@ paths:
   /analytics/:
     get:
       operationId: analytics_list
-      summary: Expects query_params `since`, `until` and `platform` (defaults to all)
-      description: "Date formatting is expected to be as 'YYYY-MM-DD'\n\nReturns:\n\
-        {\n    'timeline': serialized.data,\n    'categories': categories.data,\n\
-        \    'tokens': tokens.data\n}"
+      summary: Timeline, categories and tokens
+      description: "Expects query_params `since`, `until` and `platform` (defaults\
+        \ to all)\n\nDate formatting needs to be 'YYYY-MM-DD'\n\nReturns:\n{\n   \
+        \ 'timeline': serialized.data,\n    'categories': categories.data,\n    'tokens':\
+        \ tokens.data\n}"
       parameters: []
       responses:
         '200':
@@ -36,11 +32,14 @@ paths:
       tags:
         - analytics
     parameters: []
+
+
   /auth/login/:
     post:
       operationId: auth_login_create
-      summary: Expects `public_address` and `signature` in `data` on the request
-      description: "Logs in the user\n\nReturns the serialized user"
+      summary: Logs in the user
+      description: "Expects `public_address` and `signature` in `data` on the request\n\
+        \nReturns the serialized user"
       parameters: []
       responses:
         '201':
@@ -48,6 +47,8 @@ paths:
       tags:
         - auth
     parameters: []
+
+
   /auth/logout/:
     get:
       operationId: auth_logout_list
@@ -59,11 +60,13 @@ paths:
       tags:
         - auth
     parameters: []
+
+
   /auth/user/:
     get:
       operationId: auth_user_list
-      summary: Expects `current_user` on the request
-      description: Returns the currently logged in user serialized
+      summary: Returns the currently logged in user
+      description: Expects `current_user` on the request
       parameters: []
       responses:
         '200':
@@ -71,11 +74,13 @@ paths:
       tags:
         - auth
     parameters: []
+
+
   /auth/{public_address}/nonce/:
     get:
       operationId: auth_nonce_list
-      summary: Expects a public_address
-      description: "Returns nonce and user information:\n{\n    'nonce': user.nonce,\n\
+      summary: Returns nonce and user information
+      description: "Expects a public_address\n\nReturns:\n{\n    'nonce': user.nonce,\n\
         \    'has_signed_up': bool(user.email) and bool(user.name)\n}"
       parameters: []
       responses:
@@ -88,10 +93,12 @@ paths:
         in: path
         required: true
         type: string
+
+
   /bounty/:
     get:
       operationId: bounty_list
-      description: "exists???\nclass BountyViewSet(viewsets.ReadOnlyModelViewSet):"
+      description: ''
       parameters:
         - name: ordering
           in: query
@@ -237,10 +244,12 @@ paths:
       tags:
         - bounty
     parameters: []
+
+
   /bounty/draft/:
     get:
       operationId: bounty_draft_list
-      description: "exists???\nclass DraftBountyWriteViewSet(viewsets.ModelViewSet):"
+      description: ''
       parameters:
         - name: issuer
           in: query
@@ -292,7 +301,7 @@ paths:
         - bounty
     post:
       operationId: bounty_draft_create
-      description: "exists???\nclass DraftBountyWriteViewSet(viewsets.ModelViewSet):"
+      description: ''
       parameters:
         - name: data
           in: body
@@ -307,10 +316,12 @@ paths:
       tags:
         - bounty
     parameters: []
+
+
   /bounty/draft/{uid}/:
     get:
       operationId: bounty_draft_read
-      description: "exists???\nclass DraftBountyWriteViewSet(viewsets.ModelViewSet):"
+      description: ''
       parameters: []
       responses:
         '200':
@@ -321,7 +332,7 @@ paths:
         - bounty
     put:
       operationId: bounty_draft_update
-      description: "exists???\nclass DraftBountyWriteViewSet(viewsets.ModelViewSet):"
+      description: ''
       parameters:
         - name: data
           in: body
@@ -337,7 +348,7 @@ paths:
         - bounty
     patch:
       operationId: bounty_draft_partial_update
-      description: "exists???\nclass DraftBountyWriteViewSet(viewsets.ModelViewSet):"
+      description: ''
       parameters:
         - name: data
           in: body
@@ -353,7 +364,7 @@ paths:
         - bounty
     delete:
       operationId: bounty_draft_delete
-      description: "exists???\nclass DraftBountyWriteViewSet(viewsets.ModelViewSet):"
+      description: ''
       parameters: []
       responses:
         '204':
@@ -366,12 +377,12 @@ paths:
         required: true
         type: string
         format: uuid
+
+
   /bounty/{bounty_id}/comment/:
     get:
       operationId: bounty_comment_list
-      summary: exists????????
-      description: "class BountyComments(mixins.ListModelMixin,\n                \
-        \     viewsets.GenericViewSet):"
+      description: ''
       parameters:
         - name: limit
           in: query
@@ -411,12 +422,14 @@ paths:
         in: path
         required: true
         type: string
+
+
   /bounty/{bounty_id}/fulfillment/{fulfillment_id}/review/:
     get:
       operationId: bounty_fulfillment_review_list
-      summary: Expects `bounty_id` and `fulfillment_id`
-      description: "Returns both reviews:\n{\n    'issuer_review': issuer_review_data,\n\
-        \    'fulfiller_review': fulfiller_review_data,\n}"
+      summary: Both issuer and fulfiller reviews
+      description: "Expects `bounty_id` and `fulfillment_id`\n\nReturns:\n{\n    'issuer_review':\
+        \ issuer_review_data,\n    'fulfiller_review': fulfiller_review_data,\n}"
       parameters: []
       responses:
         '200':
@@ -425,10 +438,9 @@ paths:
         - bounty
     post:
       operationId: bounty_fulfillment_review_create
-      summary: "Expects `bounty_id` and `fulfillment_id`\nand `current_user` and `data`\
-        \ on the request"
-      description: "Serializes the data as a review\n\nSaves the serialized review\
-        \ and the fulfillment"
+      summary: Saves the fulfillment and serialized review
+      description: "Expects `bounty_id` and `fulfillment_id`\nand `current_user` and\
+        \ `data` on the request\n\nSerializes the data as a review"
       parameters: []
       responses:
         '201':
@@ -444,10 +456,12 @@ paths:
         in: path
         required: true
         type: string
+
+
   /bounty/{id}/:
     get:
       operationId: bounty_read
-      description: "exists???\nclass BountyViewSet(viewsets.ReadOnlyModelViewSet):"
+      description: ''
       parameters: []
       responses:
         '200':
@@ -462,10 +476,12 @@ paths:
         description: A unique value identifying this bounty.
         required: true
         type: integer
+
+
   /category/:
     get:
       operationId: category_list
-      description: "exists???\nclass CategoryViewSet(viewsets.ReadOnlyModelViewSet):"
+      description: ''
       parameters:
         - name: ordering
           in: query
@@ -516,10 +532,12 @@ paths:
       tags:
         - category
     parameters: []
+
+
   /category/{id}/:
     get:
       operationId: category_read
-      description: "exists???\nclass CategoryViewSet(viewsets.ReadOnlyModelViewSet):"
+      description: ''
       parameters: []
       responses:
         '200':
@@ -534,10 +552,12 @@ paths:
         description: A unique integer value identifying this ranked category.
         required: true
         type: integer
+
+
   /fulfillment/:
     get:
       operationId: fulfillment_list
-      description: "exists???\nclass FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):"
+      description: ''
       parameters:
         - name: ordering
           in: query
@@ -608,10 +628,12 @@ paths:
       tags:
         - fulfillment
     parameters: []
+
+
   /fulfillment/{id}/:
     get:
       operationId: fulfillment_read
-      description: "exists???\nclass FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):"
+      description: ''
       parameters: []
       responses:
         '200':
@@ -626,10 +648,15 @@ paths:
         description: A unique integer value identifying this fulfillment.
         required: true
         type: integer
+
+
   /leaderboard/fulfiller/:
     get:
       operationId: leaderboard_fulfiller_list
-      description: "exists???\nclass LeaderboardFulfiller(APIView):"
+      summary: Leaderboard data based on fulfiller
+      description: "Expects single `platform` or array of `platform__in`\n\nReturns:\n\
+        JsonResponse({\n    'count': len(query_result),\n    'results': serializer.data\n\
+        }, safe=False)"
       parameters: []
       responses:
         '200':
@@ -637,10 +664,15 @@ paths:
       tags:
         - leaderboard
     parameters: []
+
+
   /leaderboard/issuer/:
     get:
       operationId: leaderboard_issuer_list
-      description: "exists???\nclass LeaderboardIssuer(APIView):"
+      summary: Leaderboard data based on issuer
+      description: "Expects single `platform` or array of `platform__in`\n\nReturns:\n\
+        JsonResponse({\n    'count': len(query_result),\n    'results': serializer.data\n\
+        }, safe=False)"
       parameters: []
       responses:
         '200':
@@ -648,6 +680,8 @@ paths:
       tags:
         - leaderboard
     parameters: []
+
+
   /notification/activity/user/{public_address}/:
     get:
       operationId: notification_activity_user_list
@@ -701,10 +735,13 @@ paths:
         in: path
         required: true
         type: string
+
+
   /notification/activity/user/{public_address}/view_all/:
     get:
       operationId: notification_activity_user_view_all_list
-      description: ''
+      summary: Sets all activity notifications for `public_address` viewed to True
+      description: Expects `public_address`
       parameters: []
       responses:
         '200':
@@ -716,6 +753,8 @@ paths:
         in: path
         required: true
         type: string
+
+
   /notification/activity/user/{public_address}/{id}/:
     get:
       operationId: notification_activity_user_read
@@ -737,10 +776,13 @@ paths:
         in: path
         required: true
         type: string
+
+
   /notification/activity/{notification_id}/view/:
     get:
       operationId: notification_activity_view_list
-      description: ''
+      summary: Sets the `notification_id` notification viewed to True
+      description: Expects `notification_id`
       parameters: []
       responses:
         '200':
@@ -752,6 +794,8 @@ paths:
         in: path
         required: true
         type: string
+
+
   /notification/push/user/{public_address}/:
     get:
       operationId: notification_push_user_list
@@ -805,10 +849,13 @@ paths:
         in: path
         required: true
         type: string
+
+
   /notification/push/user/{public_address}/view_all/:
     get:
       operationId: notification_push_user_view_all_list
-      description: ''
+      summary: Sets all non-activty notifications for `public_address` viewed to True
+      description: Expects `public_address`
       parameters: []
       responses:
         '200':
@@ -820,6 +867,8 @@ paths:
         in: path
         required: true
         type: string
+
+
   /notification/push/user/{public_address}/{id}/:
     get:
       operationId: notification_push_user_read
@@ -841,10 +890,13 @@ paths:
         in: path
         required: true
         type: string
+
+
   /notification/push/{notification_id}/view/:
     get:
       operationId: notification_push_view_list
-      description: ''
+      summary: Sets the `notification_id` notification viewed to True
+      description: Expects `notification_id`
       parameters: []
       responses:
         '200':
@@ -856,6 +908,8 @@ paths:
         in: path
         required: true
         type: string
+
+
   /notification/transaction/user/{public_address}/:
     get:
       operationId: notification_transaction_user_list
@@ -920,10 +974,13 @@ paths:
         in: path
         required: true
         type: string
+
+
   /notification/transaction/{transaction_id}/view/:
     get:
       operationId: notification_transaction_view_list
-      description: ''
+      summary: Sets the `transaction_id` transaction viewed to True
+      description: Expects `transaction_id`
       parameters: []
       responses:
         '200':
@@ -935,6 +992,8 @@ paths:
         in: path
         required: true
         type: string
+
+
   /reviews/:
     get:
       operationId: reviews_list
@@ -994,6 +1053,8 @@ paths:
       tags:
         - reviews
     parameters: []
+
+
   /reviews/{id}/:
     get:
       operationId: reviews_read
@@ -1011,10 +1072,12 @@ paths:
         in: path
         required: true
         type: string
+
+
   /token/:
     get:
       operationId: token_list
-      description: "exists???\nclass Tokens(APIView):"
+      description: Tokens used in all bounties, ordered by count by type
       parameters: []
       responses:
         '200':
@@ -1022,6 +1085,8 @@ paths:
       tags:
         - token
     parameters: []
+
+
   /user/languages/:
     get:
       operationId: user_languages_list
@@ -1061,6 +1126,8 @@ paths:
       tags:
         - user
     parameters: []
+
+
   /user/languages/{id}/:
     get:
       operationId: user_languages_read
@@ -1079,13 +1146,16 @@ paths:
         description: A unique integer value identifying this language.
         required: true
         type: integer
+
+
   /user/requestProfileImageUploadURL/:
     get:
       operationId: user_requestProfileImageUploadURL_list
-      summary: Expects `current_user` on the request
-      description: "Returns upload URL's:\n{\n    'sm_url': 'https://{}/{}'.format(bucket,\
-        \ sm_key),\n    'sm_put_url': sm_put_url,\n    'lg_url': 'https://{}/{}'.format(bucket,\
-        \ lg_key),\n    'lg_put_url': lg_put_url\n}"
+      summary: Returns small and large upload URLs
+      description: "Expects `current_user` on the request\n\nReturns:\n{\n    'sm_url':\
+        \ 'https://{}/{}'.format(bucket, sm_key),\n    'sm_put_url': sm_put_url,\n\
+        \    'lg_url': 'https://{}/{}'.format(bucket, lg_key),\n    'lg_put_url':\
+        \ lg_put_url\n}"
       parameters: []
       responses:
         '200':
@@ -1093,11 +1163,13 @@ paths:
       tags:
         - user
     parameters: []
+
+
   /user/settings/:
     post:
       operationId: user_settings_create
-      summary: Expects `current_user` and `data` on the request
-      description: "Saves the data as settings, then saves the user\n\nReturns the\
+      summary: Saves the data as settings, then saves the user
+      description: "Expects `current_user` and `data` on the request\n\nReturns the\
         \ serialized settings"
       parameters: []
       responses:
@@ -1107,9 +1179,9 @@ paths:
         - user
     put:
       operationId: user_settings_update
-      summary: Expects `current_user` and `data` on the request
-      description: "Saves the data through the serializer\n\nReturns the updated serialized\
-        \ settings"
+      summary: Saves the data through the serializer
+      description: "Expects `current_user` and `data` on the request\n\nReturns the\
+        \ updated serialized settings"
       parameters: []
       responses:
         '200':
@@ -1117,6 +1189,8 @@ paths:
       tags:
         - user
     parameters: []
+
+
   /user/skills/:
     get:
       operationId: user_skills_list
@@ -1166,6 +1240,8 @@ paths:
       tags:
         - user
     parameters: []
+
+
   /user/skills/{id}/:
     get:
       operationId: user_skills_read
@@ -1184,11 +1260,13 @@ paths:
         description: A unique integer value identifying this ranked skill.
         required: true
         type: integer
+
+
   /user/{public_address}/info/:
     get:
       operationId: user_info_list
-      summary: Expects `public_address`
-      description: Returns the serialized user info
+      summary: Returns the serialized user info
+      description: Expects `public_address`
       parameters: []
       responses:
         '200':
@@ -1200,11 +1278,13 @@ paths:
         in: path
         required: true
         type: string
+
+        
   /user/{public_address}/profile/:
     get:
       operationId: user_profile_list
-      summary: Expects `public_address`
-      description: "Returns JSON response with user information:\n{\n    'user': serializer.data,\n\
+      summary: Returns JSON response with user information
+      description: "Expects `public_address`\n\nReturns:\n{\n    'user': serializer.data,\n\
         \    'stats': profile_stats\n}"
       parameters: []
       responses:
@@ -1214,9 +1294,9 @@ paths:
         - user
     post:
       operationId: user_profile_create
-      summary: Expects `public_address` and `current_user` and `data` on the request
-      description: "Saves the user profile using `data`\n\nReturns the serialized\
-        \ user"
+      summary: Saves the user profile using `data`
+      description: "Expects `public_address` and `current_user` and `data` on the\
+        \ request\n\nReturns the serialized user"
       parameters: []
       responses:
         '201':

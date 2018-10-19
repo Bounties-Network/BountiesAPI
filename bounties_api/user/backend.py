@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime, timezone
 from user.models import User
 # Best approach for now with defunct until other forms are more stable
 from eth_account.messages import defunct_hash_message
@@ -30,10 +31,17 @@ def authenticate(public_address='', signature=''):
 
 def login(request, user):
     request.session['public_address'] = user.public_address.lower()
+    user.last_logged_in = datetime.now(timezone.utc)
+    user.save()
 
 
 def logout(request):
     request.session.flush()
+
+
+def setLastViewed(request, user):
+    user.last_viewed = datetime.now(timezone.utc)
+    user.save()
 
 
 def get_user(public_address):

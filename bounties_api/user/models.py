@@ -76,6 +76,11 @@ class User(models.Model):
     linkedin = models.CharField(max_length=128, blank=True)
     dribble = models.CharField(max_length=128, blank=True)
     settings = models.ForeignKey(Settings, null=True)
+    created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    edited = models.DateTimeField(auto_now=True)
+    last_viewed = models.DateTimeField(blank=True, null=True)
+    last_logged_in = models.DateTimeField(blank=True, null=True)
+    ens_domain = models.TextField(max_length=500, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.settings:

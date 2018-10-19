@@ -79,8 +79,7 @@ INSTALLED_APPS = [
     'notifications',
     'django_nose',
     'django.contrib.sites',
-    'django.contrib.sitemaps',
-    'rest_framework_swagger'
+    'django.contrib.sitemaps'
 ]
 
 SITE_ID = 1

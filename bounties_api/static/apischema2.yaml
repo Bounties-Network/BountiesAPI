@@ -206,12 +206,12 @@ paths:
           type: number
         - name: bounty_created__lt
           in: query
-          description: ''
+          description: 'Less Than - Format = 2018-01-04T18:36:10Z'
           required: false
           type: string
         - name: bounty_created__gt
           in: query
-          description: ''
+          description: 'Greater than - Format = 2018-01-04T18:36:10Z'
           required: false
           type: string
         - name: bounty_created
@@ -226,7 +226,7 @@ paths:
           type: string
         - name: deadline__gt
           in: query
-          description: ''
+          description: 'Greater than - Format = 2018-01-04T18:36:10Z'
           required: false
           type: string
         - name: deadline
@@ -236,7 +236,7 @@ paths:
           type: string
         - name: bounty_id
           in: query
-          description: ''
+          description: 'Will always match the id field. We keep both in order to make sure matching continues to exist.'
           required: false
           type: number
         - name: categories
@@ -287,7 +287,7 @@ paths:
   /bounty/draft/:
     get:
       operationId: bounty_draft_list
-      description: ''
+      summary: Get user's drafts
       parameters:
         - name: issuer
           in: query
@@ -471,6 +471,10 @@ paths:
       responses:
         '200':
           description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Review'
       tags:
         - bounty
     post:
@@ -478,7 +482,18 @@ paths:
       summary: Saves the fulfillment and serialized review
       description: "Expects `bounty_id` and `fulfillment_id`\nand `current_user` and\
         \ `data` on the request\n\nSerializes the data as a review"
-      parameters: []
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              rating:
+                type: integer
+                enum: [ 1,2,3,4,5 ]
+              review:
+                type: string
       responses:
         '201':
           description: ''
@@ -525,9 +540,10 @@ paths:
           description: Which field to use when ordering the results.
           required: false
           type: string
+          enum: [total_count, -total_count]
         - name: search
           in: query
-          description: A search term.
+          description: Search via normalized_name - lowercase and trimmed
           required: false
           type: string
         - name: platform
@@ -593,7 +609,7 @@ paths:
   /fulfillment/:
     get:
       operationId: fulfillment_list
-      description: ''
+      summary: Get fulfillments list
       parameters:
         - name: ordering
           in: query
@@ -663,12 +679,13 @@ paths:
                   $ref: '#/definitions/Fulfillment'
       tags:
         - fulfillment
+    parameters: []
 
 
   /fulfillment/{id}/:
     get:
       operationId: fulfillment_read
-      description: ''
+      summary: A viewset for viewing and editing user instances.
       parameters: []
       responses:
         '200':
@@ -692,10 +709,36 @@ paths:
       description: "Expects single `platform` or array of `platform__in`\n\nReturns:\n\
         JsonResponse({\n    'count': len(query_result),\n    'results': serializer.data\n\
         }, safe=False)"
-      parameters: []
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+        - name: platform
+          in: query
+          description: Platform that created the bounty
+          required: false
+          type: string
       responses:
         '200':
-          description: ''
+          description: 'Get current leaderboard list'
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                count:
+                  type: integer
+                results:
+                  type: array
+                  items:
+                    $ref: '#/definitions/Leaderboard'
       tags:
         - leaderboard
 

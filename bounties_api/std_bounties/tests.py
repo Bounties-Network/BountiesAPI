@@ -591,6 +591,7 @@ class TestBountyClient(unittest.TestCase):
         self.assertEqual(result.balance, new_balance)
         self.assertEqual(result.fulfillmentAmount, inputs['newFulfillmentAmount'])
 
+
 class TestEventMessage(unittest.TestCase):
 
     def setUp(self):

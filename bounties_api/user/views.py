@@ -55,7 +55,7 @@ class LoginJWT(APIView):
 class Logout(APIView):
     def get(self, request):
         '''
-        Logs out the user that is currently logged in
+        Logs out the current user
         '''
         logout(request)
         return HttpResponse('Success')

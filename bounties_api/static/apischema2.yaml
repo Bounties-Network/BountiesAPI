@@ -11,11 +11,6 @@ consumes:
   - application/json
 produces:
   - application/json
-securityDefinitions:
-  Basic:
-    type: basic
-security:
-  - Basic: []
 paths:
   /analytics/:
     get:
@@ -79,7 +74,7 @@ paths:
   /auth/logout/:
     get:
       operationId: auth_logout_list
-      description: Logs out the user that is currently logged in
+      summary: Logs out the current user
       parameters: []
       responses:
         '200':
@@ -96,7 +91,13 @@ paths:
       parameters: []
       responses:
         '200':
-          description: ''
+          description: 'Get current user information'
+          schema:
+            $ref: '#/definitions/UserProfile'
+        '401':
+          description: 'Fails when not logged in'
+          schema:
+            type: string
       tags:
         - auth
 
@@ -111,11 +112,24 @@ paths:
       responses:
         '200':
           description: ''
+          schema:
+            type: object
+            required:
+              - nonce
+              - has_signed_up
+            properties:
+              nonce:
+                type: string
+                format: uuid
+              has_signed_up:
+                type: boolean
+                description: Whether the user has provided their infomation to the platform
       tags:
         - auth
     parameters:
       - name: public_address
         in: path
+        description: The user's Ethereum address
         required: true
         type: string
 
@@ -123,7 +137,7 @@ paths:
   /bounty/:
     get:
       operationId: bounty_list
-      description: ''
+      summary: Get bounties list
       parameters:
         - name: ordering
           in: query
@@ -132,7 +146,7 @@ paths:
           type: string
         - name: search
           in: query
-          description: A search term.
+          description: A search term. This checks for a match in the title, description, or categories.
           required: false
           type: string
         - name: platform__in
@@ -142,7 +156,7 @@ paths:
           type: string
         - name: platform
           in: query
-          description: ''
+          description: Platform that created the bounty
           required: false
           type: string
         - name: issuer
@@ -182,7 +196,7 @@ paths:
           type: number
         - name: bountyStage
           in: query
-          description: ''
+          description: Numerical which represent the following, Draft, Active, Completed, Expired, Dead
           required: false
           type: string
         - name: bountyStage__in

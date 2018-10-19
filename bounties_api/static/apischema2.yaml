@@ -750,10 +750,34 @@ paths:
       description: "Expects single `platform` or array of `platform__in`\n\nReturns:\n\
         JsonResponse({\n    'count': len(query_result),\n    'results': serializer.data\n\
         }, safe=False)"
-      parameters: []
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+        - name: platform
+          in: query
+          description: Platform that created the bounty
+          required: false
+          type: string
       responses:
         '200':
-          description: ''
+          description: 'Get current leaderboard list'
+          schema:
+            type: object
+            properties:
+              count:
+                type: integer
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Leaderboard'
       tags:
         - leaderboard
 
@@ -822,11 +846,14 @@ paths:
       responses:
         '200':
           description: ''
+          schema:
+            type: string
       tags:
         - notification
     parameters:
-      - name: public_address
+      - name: address
         in: path
+        description: The user's Ethereum address
         required: true
         type: string
 
@@ -850,6 +877,7 @@ paths:
         type: string
       - name: public_address
         in: path
+        description: The user's Ethereum address
         required: true
         type: string
 
@@ -863,11 +891,14 @@ paths:
       responses:
         '200':
           description: ''
+          schema:
+            type: string
       tags:
         - notification
     parameters:
       - name: notification_id
         in: path
+        description: Notification id
         required: true
         type: string
 
@@ -923,6 +954,7 @@ paths:
     parameters:
       - name: public_address
         in: path
+        description: The user's Ethereum address
         required: true
         type: string
 
@@ -941,6 +973,7 @@ paths:
     parameters:
       - name: public_address
         in: path
+        description: The user's Ethereum address
         required: true
         type: string
 
@@ -964,6 +997,7 @@ paths:
         type: string
       - name: public_address
         in: path
+        description: The user's Ethereum address
         required: true
         type: string
 
@@ -982,6 +1016,7 @@ paths:
     parameters:
       - name: notification_id
         in: path
+        description: Notification id
         required: true
         type: string
 
@@ -1048,6 +1083,7 @@ paths:
     parameters:
       - name: public_address
         in: path
+        description: The user's Ethereum address
         required: true
         type: string
 
@@ -1066,6 +1102,7 @@ paths:
     parameters:
       - name: transaction_id
         in: path
+        description: Transaction ID
         required: true
         type: string
 
@@ -1156,7 +1193,22 @@ paths:
       parameters: []
       responses:
         '200':
-          description: ''
+          description: 'Get list of tokens that have been used at least once in a contract'
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                tokenSymbol:
+                  type: string
+                tokenContract:
+                  type: string
+                tokenDecimals:
+                  type: integer
+                count:
+                  type: integer
+                token:
+                  $ref: '#/definitions/Token'
       tags:
         - token
 
@@ -1245,8 +1297,14 @@ paths:
         \ serialized settings"
       parameters: []
       responses:
-        '201':
-          description: ''
+        '200':
+          description: 'Get current user information'
+          schema:
+            $ref: '#/definitions/UserSettings'
+        '401':
+          description: 'Fails when not logged in'
+          schema:
+            type: string
       tags:
         - user
     put:
@@ -1257,7 +1315,13 @@ paths:
       parameters: []
       responses:
         '200':
-          description: ''
+          description: 'Get current user information'
+          schema:
+            $ref: '#/definitions/UserSettings'
+        '401':
+          description: 'Fails when not logged in'
+          schema:
+            type: string
       tags:
         - user
 
@@ -1359,7 +1423,9 @@ paths:
       parameters: []
       responses:
         '200':
-          description: ''
+          description: 'Get user information by address'
+          schema:
+            $ref: '#/definitions/UserProfile'
       tags:
         - user
     post:
@@ -1369,7 +1435,7 @@ paths:
         \ request\n\nReturns the serialized user"
       parameters: []
       responses:
-        '201':
+        '200':
           description: ''
       tags:
         - user
@@ -1378,6 +1444,8 @@ paths:
         in: path
         required: true
         type: string
+        
+
 definitions:
   Category:
     required:

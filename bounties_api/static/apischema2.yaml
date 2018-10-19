@@ -66,7 +66,6 @@ paths:
           schema:
             allOf:
               - $ref: '#/definitions/User'
-              - $ref: '#/definitions/UserSettingsWrapped'
       tags:
         - auth
 
@@ -851,7 +850,7 @@ paths:
       tags:
         - notification
     parameters:
-      - name: address
+      - name: public_address
         in: path
         description: The user's Ethereum address
         required: true
@@ -1300,7 +1299,7 @@ paths:
         '200':
           description: 'Get current user information'
           schema:
-            $ref: '#/definitions/UserSettings'
+            $ref: '#/definitions/Settings'
         '401':
           description: 'Fails when not logged in'
           schema:
@@ -1317,7 +1316,7 @@ paths:
         '200':
           description: 'Get current user information'
           schema:
-            $ref: '#/definitions/UserSettings'
+            $ref: '#/definitions/Settings'
         '401':
           description: 'Fails when not logged in'
           schema:
@@ -1444,9 +1443,44 @@ paths:
         in: path
         required: true
         type: string
-        
+
 
 definitions:
+  Leaderboard:
+    type: object
+    properties:
+      address:
+        title: Address
+        type: string
+        maxLength: 128
+      name:
+        title: Name
+        type: string
+        maxLength: 128
+      email:
+        title: Email
+        type: string
+        maxLength: 128
+      githubUsername:
+        title: Github Username
+        type: string
+        maxLength: 128
+      profile_image:
+        title: Profile image
+        type: string
+        maxLength: 256
+      total:
+        title: Sum of all
+        type: string
+        format: decimal
+      total_usd:
+        title: Sum of all
+        type: string
+        format: decimal
+      bounties_issued:
+        type: integer
+      fulfillments_paid:
+        type: integer
   Category:
     required:
       - name
@@ -2528,3 +2562,73 @@ definitions:
       schema:
         title: schema
         type: string
+
+  Settings:
+    type: object
+    properties:
+      emails:
+        type: object
+        properties:
+          both:
+            type: object
+            properties:
+              RatingReceived:
+                type: boolean
+          issuer:
+            type: object
+            properties:
+              BountyComment:
+                type: boolean
+              BountyExpired:
+                type: boolean
+              TransferRecipient:
+                type: boolean
+              FulfillmentUpdatedIssuer:
+                type: boolean
+              FulfillmentSubmittedIssuer:
+                type: boolean
+              ContributionReceived:
+                type: boolean
+              BountyCompleted:
+                type: boolean
+          activity:
+            type: boolean
+          fulfiller:
+            type: object
+            properties:
+              FulfillmentAcceptedFulfiller:
+                type: boolean
+
+  UserStats:
+    type: object
+    properties:
+      awarded:
+        type: number
+      earned:
+        type: number
+      issuer_ratings_given:
+        type: integer
+      issuer_ratings_received:
+        type: integer
+      fulfiller_ratings_given:
+        type: integer
+      fulfiller_ratings_received:
+        type: integer
+      issuer_fulfillment_acceptance:
+        type: integer
+      fulfiller_fulfillment_acceptance:
+        type: integer
+      total_bounties:
+        type: integer
+      total_fulfillments:
+        type: integer
+      total_fulfillments_on_bounties:
+        type: integer
+
+  UserProfile:
+    type: object
+    properties:
+      user:
+        $ref: '#/definitions/User'
+      stats:
+        $ref: '#/definitions/UserStats'

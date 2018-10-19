@@ -6,6 +6,7 @@ SELECT
 	profile.name as name,
 	profile.email as email,
 	profile.github as githubUsername,
+    profile.ens_domain as ens_domain,
 	profile.small_profile_image_url as profile_image,
 	SUM(bounty."fulfillmentAmount") as total,
 	SUM(fulfillment.usd_price) as total_usd,
@@ -17,7 +18,7 @@ ON fulfillment.bounty_id = bounty.id
 JOIN user_user profile
 ON fulfillment.fulfiller = profile.public_address
 WHERE fulfillment.accepted = true {}
-GROUP BY fulfillment.fulfiller, profile.name, profile.email, profile.github, profile.small_profile_image_url
+GROUP BY fulfillment.fulfiller, profile.name, profile.email, profile.github, profile.small_profile_image_url, profile.ens_domain
 ORDER BY total_usd desc, total desc
 """
 
@@ -28,6 +29,7 @@ SELECT
 	profile.name as name,
 	profile.email as email,
 	profile.github as githubUsername,
+    profile.ens_domain as ens_domain,
 	profile.small_profile_image_url as profile_image,
 	SUM(bounty."fulfillmentAmount") as total,
 	SUM(fulfillment.usd_price) as total_usd,
@@ -39,6 +41,6 @@ ON fulfillment.bounty_id = bounty.id
 JOIN user_user profile
 ON bounty.issuer = profile.public_address
 WHERE fulfillment.accepted = true {}
-GROUP BY bounty.issuer, profile.name, profile.email, profile.github, profile.small_profile_image_url
+GROUP BY bounty.issuer, profile.name, profile.email, profile.github, profile.small_profile_image_url, profile.ens_domain
 ORDER BY total_usd desc, total desc
 """

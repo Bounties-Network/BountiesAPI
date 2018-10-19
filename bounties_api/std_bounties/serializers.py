@@ -142,6 +142,7 @@ class LeaderboardFulfillerSerializer(serializers.Serializer):
     address = serializers.CharField(max_length=256)
     name = serializers.CharField(max_length=256)
     email = serializers.CharField(max_length=256)
+    ens_domain = serializers.CharField(max_length=500)
     githubusername = serializers.CharField(max_length=256)
     profile_image = serializers.CharField(max_length=256)
     total = serializers.DecimalField(decimal_places=0, max_digits=128)
@@ -150,10 +151,12 @@ class LeaderboardFulfillerSerializer(serializers.Serializer):
     fulfillments_accepted = serializers.IntegerField(read_only=True)
 
 
+
 class LeaderboardIssuerSerializer(serializers.Serializer):
     address = serializers.CharField(max_length=256)
     name = serializers.CharField(max_length=256)
     email = serializers.CharField(max_length=256)
+    ens_domain = serializers.CharField(max_length=500)
     githubusername = serializers.CharField(max_length=256)
     profile_image = serializers.CharField(max_length=256)
     total = serializers.DecimalField(decimal_places=0, max_digits=128)

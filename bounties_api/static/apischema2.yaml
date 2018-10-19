@@ -1619,11 +1619,13 @@ definitions:
         type: string
         readOnly: true
       created:
+        description: This is insertion date into our database. Use bounty_created to find transaction date.
         title: Created
         type: string
         format: date-time
         readOnly: true
       modified:
+        description: This is modification date in our database. This does not represent a modified date in the contract.
         title: Modified
         type: string
         format: date-time
@@ -1646,6 +1648,7 @@ definitions:
         type: string
         format: decimal
       calculated_fulfillmentAmount:
+        description: Does the token decimal calculation to give the base denomination
         title: Calculated fulfillmentAmount
         type: string
         format: decimal
@@ -1654,6 +1657,7 @@ definitions:
         title: PaysTokens
         type: boolean
       experienceLevel:
+        description: 0 -> Beginner, 1 -> Intermediate, 2 -> Advanced
         title: ExperienceLevel
         type: integer
         enum:
@@ -1744,16 +1748,19 @@ definitions:
         maxLength: 128
         x-nullable: true
       bounty_created:
+        description: Contract transaction date of actual bounty creation.
         title: Bounty created
         type: string
         format: date-time
         x-nullable: true
       bounty_id:
+        description: This field matches the id field. We keep both in case there is a situation where they may not be synced - this originally represented the id in the standard contract
         title: Bounty id
         type: integer
         maximum: 2147483647
         minimum: -2147483648
       data:
+        description: IPFS hash
         title: Data
         type: string
         maxLength: 128
@@ -1769,6 +1776,7 @@ definitions:
         format: decimal
         x-nullable: true
       tokenLockPrice:
+        description: The usd price of the token when the bounty goes into a locked state like Completed or Dead
         title: TokenLockPrice
         type: number
         x-nullable: true
@@ -1778,6 +1786,7 @@ definitions:
         format: decimal
         x-nullable: true
       calculated_balance:
+        description: Does the token decimal calculation to give the base denomination
         title: Calculated balance
         type: string
         format: decimal
@@ -1967,11 +1976,13 @@ definitions:
       user:
         $ref: '#/definitions/User'
       created:
+        description: This is insertion date into our database. Use bounty_created to find transaction date.
         title: Created
         type: string
         format: date-time
         readOnly: true
       modified:
+        description: This is modification date in our database. This does not represent a modified date in the contract.
         title: Modified
         type: string
         format: date-time
@@ -1981,6 +1992,7 @@ definitions:
         type: string
         minLength: 1
   RankedCategory:
+    description: This consolidates all category variations to match based on normalized names. Also contains total count of usage as a normalized name, even when there is a collision ie. (Javascript and JavaScript)
     required:
       - name
       - normalized_name
@@ -2012,6 +2024,7 @@ definitions:
         maxLength: 128
         minLength: 1
   BountyFulfillment:
+    description: Bounty fields passed as the relationship in the fulfillment endpoints.
     title: Bounty data
     required:
       - id
@@ -2130,11 +2143,13 @@ definitions:
         maximum: 2147483647
         minimum: -2147483648
       created:
+        description: 'Database insertion date. Does not match true creation date from the transaction. For transaciton creation date - see fulfillment_created'
         title: Created
         type: string
         format: date-time
         readOnly: true
       modified:
+        description: 'Database modification date. Does not match true modification date in transaction'
         title: Modified
         type: string
         format: date-time

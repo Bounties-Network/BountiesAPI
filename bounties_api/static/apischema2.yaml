@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
-  title: Bounties Network API
-  description: Bounties Network API documentation
+  title: Standard Bounties API
+  description: API to quickly access standard bounties stored values
   termsOfService: https://explorer.bounties.network/tos
   version: v1
 schemes:
@@ -29,9 +29,21 @@ paths:
       responses:
         '200':
           description: 'Get the timeline for bounties network activity'
+          schema:
+            $ref: '#/definitions/TimelineBounties'
       tags:
         - analytics
-    parameters: []
+    parameters:
+      - in: query
+        name: since
+        type: string
+        description: "Date format: YYYY-MM-DD"
+        required: true
+      - in: query
+        name: until
+        type: string
+        description: "Date format: YYYY-MM-DD"
+        required: false
 
 
   /auth/login/:
@@ -40,13 +52,28 @@ paths:
       summary: Logs in the user
       description: "Expects `public_address` and `signature` in `data` on the request\n\
         \nReturns the serialized user"
-      parameters: []
+      parameters:
+        - in: body
+          name: login
+          schema:
+            type: object
+            required:
+              - public_address
+              - signature
+            properties:
+              public_address:
+                type: string
+              signature:
+                type: string
       responses:
-        '201':
-          description: ''
+        '200':
+          description: 'Returns logged in user'
+          schema:
+            allOf:
+              - $ref: '#/definitions/User'
+              - $ref: '#/definitions/UserSettingsWrapped'
       tags:
         - auth
-    parameters: []
 
 
   /auth/logout/:
@@ -59,7 +86,6 @@ paths:
           description: ''
       tags:
         - auth
-    parameters: []
 
 
   /auth/user/:
@@ -73,7 +99,6 @@ paths:
           description: ''
       tags:
         - auth
-    parameters: []
 
 
   /auth/{public_address}/nonce/:
@@ -243,7 +268,6 @@ paths:
                   $ref: '#/definitions/Bounty'
       tags:
         - bounty
-    parameters: []
 
 
   /bounty/draft/:
@@ -315,7 +339,6 @@ paths:
             $ref: '#/definitions/DraftBountyWrite'
       tags:
         - bounty
-    parameters: []
 
 
   /bounty/draft/{uid}/:
@@ -531,7 +554,6 @@ paths:
                   $ref: '#/definitions/RankedCategory'
       tags:
         - category
-    parameters: []
 
 
   /category/{id}/:
@@ -627,7 +649,6 @@ paths:
                   $ref: '#/definitions/Fulfillment'
       tags:
         - fulfillment
-    parameters: []
 
 
   /fulfillment/{id}/:
@@ -663,7 +684,6 @@ paths:
           description: ''
       tags:
         - leaderboard
-    parameters: []
 
 
   /leaderboard/issuer/:
@@ -679,7 +699,6 @@ paths:
           description: ''
       tags:
         - leaderboard
-    parameters: []
 
 
   /notification/activity/user/{public_address}/:
@@ -1052,7 +1071,6 @@ paths:
                   $ref: '#/definitions/Review'
       tags:
         - reviews
-    parameters: []
 
 
   /reviews/{id}/:
@@ -1084,7 +1102,6 @@ paths:
           description: ''
       tags:
         - token
-    parameters: []
 
 
   /user/languages/:
@@ -1125,7 +1142,6 @@ paths:
                   $ref: '#/definitions/Language'
       tags:
         - user
-    parameters: []
 
 
   /user/languages/{id}/:
@@ -1162,7 +1178,6 @@ paths:
           description: ''
       tags:
         - user
-    parameters: []
 
 
   /user/settings/:
@@ -1188,7 +1203,6 @@ paths:
           description: ''
       tags:
         - user
-    parameters: []
 
 
   /user/skills/:
@@ -1239,7 +1253,6 @@ paths:
                   $ref: '#/definitions/RankedSkill'
       tags:
         - user
-    parameters: []
 
 
   /user/skills/{id}/:
@@ -1279,7 +1292,7 @@ paths:
         required: true
         type: string
 
-        
+
   /user/{public_address}/profile/:
     get:
       operationId: user_profile_list
@@ -2280,3 +2293,98 @@ definitions:
         type: integer
         maximum: 2147483647
         minimum: -2147483648
+
+  TimelineBounties:
+    type: object
+    properties:
+      date:
+        title: date
+        type: string
+        format: date
+      is_week:
+        title: is_week
+        type: boolean
+      bounties_issued_cum:
+        title: bounties_issued_cum
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bounties_issued:
+        title: bounties_issued
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      fulfillments_submitted_cum:
+        title: fulfillments_submitted_cum
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      fulfillments_submitted:
+        title: fulfillments_submitted
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      fulfillments_accepted_cum:
+        title: fulfillments_accepted_cum
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      fulfillments_accepted:
+        title: fulfillments_accepted
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      fulfillments_pending_acceptance:
+        title: fulfillments_pending_acceptance
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      fulfillment_acceptance_rate:
+        title: fulfillment_acceptance_rate
+        type: number
+        maximum: 1
+        minimum: 0
+      bounty_fulfilled_rate:
+        title: bounty_fulfilled_rate
+        type: number
+        maximum: 1
+        minimum: 0
+      avg_fulfiller_acceptance_rate:
+        title: avg_fulfiller_acceptance_rate
+        type: number
+        maximum: 1
+        minimum: 0
+      avg_fulfillment_amount:
+        title: avg_fulfillment_amount
+        type: number
+      total_fulfillment_amount:
+        title: total_fulfillment_amount
+        type: number
+      bounty_draft:
+        title: bounty_draft
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bounty_active:
+        title: bounty_active
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bounty_completed:
+        title: bounty_completed
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bounty_expired:
+        title: bounty_expired
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bounty_dead:
+        title: bounty_dead
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      schema:
+        title: schema
+        type: string

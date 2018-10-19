@@ -1,21 +1,6 @@
 from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
 from std_bounties import views
-from rest_framework.schemas import get_schema_view
-from rest_framework_swagger.renderers import (
-    SwaggerUIRenderer,
-    OpenAPIRenderer
-)
-
-swagger_view = get_schema_view(
-    title='Bounties API',
-    renderer_classes=[SwaggerUIRenderer]
-)
-
-open_api_view = get_schema_view(
-    title='Bounties API',
-    renderer_classes=[OpenAPIRenderer]
-)
 
 
 router = DefaultRouter()

@@ -16,9 +16,11 @@ from std_bounties.views import Tokens
 class TimelineBounties(APIView):
     def get(self, request):
         '''
+        Timeline, categories and tokens
+
         Expects query_params `since`, `until` and `platform` (defaults to all)
 
-        Date formatting is expected to be as 'YYYY-MM-DD'
+        Date formatting needs to be 'YYYY-MM-DD'
         
         Returns:
         {

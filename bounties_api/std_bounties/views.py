@@ -25,7 +25,7 @@ class ReviewsViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         '''
-        Returns reviews for 'fulfiller' or 'issuer'
+        Issuer and fulfiller reviews
 
         Expects `review_type` on the request
         '''
@@ -50,7 +50,7 @@ class SubmissionReviews(APIView):
 
     def get(self, request, bounty_id, fulfillment_id):
         '''
-        Returns both issuer and fulfiller reviews
+        Both issuer and fulfiller reviews
 
         Expects `bounty_id` and `fulfillment_id`
 

@@ -23,9 +23,9 @@ seo_client = SEOClient()
 class Login(APIView):
     def post(self, request):
         '''
-        Expects `public_address` and `signature` in `data` on the request
-
         Logs in the user
+
+        Expects `public_address` and `signature` in `data` on the request
 
         Returns the serialized user
         '''
@@ -64,9 +64,11 @@ class Logout(APIView):
 class Nonce(APIView):
     def get(self, request, public_address=''):
         '''
+        Returns nonce and user information
+
         Expects a public_address
 
-        Returns nonce and user information:
+        Returns:
         {
             'nonce': user.nonce,
             'has_signed_up': bool(user.email) and bool(user.name)
@@ -91,9 +93,9 @@ class DismissSignup(APIView):
 class UserView(APIView):
     def get(self, request):
         '''
-        Expects `current_user` on the request
+        Returns the currently logged in user
 
-        Returns the currently logged in user serialized
+        Expects `current_user` on the request
         '''
         if request.is_logged_in:
             setLastViewed(request, request.current_user)
@@ -106,9 +108,11 @@ class RequestProfileImageUploadURL(APIView):
 
     def get(self, request):
         '''
+        Returns small and large upload URLs
+
         Expects `current_user` on the request
 
-        Returns upload URL's:
+        Returns:
         {
             'sm_url': 'https://{}/{}'.format(bucket, sm_key),
             'sm_put_url': sm_put_url,
@@ -157,9 +161,9 @@ class RequestProfileImageUploadURL(APIView):
 class SettingsView(APIView):
     def post(self, request):
         '''
-        Expects `current_user` and `data` on the request
-
         Saves the data as settings, then saves the user
+
+        Expects `current_user` and `data` on the request
 
         Returns the serialized settings
         '''
@@ -173,9 +177,9 @@ class SettingsView(APIView):
 
     def put(self, request):
         '''
-        Expects `current_user` and `data` on the request
-
         Saves the data through the serializer
+
+        Expects `current_user` and `data` on the request
 
         Returns the updated serialized settings
         '''
@@ -210,9 +214,9 @@ class SkillViewSet(viewsets.ReadOnlyModelViewSet):
 class UserInfo(APIView):
     def get(self, request, public_address):
         '''
-        Expects `public_address`
-
         Returns the serialized user info
+
+        Expects `public_address`
         '''
         try:
             user = User.objects.get(public_address=public_address.lower())
@@ -226,9 +230,9 @@ class UserInfo(APIView):
 class UserProfile(APIView):
     def post(self, request, public_address):
         '''
-        Expects `public_address` and `current_user` and `data` on the request
-
         Saves the user profile using `data`
+
+        Expects `public_address` and `current_user` and `data` on the request
 
         Returns the serialized user
         '''
@@ -252,9 +256,11 @@ class UserProfile(APIView):
 
     def get(self, request, public_address):
         '''
+        Returns JSON response with user information
+
         Expects `public_address`
-        
-        Returns JSON response with user information:
+
+        Returns:
         {
             'user': serializer.data,
             'stats': profile_stats

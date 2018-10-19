@@ -12,6 +12,11 @@ from notifications.filters import TransactionFilter, DashboardNotificationFilter
 class TransactionViewSet(mixins.CreateModelMixin,
                          mixins.ListModelMixin,
                          viewsets.GenericViewSet):
+    '''
+    All transactions that have not been viewed, ordered by created
+
+    Expects `public_address`
+    '''
 
     def get_permissions(self):
         permission_classes = []
@@ -30,6 +35,11 @@ class TransactionViewSet(mixins.CreateModelMixin,
 
 
 class NotificationActivityViewSet(viewsets.ReadOnlyModelViewSet):
+    '''
+    All activity notifications, ordered by created
+    
+    Expects `public_address`
+    '''
 
     def get_queryset(self):
         public_address = self.kwargs.get('public_address')
@@ -41,6 +51,11 @@ class NotificationActivityViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class NotificationPushViewSet(viewsets.ReadOnlyModelViewSet):
+    '''
+    All non-activity notifications, ordered by created
+    
+    Expects `public_address`
+    '''
 
     def get_queryset(self):
         public_address = self.kwargs.get('public_address')
@@ -52,6 +67,12 @@ class NotificationPushViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class NotificationViewed(APIView):
+    '''
+    Sets the `notification_id` notification viewed to True
+    
+    Expects `notification_id`
+    '''
+
     permission_classes = (AuthenticationPermission, UserObjectPermissions)
 
     def get(self, request, notification_id):
@@ -64,6 +85,12 @@ class NotificationViewed(APIView):
 
 
 class TransactionViewed(APIView):
+    '''
+    Sets the `transaction_id` transaction viewed to True
+    
+    Expects `transaction_id`
+    '''
+
     permission_classes = (AuthenticationPermission, UserObjectPermissions)
 
     def get(self, request, transaction_id):
@@ -75,6 +102,12 @@ class TransactionViewed(APIView):
 
 
 class NotificationActivityViewAll(APIView):
+    '''
+    Sets all activity notifications for `public_address` viewed to True
+    
+    Expects `public_address`
+    '''
+
     permission_classes = (AuthenticationPermission, UserIDMatches,)
 
     def get(self, request, public_address):
@@ -85,6 +118,12 @@ class NotificationActivityViewAll(APIView):
 
 
 class NotificationPushViewAll(APIView):
+    '''
+    Sets all non-activty notifications for `public_address` viewed to True
+    
+    Expects `public_address`
+    '''
+
     permission_classes = (AuthenticationPermission, UserIDMatches,)
 
     def get(self, request, public_address):

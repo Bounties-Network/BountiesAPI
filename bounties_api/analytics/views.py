@@ -15,6 +15,18 @@ from std_bounties.views import Tokens
 
 class TimelineBounties(APIView):
     def get(self, request):
+        '''
+        Expects query_params `since`, `until` and `platform` (defaults to all)
+
+        Date formatting is expected to be as 'YYYY-MM-DD'
+        
+        Returns:
+        {
+            'timeline': serialized.data,
+            'categories': categories.data,
+            'tokens': tokens.data
+        }
+        '''
         queryset = request.query_params.copy()
         since = queryset.get('since', '')
         until = queryset.get('until', datetime.now().date())

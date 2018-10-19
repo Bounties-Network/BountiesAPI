@@ -25,7 +25,10 @@ paths:
   /analytics/:
     get:
       operationId: analytics_list
-      description: ''
+      summary: Expects query_params `since`, `until` and `platform` (defaults to all)
+      description: "Date formatting is expected to be as 'YYYY-MM-DD'\n\nReturns:\n\
+        {\n    'timeline': serialized.data,\n    'categories': categories.data,\n\
+        \    'tokens': tokens.data\n}"
       parameters: []
       responses:
         '200':

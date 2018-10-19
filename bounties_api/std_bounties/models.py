@@ -12,10 +12,6 @@ from bounties.utils import calculate_token_value
 
 
 class Review(models.Model):
-    """
-    review:
-    try this
-    """
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     reviewer = models.ForeignKey(User, related_name='reviews')

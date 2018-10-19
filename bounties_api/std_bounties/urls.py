@@ -39,6 +39,8 @@ urlpatterns = [
     url(r'^$', swagger_view),
     url(r'^swagger.json$', open_api_view),
     url(r'^', include(router.urls)),
+    # The manually fixed up, proper swagger representation is served from "/"
+    # The endpoints below are used for future auto generation and updates:
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

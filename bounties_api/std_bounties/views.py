@@ -25,9 +25,9 @@ class ReviewsViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         '''
-        Expects `review_type` on the request
-
         Returns reviews for 'fulfiller' or 'issuer'
+
+        Expects `review_type` on the request
         '''
         review_type = self.request.GET.get('review_type', '')
 
@@ -50,9 +50,11 @@ class SubmissionReviews(APIView):
 
     def get(self, request, bounty_id, fulfillment_id):
         '''
+        Returns both issuer and fulfiller reviews
+
         Expects `bounty_id` and `fulfillment_id`
 
-        Returns both reviews:
+        Returns:
         {
             'issuer_review': issuer_review_data,
             'fulfiller_review': fulfiller_review_data,
@@ -77,12 +79,12 @@ class SubmissionReviews(APIView):
 
     def post(self, request, bounty_id, fulfillment_id):
         '''
+        Saves the fulfillment and serialized review
+
         Expects `bounty_id` and `fulfillment_id`
         and `current_user` and `data` on the request
 
         Serializes the data as a review
-
-        Saves the serialized review and the fulfillment
         '''
         bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
         fulfillment = get_object_or_404(
@@ -130,12 +132,6 @@ class SubmissionReviews(APIView):
 
 class BountyComments(mixins.ListModelMixin,
                      viewsets.GenericViewSet):
-    '''
-    exists????????
-
-class BountyComments(mixins.ListModelMixin,
-                     viewsets.GenericViewSet):
-    '''
 
     serializer_class = CommentSerializer
 
@@ -146,9 +142,22 @@ class BountyComments(mixins.ListModelMixin,
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
-        return Comment.objects.filter(bounty__id=self.kwargs['bounty_id']).order_by('-created')
+        '''
+        All comments by `comment_id`, ordered by created
+
+        Expects `comment_id`
+        '''
+        return Comment.objects.filter(
+            bounty__id=self.kwargs['bounty_id']).order_by('-created')
 
     def post(self, request, bounty_id):
+        '''
+        Adds the data on the request as a comment on the `bounty_id`
+
+        Expects `bounty_id` and `data` on the request
+
+        Returns the serialized data
+        '''
         bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
         serializer = CommentSerializer(
             data=request.data,
@@ -166,10 +175,6 @@ class BountyComments(mixins.ListModelMixin,
 
 
 class DraftBountyWriteViewSet(viewsets.ModelViewSet):
-    '''
-    exists???
-class DraftBountyWriteViewSet(viewsets.ModelViewSet):
-    '''
     queryset = DraftBounty.objects.filter(on_chain=False)
     serializer_class = DraftBountyWriteSerializer
     lookup_field = 'uid'
@@ -190,10 +195,6 @@ class DraftBountyWriteViewSet(viewsets.ModelViewSet):
 
 
 class BountyViewSet(viewsets.ReadOnlyModelViewSet):
-    '''
-    exists???
-class BountyViewSet(viewsets.ReadOnlyModelViewSet):
-    '''
     serializer_class = BountySerializer
     queryset = Bounty.objects.all().prefetch_related(
         'categories').select_related('token').distinct()
@@ -212,14 +213,15 @@ class BountyViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
-    '''
-    exists???
-class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
-    '''
     serializer_class = FulfillmentSerializer
     queryset = Fulfillment.objects.all().select_related('bounty')
 
     def get_queryset(self):
+        '''
+        All related fulfillments for the `current_user` on the request
+
+        Expects `current_user`, or finds public fulfillments
+        '''
         qs = Fulfillment.objects.all().select_related('bounty')
 
         current_user = self.request.current_user
@@ -231,7 +233,8 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
                 Q(bounty__private_fulfillments=False)
             )
         else:
-            return Fulfillment.objects.filter(bounty__private_fulfillments=False)
+            return Fulfillment.objects.filter(
+                bounty__private_fulfillments=False)
 
         return Fulfillment.objects.none()
 
@@ -244,10 +247,6 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    '''
-    exists???
-class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    '''
     serializer_class = RankedCategorySerializer
     queryset = RankedCategory.objects.all()
     filter_class = RankedCategoryFilter
@@ -258,11 +257,16 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class UserProfile(APIView):
-    '''
-    exists???
-class UserProfile(APIView):
-    '''
     def get(self, request, address=''):
+        '''
+        User profile based on latest fulfillment
+
+        Expects `platform` singular or `platform__in` array of platforms
+        
+        Finds fulfillments found given parameters, ordered by created
+
+        Returns profile based on the latest fulfillment found
+        '''
         platform_in = extractInParams(request, 'platform', 'platform__in')
         extra_filters = {}
         if platform_in:
@@ -283,11 +287,18 @@ class UserProfile(APIView):
 
 
 class LeaderboardIssuer(APIView):
-    '''
-    exists???
-class LeaderboardIssuer(APIView):
-    '''
     def get(self, request):
+        '''
+        Leaderboard data based on issuer
+        
+        Expects single `platform` or array of `platform__in`
+
+        Returns:
+        JsonResponse({
+            'count': len(query_result),
+            'results': serializer.data
+        }, safe=False)
+        '''
         sql_param = ''
         platform_in = extractInParams(request, 'platform', 'platform__in')
         startIndex, endIndex = limitOffsetParams(request)
@@ -307,15 +318,25 @@ class LeaderboardIssuer(APIView):
         query_result = dictfetchall(cursor)
         narrowed_result = query_result[startIndex: endIndex]
         serializer = LeaderboardIssuerSerializer(narrowed_result, many=True)
-        return JsonResponse({'count': len(query_result), 'results': serializer.data}, safe=False)
+        return JsonResponse({
+            'count': len(query_result),
+            'results': serializer.data
+        }, safe=False)
 
 
 class LeaderboardFulfiller(APIView):
-    '''
-    exists???
-class LeaderboardFulfiller(APIView):
-    '''
     def get(self, request):
+        '''
+        Leaderboard data based on fulfiller
+        
+        Expects single `platform` or array of `platform__in`
+
+        Returns:
+        JsonResponse({
+            'count': len(query_result),
+            'results': serializer.data
+        }, safe=False)
+        '''
         sql_param = ''
         platform_in = extractInParams(request, 'platform', 'platform__in')
         startIndex, endIndex = limitOffsetParams(request)
@@ -335,15 +356,17 @@ class LeaderboardFulfiller(APIView):
         query_result = dictfetchall(cursor)
         narrowed_result = query_result[startIndex: endIndex]
         serializer = LeaderboardFulfillerSerializer(narrowed_result, many=True)
-        return JsonResponse({'count': len(query_result), 'results': serializer.data}, safe=False)
+        return JsonResponse({
+            'count': len(query_result),
+            'results': serializer.data
+        }, safe=False)
 
 
 class Tokens(APIView):
-    '''
-    exists???
-class Tokens(APIView):
-    '''
     def get(self, request):
+        '''
+        Tokens used in all bounties, ordered by count by type
+        '''
         token_qs = {}
         result = []
         token_to_append = {}

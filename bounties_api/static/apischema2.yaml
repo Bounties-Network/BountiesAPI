@@ -32,7 +32,7 @@ paths:
       parameters: []
       responses:
         '200':
-          description: ''
+          description: 'Get the timeline for bounties network activity'
       tags:
         - analytics
     parameters: []

@@ -31,16 +31,15 @@ jobs:
           name: Run django tests
           command: docker-compose -f docker-compose-circleci-test.yml run bounties_api bash -c "sleep 5 && python manage.py test"
 
-
       - run:
-          name: log in to docker hub
+          name: log in to docker hub and upload docker image
           command: |
-            docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-
-      - run:
-          name: upload docker image
-          command: |
-            docker push consensysbounties/std_bounties:$CIRCLE_SHA1
+            if [ "$DOCKER_HUB_USERNAME" != "" ] && [ "$DOCKER_HUB_PASSWORD" != "" ]; then
+              docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+              docker push consensysbounties/std_bounties:$CIRCLE_SHA1
+            else
+              echo "Missing credentials, skipping docker image pushing"
+            fi
 
       - run:
           name: Install codecov

@@ -22,6 +22,13 @@ seo_client = SEOClient()
 
 class Login(APIView):
     def post(self, request):
+        '''
+        Expects `public_address` and `signature` in `data` on the request
+
+        Logs in the user
+
+        Returns the serialized user
+        '''
         public_address = request.data.get('public_address', '')
         signature = request.data.get('signature', '')
         user = authenticate(public_address=public_address, signature=signature)
@@ -47,12 +54,24 @@ class LoginJWT(APIView):
 
 class Logout(APIView):
     def get(self, request):
+        '''
+        Logs out the user that is currently logged in
+        '''
         logout(request)
         return HttpResponse('Success')
 
 
 class Nonce(APIView):
     def get(self, request, public_address=''):
+        '''
+        Expects a public_address
+
+        Returns nonce and user information:
+        {
+            'nonce': user.nonce,
+            'has_signed_up': bool(user.email) and bool(user.name)
+        }
+        '''
         user = User.objects.get_or_create(
             public_address=public_address.lower())[0]
         return JsonResponse(
@@ -71,6 +90,11 @@ class DismissSignup(APIView):
 
 class UserView(APIView):
     def get(self, request):
+        '''
+        Expects `current_user` on the request
+
+        Returns the currently logged in user serialized
+        '''
         if request.is_logged_in:
             setLastViewed(request, request.current_user)
             return JsonResponse(UserSerializer(request.current_user).data)
@@ -81,6 +105,17 @@ class RequestProfileImageUploadURL(APIView):
     permission_classes = [AuthenticationPermission]
 
     def get(self, request):
+        '''
+        Expects `current_user` on the request
+
+        Returns upload URL's:
+        {
+            'sm_url': 'https://{}/{}'.format(bucket, sm_key),
+            'sm_put_url': sm_put_url,
+            'lg_url': 'https://{}/{}'.format(bucket, lg_key),
+            'lg_put_url': lg_put_url
+        }
+        '''
         AWS_REGION = 'us-east-1'
         client = boto3.client('s3', region_name=AWS_REGION)
 
@@ -88,8 +123,10 @@ class RequestProfileImageUploadURL(APIView):
         nonce = str(uuid4())[:4]
         bucket = 'assets.bounties.network'
 
-        sm_key = '{}/userimages/{}-sm-{}.png'.format(settings.ENVIRONMENT, current_user.public_address, nonce)
-        lg_key = '{}/userimages/{}-lg-{}.png'.format(settings.ENVIRONMENT, current_user.public_address, nonce)
+        sm_key = '{}/userimages/{}-sm-{}.png'.format(
+            settings.ENVIRONMENT, current_user.public_address, nonce)
+        lg_key = '{}/userimages/{}-lg-{}.png'.format(
+            settings.ENVIRONMENT, current_user.public_address, nonce)
 
         sm_put_url = client.generate_presigned_url(
             'put_object',
@@ -119,6 +156,13 @@ class RequestProfileImageUploadURL(APIView):
 
 class SettingsView(APIView):
     def post(self, request):
+        '''
+        Expects `current_user` and `data` on the request
+
+        Saves the data as settings, then saves the user
+
+        Returns the serialized settings
+        '''
         serializer = SettingsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         settings = serializer.save()
@@ -128,6 +172,13 @@ class SettingsView(APIView):
         return JsonResponse(SettingsSerializer(settings).data)
 
     def put(self, request):
+        '''
+        Expects `current_user` and `data` on the request
+
+        Saves the data through the serializer
+
+        Returns the updated serialized settings
+        '''
         user = request.current_user
         settings = user.settings
         serializer = SettingsSerializer(settings, data=request.data)
@@ -137,11 +188,17 @@ class SettingsView(APIView):
 
 
 class LanguageViewSet(viewsets.ReadOnlyModelViewSet):
+    '''
+    Returns ordered languages
+    '''
     serializer_class = LanguageSerializer
     queryset = Language.objects.order_by('name')
 
 
 class SkillViewSet(viewsets.ReadOnlyModelViewSet):
+    '''
+    Returns ordered skills
+    '''
     serializer_class = RankedSkillSerializer
     queryset = RankedSkill.objects.all()
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
@@ -152,6 +209,11 @@ class SkillViewSet(viewsets.ReadOnlyModelViewSet):
 
 class UserInfo(APIView):
     def get(self, request, public_address):
+        '''
+        Expects `public_address`
+
+        Returns the serialized user info
+        '''
         try:
             user = User.objects.get(public_address=public_address.lower())
         except User.DoesNotExist:
@@ -163,6 +225,13 @@ class UserInfo(APIView):
 
 class UserProfile(APIView):
     def post(self, request, public_address):
+        '''
+        Expects `public_address` and `current_user` and `data` on the request
+
+        Saves the user profile using `data`
+
+        Returns the serialized user
+        '''
         user = request.current_user
 
         user.profile_touched_manually = True
@@ -182,6 +251,15 @@ class UserProfile(APIView):
         return JsonResponse(UserProfileSerializer(user).data)
 
     def get(self, request, public_address):
+        '''
+        Expects `public_address`
+        
+        Returns JSON response with user information:
+        {
+            'user': serializer.data,
+            'stats': profile_stats
+        }
+        '''
         try:
             user = User.objects.get(public_address=public_address.lower())
         except User.DoesNotExist:

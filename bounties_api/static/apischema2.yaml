@@ -1,0 +1,2199 @@
+swagger: '2.0'
+info:
+  title: Bounties Network API
+  description: Bounties Network API documentation
+  termsOfService: https://explorer.bounties.network/tos
+  contact:
+    email: contact@bounties.network
+  license:
+    name: MIT License
+  version: v1
+host: localhost:8000
+schemes:
+  - http
+basePath: /
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+  - Basic: []
+paths:
+  /analytics/:
+    get:
+      operationId: analytics_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - analytics
+    parameters: []
+  /auth/login/:
+    post:
+      operationId: auth_login_create
+      summary: Expects `public_address` and `signature` in `data` on the request
+      description: "Logs in the user\n\nReturns the serialized user"
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - auth
+    parameters: []
+  /auth/logout/:
+    get:
+      operationId: auth_logout_list
+      description: Logs out the user that is currently logged in
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - auth
+    parameters: []
+  /auth/user/:
+    get:
+      operationId: auth_user_list
+      summary: Expects `current_user` on the request
+      description: Returns the currently logged in user serialized
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - auth
+    parameters: []
+  /auth/{public_address}/nonce/:
+    get:
+      operationId: auth_nonce_list
+      summary: Expects a public_address
+      description: "Returns nonce and user information:\n{\n    'nonce': user.nonce,\n\
+        \    'has_signed_up': bool(user.email) and bool(user.name)\n}"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - auth
+    parameters:
+      - name: public_address
+        in: path
+        required: true
+        type: string
+  /bounty/:
+    get:
+      operationId: bounty_list
+      description: "exists???\nclass BountyViewSet(viewsets.ReadOnlyModelViewSet):"
+      parameters:
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: platform__in
+          in: query
+          description: Multiple values may be separated by commas.
+          required: false
+          type: string
+        - name: platform
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: issuer
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: experienceLevel
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: experienceLevel__in
+          in: query
+          description: Multiple values may be separated by commas.
+          required: false
+          type: number
+        - name: fulfillmentAmount
+          in: query
+          description: ''
+          required: false
+          type: number
+        - name: fulfillmentAmount__lt
+          in: query
+          description: ''
+          required: false
+          type: number
+        - name: fulfillmentAmount__gt
+          in: query
+          description: ''
+          required: false
+          type: number
+        - name: fulfillmentAmount__lte
+          in: query
+          description: ''
+          required: false
+          type: number
+        - name: bountyStage
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: bountyStage__in
+          in: query
+          description: Multiple values may be separated by commas.
+          required: false
+          type: number
+        - name: bounty_created__lt
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: bounty_created__gt
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: bounty_created
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: deadline__lt
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: deadline__gt
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: deadline
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: bounty_id
+          in: query
+          description: ''
+          required: false
+          type: number
+        - name: categories
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: fulfillments
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Bounty'
+      tags:
+        - bounty
+    parameters: []
+  /bounty/draft/:
+    get:
+      operationId: bounty_draft_list
+      description: "exists???\nclass DraftBountyWriteViewSet(viewsets.ModelViewSet):"
+      parameters:
+        - name: issuer
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: platform__in
+          in: query
+          description: Multiple values may be separated by commas.
+          required: false
+          type: string
+        - name: platform
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/DraftBountyWrite'
+      tags:
+        - bounty
+    post:
+      operationId: bounty_draft_create
+      description: "exists???\nclass DraftBountyWriteViewSet(viewsets.ModelViewSet):"
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DraftBountyWrite'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/DraftBountyWrite'
+      tags:
+        - bounty
+    parameters: []
+  /bounty/draft/{uid}/:
+    get:
+      operationId: bounty_draft_read
+      description: "exists???\nclass DraftBountyWriteViewSet(viewsets.ModelViewSet):"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/DraftBountyWrite'
+      tags:
+        - bounty
+    put:
+      operationId: bounty_draft_update
+      description: "exists???\nclass DraftBountyWriteViewSet(viewsets.ModelViewSet):"
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DraftBountyWrite'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/DraftBountyWrite'
+      tags:
+        - bounty
+    patch:
+      operationId: bounty_draft_partial_update
+      description: "exists???\nclass DraftBountyWriteViewSet(viewsets.ModelViewSet):"
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DraftBountyWrite'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/DraftBountyWrite'
+      tags:
+        - bounty
+    delete:
+      operationId: bounty_draft_delete
+      description: "exists???\nclass DraftBountyWriteViewSet(viewsets.ModelViewSet):"
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - bounty
+    parameters:
+      - name: uid
+        in: path
+        required: true
+        type: string
+        format: uuid
+  /bounty/{bounty_id}/comment/:
+    get:
+      operationId: bounty_comment_list
+      summary: exists????????
+      description: "class BountyComments(mixins.ListModelMixin,\n                \
+        \     viewsets.GenericViewSet):"
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Comment'
+      tags:
+        - bounty
+    parameters:
+      - name: bounty_id
+        in: path
+        required: true
+        type: string
+  /bounty/{bounty_id}/fulfillment/{fulfillment_id}/review/:
+    get:
+      operationId: bounty_fulfillment_review_list
+      summary: Expects `bounty_id` and `fulfillment_id`
+      description: "Returns both reviews:\n{\n    'issuer_review': issuer_review_data,\n\
+        \    'fulfiller_review': fulfiller_review_data,\n}"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - bounty
+    post:
+      operationId: bounty_fulfillment_review_create
+      summary: "Expects `bounty_id` and `fulfillment_id`\nand `current_user` and `data`\
+        \ on the request"
+      description: "Serializes the data as a review\n\nSaves the serialized review\
+        \ and the fulfillment"
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - bounty
+    parameters:
+      - name: bounty_id
+        in: path
+        required: true
+        type: string
+      - name: fulfillment_id
+        in: path
+        required: true
+        type: string
+  /bounty/{id}/:
+    get:
+      operationId: bounty_read
+      description: "exists???\nclass BountyViewSet(viewsets.ReadOnlyModelViewSet):"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Bounty'
+      tags:
+        - bounty
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this bounty.
+        required: true
+        type: integer
+  /category/:
+    get:
+      operationId: category_list
+      description: "exists???\nclass CategoryViewSet(viewsets.ReadOnlyModelViewSet):"
+      parameters:
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: platform
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/RankedCategory'
+      tags:
+        - category
+    parameters: []
+  /category/{id}/:
+    get:
+      operationId: category_read
+      description: "exists???\nclass CategoryViewSet(viewsets.ReadOnlyModelViewSet):"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/RankedCategory'
+      tags:
+        - category
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this ranked category.
+        required: true
+        type: integer
+  /fulfillment/:
+    get:
+      operationId: fulfillment_list
+      description: "exists???\nclass FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):"
+      parameters:
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
+        - name: fulfillment_id
+          in: query
+          description: ''
+          required: false
+          type: number
+        - name: fulfiller
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: bounty
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: bounty__user__public_address
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: platform
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: platform__in
+          in: query
+          description: Multiple values may be separated by commas.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Fulfillment'
+      tags:
+        - fulfillment
+    parameters: []
+  /fulfillment/{id}/:
+    get:
+      operationId: fulfillment_read
+      description: "exists???\nclass FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Fulfillment'
+      tags:
+        - fulfillment
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this fulfillment.
+        required: true
+        type: integer
+  /leaderboard/fulfiller/:
+    get:
+      operationId: leaderboard_fulfiller_list
+      description: "exists???\nclass LeaderboardFulfiller(APIView):"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - leaderboard
+    parameters: []
+  /leaderboard/issuer/:
+    get:
+      operationId: leaderboard_issuer_list
+      description: "exists???\nclass LeaderboardIssuer(APIView):"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - leaderboard
+    parameters: []
+  /notification/activity/user/{public_address}/:
+    get:
+      operationId: notification_activity_user_list
+      description: ''
+      parameters:
+        - name: notification__platform__in
+          in: query
+          description: Multiple values may be separated by commas.
+          required: false
+          type: string
+        - name: notification__platform
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/DashboardNotification'
+      tags:
+        - notification
+    parameters:
+      - name: public_address
+        in: path
+        required: true
+        type: string
+  /notification/activity/user/{public_address}/view_all/:
+    get:
+      operationId: notification_activity_user_view_all_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - notification
+    parameters:
+      - name: public_address
+        in: path
+        required: true
+        type: string
+  /notification/activity/user/{public_address}/{id}/:
+    get:
+      operationId: notification_activity_user_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/DashboardNotification'
+      tags:
+        - notification
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+      - name: public_address
+        in: path
+        required: true
+        type: string
+  /notification/activity/{notification_id}/view/:
+    get:
+      operationId: notification_activity_view_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - notification
+    parameters:
+      - name: notification_id
+        in: path
+        required: true
+        type: string
+  /notification/push/user/{public_address}/:
+    get:
+      operationId: notification_push_user_list
+      description: ''
+      parameters:
+        - name: notification__platform__in
+          in: query
+          description: Multiple values may be separated by commas.
+          required: false
+          type: string
+        - name: notification__platform
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/DashboardNotification'
+      tags:
+        - notification
+    parameters:
+      - name: public_address
+        in: path
+        required: true
+        type: string
+  /notification/push/user/{public_address}/view_all/:
+    get:
+      operationId: notification_push_user_view_all_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - notification
+    parameters:
+      - name: public_address
+        in: path
+        required: true
+        type: string
+  /notification/push/user/{public_address}/{id}/:
+    get:
+      operationId: notification_push_user_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/DashboardNotification'
+      tags:
+        - notification
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+      - name: public_address
+        in: path
+        required: true
+        type: string
+  /notification/push/{notification_id}/view/:
+    get:
+      operationId: notification_push_view_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - notification
+    parameters:
+      - name: notification_id
+        in: path
+        required: true
+        type: string
+  /notification/transaction/user/{public_address}/:
+    get:
+      operationId: notification_transaction_user_list
+      description: ''
+      parameters:
+        - name: platform
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Transaction'
+      tags:
+        - notification
+    post:
+      operationId: notification_transaction_user_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Transaction'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Transaction'
+      tags:
+        - notification
+    parameters:
+      - name: public_address
+        in: path
+        required: true
+        type: string
+  /notification/transaction/{transaction_id}/view/:
+    get:
+      operationId: notification_transaction_view_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - notification
+    parameters:
+      - name: transaction_id
+        in: path
+        required: true
+        type: string
+  /reviews/:
+    get:
+      operationId: reviews_list
+      description: ''
+      parameters:
+        - name: reviewer__public_address
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: reviewee__public_address
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: platform
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: platform__in
+          in: query
+          description: Multiple values may be separated by commas.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Review'
+      tags:
+        - reviews
+    parameters: []
+  /reviews/{id}/:
+    get:
+      operationId: reviews_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Review'
+      tags:
+        - reviews
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+  /token/:
+    get:
+      operationId: token_list
+      description: "exists???\nclass Tokens(APIView):"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - token
+    parameters: []
+  /user/languages/:
+    get:
+      operationId: user_languages_list
+      description: Returns ordered languages
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Language'
+      tags:
+        - user
+    parameters: []
+  /user/languages/{id}/:
+    get:
+      operationId: user_languages_read
+      description: Returns ordered languages
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Language'
+      tags:
+        - user
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this language.
+        required: true
+        type: integer
+  /user/requestProfileImageUploadURL/:
+    get:
+      operationId: user_requestProfileImageUploadURL_list
+      summary: Expects `current_user` on the request
+      description: "Returns upload URL's:\n{\n    'sm_url': 'https://{}/{}'.format(bucket,\
+        \ sm_key),\n    'sm_put_url': sm_put_url,\n    'lg_url': 'https://{}/{}'.format(bucket,\
+        \ lg_key),\n    'lg_put_url': lg_put_url\n}"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - user
+    parameters: []
+  /user/settings/:
+    post:
+      operationId: user_settings_create
+      summary: Expects `current_user` and `data` on the request
+      description: "Saves the data as settings, then saves the user\n\nReturns the\
+        \ serialized settings"
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - user
+    put:
+      operationId: user_settings_update
+      summary: Expects `current_user` and `data` on the request
+      description: "Saves the data through the serializer\n\nReturns the updated serialized\
+        \ settings"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - user
+    parameters: []
+  /user/skills/:
+    get:
+      operationId: user_skills_list
+      description: Returns ordered skills
+      parameters:
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+              previous:
+                type: string
+                format: uri
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/RankedSkill'
+      tags:
+        - user
+    parameters: []
+  /user/skills/{id}/:
+    get:
+      operationId: user_skills_read
+      description: Returns ordered skills
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/RankedSkill'
+      tags:
+        - user
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this ranked skill.
+        required: true
+        type: integer
+  /user/{public_address}/info/:
+    get:
+      operationId: user_info_list
+      summary: Expects `public_address`
+      description: Returns the serialized user info
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - user
+    parameters:
+      - name: public_address
+        in: path
+        required: true
+        type: string
+  /user/{public_address}/profile/:
+    get:
+      operationId: user_profile_list
+      summary: Expects `public_address`
+      description: "Returns JSON response with user information:\n{\n    'user': serializer.data,\n\
+        \    'stats': profile_stats\n}"
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - user
+    post:
+      operationId: user_profile_create
+      summary: Expects `public_address` and `current_user` and `data` on the request
+      description: "Saves the user profile using `data`\n\nReturns the serialized\
+        \ user"
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - user
+    parameters:
+      - name: public_address
+        in: path
+        required: true
+        type: string
+definitions:
+  Category:
+    required:
+      - name
+      - normalized_name
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 128
+        minLength: 1
+      normalized_name:
+        title: Normalized name
+        type: string
+        maxLength: 128
+        minLength: 1
+  Token:
+    title: Current market token data
+    required:
+      - normalized_name
+      - name
+      - symbol
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      normalized_name:
+        title: Normalized name
+        type: string
+        maxLength: 128
+        minLength: 1
+      name:
+        title: Name
+        type: string
+        maxLength: 128
+        minLength: 1
+      symbol:
+        title: Symbol
+        type: string
+        maxLength: 128
+        minLength: 1
+      price_usd:
+        title: Price usd
+        type: number
+        x-nullable: true
+  User:
+    title: User
+    required:
+      - categories
+      - languages
+      - skills
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      public_address:
+        title: Public address
+        type: string
+        maxLength: 500
+      name:
+        title: Name
+        type: string
+        maxLength: 128
+      email:
+        title: Email
+        type: string
+        maxLength: 128
+      wants_marketing_emails:
+        title: Wants marketing emails
+        type: boolean
+      organization:
+        title: Organization
+        type: string
+        maxLength: 128
+      small_profile_image_url:
+        title: Small profile image url
+        type: string
+        maxLength: 256
+      large_profile_image_url:
+        title: Large profile image url
+        type: string
+        maxLength: 256
+      page_preview:
+        title: Page preview
+        type: string
+        maxLength: 256
+      website:
+        title: Website
+        type: string
+        maxLength: 128
+      twitter:
+        title: Twitter
+        type: string
+        maxLength: 128
+      github:
+        title: Github
+        type: string
+        maxLength: 128
+      linkedin:
+        title: Linkedin
+        type: string
+        maxLength: 128
+      dribble:
+        title: Dribble
+        type: string
+        maxLength: 128
+      categories:
+        type: array
+        items:
+          type: integer
+        uniqueItems: true
+      languages:
+        type: array
+        items:
+          type: integer
+        uniqueItems: true
+      skills:
+        type: array
+        items:
+          type: integer
+        uniqueItems: true
+  Bounty:
+    required:
+      - id
+      - bountyStage
+      - deadline
+      - fulfillmentAmount
+      - bounty_id
+      - data
+      - issuer
+    type: object
+    properties:
+      id:
+        title: Id
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bountyStage:
+        title: Bountystage
+        type: integer
+        enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+      categories:
+        type: array
+        items:
+          $ref: '#/definitions/Category'
+        readOnly: true
+      current_market_token_data:
+        $ref: '#/definitions/Token'
+      user:
+        $ref: '#/definitions/User'
+      fulfillment_count:
+        title: Fulfillment count
+        type: string
+        readOnly: true
+      comment_count:
+        title: Comment count
+        type: string
+        readOnly: true
+      created:
+        title: Created
+        type: string
+        format: date-time
+        readOnly: true
+      modified:
+        title: Modified
+        type: string
+        format: date-time
+        readOnly: true
+      deadline:
+        title: Deadline
+        type: string
+        format: date-time
+      arbiter:
+        title: Arbiter
+        type: string
+        maxLength: 128
+        minLength: 1
+        x-nullable: true
+      private_fulfillments:
+        title: Private fulfillments
+        type: boolean
+      fulfillmentAmount:
+        title: FulfillmentAmount
+        type: string
+        format: decimal
+      calculated_fulfillmentAmount:
+        title: Calculated fulfillmentAmount
+        type: string
+        format: decimal
+        x-nullable: true
+      paysTokens:
+        title: PaysTokens
+        type: boolean
+      experienceLevel:
+        title: ExperienceLevel
+        type: integer
+        enum:
+          - 0
+          - 1
+          - 2
+        x-nullable: true
+      revisions:
+        title: Revisions
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+        x-nullable: true
+      title:
+        title: Title
+        type: string
+        maxLength: 256
+      description:
+        title: Description
+        type: string
+      tokenSymbol:
+        title: TokenSymbol
+        type: string
+        maxLength: 128
+        minLength: 1
+      tokenDecimals:
+        title: TokenDecimals
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      tokenContract:
+        title: TokenContract
+        type: string
+        maxLength: 128
+        minLength: 1
+      usd_price:
+        title: Usd price
+        type: number
+      issuer_name:
+        title: Issuer name
+        type: string
+        maxLength: 128
+      issuer_email:
+        title: Issuer email
+        type: string
+        maxLength: 128
+      issuer_githubUsername:
+        title: Issuer githubUsername
+        type: string
+        maxLength: 128
+      issuer_address:
+        title: Issuer address
+        type: string
+        maxLength: 128
+      sourceFileName:
+        title: SourceFileName
+        type: string
+        maxLength: 256
+      sourceFileHash:
+        title: SourceFileHash
+        type: string
+        maxLength: 256
+      sourceDirectoryHash:
+        title: SourceDirectoryHash
+        type: string
+        maxLength: 256
+      webReferenceURL:
+        title: WebReferenceURL
+        type: string
+        maxLength: 256
+      platform:
+        title: Platform
+        type: string
+        maxLength: 128
+      schemaVersion:
+        title: SchemaVersion
+        type: string
+        maxLength: 64
+      schemaName:
+        title: SchemaName
+        type: string
+        maxLength: 128
+        minLength: 1
+        x-nullable: true
+      uid:
+        title: Uid
+        type: string
+        maxLength: 128
+        x-nullable: true
+      bounty_created:
+        title: Bounty created
+        type: string
+        format: date-time
+        x-nullable: true
+      bounty_id:
+        title: Bounty id
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      data:
+        title: Data
+        type: string
+        maxLength: 128
+        minLength: 1
+      issuer:
+        title: Issuer
+        type: string
+        maxLength: 128
+        minLength: 1
+      old_balance:
+        title: Old balance
+        type: string
+        format: decimal
+        x-nullable: true
+      tokenLockPrice:
+        title: TokenLockPrice
+        type: number
+        x-nullable: true
+      balance:
+        title: Balance
+        type: string
+        format: decimal
+        x-nullable: true
+      calculated_balance:
+        title: Calculated balance
+        type: string
+        format: decimal
+        x-nullable: true
+      image_preview:
+        title: Image preview
+        type: string
+        maxLength: 256
+      data_categories:
+        title: Data categories
+        type: string
+        x-nullable: true
+      data_issuer:
+        title: Data issuer
+        type: string
+        x-nullable: true
+      data_json:
+        title: Data json
+        type: string
+        x-nullable: true
+      token:
+        title: Token
+        type: integer
+        x-nullable: true
+  DraftBountyWrite:
+    required:
+      - categories
+      - deadline
+      - fulfillmentAmount
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      categories:
+        type: array
+        items:
+          type: string
+        uniqueItems: true
+      tokenContract:
+        title: Tokencontract
+        type: string
+      tokenSymbol:
+        title: Tokensymbol
+        type: string
+        readOnly: true
+        minLength: 1
+      tokenDecimals:
+        title: Tokendecimals
+        type: integer
+        readOnly: true
+      arbiter:
+        title: Arbiter
+        type: string
+      usd_price:
+        title: Usd price
+        type: number
+        readOnly: true
+      on_chain:
+        title: On chain
+        type: boolean
+        readOnly: true
+      current_market_token_data:
+        $ref: '#/definitions/Token'
+      webReferenceURL:
+        title: Webreferenceurl
+        type: string
+      uid:
+        title: Uid
+        type: string
+        readOnly: true
+        minLength: 1
+      calculated_fulfillmentAmount:
+        title: Calculated fulfillmentamount
+        type: string
+        format: decimal
+        readOnly: true
+      user:
+        $ref: '#/definitions/User'
+      issuer:
+        title: Issuer
+        type: string
+        readOnly: true
+        minLength: 1
+      created:
+        title: Created
+        type: string
+        format: date-time
+        readOnly: true
+      modified:
+        title: Modified
+        type: string
+        format: date-time
+        readOnly: true
+      deadline:
+        title: Deadline
+        type: string
+        format: date-time
+      private_fulfillments:
+        title: Private fulfillments
+        type: boolean
+      fulfillmentAmount:
+        title: FulfillmentAmount
+        type: string
+        format: decimal
+      paysTokens:
+        title: PaysTokens
+        type: boolean
+      experienceLevel:
+        title: ExperienceLevel
+        type: integer
+        enum:
+          - 0
+          - 1
+          - 2
+        x-nullable: true
+      revisions:
+        title: Revisions
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+        x-nullable: true
+      title:
+        title: Title
+        type: string
+        maxLength: 256
+      description:
+        title: Description
+        type: string
+      issuer_name:
+        title: Issuer name
+        type: string
+        maxLength: 128
+      issuer_email:
+        title: Issuer email
+        type: string
+        maxLength: 128
+      issuer_githubUsername:
+        title: Issuer githubUsername
+        type: string
+        maxLength: 128
+      issuer_address:
+        title: Issuer address
+        type: string
+        maxLength: 128
+      sourceFileName:
+        title: SourceFileName
+        type: string
+        maxLength: 256
+      sourceFileHash:
+        title: SourceFileHash
+        type: string
+        maxLength: 256
+      sourceDirectoryHash:
+        title: SourceDirectoryHash
+        type: string
+        maxLength: 256
+      schemaVersion:
+        title: SchemaVersion
+        type: string
+        maxLength: 64
+      schemaName:
+        title: SchemaName
+        type: string
+        maxLength: 128
+        minLength: 1
+        x-nullable: true
+      data:
+        title: Data
+        type: string
+        maxLength: 128
+        x-nullable: true
+      platform:
+        title: Platform
+        type: string
+        maxLength: 128
+  Comment:
+    required:
+      - text
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      user:
+        $ref: '#/definitions/User'
+      created:
+        title: Created
+        type: string
+        format: date-time
+        readOnly: true
+      modified:
+        title: Modified
+        type: string
+        format: date-time
+        readOnly: true
+      text:
+        title: Text
+        type: string
+        minLength: 1
+  RankedCategory:
+    required:
+      - name
+      - normalized_name
+      - total_count
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 128
+        minLength: 1
+      normalized_name:
+        title: Normalized name
+        type: string
+        maxLength: 128
+        minLength: 1
+      total_count:
+        title: Total count
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      platform:
+        title: Platform
+        type: string
+        maxLength: 128
+        minLength: 1
+  BountyFulfillment:
+    title: Bounty data
+    required:
+      - id
+      - bounty_id
+      - fulfillmentAmount
+    type: object
+    properties:
+      id:
+        title: Id
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bounty_id:
+        title: Bounty id
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      bountyStage:
+        title: BountyStage
+        type: integer
+        enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+      title:
+        title: Title
+        type: string
+        maxLength: 256
+      usd_price:
+        title: Usd price
+        type: number
+      tokenSymbol:
+        title: TokenSymbol
+        type: string
+        maxLength: 128
+        minLength: 1
+      tokenDecimals:
+        title: TokenDecimals
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      fulfillmentAmount:
+        title: FulfillmentAmount
+        type: string
+        format: decimal
+      calculated_fulfillmentAmount:
+        title: Calculated fulfillmentAmount
+        type: string
+        format: decimal
+        x-nullable: true
+      user:
+        $ref: '#/definitions/User'
+  Review:
+    title: Fulfiller review
+    required:
+      - rating
+      - review
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      reviewer:
+        $ref: '#/definitions/User'
+      reviewee:
+        $ref: '#/definitions/User'
+      created:
+        title: Created
+        type: string
+        format: date-time
+        readOnly: true
+      modified:
+        title: Modified
+        type: string
+        format: date-time
+        readOnly: true
+      rating:
+        title: Rating
+        type: integer
+        maximum: 5
+        minimum: 1
+      review:
+        title: Review
+        type: string
+        minLength: 1
+      platform:
+        title: Platform
+        type: string
+        maxLength: 128
+  Fulfillment:
+    required:
+      - fulfillment_id
+      - data
+      - fulfiller
+      - bounty
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      bounty_data:
+        $ref: '#/definitions/BountyFulfillment'
+      fulfiller_review:
+        $ref: '#/definitions/Review'
+      issuer_review:
+        $ref: '#/definitions/Review'
+      user:
+        $ref: '#/definitions/User'
+      fulfillment_id:
+        title: Fulfillment id
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      created:
+        title: Created
+        type: string
+        format: date-time
+        readOnly: true
+      modified:
+        title: Modified
+        type: string
+        format: date-time
+        readOnly: true
+      fulfillment_created:
+        title: Fulfillment created
+        type: string
+        format: date-time
+        x-nullable: true
+      data:
+        title: Data
+        type: string
+        maxLength: 128
+        minLength: 1
+      accepted:
+        title: Accepted
+        type: boolean
+      accepted_date:
+        title: Accepted date
+        type: string
+        format: date-time
+        x-nullable: true
+      usd_price:
+        title: Usd price
+        type: number
+        x-nullable: true
+      fulfiller:
+        title: Fulfiller
+        type: string
+        maxLength: 128
+        minLength: 1
+      fulfiller_name:
+        title: Fulfiller name
+        type: string
+        maxLength: 128
+      fulfiller_email:
+        title: Fulfiller email
+        type: string
+        maxLength: 128
+      fulfiller_githubUsername:
+        title: Fulfiller githubUsername
+        type: string
+        maxLength: 128
+      fulfiller_address:
+        title: Fulfiller address
+        type: string
+        maxLength: 128
+      description:
+        title: Description
+        type: string
+      url:
+        title: Url
+        type: string
+        maxLength: 256
+      sourceFileName:
+        title: SourceFileName
+        type: string
+        maxLength: 256
+      sourceFileHash:
+        title: SourceFileHash
+        type: string
+        maxLength: 256
+      sourceDirectoryHash:
+        title: SourceDirectoryHash
+        type: string
+        maxLength: 256
+      platform:
+        title: Platform
+        type: string
+        maxLength: 128
+      schemaVersion:
+        title: SchemaVersion
+        type: string
+        maxLength: 64
+      schemaName:
+        title: SchemaName
+        type: string
+        maxLength: 128
+      data_fulfiller:
+        title: Data fulfiller
+        type: string
+        x-nullable: true
+      data_json:
+        title: Data json
+        type: string
+        x-nullable: true
+      bounty:
+        title: Bounty
+        type: integer
+  Notification:
+    title: Notification
+    required:
+      - uid
+      - notification_name
+      - notification_created
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      user:
+        $ref: '#/definitions/User'
+      from_user:
+        $ref: '#/definitions/User'
+      uid:
+        title: Uid
+        type: string
+        maxLength: 512
+        minLength: 1
+      created:
+        title: Created
+        type: string
+        format: date-time
+        readOnly: true
+      updated:
+        title: Updated
+        type: string
+        format: date-time
+        readOnly: true
+      notification_name:
+        title: Notification name
+        type: integer
+        enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          - 14
+          - 6
+          - 7
+          - 8
+          - 9
+          - 10
+          - 11
+          - 12
+          - 13
+          - 15
+          - 16
+          - 17
+          - 18
+          - 19
+          - 20
+          - 21
+          - 22
+          - 23
+          - 24
+          - 25
+          - 26
+      notification_created:
+        title: Notification created
+        type: string
+        format: date-time
+      email_sent:
+        title: Email sent
+        type: boolean
+      dashboard:
+        title: Dashboard
+        type: boolean
+      platform:
+        title: Platform
+        type: string
+        maxLength: 128
+  DashboardNotification:
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      notification:
+        $ref: '#/definitions/Notification'
+      created:
+        title: Created
+        type: string
+        format: date-time
+        readOnly: true
+      updated:
+        title: Updated
+        type: string
+        format: date-time
+        readOnly: true
+      is_activity:
+        title: Is activity
+        type: boolean
+      viewed:
+        title: Viewed
+        type: boolean
+      string_data:
+        title: String data
+        type: string
+        maxLength: 512
+      data:
+        title: Data
+        type: string
+        x-nullable: true
+  Transaction:
+    required:
+      - tx_hash
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      failed:
+        title: Failed
+        type: boolean
+        readOnly: true
+      completed:
+        title: Completed
+        type: boolean
+        readOnly: true
+      viewed:
+        title: Viewed
+        type: boolean
+        readOnly: true
+      data:
+        title: Data
+        type: string
+        readOnly: true
+      created:
+        title: Created
+        type: string
+        format: date-time
+        readOnly: true
+      updated:
+        title: Updated
+        type: string
+        format: date-time
+        readOnly: true
+      tx_hash:
+        title: Tx hash
+        type: string
+        maxLength: 256
+        minLength: 1
+      platform:
+        title: Platform
+        type: string
+        maxLength: 128
+  Language:
+    required:
+      - name
+      - normalized_name
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 128
+        minLength: 1
+      normalized_name:
+        title: Normalized name
+        type: string
+        maxLength: 128
+        minLength: 1
+  RankedSkill:
+    required:
+      - name
+      - normalized_name
+      - total_count
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 128
+        minLength: 1
+      normalized_name:
+        title: Normalized name
+        type: string
+        maxLength: 128
+        minLength: 1
+      total_count:
+        title: Total count
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648

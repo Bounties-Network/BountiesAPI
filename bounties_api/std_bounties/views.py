@@ -10,7 +10,7 @@ from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList, lim
 from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_FULFILLER_QUERY
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer, ReviewSerializer
 from std_bounties.models import Bounty, DraftBounty, Fulfillment, RankedCategory, Token, Comment, Review
-from std_bounties.filters import BountiesFilter, DraftBountiesFilter, FulfillmentsFilter, RankedCategoryFilter, ReviewsFilter
+from std_bounties.filters import BountiesFilter, DraftBountiesFilter, FulfillmentsFilter, RankedCategoryFilter, ReviewsFilter, CommentsFilter
 from user.permissions import AuthenticationPermission, UserObjectPermissions
 from notifications.notification_client import NotificationClient
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -24,6 +24,11 @@ class ReviewsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ReviewSerializer
 
     def get_queryset(self):
+        '''
+        Expects `review_type` on the request
+
+        Returns reviews for 'fulfiller' or 'issuer'
+        '''
         review_type = self.request.GET.get('review_type', '')
 
         if review_type == 'fulfiller':
@@ -44,6 +49,15 @@ class SubmissionReviews(APIView):
     permission_classes = [AuthenticationPermission]
 
     def get(self, request, bounty_id, fulfillment_id):
+        '''
+        Expects `bounty_id` and `fulfillment_id`
+
+        Returns both reviews:
+        {
+            'issuer_review': issuer_review_data,
+            'fulfiller_review': fulfiller_review_data,
+        }
+        '''
         bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
         fulfillment = get_object_or_404(
             Fulfillment,
@@ -62,6 +76,14 @@ class SubmissionReviews(APIView):
         })
 
     def post(self, request, bounty_id, fulfillment_id):
+        '''
+        Expects `bounty_id` and `fulfillment_id`
+        and `current_user` and `data` on the request
+
+        Serializes the data as a review
+
+        Saves the serialized review and the fulfillment
+        '''
         bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
         fulfillment = get_object_or_404(
             Fulfillment,
@@ -108,6 +130,12 @@ class SubmissionReviews(APIView):
 
 class BountyComments(mixins.ListModelMixin,
                      viewsets.GenericViewSet):
+    '''
+    exists????????
+
+class BountyComments(mixins.ListModelMixin,
+                     viewsets.GenericViewSet):
+    '''
 
     serializer_class = CommentSerializer
 
@@ -138,6 +166,10 @@ class BountyComments(mixins.ListModelMixin,
 
 
 class DraftBountyWriteViewSet(viewsets.ModelViewSet):
+    '''
+    exists???
+class DraftBountyWriteViewSet(viewsets.ModelViewSet):
+    '''
     queryset = DraftBounty.objects.filter(on_chain=False)
     serializer_class = DraftBountyWriteSerializer
     lookup_field = 'uid'
@@ -158,6 +190,10 @@ class DraftBountyWriteViewSet(viewsets.ModelViewSet):
 
 
 class BountyViewSet(viewsets.ReadOnlyModelViewSet):
+    '''
+    exists???
+class BountyViewSet(viewsets.ReadOnlyModelViewSet):
+    '''
     serializer_class = BountySerializer
     queryset = Bounty.objects.all().prefetch_related(
         'categories').select_related('token').distinct()
@@ -176,6 +212,10 @@ class BountyViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
+    '''
+    exists???
+class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
+    '''
     serializer_class = FulfillmentSerializer
     queryset = Fulfillment.objects.all().select_related('bounty')
 
@@ -204,6 +244,10 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    '''
+    exists???
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    '''
     serializer_class = RankedCategorySerializer
     queryset = RankedCategory.objects.all()
     filter_class = RankedCategoryFilter
@@ -214,6 +258,10 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class UserProfile(APIView):
+    '''
+    exists???
+class UserProfile(APIView):
+    '''
     def get(self, request, address=''):
         platform_in = extractInParams(request, 'platform', 'platform__in')
         extra_filters = {}
@@ -235,6 +283,10 @@ class UserProfile(APIView):
 
 
 class LeaderboardIssuer(APIView):
+    '''
+    exists???
+class LeaderboardIssuer(APIView):
+    '''
     def get(self, request):
         sql_param = ''
         platform_in = extractInParams(request, 'platform', 'platform__in')
@@ -259,6 +311,10 @@ class LeaderboardIssuer(APIView):
 
 
 class LeaderboardFulfiller(APIView):
+    '''
+    exists???
+class LeaderboardFulfiller(APIView):
+    '''
     def get(self, request):
         sql_param = ''
         platform_in = extractInParams(request, 'platform', 'platform__in')
@@ -283,6 +339,10 @@ class LeaderboardFulfiller(APIView):
 
 
 class Tokens(APIView):
+    '''
+    exists???
+class Tokens(APIView):
+    '''
     def get(self, request):
         token_qs = {}
         result = []

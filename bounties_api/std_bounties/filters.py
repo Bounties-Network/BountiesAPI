@@ -1,5 +1,13 @@
 import rest_framework_filters as filters
-from std_bounties.models import Bounty, Category, DraftBounty, Fulfillment, RankedCategory, Review
+from std_bounties.models import (
+    Bounty,
+    Category,
+    DraftBounty,
+    Fulfillment,
+    RankedCategory,
+    Review,
+    Comment
+)
 
 
 class CategoriesFilter(filters.FilterSet):
@@ -75,4 +83,13 @@ class BountiesFilter(filters.FilterSet):
             'bounty_created': ['lt', 'gt', 'exact'],
             'deadline': ['lt', 'gt', 'exact'],
             'bounty_id': ['exact'],
+        }
+
+
+class CommentsFilter(filters.FilterSet):
+    class Meta:
+        model = Comment
+        fields = {
+            'created': ['lt', 'gt', 'exact'],
+            'user': ['exact'],
         }

@@ -1481,6 +1481,7 @@ definitions:
         type: integer
       fulfillments_paid:
         type: integer
+
   Category:
     required:
       - name
@@ -1501,6 +1502,7 @@ definitions:
         type: string
         maxLength: 128
         minLength: 1
+
   Token:
     title: Current market token data
     required:
@@ -1532,6 +1534,7 @@ definitions:
         title: Price usd
         type: number
         x-nullable: true
+
   User:
     title: User
     required:
@@ -1610,6 +1613,7 @@ definitions:
         items:
           type: integer
         uniqueItems: true
+
   Bounty:
     required:
       - id
@@ -1845,6 +1849,7 @@ definitions:
         title: Token
         type: integer
         x-nullable: true
+
   DraftBountyWrite:
     required:
       - categories
@@ -1998,6 +2003,7 @@ definitions:
         title: Platform
         type: string
         maxLength: 128
+
   Comment:
     required:
       - text
@@ -2025,6 +2031,7 @@ definitions:
         title: Text
         type: string
         minLength: 1
+
   RankedCategory:
     description: This consolidates all category variations to match based on normalized names. Also contains total count of usage as a normalized name, even when there is a collision ie. (Javascript and JavaScript)
     required:
@@ -2057,6 +2064,7 @@ definitions:
         type: string
         maxLength: 128
         minLength: 1
+
   BountyFulfillment:
     description: Bounty fields passed as the relationship in the fulfillment endpoints.
     title: Bounty data
@@ -2113,6 +2121,7 @@ definitions:
         x-nullable: true
       user:
         $ref: '#/definitions/User'
+
   Review:
     title: Fulfiller review
     required:
@@ -2151,6 +2160,7 @@ definitions:
         title: Platform
         type: string
         maxLength: 128
+
   Fulfillment:
     required:
       - fulfillment_id
@@ -2273,6 +2283,7 @@ definitions:
       bounty:
         title: Bounty
         type: integer
+
   Notification:
     title: Notification
     required:
@@ -2348,6 +2359,7 @@ definitions:
         title: Platform
         type: string
         maxLength: 128
+
   DashboardNotification:
     type: object
     properties:
@@ -2381,6 +2393,7 @@ definitions:
         title: Data
         type: string
         x-nullable: true
+
   Transaction:
     required:
       - tx_hash
@@ -2425,6 +2438,7 @@ definitions:
         title: Platform
         type: string
         maxLength: 128
+
   Language:
     required:
       - name
@@ -2441,6 +2455,7 @@ definitions:
         type: string
         maxLength: 128
         minLength: 1
+
   RankedSkill:
     required:
       - name

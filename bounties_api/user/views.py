@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework import viewsets
-from user.backend import authenticate, login, logout
+from user.backend import authenticate, login, logout, setLastViewed
 from user.serializers import LanguageSerializer, UserSerializer, UserInfoSerializer, UserProfileSerializer, SettingsSerializer, RankedSkillSerializer
 from user.models import Language, User, RankedSkill
 from user.permissions import AuthenticationPermission
@@ -47,6 +47,7 @@ class Nonce(APIView):
 class UserView(APIView):
     def get(self, request):
         if request.is_logged_in:
+            setLastViewed(request, request.current_user)
             return JsonResponse(UserSerializer(request.current_user).data)
         return HttpResponse('Unauthorized', status=401)
 

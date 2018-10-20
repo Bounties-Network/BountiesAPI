@@ -4,6 +4,9 @@ from user.models import User
 # Best approach for now with defunct until other forms are more stable
 from eth_account.messages import defunct_hash_message
 from web3.auto import w3
+from django.conf import settings
+import datetime
+import jwt
 import logging
 
 
@@ -31,8 +34,13 @@ def authenticate(public_address='', signature=''):
 
 def login(request, user):
     request.session['public_address'] = user.public_address.lower()
-    user.last_logged_in = datetime.now(timezone.utc)
+    user.last_logged_in = datetime.datetime.now(timezone.utc)
     user.save()
+
+
+def loginJWT(request, user):
+    expiration = datetime.datetime.utcnow() + datetime.timedelta(weeks=2)
+    return jwt.encode({ 'public_address': user.public_address, 'exp': expiration }, settings.SECRET_KEY, algorithm="HS256")
 
 
 def logout(request):
@@ -40,7 +48,7 @@ def logout(request):
 
 
 def setLastViewed(request, user):
-    user.last_viewed = datetime.now(timezone.utc)
+    user.last_viewed = datetime.datetime.now(timezone.utc)
     user.save()
 
 

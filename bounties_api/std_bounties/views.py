@@ -10,7 +10,7 @@ from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList, lim
 from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_FULFILLER_QUERY
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer, ReviewSerializer
 from std_bounties.models import Bounty, DraftBounty, Fulfillment, RankedCategory, Token, Comment, Review
-from std_bounties.filters import BountiesFilter, DraftBountiesFilter, FulfillmentsFilter, RankedCategoryFilter, ReviewsFilter, CommentsFilter
+from std_bounties.filters import BountiesFilter, DraftBountiesFilter, FulfillmentsFilter, RankedCategoryFilter, ReviewsFilter
 from user.permissions import AuthenticationPermission, UserObjectPermissions
 from notifications.notification_client import NotificationClient
 from rest_framework.filters import OrderingFilter, SearchFilter

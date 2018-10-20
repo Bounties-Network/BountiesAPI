@@ -84,12 +84,3 @@ class BountiesFilter(filters.FilterSet):
             'deadline': ['lt', 'gt', 'exact'],
             'bounty_id': ['exact'],
         }
-
-
-class CommentsFilter(filters.FilterSet):
-    class Meta:
-        model = Comment
-        fields = {
-            'created': ['lt', 'gt', 'exact'],
-            'user': ['exact'],
-        }

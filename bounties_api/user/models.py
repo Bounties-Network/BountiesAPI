@@ -77,7 +77,7 @@ class User(models.Model):
     dribble = models.CharField(max_length=128, blank=True)
     settings = models.ForeignKey(Settings, null=True)
     created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    edited = models.DateTimeField(auto_now=True)
+    edited = models.DateTimeField(auto_now=True, null=True)
     last_viewed = models.DateTimeField(blank=True, null=True)
     last_logged_in = models.DateTimeField(blank=True, null=True)
     ens_domain = models.TextField(max_length=500, blank=True)

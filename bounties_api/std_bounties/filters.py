@@ -5,8 +5,7 @@ from std_bounties.models import (
     DraftBounty,
     Fulfillment,
     RankedCategory,
-    Review,
-    Comment
+    Review
 )
 
 

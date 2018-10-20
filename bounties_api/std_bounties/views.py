@@ -6,11 +6,43 @@ from django.http import JsonResponse, Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from rest_framework.views import APIView
-from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList, limitOffsetParams
-from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_FULFILLER_QUERY
-from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer, ReviewSerializer
-from std_bounties.models import Bounty, DraftBounty, Fulfillment, RankedCategory, Token, Comment, Review
-from std_bounties.filters import BountiesFilter, DraftBountiesFilter, FulfillmentsFilter, RankedCategoryFilter, ReviewsFilter
+from bounties.utils import (
+    dictfetchall,
+    extractInParams,
+    sqlGenerateOrList,
+    limitOffsetParams
+)
+from std_bounties.queries import (
+    LEADERBOARD_ISSUER_QUERY,
+    LEADERBOARD_FULFILLER_QUERY
+)
+from std_bounties.serializers import (
+    BountySerializer,
+    FulfillmentSerializer,
+    RankedCategorySerializer,
+    LeaderboardIssuerSerializer,
+    LeaderboardFulfillerSerializer,
+    TokenSerializer,
+    DraftBountyWriteSerializer,
+    CommentSerializer,
+    ReviewSerializer
+)
+from std_bounties.models import (
+    Bounty,
+    DraftBounty,
+    Fulfillment,
+    RankedCategory,
+    Token,
+    Comment,
+    Review
+)
+from std_bounties.filters import (
+    BountiesFilter,
+    DraftBountiesFilter,
+    FulfillmentsFilter,
+    RankedCategoryFilter,
+    ReviewsFilter
+)
 from user.permissions import AuthenticationPermission, UserObjectPermissions
 from notifications.notification_client import NotificationClient
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -262,7 +294,7 @@ class UserProfile(APIView):
         User profile based on latest fulfillment
 
         Expects `platform` singular or `platform__in` array of platforms
-        
+
         Finds fulfillments found given parameters, ordered by created
 
         Returns profile based on the latest fulfillment found
@@ -290,7 +322,7 @@ class LeaderboardIssuer(APIView):
     def get(self, request):
         '''
         Leaderboard data based on issuer
-        
+
         Expects single `platform` or array of `platform__in`
 
         Returns:
@@ -328,7 +360,7 @@ class LeaderboardFulfiller(APIView):
     def get(self, request):
         '''
         Leaderboard data based on fulfiller
-        
+
         Expects single `platform` or array of `platform__in`
 
         Returns:

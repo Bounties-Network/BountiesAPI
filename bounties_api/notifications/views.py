@@ -49,7 +49,7 @@ class NotificationActivityViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         '''
         All activity notifications, ordered by created
-        
+
         Expects `public_address`
         '''
         public_address = self.kwargs.get('public_address')
@@ -65,7 +65,7 @@ class NotificationPushViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         '''
         All non-activity notifications, ordered by created
-        
+
         Expects `public_address`
         '''
         public_address = self.kwargs.get('public_address')
@@ -83,7 +83,7 @@ class NotificationViewed(APIView):
     def get(self, request, notification_id):
         '''
         Sets the `notification_id` notification viewed to True
-        
+
         Expects `notification_id`
         '''
         notification = get_object_or_404(
@@ -101,7 +101,7 @@ class TransactionViewed(APIView):
     def get(self, request, transaction_id):
         '''
         Sets the `transaction_id` transaction viewed to True
-        
+
         Expects `transaction_id`
         '''
         transaction = get_object_or_404(Transaction, id=transaction_id)
@@ -118,7 +118,7 @@ class NotificationActivityViewAll(APIView):
     def get(self, request, public_address):
         '''
         Sets all activity notifications for `public_address` viewed to True
-        
+
         Expects `public_address`
         '''
         notifications = DashboardNotification.objects.filter(
@@ -135,7 +135,7 @@ class NotificationPushViewAll(APIView):
     def get(self, request, public_address):
         '''
         Sets all non-activty notifications for `public_address` viewed to True
-        
+
         Expects `public_address`
         '''
         notifications = DashboardNotification.objects.filter(

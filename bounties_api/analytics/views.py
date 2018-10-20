@@ -7,7 +7,11 @@ from rest_framework.response import Response
 from django.db.models import Count
 
 from analytics.filters import BountiesTimelineFilter
-from .serializers import BountiesTimelineSerializer, TimelineCategorySerializer, TokenListSerializer
+from .serializers import (
+    BountiesTimelineSerializer,
+    TimelineCategorySerializer,
+    TokenListSerializer
+)
 from .models import BountiesTimeline
 from std_bounties.models import Category, RankedCategory
 from std_bounties.views import Tokens
@@ -21,7 +25,7 @@ class TimelineBounties(APIView):
         Expects query_params `since`, `until` and `platform` (defaults to all)
 
         Date formatting needs to be 'YYYY-MM-DD'
-        
+
         Returns:
         {
             'timeline': serialized.data,
@@ -47,40 +51,56 @@ class TimelineBounties(APIView):
                 queryset['since'] = since_date
 
                 bounties_timeline = BountiesTimelineFilter(
-                    queryset, BountiesTimeline.objects.all().order_by('date'), request=request)
+                    queryset,
+                    BountiesTimeline.objects.all().order_by('date'),
+                    request=request
+                )
 
                 serialized = BountiesTimelineSerializer(
                     bounties_timeline.qs, many=True, context={
                         'request': request})
 
                 if platform == 'all':
-                    ranked_category_list = RankedCategory.objects.distinct().values('normalized_name', 'name')
-                    ranked_categories = dict(map(lambda x: (x['normalized_name'], x['name']), ranked_category_list))
+                    ranked_category_list = RankedCategory.objects.distinct().values(
+                        'normalized_name', 'name')
+                    ranked_categories = dict(
+                        map(lambda x: (x['normalized_name'], x['name']),
+                            ranked_category_list))
 
                     gitcoinQuery = Category.objects.select_related('bounty').filter(
                         bounty__bounty_created__gte=since_date,
                         bounty__bounty_created__lte=until_date,
                         bounty__platform__exact='gitcoin'
-                    ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
+                    ).distinct().exclude(normalized_name__exact='').values(
+                        'normalized_name').annotate(total=Count('bounty'))
 
                     standardQuery = Category.objects.select_related('bounty').filter(
                         bounty__bounty_created__gte=since_date,
                         bounty__bounty_created__lte=until_date,
                         bounty__platform__exact='bounties-network'
-                    ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
+                    ).distinct().exclude(normalized_name__exact='').values(
+                        'normalized_name').annotate(total=Count('bounty'))
 
                     queryset = gitcoinQuery | standardQuery
 
                 else:
-                    ranked_category_list = RankedCategory.objects.distinct().values('normalized_name', 'name')
-                    ranked_categories = dict(map(lambda x: (x['normalized_name'], x['name']), ranked_category_list))
+                    ranked_category_list = RankedCategory.objects.distinct().values(
+                        'normalized_name', 'name')
+                    ranked_categories = dict(
+                        map(lambda x: (x['normalized_name'], x['name']),
+                            ranked_category_list))
                     queryset = Category.objects.select_related('bounty').filter(
                         bounty__bounty_created__gte=since_date,
                         bounty__bounty_created__lte=until_date,
                         bounty__platform__exact=platform
                     ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
 
-                categories = TimelineCategorySerializer(queryset, many=True, context={'ranked_categories': ranked_categories})
+                categories = TimelineCategorySerializer(
+                    queryset,
+                    many=True,
+                    context={
+                        'ranked_categories': ranked_categories
+                    })
 
                 token_list = json.loads(Tokens.get(self, request).getvalue())
                 tokens = TokenListSerializer(token_list, many=True)

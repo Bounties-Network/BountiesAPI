@@ -7,6 +7,7 @@ info:
 schemes:
   - http
 basePath: /
+host: new.api.bounties.network
 consumes:
   - application/json
 produces:

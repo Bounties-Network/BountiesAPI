@@ -18,14 +18,6 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from bounties.views import custom_sitemap_index
 from bounties.sitemaps import BountyMap, ProfileMap, StaticMap
-from rest_framework_swagger.renderers import (
-    SwaggerUIRenderer,
-    OpenAPIRenderer
-)
-
-# Rendering for Swagger
-schema_view = get_schema_view(title='Bounties API', renderer_classes=[
-    OpenAPIRenderer, SwaggerUIRenderer])
 
 sitemaps = {
     'BountyMap': BountyMap,
@@ -43,5 +35,4 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name="index.html"), name="docs"),
     url(r'^analytics/', include('analytics.urls', namespace='analytics')),
     url(r'^', include('std_bounties.urls', namespace='std_bounties')),
-    url(r'^swagger', schema_view, name="docs")
 ]

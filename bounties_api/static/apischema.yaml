@@ -1903,7 +1903,6 @@ definitions:
       calculated_fulfillmentAmount:
         title: Calculated fulfillmentamount
         type: string
-        format: decimal
         readOnly: true
       user:
         $ref: '#/definitions/User'
@@ -1932,7 +1931,6 @@ definitions:
       fulfillmentAmount:
         title: FulfillmentAmount
         type: string
-        format: decimal
       paysTokens:
         title: PaysTokens
         type: boolean

@@ -30,7 +30,12 @@ class Command(BaseCommand):
     help = 'Listen to SQS queue for contract events'
 
     def add_arguments(self, parser):
-        parser.add_argument('blacklist', type=bool)
+        parser.add_argument(
+            '--blacklist',
+            action='store_true',
+            dest='blacklist',
+            help='Do blacklist queue',
+        )
 
     def handle(self, *args, **options):
         try:

@@ -29,18 +29,18 @@ pp = pprint.PrettyPrinter(indent=4)
 class Command(BaseCommand):
     help = 'Listen to SQS queue for contract events'
 
+    def add_arguments(self, parser):
+        parser.add_argument('blacklist', type=bool)
+
     def handle(self, *args, **options):
         try:
-            # retry the blacklisted events when this reaches zero
-            retry_blacklist_rate = 200
-            retry_blacklist = retry_blacklist_rate
+            if options['blacklist']:
+                return self.resolve_blacklist()
 
             while True:
                 # poll by the second
                 if not settings.LOCAL:
                     time.sleep(1)
-
-                retry_blacklist -= 1
 
                 # TODO - All should be a transaction atomic function
                 response = sqs_client.receive_message(
@@ -83,14 +83,7 @@ class Command(BaseCommand):
                     continue
 
                 self.handle_message(message)
-
                 self.remove_from_queue(message)
-
-                if retry_blacklist <= 0:
-                    retry_blacklist = retry_blacklist_rate
-                    logger.info(
-                        'retry_blacklist reset to: {}'.format(retry_blacklist))
-                    self.resolve_blacklist()
 
         except Exception as e:
             # goes to rollbar

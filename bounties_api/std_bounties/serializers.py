@@ -151,7 +151,6 @@ class LeaderboardFulfillerSerializer(serializers.Serializer):
     fulfillments_accepted = serializers.IntegerField(read_only=True)
 
 
-
 class LeaderboardIssuerSerializer(serializers.Serializer):
     address = serializers.CharField(max_length=256)
     name = serializers.CharField(max_length=256)

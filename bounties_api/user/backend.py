@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import timezone
 from user.models import User
 # Best approach for now with defunct until other forms are more stable
 from eth_account.messages import defunct_hash_message
@@ -40,7 +40,8 @@ def login(request, user):
 
 def loginJWT(request, user):
     expiration = datetime.datetime.utcnow() + datetime.timedelta(weeks=2)
-    return jwt.encode({ 'public_address': user.public_address, 'exp': expiration }, settings.SECRET_KEY, algorithm="HS256")
+    return jwt.encode({'public_address': user.public_address,
+                       'exp': expiration}, settings.SECRET_KEY, algorithm="HS256")
 
 
 def logout(request):

@@ -35,7 +35,6 @@ class Command(BaseCommand):
             action='store_true',
             dest='blacklist',
             help='Do blacklist queue',
-            nargs='?',
             default=False
         )
 
@@ -95,7 +94,8 @@ class Command(BaseCommand):
         except Exception as e:
             # goes to rollbar
             logger.exception(e)
-            raise e
+            self.remove_from_queue(message)
+            self.add_to_blacklist(message)
 
     def remove_from_queue(self, message):
         # This means the contract subscriber will never send this event
@@ -338,6 +338,4 @@ class Command(BaseCommand):
             if e.original.response.status_code == 504:
                 logger.warning(
                     'Timeout for bounty id {}'.format(message.bounty_id))
-                self.remove_from_queue(message)
-                self.add_to_blacklist(message)
             raise e

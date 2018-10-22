@@ -34,15 +34,16 @@ class Command(BaseCommand):
             '--blacklist',
             action='store_true',
             dest='blacklist',
-            help='Do blacklist queue',
+            help='Process blacklisted events',
             default=False
         )
 
     def handle(self, *args, **options):
-        try:
-            if options['blacklist']:
-                return self.resolve_blacklist()
+        if options['blacklist']:
+            self.resolve_blacklist()
+            return
 
+        try:
             while True:
                 # poll by the second
                 if not settings.LOCAL:

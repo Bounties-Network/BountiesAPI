@@ -35,6 +35,8 @@ class Command(BaseCommand):
             action='store_true',
             dest='blacklist',
             help='Do blacklist queue',
+            nargs='?',
+            default=False
         )
 
     def handle(self, *args, **options):

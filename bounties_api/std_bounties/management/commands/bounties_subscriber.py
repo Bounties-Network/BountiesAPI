@@ -43,8 +43,8 @@ class Command(BaseCommand):
             self.resolve_blacklist()
             return
 
-        try:
-            while True:
+        while True:
+            try:
                 # poll by the second
                 if not settings.LOCAL:
                     time.sleep(1)
@@ -92,11 +92,11 @@ class Command(BaseCommand):
                 self.handle_message(message)
                 self.remove_from_queue(message)
 
-        except Exception as e:
-            # goes to rollbar
-            logger.exception(e)
-            self.remove_from_queue(message)
-            self.add_to_blacklist(message)
+            except Exception as e:
+                # goes to rollbar
+                logger.error(e)
+                self.remove_from_queue(message)
+                self.add_to_blacklist(message)
 
     def remove_from_queue(self, message):
         # This means the contract subscriber will never send this event

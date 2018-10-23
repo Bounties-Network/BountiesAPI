@@ -29,18 +29,25 @@ pp = pprint.PrettyPrinter(indent=4)
 class Command(BaseCommand):
     help = 'Listen to SQS queue for contract events'
 
-    def handle(self, *args, **options):
-        try:
-            # retry the blacklisted events when this reaches zero
-            retry_blacklist_rate = 200
-            retry_blacklist = retry_blacklist_rate
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--blacklist',
+            action='store_true',
+            dest='blacklist',
+            help='Process blacklisted events',
+            default=False
+        )
 
-            while True:
+    def handle(self, *args, **options):
+        if options['blacklist']:
+            self.resolve_blacklist()
+            return
+
+        while True:
+            try:
                 # poll by the second
                 if not settings.LOCAL:
                     time.sleep(1)
-
-                retry_blacklist -= 1
 
                 # TODO - All should be a transaction atomic function
                 response = sqs_client.receive_message(
@@ -83,19 +90,13 @@ class Command(BaseCommand):
                     continue
 
                 self.handle_message(message)
-
                 self.remove_from_queue(message)
 
-                if retry_blacklist <= 0:
-                    retry_blacklist = retry_blacklist_rate
-                    logger.info(
-                        'retry_blacklist reset to: {}'.format(retry_blacklist))
-                    self.resolve_blacklist()
-
-        except Exception as e:
-            # goes to rollbar
-            logger.exception(e)
-            raise e
+            except Exception as e:
+                # goes to rollbar
+                logger.error(e)
+                self.remove_from_queue(message)
+                self.add_to_blacklist(message)
 
     def remove_from_queue(self, message):
         # This means the contract subscriber will never send this event
@@ -338,6 +339,4 @@ class Command(BaseCommand):
             if e.original.response.status_code == 504:
                 logger.warning(
                     'Timeout for bounty id {}'.format(message.bounty_id))
-                self.remove_from_queue(message)
-                self.add_to_blacklist(message)
             raise e

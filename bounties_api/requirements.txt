@@ -19,3 +19,4 @@
  arrow==0.12.1
  djangorestframework-queryfields==1.0.0
  pillow
+ pyjwt==1.6.4

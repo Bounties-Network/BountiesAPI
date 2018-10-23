@@ -18,15 +18,9 @@ async function handler() {
 			fromBlock = parseInt(fromBlock);
 			const latestBlockData = await getBlock('latest');
 			const latestBlock = latestBlockData.number;
-			console.log('fromBlock: ', fromBlock);
-			console.log('latestBlock: ', latestBlock)
 			let eventBlock;
 			while (fromBlock < latestBlock) {
-				if (fromBlock === 4762524) {
-					fromBlock += 1000;
-				}
 				let events = await StandardBounties.getPastEvents({fromBlock, toBlock: fromBlock + 100000});
-				console.log('currentCheck: ', fromBlock);
 				eventBlock = await sendEvents(events);
 				if (eventBlock) {
 					break;
@@ -34,7 +28,6 @@ async function handler() {
 				fromBlock += 100000;
 			}
 
-			console.log('eventBlock: ', eventBlock);
 			if (eventBlock) {
 				await writeAsync('currentBlock', eventBlock);
 			}

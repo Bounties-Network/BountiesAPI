@@ -4,6 +4,10 @@
 [Deployed Production API - Mainnet Contract](https://api.bounties.network)
 [Deployed Rinkeby API - Rinkeby Contract great for testing](https://rinkeby.api.bounties.network)
 
+## Documentation
+
+We host our documentation on https://bounties.readme.io/, and the Bounties API is documented at https://bounties.readme.io/reference#welcome
+
 ## Setup
 [Download Docker stable version](https://docs.docker.com/docker-for-mac/install/#download-docker-for-mac)
 ```

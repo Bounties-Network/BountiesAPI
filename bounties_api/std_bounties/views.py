@@ -33,7 +33,11 @@ class ReviewsViewSet(viewsets.ReadOnlyModelViewSet):
         return Review.objects.all()
 
     filter_class = ReviewsFilter
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (OrderingFilter, DjangoFilterBackend,)
+
+    ordering_fields = (
+        'created',
+        'rating')
 
 
 class SubmissionReviews(APIView):

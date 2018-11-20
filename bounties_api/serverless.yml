@@ -18,19 +18,16 @@ custom:
   variables: ${file(./variables.yml)}
   prod:
     blacklist_rate: rate(5 minute)
-  dev:
-    blacklist_rate: rate(1 minute)
+  staging:
+    blacklist_rate: rate(5 minute)
 
 plugins:
   - serverless-python-requirements
-  - serverless-offline
-  # - serverless-offline-python
-  - serverless-offline-scheduler
   # - serverless-wsgi
 
 functions:
   resolve_blacklist:
-    handler: bounties_api/serverless.resolve_blacklist
+    handler: serverless.resolve_blacklist
     environment: ${self:custom.variables}
     events:
        - schedule: ${self:custom.${self:provider.stage}.blacklist_rate}

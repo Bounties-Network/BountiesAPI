@@ -53,6 +53,18 @@ services:
       - db
       - redis
       - bounties_api
+  bounties_subscriber_blacklist:
+    build:
+      dockerfile: Dockerfile.serverless.python
+    restart: always
+    command: serverless.resolve_blacklist
+    volumes:
+      - ./bounties_api:/var/task
+    depends_on:
+      - sqs
+      - db
+      - redis
+      - bounties_api
   sql_jobs:
     # In production, these run an as an hourly cronjob.
     # Here, we use a local.sh to just run it more often

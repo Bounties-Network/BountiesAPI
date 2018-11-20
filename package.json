@@ -17,9 +17,6 @@
   },
   "homepage": "https://github.com/Bounties-Network/BountiesAPI#readme",
   "devDependencies": {
-    "serverless-offline": "^3.31.3",
-    "serverless-offline-python": "^3.21.3",
-    "serverless-offline-scheduler": "^0.3.5",
     "serverless-python-requirements": "^4.2.5"
   }
 }

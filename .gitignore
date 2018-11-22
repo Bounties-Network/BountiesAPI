@@ -6,3 +6,4 @@ coverage.lcov
 bounties_api/cover
 variables.yml
 node_modules
+venv

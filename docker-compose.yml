@@ -55,16 +55,16 @@ services:
       - bounties_api
   bounties_subscriber_blacklist:
     build:
-      dockerfile: Dockerfile.serverless.python
+      context: ./docker-lambda-python3.6-scheduled
+      dockerfile: Dockerfile
     restart: always
-    command: serverless.resolve_blacklist
+    command: serverless.resolve_blacklist 5
     volumes:
       - ./bounties_api:/var/task
     depends_on:
       - sqs
       - db
       - redis
-      - bounties_api
   sql_jobs:
     # In production, these run an as an hourly cronjob.
     # Here, we use a local.sh to just run it more often

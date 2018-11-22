@@ -1,0 +1,12 @@
+FROM lambci/lambda:build-python3.6
+
+ENV PYTHONUNBUFFERED 1
+ARG auto_build="true"
+ENV auto_build=$auto_build
+
+ADD requirements.txt ./requirements.txt
+ADD ./lambda-entrypoint.sh ./lambda-entrypoint.sh
+
+RUN pip install -r requirements.txt
+
+ENTRYPOINT ["./lambda-entrypoint.sh"]

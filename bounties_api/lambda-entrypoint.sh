@@ -20,6 +20,7 @@ if [ "$SCHEDULE_INTERVAL" == "" ]; then
 fi
 
 while true; do
+    echo "Running $LAMBDA_NAME"
 	/var/lang/bin/python3.6 /var/runtime/awslambda/bootstrap.py $LAMBDA_NAME
 	sleep $SCHEDULE_INTERVAL
 done

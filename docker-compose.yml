@@ -55,8 +55,8 @@ services:
       - bounties_api
   bounties_subscriber_blacklist:
     build:
-      context: ./docker-lambda-python3.6-scheduled
-      dockerfile: Dockerfile
+      context: ./bounties_api
+      dockerfile: Dockerfile.lambda
     restart: always
     command: serverless.resolve_blacklist 5
     volumes:

@@ -1,12 +1,11 @@
 FROM lambci/lambda:build-python3.6
 
-ENV PYTHONUNBUFFERED 1
-ARG auto_build="true"
-ENV auto_build=$auto_build
+COPY requirements.txt /tmp/requirements.txt
+RUN pip3 install -r /tmp/requirements.txt
 
-ADD requirements.txt ./requirements.txt
-ADD ./lambda-entrypoint.sh ./lambda-entrypoint.sh
+RUN rm /var/runtime/awslambda/runtime.cpython-36m-x86_64-linux-gnu.so
+COPY runtime-mock.py /var/runtime/awslambda/runtime.py
 
-RUN pip install -r requirements.txt
+COPY lambda-entrypoint.sh /lambda-entrypoint.sh
 
-ENTRYPOINT ["./lambda-entrypoint.sh"]
+ENTRYPOINT ["/lambda-entrypoint.sh"]

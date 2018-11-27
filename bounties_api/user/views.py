@@ -1,9 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework import viewsets
+from datetime import datetime
 from user.backend import authenticate, login, logout, setLastViewed, loginJWT
 from user.serializers import LanguageSerializer, UserSerializer, UserInfoSerializer, UserProfileSerializer, SettingsSerializer, RankedSkillSerializer
 from user.models import Language, User, RankedSkill
-from user.permissions import AuthenticationPermission
+from user.permissions import AuthenticationPermission, UserIDMatches
 from std_bounties.models import Fulfillment
 from django.conf import settings
 from django.db.models import Sum, Avg, Count
@@ -56,6 +57,15 @@ class Nonce(APIView):
             public_address=public_address.lower())[0]
         return JsonResponse(
             {'nonce': user.nonce, 'has_signed_up': bool(user.email) and bool(user.name)})
+
+
+class DismissSignup(APIView):
+    permission_classes = [AuthenticationPermission, UserIDMatches]
+
+    def get(self, request, public_address=''):
+        user = User.objects.get(public_address=public_address.lower())
+        user.dismissed_signup_prompt = datetime.utcnow()
+        return JsonResponse(UserSerializer(request.current_user).data)
 
 
 class UserView(APIView):

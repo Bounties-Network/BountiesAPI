@@ -64,6 +64,7 @@ class User(models.Model):
     name = models.CharField(max_length=128, blank=True)
     email = models.CharField(max_length=128, blank=True)
     wants_marketing_emails = models.BooleanField(default=False)
+    dismissed_signup_prompt = models.DateTimeField(blank=True, null=True)
     organization = models.CharField(max_length=128, blank=True)
     languages = models.ManyToManyField('user.Language')
     skills = models.ManyToManyField('user.Skill')

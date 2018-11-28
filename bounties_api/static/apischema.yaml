@@ -63,7 +63,7 @@ paths:
                 type: string
       responses:
         '200':
-          description: 'Returns logged in user'
+          description: Get logged in user
           schema:
             allOf:
               - $ref: '#/definitions/User'
@@ -86,7 +86,7 @@ paths:
   /auth/user/:
     get:
       operationId: auth_user_list
-      summary: Returns the currently logged in user
+      summary: Get the currently logged in us
       description: Expects `current_user` on the request
       parameters: []
       responses:
@@ -105,7 +105,7 @@ paths:
   /auth/{public_address}/nonce/:
     get:
       operationId: auth_nonce_list
-      summary: Returns nonce and user information
+      summary: Get nonce and user information
       description: "Expects a public_address\n\nReturns:\n{\n    'nonce': user.nonce,\n\
         \    'has_signed_up': bool(user.email) and bool(user.name)\n}"
       parameters: []
@@ -685,7 +685,7 @@ paths:
   /fulfillment/{id}/:
     get:
       operationId: fulfillment_read
-      summary: A viewset for viewing and editing user instances.
+      summary: Get the fulfillment for this ID.
       parameters: []
       responses:
         '200':
@@ -1216,7 +1216,7 @@ paths:
   /user/languages/:
     get:
       operationId: user_languages_list
-      description: Returns ordered languages
+      description: Get ordered languages
       parameters:
         - name: limit
           in: query
@@ -1256,7 +1256,7 @@ paths:
   /user/languages/{id}/:
     get:
       operationId: user_languages_read
-      description: Returns ordered languages
+      description: Get ordered languages
       parameters: []
       responses:
         '200':
@@ -1276,7 +1276,7 @@ paths:
   /user/requestProfileImageUploadURL/:
     get:
       operationId: user_requestProfileImageUploadURL_list
-      summary: Returns small and large upload URLs
+      summary: Get upload URLs for small and large images
       description: "Expects `current_user` on the request\n\nReturns:\n{\n    'sm_url':\
         \ 'https://{}/{}'.format(bucket, sm_key),\n    'sm_put_url': sm_put_url,\n\
         \    'lg_url': 'https://{}/{}'.format(bucket, lg_key),\n    'lg_put_url':\
@@ -1329,7 +1329,7 @@ paths:
   /user/skills/:
     get:
       operationId: user_skills_list
-      description: Returns ordered skills
+      description: Get ordered skills
       parameters:
         - name: ordering
           in: query
@@ -1379,7 +1379,7 @@ paths:
   /user/skills/{id}/:
     get:
       operationId: user_skills_read
-      description: Returns ordered skills
+      description: Get ordered skills
       parameters: []
       responses:
         '200':
@@ -1399,7 +1399,7 @@ paths:
   /user/{public_address}/info/:
     get:
       operationId: user_info_list
-      summary: Returns the serialized user info
+      summary: Get the serialized user info
       description: Expects `public_address`
       parameters: []
       responses:
@@ -1417,7 +1417,7 @@ paths:
   /user/{public_address}/profile/:
     get:
       operationId: user_profile_list
-      summary: Returns JSON response with user information
+      summary: Get JSON response with user information
       description: "Expects `public_address`\n\nReturns:\n{\n    'user': serializer.data,\n\
         \    'stats': profile_stats\n}"
       parameters: []

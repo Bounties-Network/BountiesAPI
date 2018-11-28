@@ -65,6 +65,7 @@ class DismissSignup(APIView):
     def get(self, request, public_address=''):
         user = User.objects.get(public_address=public_address.lower())
         user.dismissed_signup_prompt = datetime.utcnow()
+        user.save()
         return JsonResponse(UserSerializer(request.current_user).data)
 
 

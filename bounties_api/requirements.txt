@@ -21,6 +21,6 @@
  pillow
  pyjwt==1.6.4
  dominate==2.3.4
- PyYAML==3.13 
+ PyYAML==3.13
  swaggertools==0.0.4
  drf-yasg==1.11.0

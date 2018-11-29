@@ -58,6 +58,8 @@ services:
       context: ./bounties_api
       dockerfile: Dockerfile.lambda
     restart: always
+    env_file:
+      - .env
     command: serverless.resolve_blacklist 5
     volumes:
       - ./bounties_api:/var/task
@@ -65,6 +67,7 @@ services:
       - sqs
       - db
       - redis
+      - bounties_api
   sql_jobs:
     # In production, these run an as an hourly cronjob.
     # Here, we use a local.sh to just run it more often

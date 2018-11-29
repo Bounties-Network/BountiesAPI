@@ -56,7 +56,7 @@ services:
   bounties_subscriber_blacklist:
     build:
       context: ./bounties_api
-      dockerfile: Dockerfile.lambda
+      dockerfile: Dockerfile.python
     restart: always
     env_file:
       - .env

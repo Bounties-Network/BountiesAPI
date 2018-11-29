@@ -1,0 +1,9 @@
+FROM lambci/lambda:build-nodejs8.10
+
+COPY awslambda-mock.js /var/runtime/node_modules/awslambda/build/Release/awslambda.js
+
+RUN npm install
+
+COPY node-entrypoint.sh /node-entrypoint.sh
+
+ENTRYPOINT ["/node-entrypoint.sh"]

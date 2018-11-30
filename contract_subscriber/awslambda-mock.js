@@ -1,4 +1,4 @@
-ar fs = require('fs')
+var fs = require('fs')
 var crypto = require('crypto')
 
 var HANDLER = process.argv[2] || process.env.AWS_LAMBDA_FUNCTION_HANDLER || process.env._HANDLER || 'index.handler'

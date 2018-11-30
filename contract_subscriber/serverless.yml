@@ -1,0 +1,30 @@
+service: contract_subscriber
+
+# Use the serverless-webpack plugin to transpile ES6
+plugins:
+  - serverless-webpack
+
+# serverless-webpack configuration
+# Enable auto-packing of external modules
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: us-east-1
+  # To load environment variables externally
+  # rename env.example to env.yml and uncomment
+  # the following line. Also, make sure to not
+  # commit your env.yml.
+  #
+  #environment: ${file(env.yml):${self:provider.stage}}
+
+functions:
+  contract_subscriber:
+    handler: serverless.getBlock
+    events:
+       - schedule: ${self:custom.${self:provider.stage}.blacklist_rate}

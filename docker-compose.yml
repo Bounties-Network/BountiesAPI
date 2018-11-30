@@ -111,16 +111,16 @@ services:
   contract_subscriber:
     build:
       context: ./contract_subscriber
+      dockerfile: Dockerfile.node
     restart: always
     env_file:
       - .env
-    command: npm start
+    command: serverless.readBlock 1
     volumes:
-      - ./contract_subscriber:/usr/src/app
-      - /usr/src/app/node_modules
-    depends_on:
-      - sqs
-      - redis
+      - ./contract_subscriber:/var/task
+    # depends_on:
+    #   - sqs
+    #   - redis
 volumes:
   psql_bounties:
     external: true

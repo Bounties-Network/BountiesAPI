@@ -102,6 +102,8 @@ def map_bounty_data(data_hash, bounty_id):
     # if 'platform' is gitcoin, also return deadline
     if meta.get('platform', '') == 'gitcoin' and 'expire_date' in data:
         bounty.update({'deadline': datetime.utcfromtimestamp(int(data.get('expire_date')))})
+    if meta.get('platform', '') == 'gitcoin':
+        bounty.update({'private_fulfillments': False})
 
     return bounty
 

@@ -13,7 +13,7 @@ def fix_it_all():
         print('looping with dn {}'.format(dn.__dict__))
         print()
         title = dn.data['bounty_title']
-        bounties = Bounty.objects.filter(title=title)
+        bounties = Bounty.objects.filter(title=title).exclude(bountyStage=2)
         if len(bounties) > 1:
             print()
             print()

@@ -1,0 +1,22 @@
+{
+  "name": "bountiesapi",
+  "version": "1.0.0",
+  "description": "The BountiesAPI serverless infrastructure",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bounties-Network/BountiesAPI.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Bounties-Network/BountiesAPI/issues"
+  },
+  "homepage": "https://github.com/Bounties-Network/BountiesAPI#readme",
+  "devDependencies": {
+    "serverless-python-requirements": "^4.2.5"
+  }
+}

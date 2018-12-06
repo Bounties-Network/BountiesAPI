@@ -1,0 +1,11 @@
+FROM lambci/lambda:build-python3.6
+
+COPY requirements.txt /tmp/requirements.txt
+RUN pip3 install -r /tmp/requirements.txt
+
+RUN rm /var/runtime/awslambda/runtime.cpython-36m-x86_64-linux-gnu.so
+COPY runtime-mock.py /var/runtime/awslambda/runtime.py
+
+COPY python-entrypoint.sh /python-entrypoint.sh
+
+ENTRYPOINT ["/python-entrypoint.sh"]

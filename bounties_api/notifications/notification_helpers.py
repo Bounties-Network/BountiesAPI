@@ -27,8 +27,9 @@ def create_profile_updated_notification(*args, **kwargs):
 
 def create_rating_notification(**kwargs):
     bounty = kwargs.get('bounty')
-    user = kwargs.get('user')
     issuer = bounty.user
+    review = kwargs.get('review')
+    user = review.reviewee
 
     reviewee = 'fulfiller'
     if user.public_address == issuer.public_address:

@@ -5,7 +5,7 @@ from user.backend import authenticate, login, logout, setLastViewed, loginJWT
 from user.serializers import LanguageSerializer, UserSerializer, UserInfoSerializer, UserProfileSerializer, SettingsSerializer, RankedSkillSerializer
 from user.models import Language, User, RankedSkill
 from user.permissions import AuthenticationPermission, UserIDMatches
-from std_bounties.models import Fulfillment
+from std_bounties.models import Bounty, Fulfillment
 from django.conf import settings
 from django.db.models import Sum, Avg, Count
 from django.http import JsonResponse, HttpResponse
@@ -217,10 +217,15 @@ class UserProfile(APIView):
         issuer_fulfillment_acceptance = None if not Fulfillment.objects.filter(
             bounty__user=user, **additional_filters).count() else (
             Fulfillment.objects.filter(
+                bounty__user=user.id,
                 accepted=True,
-                bounty__user=user, **additional_filters).count() /
-            Fulfillment.objects.filter(
-                bounty__user=user, **additional_filters).count())
+                **additional_filters).values('bounty').distinct().count() /
+            Bounty.objects.filter(
+                user=user.id,
+                **additional_filters).annotate(
+                fulfillment_count=Count('fulfillments')).filter(
+                fulfillment_count__gt=0).count())
+
         fulfiller_fulfillment_acceptance = None if not user_fulfillments.count() else (
             user_fulfillments.filter(accepted=True).count() / user_fulfillments.count())
 

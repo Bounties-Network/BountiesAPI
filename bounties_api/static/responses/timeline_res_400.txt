@@ -1,0 +1,4 @@
+{
+    "error": 400,
+    "message": "The fields since & until needs being formated as YYYY-MM-DD"
+}

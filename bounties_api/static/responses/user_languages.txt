@@ -1,0 +1,12 @@
+{
+  "count": 157,
+  "next": "https://api.bounties.network/user/languages/?limit=25&offset=25",
+  "previous": null,
+  "results": [
+    {
+      "name": "Afar",
+      "normalized_name": "afar"
+    },
+    ...
+  ]
+}

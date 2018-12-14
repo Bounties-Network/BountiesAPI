@@ -1,0 +1,47 @@
+{
+  "id": 25,
+  "categories": [],
+  "languages": [],
+  "skills": [
+    "languages",
+    "running away"
+  ],
+  "page_preview": "https://assets.bounties.network/profile_preview/0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb-3061643e-d71d-4f71-8b12-18b43593a642.png",
+  "settings": {
+    "emails": {
+      "both": {
+        "RatingReceived": true
+      },
+      "issuer": {
+        "BountyExpired": true,
+        "BountyCompleted": true,
+        "TransferRecipient": true,
+        "ContributionReceived": true,
+        "BountyCommentReceived": true,
+        "FulfillmentUpdatedIssuer": true,
+        "FulfillmentSubmittedIssuer": true
+      },
+      "activity": false,
+      "fulfiller": {
+        "FulfillmentAcceptedFulfiller": true
+      }
+    }
+  },
+  "public_address": "0xa3e2b5d63c258cb779ef52ef8ed81287fa121442",
+  "name": "Rincewind",
+  "email": "rincewind@example.com",
+  "wants_marketing_emails": false,
+  "organization": "Unseen University",
+  "small_profile_image_url": "",
+  "large_profile_image_url": "",
+  "website": "",
+  "twitter": "",
+  "github": "",
+  "linkedin": "",
+  "dribble": "",
+  "created": "2018-10-19T00:21:05.352251",
+  "edited": "2018-12-11T12:52:51.494592",
+  "last_viewed": "2018-12-11T12:52:51.492748",
+  "last_logged_in": "2018-12-11T12:52:29.574123",
+  "ens_domain": ""
+}

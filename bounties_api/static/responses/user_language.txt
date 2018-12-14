@@ -1,0 +1,4 @@
+{
+  "name": "Afar",
+  "normalized_name": "afar"
+}

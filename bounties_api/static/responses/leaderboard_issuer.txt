@@ -1,0 +1,17 @@
+{
+  "count": 168,
+  "results": [
+    {
+      "address": "0x4444444444444444444422222222222222222222",
+      "name": "Rincewind",
+      "email": "rincewind@example.com",
+      "githubusername": "",
+      "profile_image": "",
+      "total": "420000000000000000000",
+      "total_usd": 42000.42,
+      "bounties_issued": 42,
+      "fulfillments_paid": 42
+    },
+    ...
+  ]
+}

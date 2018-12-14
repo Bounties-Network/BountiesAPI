@@ -1,0 +1,7 @@
+
+{
+            'sm_url': 'https://{}/{}'.format(bucket, sm_key),
+            'sm_put_url': sm_put_url,
+            'lg_url': 'https://{}/{}'.format(bucket, lg_key),
+            'lg_put_url': lg_put_url
+        }

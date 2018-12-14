@@ -1,0 +1,49 @@
+{
+  "timeline": [
+    {
+      "id": 594,
+      "date": "2018-10-10",
+      "is_week": false,
+      "bounties_issued_cum": 156,
+      "bounties_issued": 2,
+      "fulfillments_submitted_cum": 296,
+      "fulfillments_submitted": 8,
+      "fulfillments_accepted_cum": 145,
+      "fulfillments_accepted": 3,
+      "fulfillments_pending_acceptance": 151,
+      "fulfillment_acceptance_rate": 0.489864864864865,
+      "bounty_fulfilled_rate": 0.445945945945946,
+      "avg_fulfiller_acceptance_rate": 0.508063755066679,
+      "avg_fulfillment_amount": 89.5624381889942,
+      "total_fulfillment_amount": 6299.569501,
+      "total_unique_issuers": 2,
+      "total_unique_issuers_cum": 54,
+      "total_unique_fulfillers": 5,
+      "total_unique_fulfillers_cum": 162,
+      "bounty_draft": 7,
+      "bounty_active": 43,
+      "bounty_completed": 29,
+      "bounty_expired": 34,
+      "bounty_dead": 43,
+      "platform": "bounties-network"
+    },
+    ...
+  ],
+  "categories": [
+    {
+      "name": "design",
+      "normalized_name": "design",
+      "total_count": 7
+    },
+    ...
+  ],
+   "tokens": [
+    {
+      "token_symbol": "ETH",
+      "token_contract": "0x0000000000000000000000000000000000000000",
+      "total_count": 1168,
+      "price_usd": 88.9692117643
+    }, 
+    ...
+  ]
+}

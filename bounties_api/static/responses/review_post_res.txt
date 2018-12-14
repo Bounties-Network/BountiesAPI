@@ -1,0 +1,14 @@
+{
+  "id": 1,
+  "reviewer": {
+    ...
+  },
+  "reviewee": {
+    ...
+  },
+  "created": "2018-09-05T19:11:20.770816",
+  "modified": "2018-09-05T19:11:20.770838",
+  "rating": 5,
+  "review": "Excellent guiding!",
+  "platform": "bounties-network"
+}

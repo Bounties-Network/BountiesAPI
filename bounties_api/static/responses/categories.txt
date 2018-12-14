@@ -1,0 +1,15 @@
+{
+  "count": 839,
+  "next": "https://api.bounties.network/category/?limit=42&offset=42&platform=main",
+  "previous": null,
+  "results": [
+    {
+      "id": 390,
+      "name": "JavaScript",
+      "normalized_name": "javascript",
+      "total_count": 976,
+      "platform": "main"
+    },
+    ...
+  ]
+}

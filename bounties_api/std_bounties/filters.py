@@ -1,12 +1,5 @@
 import rest_framework_filters as filters
-from std_bounties.models import (
-    Bounty,
-    Category,
-    DraftBounty,
-    Fulfillment,
-    RankedCategory,
-    Review
-)
+from std_bounties.models import Bounty, Category, DraftBounty, Fulfillment, RankedCategory, Review
 
 
 class CategoriesFilter(filters.FilterSet):

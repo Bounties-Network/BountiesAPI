@@ -24,13 +24,13 @@ class Review(models.Model):
     platform = models.CharField(max_length=128, blank=True)
 
 
-class Category(models.Model):
+class Tag(models.Model):
     name = models.CharField(max_length=128, unique=True)
     normalized_name = models.CharField(max_length=128)
 
     def save(self, *args, **kwargs):
         self.normalized_name = self.name.lower().strip()
-        super(Category, self).save(*args, **kwargs)
+        super(Tag, self).save(*args, **kwargs)
 
 
 class Comment(models.Model):
@@ -76,7 +76,7 @@ class BountyAbstract(models.Model):
     user = models.ForeignKey('user.User', null=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    categories = models.ManyToManyField(Category)
+    tags = models.ManyToManyField(Tag)
     deadline = models.DateTimeField()
     arbiter = models.CharField(max_length=128, null=True)
     private_fulfillments = models.BooleanField(default=True)
@@ -140,7 +140,7 @@ class Bounty(BountyAbstract):
         null=True,
         default=0)
     image_preview = models.CharField(max_length=256, blank=True)
-    data_categories = JSONField(null=True)
+    data_tags = JSONField(null=True)
     data_issuer = JSONField(null=True)
     data_json = JSONField(null=True)
 
@@ -174,19 +174,19 @@ class Bounty(BountyAbstract):
         return BountyState.objects.get_or_create(
             bounty=self, bountyStage=self.bountyStage, change_date=event_date)
 
-    def save_and_clear_categories(self, categories):
+    def save_and_clear_tags(self, tags):
         # this is really messy, but this is bc of psql django bugs
-        self.categories.clear()
-        if isinstance(categories, list):
-            for category in categories:
-                if isinstance(category, str):
+        self.tags.clear()
+        if isinstance(tags, list):
+            for tag in tags:
+                if isinstance(tag, str):
                     try:
-                        if category != '':
-                            matching_category = Category.objects.get(
-                                name=category.strip())
-                            self.categories.add(matching_category)
+                        if tag != '':
+                            matching_tag = Tag.objects.get(
+                                name=tag.strip())
+                            self.tags.add(matching_tag)
                     except ObjectDoesNotExist:
-                        self.categories.create(name=category.strip())
+                        self.tags.create(name=tag.strip())
 
 
 class DraftBounty(BountyAbstract):
@@ -195,7 +195,7 @@ class DraftBounty(BountyAbstract):
     issuer = models.CharField(max_length=128, null=True, blank=True)
     on_chain = models.BooleanField(default=False)
     platform = models.CharField(max_length=128, blank=True)
-    data_categories = None
+    data_tags = None
     data_issuer = None
     data_json = None
 
@@ -258,7 +258,7 @@ class Fulfillment(models.Model):
         super(Fulfillment, self).save(*args, **kwargs)
 
 
-class RankedCategory(models.Model):
+class RankedTag(models.Model):
     name = models.CharField(max_length=128)
     normalized_name = models.CharField(max_length=128)
     total_count = models.IntegerField()
@@ -266,7 +266,7 @@ class RankedCategory(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'category_ranks'
+        db_table = 'tag_ranks'
 
 
 class Event(models.Model):

@@ -110,7 +110,7 @@ class TestMapBountyData(unittest.TestCase):
             'funders': [
                 issuer,
             ],
-            'categories': ['python'],
+            'tags': ['python'],
             'created': '1527881995',
             'tokenSymbol': 'ETH',
             'tokenAddress': '0x0',
@@ -150,8 +150,8 @@ class TestMapBountyData(unittest.TestCase):
         self.assertEqual(result['data_issuer'], ipfs_data['payload']['issuer'])
         self.assertEqual(result['data'], data_hash)
         self.assertEqual(result['data_json'], ipfs_data_as_json)
-        self.assertEqual(result['data_categories'],
-                         ipfs_data['payload']['categories'])
+        self.assertEqual(result['data_tags'],
+                         ipfs_data['payload']['tags'])
         self.assertEqual(result['platform'], ipfs_data['meta']['platform'])
         self.assertEqual(result['schemaName'], ipfs_data['meta']['schemaName'])
         self.assertEqual(result['schemaVersion'],

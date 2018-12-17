@@ -1,0 +1,37 @@
+{
+  "count": 36,
+  "next": "https://api.bounties.network/notification/activity/user/0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb/?limit=25&offset=25&platform=bounties-network",
+  "previous": null,
+  "results": [
+    {
+      "id": 1637,
+      "notification": {
+        "id": 1637,
+        "user": {
+          ...
+        },
+        "from_user": {
+          ...
+        },
+        "uid": "243-0-25-19",
+        "created": "2018-12-13T23:42:45.674182",
+        "updated": "2018-12-13T23:42:45.674202",
+        "notification_name": 19,
+        "notification_created": "2018-12-13T23:42:45.648850",
+        "email_sent": false,
+        "dashboard": true,
+        "platform": "bounties-network"
+      },
+      "created": "2018-12-13T23:42:45.676716",
+      "updated": "2018-12-13T23:42:45.676733",
+      "is_activity": true,
+      "viewed": false,
+      "string_data": "You left a review for your experience with: Follow the Bounties API tutorial and give feedback.",
+      "data": {
+        "link": "https://bounties.network/profile/0x9d999cf32858400c3e0b94c48cc52eaeebea0467?reviews=true&fulfiller=true",
+        "bounty_title": "Follow the Bounties API tutorial and give feedback"
+      }
+    },
+    ...
+  ]
+}

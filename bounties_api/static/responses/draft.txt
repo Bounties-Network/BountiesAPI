@@ -1,0 +1,140 @@
+POST
+
+curl 'https://api.bounties.network/bounty/draft/' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:63.0) Gecko/20100101 Firefox/63.0' -H 'Accept: application/json, text/plain, */*, application/json' -H 'Accept-Language: en-US,en;q=0.5' --compressed -H 'Referer: https://explorer.bounties.network/createBounty' -H 'Content-Type: application/json' -H 'Origin: https://explorer.bounties.network' -H 'Connection: keep-alive' -H 'Cookie: _ga=GA1.2.2122607002.1542379413; __cfduid=db356fe914752591f1480495713555bd51542665701; csrftoken=A6CJOUimTQIc1dN2xB7btSrmGyiaDDYZ6uRt1ev7eDNOPw85Np0ncoPHT0hxVsMA; _gid=GA1.2.697372039.1544489027; sessionid=eyJwdWJsaWNfYWRkcmVzcyI6IjB4YTNlMmI1ZDYzYzI1OGNiNzc5ZWY1MmVmOGVkODEyODdmYTEyMTRjYiJ9:1gXGWX:FOuocM-jiJ4UU7CwsGC4oLPbmY8' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache' --data $'{"title":"Follow the Bounties API tutorial and give feedback","categories":["web3"],"description":"# Description\\n\\nWe are solidifying our documentation at https://bounties.readme.io/v1.0/guides. Help us improve it by following the tutorials we\'ve created, and get familiar with the Bounties Network code! \\n\\n## Definition of Done\\n\\n- A public github repo with code from the tutorial you have completed\\n- Feedback on what could be changed or improved","experienceLevel":1,"revisions":2,"privateFulfillments":false,"paysTokens":false,"fulfillmentAmount":"500000000000000000","issuer_email":"matias.forbord@consensys.net","issuer_name":"Matias Forbord","deadline":"2019-04-30T16:00:27.000Z","private_fulfillments":false,"platform":"bounties-network"}'
+
+{
+  "title":"Test upload values of a draft",
+  "categories":["javascript"],
+  "description":"What are the values for posting this draft?",
+  "experienceLevel":0,
+  "revisions":3,
+  "privateFulfillments":false,
+  "paysTokens":false,
+  "fulfillmentAmount":"42000000000000000",
+  "issuer_email":"matias.forbord@consensys.net",
+  "issuer_name":"Matias Forbord",
+  "deadline":"2018-12-16T03:21:08.499Z",
+  "webReferenceURL":"https://bounties.readme.io/reference",
+  "sourceDirectoryHash":"QmbnFnR2XHs3S5qXr8GF8gNvQJDoey5fhc8zVXDrizXJ42",
+  "sourceFileName":"my_file.png",
+  "private_fulfillments":false,
+  "platform":"bounties-network"
+}
+
+{
+  "title":"Follow the Bounties API tutorial and give feedback",
+  "categories":["web3"],
+  "description":"# Description\n\nWe are solidifying our documentation at https://bounties.readme.io/v1.0/guides. Help us improve it by following the tutorials we've created, and get familiar with the Bounties Network code! \n\n## Definition of Done\n\n- A public github repo with code from the tutorial you have completed\n- Feedback on what could be changed or improved",
+  "experienceLevel":1,
+  "revisions":2,
+  "privateFulfillments":false,
+  "paysTokens":false,
+  "fulfillmentAmount":"500000000000000000",
+  "issuer_email":"matias.forbord@consensys.net",
+  "issuer_name":"Matias Forbord",
+  "deadline":"2019-04-30T16:00:27.000Z",
+  "webReferenceURL":"https://bounties.readme.io/reference",
+  "sourceDirectoryHash":"QmbnFnR2XHs3S5qXr8GF8gNvQJDoey5fhc8zVXDrizXJ42",
+  "sourceFileName":"my_file.png",
+  "private_fulfillments":false,
+  "platform":"bounties-network"
+}
+
+{"id":78,"categories":["web3"],"tokenContract":"0x0000000000000000000000000000000000000000","tokenSymbol":"ETH","tokenDecimals":18,"arbiter":null,"usd_price":44.90856984,"on_chain":false,"current_market_token_data":{"id":2,"normalized_name":"ethereum","name":"Ethereum","symbol":"ETH","price_usd":89.8171396828},"webReferenceURL":"","uid":"e2a8f63f-9270-4b39-b793-4fc9e1b53d1e","calculated_fulfillmentAmount":"0.500000000000000000000000000000","user":{"id":860,"public_address":"0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb","name":"Matias Forbord","email":"matias.forbord@consensys.net","wants_marketing_emails":true,"dismissed_signup_prompt":null,"organization":"Bounties Network","small_profile_image_url":"https://assets.bounties.network/production/userimages/0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb-sm-c61b.png","large_profile_image_url":"https://assets.bounties.network/production/userimages/0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb-lg-c61b.png","page_preview":"https://assets.bounties.network/production/profile_preview/0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb-5d46edba-9d08-4915-ab70-dafdd7fbf05a.png","website":"https://gifsplanation.com","twitter":"MatiasForbord","github":"codeluggage","linkedin":"https://linkedin.com/in/matiasforbord","dribble":"","created":"2018-10-19T00:07:13.243450","edited":"2018-12-13T02:34:36.307870","last_viewed":"2018-12-13T02:34:36.304536","last_logged_in":"2018-12-13T02:14:49.214472","ens_domain":"","categories":[],"languages":[28,97,137],"skills":[9,18,34,71,88,214]},"issuer":"0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb","created":"2018-12-13T02:48:08.592971","modified":"2018-12-13T02:48:08.604660","deadline":"2019-04-30T16:00:27","private_fulfillments":false,"fulfillmentAmount":"500000000000000000","paysTokens":false,"experienceLevel":1,"revisions":2,"title":"Follow the Bounties API tutorial and give feedback","description":"# Description\n\nWe are solidifying our documentation at https://bounties.readme.io/v1.0/guides. Help us improve it by following the tutorials we've created, and get familiar with the Bounties Network code! \n\n## Definition of Done\n\n- A public github repo with code from the tutorial you have completed\n- Feedback on what could be changed or improved","issuer_name":"Matias Forbord","issuer_email":"matias.forbord@consensys.net","issuer_githubUsername":"","issuer_address":"","sourceFileName":"","sourceFileHash":"","sourceDirectoryHash":"","schemaVersion":"","schemaName":null,"data":null,"platform":"bounties-network"}
+
+
+
+{"id":78,"categories":["web3"],"tokenContract":"0x0000000000000000000000000000000000000000","tokenSymbol":"ETH","tokenDecimals":18,"arbiter":null,"usd_price":44.90856984,"on_chain":false,"current_market_token_data":{"id":2,"normalized_name":"ethereum","name":"Ethereum","symbol":"ETH","price_usd":89.8171396828},"webReferenceURL":"","uid":"e2a8f63f-9270-4b39-b793-4fc9e1b53d1e","calculated_fulfillmentAmount":"0.500000000000000000000000000000","user":{"id":860,"public_address":"0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb","name":"Matias Forbord","email":"matias.forbord@consensys.net","wants_marketing_emails":true,"dismissed_signup_prompt":null,"organization":"Bounties Network","small_profile_image_url":"https://assets.bounties.network/production/userimages/0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb-sm-c61b.png","large_profile_image_url":"https://assets.bounties.network/production/userimages/0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb-lg-c61b.png","page_preview":"https://assets.bounties.network/production/profile_preview/0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb-5d46edba-9d08-4915-ab70-dafdd7fbf05a.png","website":"https://gifsplanation.com","twitter":"MatiasForbord","github":"codeluggage","linkedin":"https://linkedin.com/in/matiasforbord","dribble":"","created":"2018-10-19T00:07:13.243450","edited":"2018-12-13T02:34:36.307870","last_viewed":"2018-12-13T02:34:36.304536","last_logged_in":"2018-12-13T02:14:49.214472","ens_domain":"","categories":[],"languages":[28,97,137],"skills":[9,18,34,71,88,214]},"issuer":"0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb","created":"2018-12-13T02:48:08.592971","modified":"2018-12-13T02:48:08.604660","deadline":"2019-04-30T16:00:27","private_fulfillments":false,"fulfillmentAmount":"500000000000000000","paysTokens":false,"experienceLevel":1,"revisions":2,"title":"Follow the Bounties API tutorial and give feedback","description":"# Description\n\nWe are solidifying our documentation at https://bounties.readme.io/v1.0/guides. Help us improve it by following the tutorials we've created, and get familiar with the Bounties Network code! \n\n## Definition of Done\n\n- A public github repo with code from the tutorial you have completed\n- Feedback on what could be changed or improved","issuer_name":"Matias Forbord","issuer_email":"matias.forbord@consensys.net","issuer_githubUsername":"","issuer_address":"","sourceFileName":"","sourceFileHash":"","sourceDirectoryHash":"","schemaVersion":"","schemaName":null,"data":null,"platform":"bounties-network"}
+
+
+---
+
+GET
+
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 78,
+      "categories": [
+        "web3"
+      ],
+      "tokenContract": "0x0000000000000000000000000000000000000000",
+      "tokenSymbol": "ETH",
+      "tokenDecimals": 18,
+      "arbiter": null,
+      "usd_price": 44.90856984,
+      "on_chain": false,
+      "current_market_token_data": {
+        "id": 2,
+        "normalized_name": "ethereum",
+        "name": "Ethereum",
+        "symbol": "ETH",
+        "price_usd": 89.8171396828
+      },
+      "webReferenceURL": "",
+      "uid": "e2a8f63f-9270-4b39-b793-4fc9e1b53d1e",
+      "calculated_fulfillmentAmount": "0.500000000000000000000000000000",
+      "user": {
+        "id": 860,
+        "public_address": "0xa3e2b5d63c258cb779ef52ef8ed81287fa121442",
+        "name": "Rincewind",
+        "email": "rincewind@example.com",
+        "wants_marketing_emails": true,
+        "dismissed_signup_prompt": null,
+        "organization": "Bounties Network",
+        "small_profile_image_url": "https://assets.bounties.network/production/userimages/0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb-sm-c642.png",
+        "large_profile_image_url": "https://assets.bounties.network/production/userimages/0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb-lg-c642.png",
+        "page_preview": "https://assets.bounties.network/production/profile_preview/0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb-5d46edba-9d08-4915-ab70-dafdd7fbf042.png",
+        "website": "",
+        "twitter": "",
+        "github": "",
+        "linkedin": "",
+        "dribble": "",
+        "created": "2018-10-19T00:07:13.243450",
+        "edited": "2018-12-13T02:34:36.307870",
+        "last_viewed": "2018-12-13T02:34:36.304536",
+        "last_logged_in": "2018-12-13T02:14:49.214472",
+        "ens_domain": "",
+        "categories": [],
+        "languages": [
+          28,
+          97,
+          137
+        ],
+        "skills": [
+          9,
+          18,
+          34,
+          71,
+          88,
+          214
+        ]
+      },
+      "issuer": "0xa3e2b5d63c258cb779ef52ef8ed81287fa121442",
+      "created": "2018-12-13T02:48:08.592971",
+      "modified": "2018-12-13T02:48:08.604660",
+      "deadline": "2019-04-30T16:00:27",
+      "private_fulfillments": false,
+      "fulfillmentAmount": "500000000000000000",
+      "paysTokens": false,
+      "experienceLevel": 1,
+      "revisions": 2,
+      "title": "Follow the Bounties API tutorial and give feedback",
+      "description": "# Description\n\nWe are solidifying our documentation at https://bounties.readme.io/v1.0/guides. Help us improve it by following the tutorials we've created, and get familiar with the Bounties Network code! \n\n## Definition of Done\n\n- A public github repo with code from the tutorial you have completed\n- Feedback on what could be changed or improved",
+      "issuer_name": "Rincewind",
+      "issuer_email": "rincewind@example.com",
+      "issuer_githubUsername": "",
+      "issuer_address": "",
+      "sourceFileName": "",
+      "sourceFileHash": "",
+      "sourceDirectoryHash": "",
+      "schemaVersion": "",
+      "schemaName": null,
+      "data": null,
+      "platform": "bounties-network"
+    }
+  ]
+}

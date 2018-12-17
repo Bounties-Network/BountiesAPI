@@ -1,0 +1,20 @@
+{
+  "emails": {
+    "activity": false,
+    "both": {
+      "RatingReceived": false
+    },
+    "issuer": {
+      "BountyCommentReceived": true,
+      "BountyExpired": true,
+      "TransferRecipient": true,
+      "FulfillmentUpdatedIssuer": true,
+      "FulfillmentSubmittedIssuer": true,
+      "ContributionReceived": true,
+      "BountyCompleted": true
+    },
+    "fulfiller": {
+      "FulfillmentAcceptedFulfiller": true
+    }
+  }
+}

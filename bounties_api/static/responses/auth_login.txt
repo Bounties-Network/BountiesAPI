@@ -1,0 +1,63 @@
+{
+  "nonce": "c8947d3b-7c55-4f1b-9780-d00dbdce8d42",
+  "has_signed_up": true
+}
+
+{
+  "public_address": "0xa3e2B5D63C258Cb779EF52EF8ED81287fA121442",
+  "signature": "0x5985e9393fe8f542bc46ced81433aa24ccece547b46a7570f1fd0de88e08adec02c6e6e6320071cfa7dfd5655d24b0c152ba935d7b2bc83614f71ccbb070f80e42"
+}
+
+---
+
+{
+  "id": 860,
+  "categories": [],
+  "languages": [
+    "Ankhian"
+  ],
+  "skills": [
+    "languages",
+    "running away",
+    "tourist guide"
+  ],
+  "page_preview": "https://assets.bounties.network/production/profile_preview/0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb-5d46edba-9d08-4915-ab70-dafdd7fbf042.png",
+  "settings": {
+    "emails": {
+      "both": {
+        "RatingReceived": true
+      },
+      "issuer": {
+        "BountyExpired": true,
+        "BountyCompleted": true,
+        "TransferRecipient": true,
+        "ContributionReceived": true,
+        "BountyCommentReceived": true,
+        "FulfillmentUpdatedIssuer": true,
+        "FulfillmentSubmittedIssuer": true
+      },
+      "activity": false,
+      "fulfiller": {
+        "FulfillmentAcceptedFulfiller": true
+      }
+    }
+  },
+  "public_address": "0xa3e2b5d63c258cb779ef52ef8ed81287fa121442",
+  "name": "Rincewind",
+  "email": "rincewind@example.com",
+  "wants_marketing_emails": true,
+  "dismissed_signup_prompt": null,
+  "organization": "Unseen University",
+  "small_profile_image_url": "https://assets.bounties.network/production/userimages/0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb-sm-c642.png",
+  "large_profile_image_url": "https://assets.bounties.network/production/userimages/0xa3e2b5d63c258cb779ef52ef8ed81287fa1214cb-lg-c642.png",
+  "website": "",
+  "twitter": "",
+  "github": "",
+  "linkedin": "",
+  "dribble": "",
+  "created": "2018-10-19T00:07:13.243450",
+  "edited": "2018-12-12T15:07:44.482678",
+  "last_viewed": "2018-12-12T15:05:39.877115",
+  "last_logged_in": "2018-12-12T15:07:44.482558",
+  "ens_domain": ""
+}

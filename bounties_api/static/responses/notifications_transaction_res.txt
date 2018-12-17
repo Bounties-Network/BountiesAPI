@@ -1,0 +1,23 @@
+{
+  "count": 42,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 405,
+      "failed": false,
+      "completed": true,
+      "viewed": false,
+      "data": {
+        "link": "/bounty/243/?fulfillment_id=0&rating=true",
+        "message": "Submission accepted",
+        "linkText": "Rate fulfiller"
+      },
+      "created": "2018-12-13T23:41:57.597205",
+      "updated": "2018-12-13T23:41:57.597228",
+      "tx_hash": "0xa2b41be5ac0ea6c23ef6a6460c1e9aa60209f2e608b2e2f79b2df724c79c7642",
+      "platform": "bounties-network"
+    },
+    ...
+  ]
+}

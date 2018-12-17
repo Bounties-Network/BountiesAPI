@@ -1,0 +1,18 @@
+[
+  {
+    "tokenSymbol": "ETH",
+    "tokenContract": "0x0000000000000000000000000000000000000000",
+    "tokenDecimals": 18,
+    "count": 1168,
+    "token": [
+      {
+        "id": 2,
+        "normalized_name": "ethereum",
+        "name": "Ethereum",
+        "symbol": "ETH",
+        "price_usd": 88.262118341
+      }
+    ]
+  },
+  ...
+]

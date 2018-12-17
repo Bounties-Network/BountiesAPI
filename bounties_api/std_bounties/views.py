@@ -6,11 +6,43 @@ from django.http import JsonResponse, Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from rest_framework.views import APIView
-from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList, limitOffsetParams
-from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_FULFILLER_QUERY
-from std_bounties.serializers import BountySerializer, FulfillmentSerializer, RankedCategorySerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer, ReviewSerializer
-from std_bounties.models import Bounty, DraftBounty, Fulfillment, RankedCategory, Token, Comment, Review
-from std_bounties.filters import BountiesFilter, DraftBountiesFilter, FulfillmentsFilter, RankedCategoryFilter, ReviewsFilter
+from bounties.utils import (
+    dictfetchall,
+    extractInParams,
+    sqlGenerateOrList,
+    limitOffsetParams
+)
+from std_bounties.queries import (
+    LEADERBOARD_ISSUER_QUERY,
+    LEADERBOARD_FULFILLER_QUERY
+)
+from std_bounties.serializers import (
+    BountySerializer,
+    FulfillmentSerializer,
+    RankedCategorySerializer,
+    LeaderboardIssuerSerializer,
+    LeaderboardFulfillerSerializer,
+    TokenSerializer,
+    DraftBountyWriteSerializer,
+    CommentSerializer,
+    ReviewSerializer
+)
+from std_bounties.models import (
+    Bounty,
+    DraftBounty,
+    Fulfillment,
+    RankedCategory,
+    Token,
+    Comment,
+    Review
+)
+from std_bounties.filters import (
+    BountiesFilter,
+    DraftBountiesFilter,
+    FulfillmentsFilter,
+    RankedCategoryFilter,
+    ReviewsFilter
+)
 from user.permissions import AuthenticationPermission, UserObjectPermissions
 from notifications.notification_client import NotificationClient
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -24,6 +56,11 @@ class ReviewsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ReviewSerializer
 
     def get_queryset(self):
+        '''
+        Issuer and fulfiller reviews
+
+        Expects `review_type` on the request
+        '''
         review_type = self.request.GET.get('review_type', '')
 
         if review_type == 'fulfiller':
@@ -44,6 +81,17 @@ class SubmissionReviews(APIView):
     permission_classes = [AuthenticationPermission]
 
     def get(self, request, bounty_id, fulfillment_id):
+        '''
+        Both issuer and fulfiller reviews
+
+        Expects `bounty_id` and `fulfillment_id`
+
+        Returns:
+        {
+            'issuer_review': issuer_review_data,
+            'fulfiller_review': fulfiller_review_data,
+        }
+        '''
         bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
         fulfillment = get_object_or_404(
             Fulfillment,
@@ -62,6 +110,14 @@ class SubmissionReviews(APIView):
         })
 
     def post(self, request, bounty_id, fulfillment_id):
+        '''
+        Saves the fulfillment and serialized review
+
+        Expects `bounty_id` and `fulfillment_id`
+        and `current_user` and `data` on the request
+
+        Serializes the data as a review
+        '''
         bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
         fulfillment = get_object_or_404(
             Fulfillment,
@@ -118,9 +174,22 @@ class BountyComments(mixins.ListModelMixin,
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
-        return Comment.objects.filter(bounty__id=self.kwargs['bounty_id']).order_by('-created')
+        '''
+        All comments by `comment_id`, ordered by created
+
+        Expects `comment_id`
+        '''
+        return Comment.objects.filter(
+            bounty__id=self.kwargs['bounty_id']).order_by('-created')
 
     def post(self, request, bounty_id):
+        '''
+        Adds the data on the request as a comment on the `bounty_id`
+
+        Expects `bounty_id` and `data` on the request
+
+        Returns the serialized data
+        '''
         bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
         serializer = CommentSerializer(
             data=request.data,
@@ -180,6 +249,11 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Fulfillment.objects.all().select_related('bounty')
 
     def get_queryset(self):
+        '''
+        All related fulfillments for the `current_user` on the request
+
+        Expects `current_user`, or finds public fulfillments
+        '''
         qs = Fulfillment.objects.all().select_related('bounty')
 
         current_user = self.request.current_user
@@ -191,7 +265,8 @@ class FulfillmentViewSet(viewsets.ReadOnlyModelViewSet):
                 Q(bounty__private_fulfillments=False)
             )
         else:
-            return Fulfillment.objects.filter(bounty__private_fulfillments=False)
+            return Fulfillment.objects.filter(
+                bounty__private_fulfillments=False)
 
         return Fulfillment.objects.none()
 
@@ -215,6 +290,15 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 class UserProfile(APIView):
     def get(self, request, address=''):
+        '''
+        User profile based on latest fulfillment
+
+        Expects `platform` singular or `platform__in` array of platforms
+
+        Finds fulfillments found given parameters, ordered by created
+
+        Returns profile based on the latest fulfillment found
+        '''
         platform_in = extractInParams(request, 'platform', 'platform__in')
         extra_filters = {}
         if platform_in:
@@ -236,6 +320,17 @@ class UserProfile(APIView):
 
 class LeaderboardIssuer(APIView):
     def get(self, request):
+        '''
+        Leaderboard data based on issuer
+
+        Expects single `platform` or array of `platform__in`
+
+        Returns:
+        JsonResponse({
+            'count': len(query_result),
+            'results': serializer.data
+        }, safe=False)
+        '''
         sql_param = ''
         platform_in = extractInParams(request, 'platform', 'platform__in')
         startIndex, endIndex = limitOffsetParams(request)
@@ -255,11 +350,25 @@ class LeaderboardIssuer(APIView):
         query_result = dictfetchall(cursor)
         narrowed_result = query_result[startIndex: endIndex]
         serializer = LeaderboardIssuerSerializer(narrowed_result, many=True)
-        return JsonResponse({'count': len(query_result), 'results': serializer.data}, safe=False)
+        return JsonResponse({
+            'count': len(query_result),
+            'results': serializer.data
+        }, safe=False)
 
 
 class LeaderboardFulfiller(APIView):
     def get(self, request):
+        '''
+        Leaderboard data based on fulfiller
+
+        Expects single `platform` or array of `platform__in`
+
+        Returns:
+        JsonResponse({
+            'count': len(query_result),
+            'results': serializer.data
+        }, safe=False)
+        '''
         sql_param = ''
         platform_in = extractInParams(request, 'platform', 'platform__in')
         startIndex, endIndex = limitOffsetParams(request)
@@ -279,11 +388,17 @@ class LeaderboardFulfiller(APIView):
         query_result = dictfetchall(cursor)
         narrowed_result = query_result[startIndex: endIndex]
         serializer = LeaderboardFulfillerSerializer(narrowed_result, many=True)
-        return JsonResponse({'count': len(query_result), 'results': serializer.data}, safe=False)
+        return JsonResponse({
+            'count': len(query_result),
+            'results': serializer.data
+        }, safe=False)
 
 
 class Tokens(APIView):
     def get(self, request):
+        '''
+        Tokens used in all bounties, ordered by count by type
+        '''
         token_qs = {}
         result = []
         token_to_append = {}

@@ -1,0 +1,29 @@
+{
+  "id": 1636,
+  "notification": {
+    "id": 1636,
+    "user": {
+      ...
+    },
+    "from_user": {
+      ...
+    },
+    "uid": "243-0-completed",
+    "created": "2018-12-13T23:42:13.591226",
+    "updated": "2018-12-13T23:42:13.708043",
+    "notification_name": 26,
+    "notification_created": "2018-12-13T23:42:13.587639",
+    "email_sent": true,
+    "dashboard": true,
+    "platform": "bounties-network"
+  },
+  "created": "2018-12-13T23:42:13.593337",
+  "updated": "2018-12-13T23:42:13.593354",
+  "is_activity": false,
+  "viewed": false,
+  "string_data": "Follow the Bounties API tutorial and give feedback is out of funds",
+  "data": {
+    "link": "https://explorer.bounties.network/bounty/243",
+    "bounty_title": "Follow the Bounties API tutorial and give feedback"
+  }
+}

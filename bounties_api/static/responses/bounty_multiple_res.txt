@@ -1,0 +1,105 @@
+{
+  "count": 48,
+  "next": "https://api.bounties.network/bounty/?bountyStage__in=1&&offset=1&ordering=-bounty_created&platform__in=bounties-network",
+  "previous": null,
+  "results": [
+    {
+      "id": 1511,
+      "bountyStage": 1,
+      "categories": [
+        {
+          "id": 363,
+          "name": "social impact",
+          "normalized_name": "social impact"
+        },
+        {
+          "id": 814,
+          "name": "Philippines",
+          "normalized_name": "philippines"
+        }
+      ],
+      "current_market_token_data": {
+        "id": 2,
+        "normalized_name": "ethereum",
+        "name": "Ethereum",
+        "symbol": "ETH",
+        "price_usd": 91.4385656543
+      },
+      "user": {
+        "id": 48,
+        "public_address": "0x54becc7560a7be76d72ed76a1f5fee6c5a2a7ab6",
+        "name": "Simona",
+        "email": "simona.pop@example.com",
+        "wants_marketing_emails": false,
+        "dismissed_signup_prompt": null,
+        "organization": "The Bounties Network",
+        "small_profile_image_url": "https://assets.bounties.network/production/userimages/0x54becc7560a7be76d72ed76a1f5fee6c5a2a7ab6-160.jpg",
+        "large_profile_image_url": "https://assets.bounties.network/production/userimages/0x54becc7560a7be76d72ed76a1f5fee6c5a2a7ab6-89.jpg",
+        "page_preview": "https://assets.bounties.network/production/profile_preview/0x54becc7560a7be76d72ed76a1f5fee6c5a2a7ab6-18cb4446-965f-47b9-a7ff-6a733eb003e4.png",
+        "website": "https://medium.com/@Sim_Pop",
+        "twitter": "Sim_Pop",
+        "github": "",
+        "linkedin": "",
+        "dribble": "",
+        "created": "2018-10-19T00:07:13.243450",
+        "edited": "2018-12-10T16:55:09.307209",
+        "last_viewed": "2018-12-10T16:55:09.305338",
+        "last_logged_in": "2018-12-03T10:04:25.722169",
+        "ens_domain": "",
+        "categories": [],
+        "languages": [
+          28,
+          35,
+          56,
+          112
+        ],
+        "skills": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "fulfillment_count": 105,
+      "comment_count": 2,
+      "created": "2018-10-17T10:53:58.230812",
+      "modified": "2018-12-11T07:15:36.903831",
+      "deadline": "2019-04-29T23:00:50",
+      "arbiter": "0x0000000000000000000000000000000000000000",
+      "private_fulfillments": false,
+      "fulfillmentAmount": "44000000000000000",
+      "calculated_fulfillmentAmount": "0.044000000000000000000000000000",
+      "paysTokens": false,
+      "experienceLevel": 0,
+      "revisions": 0,
+      "title": "Bounties for the Oceans: Philippines Pilot - Sustained, Verifiable Plastic Cleanups",
+      "description": "# Bounties for the Oceans\n\nThe Bounties Network is partnering with ConsenSys Social Impact to address the state of our oceans and incentivize plastic cleanup action on a local and global level.\n\nSome dire stats from the UN:\n\n80% of all pollution in the ocean comes from people on land.\n8 million tonnes of plastic per year ends up in the ocean, wreaking havoc on wildlife, fisheries and tourism.\n\nPlastic pollution costs the lives of 1 million seabirds and 100,000 marine mammals per year.\n\nFish eat plastic, and we eat the fish.\n\nPlastic causes $8 billion in damage to marine ecosystems each year.\n\nWith Bounties for the Ocean, we are asking people everywhere to submit verifiable proof of their direct plastic cleanup contribution as a way of fostering widespread and long-term behavioral shift. \n\nDo not depend on centralized organizations, go out there and do it yourselves.\n\n## Definition of Done & Requirements\n\n - Upload a photo of yourself with one of our anchor volunteers, and the trash you've picked up for a half day\n -The photo must be taken at Las Pinas-Paranaque Critical Habitat & EcoTourism Area\n - Share your image on social media if possible, tagging @ethBounties using #bountiesfortheoceans, and upload a screenshot\n\n## Summary\n\n - Yes, you can make a difference\n - Each correct submission will be rewarded with 0.03 ETH on acceptance\n - It is important to continue efforts beyond the Bounties for the Oceans event in December, and curb your use of plastic as much as possible in daily activities",
+      "tokenSymbol": "ETH",
+      "tokenDecimals": 18,
+      "tokenContract": "0x0000000000000000000000000000000000000000",
+      "usd_price": 4.0249154361592,
+      "issuer_name": "Simona",
+      "issuer_email": "simona.pop@example.com",
+      "issuer_githubUsername": "",
+      "issuer_address": "0x54becc7560a7be76d72ed76a1f5fee6c5a2a7ab6",
+      "sourceFileName": "",
+      "sourceFileHash": "",
+      "sourceDirectoryHash": "",
+      "webReferenceURL": "",
+      "platform": "bounties-network",
+      "schemaVersion": "bounties-network",
+      "schemaName": "standardSchema",
+      "uid": "",
+      "bounty_created": "2018-10-17T10:53:26",
+      "bounty_id": 1511,
+      "data": "QmaehkeduAN1anu7iuuMBjXLfBxUTNJNex1JTjLwphUntm",
+      "issuer": "0x54becc7560a7be76d72ed76a1f5fee6c5a2a7ab6",
+      "old_balance": null,
+      "tokenLockPrice": null,
+      "balance": "421000000000000000",
+      "calculated_balance": "0.421000000000000000000000000000",
+      "image_preview": "https://assets.bounties.network/production/bounty_preview/1511-2715607c-856f-44d6-9ea0-c2aaa1667ba8.png",
+      "token": 2
+    }
+  ]
+}

@@ -8,7 +8,7 @@ info:
   license:
     name: MIT License
   version: v1
-host: localhost:8000
+host: 127.0.0.1:8000
 schemes:
   - http
 basePath: /
@@ -43,6 +43,17 @@ paths:
       summary: Logs in the user
       description: "Expects `public_address` and `signature` in `data` on the request\n\
         \nReturns the serialized user"
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - auth
+    parameters: []
+  /auth/login/jwt/:
+    post:
+      operationId: auth_login_jwt_create
+      description: ''
       parameters: []
       responses:
         '201':
@@ -950,6 +961,11 @@ paths:
       operationId: reviews_list
       description: ''
       parameters:
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
         - name: reviewer__public_address
           in: query
           description: ''
@@ -1195,6 +1211,21 @@ paths:
         description: A unique integer value identifying this ranked skill.
         required: true
         type: integer
+  /user/{public_address}/dismiss_signup/:
+    get:
+      operationId: user_dismiss_signup_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - user
+    parameters:
+      - name: public_address
+        in: path
+        required: true
+        type: string
   /user/{public_address}/info/:
     get:
       operationId: user_info_list
@@ -1318,6 +1349,11 @@ definitions:
       wants_marketing_emails:
         title: Wants marketing emails
         type: boolean
+      dismissed_signup_prompt:
+        title: Dismissed signup prompt
+        type: string
+        format: date-time
+        x-nullable: true
       organization:
         title: Organization
         type: string

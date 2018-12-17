@@ -24,7 +24,7 @@ if [ "$CURL_EXISTS" != "" ] && [ "$DOCKER_EXISTS" != "" ] && [ "$DOCKER_COMPOSE_
     echo
     echo "Starting up bounties_api"
     echo
-    docker-compose up --detach bounties_api
+    docker-compose up -d bounties_api
     echo
     echo "Waiting $SLEEP_FOR_SECONDS seconds for container to get up and running..."
     echo

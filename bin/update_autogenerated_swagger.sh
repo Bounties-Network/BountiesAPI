@@ -2,7 +2,10 @@
 
 CURRENT_FOLDER=`pwd`
 
-echo "Make sure to only run this script from the root of the repository"
+if [[ "$CURRENT_FOLDER" == */bin ]]; then
+    echo "Run this script from the root of the repository"
+    exit 1
+fi
 
 CURL_EXISTS=`which curl`
 DOCKER_EXISTS=`which docker`

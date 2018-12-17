@@ -32,7 +32,13 @@ if [ "$CURL_EXISTS" != "" ] && [ "$DOCKER_EXISTS" != "" ] && [ "$DOCKER_COMPOSE_
     echo
     echo "Exporting swagger to $EXPORT_PATH"
     echo
-    curl http://localhost:8000/swagger.yaml > $EXPORT_PATH
+    curl http://127.0.0.1:8000/swagger.yaml > $EXPORT_PATH
+    EXPORTED_YAML=`cat $EXPORT_PATH`
+    if [ "$EXPORTED_YAML" == "" ]; then
+        echo "Trying again, container was not ready..."
+        sleep $SLEEP_FOR_SECONDS
+        curl http://127.0.0.1:8000/swagger.yaml > $EXPORT_PATH
+    fi
     echo
     echo "Shutting down..."
     echo

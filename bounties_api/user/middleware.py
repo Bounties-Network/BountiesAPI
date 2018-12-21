@@ -1,11 +1,14 @@
+import datetime
 from user.backend import get_user
 from django.utils.deprecation import MiddlewareMixin
 from django.conf import settings
+from uuid import uuid4
 import logging
 import jwt
 
 
 logger = logging.getLogger('django')
+max_age = 365 * 24 * 60 * 60 * 100
 
 
 class AuthenticationMiddleware(MiddlewareMixin):
@@ -28,3 +31,34 @@ class AuthenticationMiddleware(MiddlewareMixin):
         else:
             request.is_logged_in = False
             request.current_user = None
+
+    def process_response(self, request, response):
+        uuid_cookie = request.COOKIES.get('uuid')
+        user_id_cookie = request.COOKIES.get('user_id')
+
+        if not uuid_cookie:
+            expires = datetime.datetime.strftime(
+                datetime.datetime.utcnow() +
+                datetime.timedelta(
+                    seconds=max_age),
+                "%a, %d-%b-%Y %H:%M:%S GMT")
+            response.set_cookie(
+                'uuid',
+                value=uuid4(),
+                secure=False,
+                httponly=True,
+                expires=expires)
+        if not user_id_cookie and request.current_user:
+            expires = datetime.datetime.strftime(
+                datetime.datetime.utcnow() +
+                datetime.timedelta(
+                    seconds=max_age),
+                "%a, %d-%b-%Y %H:%M:%S GMT")
+            response.set_cookie(
+                'user_id',
+                value=request.current_user.id,
+                secure=False,
+                httponly=True,
+                expires=expires)
+
+        return response

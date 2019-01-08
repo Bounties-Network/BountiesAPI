@@ -13,6 +13,11 @@ from std_bounties.models import Category, RankedCategory
 from std_bounties.views import Tokens
 
 
+class RecordPageView(APIView):
+    def get(self, request):
+        return Response()
+
+
 class TimelineBounties(APIView):
     def get(self, request):
         queryset = request.query_params.copy()

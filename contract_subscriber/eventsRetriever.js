@@ -41,6 +41,12 @@ async function sendEvents(events) {
 				.mapKeys((value, key) => key.substring(1))
 				.value();
 			const blockData = await getBlock(blockNumber);
+
+			if (!('timestamp' in blockData)) {
+				highestBlock = blockNumber;
+				continue;
+			}
+
 			const eventTimestamp = blockData.timestamp.toString();
 
 			// Set Up SQS Params

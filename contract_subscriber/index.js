@@ -39,12 +39,10 @@ async function handler() {
 			await delay(1000);
 
 		} catch (err) {
+			rollbar.error(err);
+			console.log(err);
 			// ignore constant RPC response error from Infura temporarily
 			if (err.message !== 'Invalid JSON RPC response: ""') {
-				// include rollbar error message soon
-				rollbar.error(err);
-				console.log(err);
-
 				// exit with error so kubernettes will automatically restart the job
 				process.exit(1);
 			} else {

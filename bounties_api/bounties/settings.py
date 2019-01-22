@@ -78,22 +78,11 @@ INSTALLED_APPS = [
     'analytics',
     'user',
     'notifications',
-    'django_nose',
     'django.contrib.sites',
     'django.contrib.sitemaps'
 ]
 
 SITE_ID = 1
-
-# Use nose to run all tests
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-
-# Tell nose to measure coverage on the 'foo' and 'bar' apps
-NOSE_ARGS = [
-    '--with-coverage',
-    '--cover-inclusive',
-    '--cover-xml',
-]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

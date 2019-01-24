@@ -3,6 +3,8 @@ from notifications.notification_client import NotificationClient
 from std_bounties.slack_client import SlackMessageClient
 from std_bounties.seo_client import SEOClient
 from std_bounties.models import Bounty
+from activity.models import Activity, Target
+from activity.constants import activity_to_id
 
 bounty_client = BountyClient()
 notification_client = NotificationClient()
@@ -49,6 +51,12 @@ def bounty_fulfilled(bounty_id, **kwargs):
     bounty_client.fulfill_bounty(bounty, **kwargs)
     notification_client.bounty_fulfilled(bounty_id, **kwargs)
     slack_client.bounty_fulfilled(bounty, fulfillment_id)
+
+    Activity.objects.create(
+        actor=bounty.user,
+        verb=activity_to_id['FULFILLMENT_SUBMITTED'],
+        target=Target.objects.get_or_create(bounty=bounty)[0]
+    )
 
 
 def fullfillment_updated(bounty_id, **kwargs):

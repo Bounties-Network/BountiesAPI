@@ -4,6 +4,7 @@ from std_bounties.bounty_client import BountyClient
 from notifications.notification_client import NotificationClient
 from std_bounties.slack_client import SlackMessageClient
 from std_bounties.seo_client import SEOClient
+
 from std_bounties.models import Bounty, Fulfillment
 from activity import client as activity_client
 

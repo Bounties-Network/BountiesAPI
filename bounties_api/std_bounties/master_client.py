@@ -59,7 +59,7 @@ def bounty_fulfilled(bounty_id, **kwargs):
     )
     notification_client.bounty_fulfilled(bounty_id, **kwargs)
     slack_client.bounty_fulfilled(bounty, fulfillment_id)
-    activity_client.fulfillment_created(fulfillment)
+    activity_client.fulfillment_created(fulfillment, bounty)
 
 
 def fullfillment_updated(bounty_id, **kwargs):
@@ -81,7 +81,7 @@ def fulfillment_accepted(bounty_id, **kwargs):
     notification_client.fulfillment_accepted(bounty_id, **kwargs)
     slack_client.fulfillment_accepted(bounty, fulfillment_id)
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
-    activity_client.fulfillment_accepted(fulfillment)
+    activity_client.fulfillment_accepted(fulfillment, bounty)
     if bounty.balance < bounty.fulfillmentAmount:
         notification_client.bounty_completed(bounty, fulfillment_id)
         # activity_client.bounty_completed(bounty)

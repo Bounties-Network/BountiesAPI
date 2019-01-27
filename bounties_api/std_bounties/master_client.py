@@ -84,7 +84,7 @@ def fulfillment_accepted(bounty_id, **kwargs):
     activity_client.fulfillment_accepted(fulfillment, bounty)
     if bounty.balance < bounty.fulfillmentAmount:
         notification_client.bounty_completed(bounty, fulfillment_id)
-        # activity_client.bounty_completed(bounty)
+        activity_client.bounty_completed(bounty)
 
 
 def bounty_killed(bounty_id, **kwargs):

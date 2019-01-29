@@ -63,9 +63,11 @@ class BountyState(models.Model):
             if last_stage == EXPIRED_STAGE and self.change_date < last_record.change_date:
                 last_record.delete()
             if last_stage == ACTIVE_STAGE and self.bounty.deadline < self.change_date:
-                BountyState.objects.create(bounty=self.bounty,
-                                           bountyStage=EXPIRED_STAGE,
-                                           change_date=self.bounty.deadline)
+                BountyState.objects.create(
+                    bounty=self.bounty,
+                    bountyStage=EXPIRED_STAGE,
+                    change_date=self.bounty.deadline
+                )
         super(BountyState, self).save(*args, **kwargs)
 
     class Meta:
@@ -87,17 +89,14 @@ class BountyAbstract(models.Model):
         null=True,
         default=0)
     paysTokens = models.BooleanField()
-    experienceLevel = models.IntegerField(
-        choices=DIFFICULTY_CHOICES, null=True)
+    experienceLevel = models.IntegerField(choices=DIFFICULTY_CHOICES, null=True)
     revisions = models.IntegerField(null=True)
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField(blank=True)
     token = models.ForeignKey(Token, null=True)
     tokenSymbol = models.CharField(max_length=128, default='ETH')
     tokenDecimals = models.IntegerField(default=18)
-    tokenContract = models.CharField(
-        max_length=128,
-        default='0x0000000000000000000000000000000000000000')
+    tokenContract = models.CharField(max_length=128, default='0x0000000000000000000000000000000000000000')
     usd_price = models.FloatField(default=0)
     issuer_name = models.CharField(max_length=128, blank=True)
     issuer_email = models.CharField(max_length=128, blank=True)
@@ -119,15 +118,12 @@ class Bounty(BountyAbstract):
     id = models.IntegerField(primary_key=True)
     uid = models.CharField(max_length=128, blank=True, null=True)
     bounty_created = models.DateTimeField(null=True)
-    bountyStage = models.IntegerField(
-        choices=STAGE_CHOICES, default=DRAFT_STAGE)
-    comments = models.ManyToManyField(
-        Comment, related_name='bounty')
+    bountyStage = models.IntegerField(choices=STAGE_CHOICES, default=DRAFT_STAGE)
+    comments = models.ManyToManyField(Comment, related_name='bounty')
     bounty_id = models.IntegerField()
     data = models.CharField(max_length=128)
     issuer = models.CharField(max_length=128)
-    old_balance = models.DecimalField(
-        decimal_places=0, max_digits=64, null=True)
+    old_balance = models.DecimalField(decimal_places=0, max_digits=64, null=True)
     tokenLockPrice = models.FloatField(null=True, blank=True)
     balance = models.DecimalField(
         decimal_places=0,
@@ -149,8 +145,7 @@ class Bounty(BountyAbstract):
         balance = self.balance
         decimals = self.tokenDecimals
         self.calculated_balance = calculate_token_value(balance, decimals)
-        self.calculated_fulfillmentAmount = calculate_token_value(
-            fulfillmentAmount, decimals)
+        self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
         user, created = User.objects.get_or_create(
             public_address=self.issuer,
             defaults={
@@ -217,10 +212,8 @@ class Fulfillment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     fulfillment_created = models.DateTimeField(null=True)
-    fulfiller_review = models.ForeignKey(
-        Review, related_name='fulfillment_review', null=True)
-    issuer_review = models.ForeignKey(
-        Review, related_name='issuer_review', null=True)
+    fulfiller_review = models.ForeignKey(Review, related_name='fulfillment_review', null=True)
+    issuer_review = models.ForeignKey(Review, related_name='issuer_review', null=True)
     data = models.CharField(max_length=128)
     accepted = models.BooleanField()
     accepted_date = models.DateTimeField(null=True)

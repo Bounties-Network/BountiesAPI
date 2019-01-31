@@ -75,6 +75,13 @@ class BountyState(models.Model):
 
 
 class BountyAbstract(models.Model):
+    OPEN = 'O'
+    CLOSED = 'C'
+
+    BOUNTY_TYPES = (
+        (OPEN, 'open')
+    )
+
     user = models.ForeignKey('user.User', null=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -82,6 +89,7 @@ class BountyAbstract(models.Model):
     deadline = models.DateTimeField()
     arbiter = models.CharField(max_length=128, null=True)
     private_fulfillments = models.BooleanField(default=True)
+    fulfillers_need_approval = models.BooleanField(default=False)
     fulfillmentAmount = models.DecimalField(decimal_places=0, max_digits=64)
     calculated_fulfillmentAmount = models.DecimalField(
         decimal_places=30,
@@ -271,3 +279,22 @@ class Event(models.Model):
     transaction_from = models.CharField(max_length=128)
     contract_inputs = JSONField(null=True)
     event_date = models.DateTimeField()
+
+
+class FulfillerApplication(models.Model):
+    ACCEPTED = 'A'
+    REJECTED = 'R'
+    PENDING = 'P'
+
+    APPLICATION_STATES = (
+        (ACCEPTED, 'accepted'),
+        (REJECTED, 'rejected'),
+        (PENDING, 'pending'),
+    )
+
+    bounty = models.ForeignKey(Bounty, blank=False, null=False)
+    applicant = models.ForeignKey('user.User')
+    message = models.TextField()
+    state = models.CharField(max_length=1, choices=APPLICATION_STATES, default=PENDING)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now_add=True)

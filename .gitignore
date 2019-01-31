@@ -4,3 +4,4 @@ coverage.lcov
 .vscode
 .python-version
 bounties_api/cover
+.DS_STORE

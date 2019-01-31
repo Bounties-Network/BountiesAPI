@@ -62,8 +62,7 @@ def map_bounty_data(data_hash, bounty_id):
 
     formattedExperienceLevel = str(experienceLevel).lower().strip().capitalize()
 
-    metadata.update({'experienceLevel': rev_mapped_difficulties.get(
-        formattedExperienceLevel, BEGINNER)})
+    metadata.update({'experienceLevel': rev_mapped_difficulties.get(formattedExperienceLevel, BEGINNER)})
 
     data_issuer = data.get('issuer', {})
     if isinstance(data_issuer, str):
@@ -78,20 +77,11 @@ def map_bounty_data(data_hash, bounty_id):
         **meta,
         **metadata,
         'private_fulfillments': data.get('privateFulfillments', True),
-        'issuer_name': data_issuer.get(
-            'name',
-            ''),
-        'issuer_email': data_issuer.get(
-            'email',
-            '') or data.get(
-                'contact',
-                ''),
-        'issuer_githubUsername': data_issuer.get(
-            'githubUsername',
-            ''),
-        'issuer_address': data_issuer.get(
-            'address',
-            ''),
+        'fulfillers_need_approval': data.get('fulfillersNeedApproval', False),
+        'issuer_name': data_issuer.get('name', ''),
+        'issuer_email': data_issuer.get('email', '') or data.get('contact', ''),
+        'issuer_githubUsername': data_issuer.get('githubUsername', ''),
+        'issuer_address': data_issuer.get('address', ''),
         'revisions': data.get('revisions', None),
         'data_issuer': data_issuer,
         'data': ipfs_hash,
@@ -131,20 +121,10 @@ def map_fulfillment_data(data_hash, bounty_id, fulfillment_id):
         'data_json': str(data_JSON),
         'data': ipfs_hash,
         'data_fulfiller': data_fulfiller,
-        'fulfiller_name': data_fulfiller.get(
-            'name',
-            ''),
-        'fulfiller_email': data_fulfiller.get(
-            'email',
-            '') or data.get(
-                'contact',
-                ''),
-        'fulfiller_githubUsername': data_fulfiller.get(
-            'githubUsername',
-            ''),
-        'fulfiller_address': data_fulfiller.get(
-            'address',
-            ''),
+        'fulfiller_name': data_fulfiller.get('name', ''),
+        'fulfiller_email': data_fulfiller.get('email', '') or data.get('contact', ''),
+        'fulfiller_githubUsername': data_fulfiller.get('githubUsername', ''),
+        'fulfiller_address': data_fulfiller.get('address', ''),
         **plucked_data,
         **metadata,
     }
@@ -178,8 +158,7 @@ def get_historic_pricing(token_symbol, token_decimals, value, timestamp):
     r.raise_for_status()
     coin_data = r.json()
     if coin_data.get('Response', None) == 'Error':
-        usd_price, token_model = get_token_pricing(
-            token_symbol, token_decimals, value)
+        usd_price, token_model = get_token_pricing(token_symbol, token_decimals, value)
         token_price = token_model.price_usd if token_model else 0
         return usd_price, token_price
     token_price = coin_data[token_symbol]['USD']

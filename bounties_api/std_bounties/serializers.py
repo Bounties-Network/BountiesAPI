@@ -6,6 +6,7 @@ from bounties.serializers import CreatableSlugRelatedField
 from std_bounties.models import (
     Bounty,
     Fulfillment,
+    FulfillerApplication,
     Category,
     RankedCategory,
     Token,
@@ -78,6 +79,17 @@ class CommentSerializer(serializers.ModelSerializer):
             'user': user,
         }
         return Comment.objects.create(**updated_data)
+
+
+class FulfillerApplicationSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = FulfillerApplication
+        fields = '__all__'
+
+    def create(self, validated_data):
+        return FulfillerApplication.objects.create(**validated_data)
 
 
 class BountyFulfillmentSerializer(serializers.ModelSerializer):
@@ -188,9 +200,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        instance = super(
-            DraftBountyWriteSerializer,
-            self).create(validated_data)
+        instance = super(DraftBountyWriteSerializer, self).create(validated_data)
         request = self.context.get('request')
         user = request.current_user
         instance.user = user
@@ -208,11 +218,10 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        super(
-            DraftBountyWriteSerializer,
-            self).update(
+        super(DraftBountyWriteSerializer, self).update(
             instance,
-            validated_data)
+            validated_data
+        )
         token_data = map_token_data(
             instance.paysTokens,
             instance.tokenContract,

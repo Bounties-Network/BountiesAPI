@@ -82,6 +82,7 @@ class User(models.Model):
     last_viewed = models.DateTimeField(blank=True, null=True)
     last_logged_in = models.DateTimeField(blank=True, null=True)
     ens_domain = models.TextField(max_length=500, blank=True)
+    dismissed_banner_count = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
         if not self.settings:

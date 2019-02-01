@@ -14,6 +14,6 @@ urlpatterns = [
     url(r'^(?P<public_address>\w+)/profile/$', views.UserProfile.as_view()),
     url(r'^(?P<public_address>\w+)/info/$', views.UserInfo.as_view()),
     url(r'^(?P<public_address>\w+)/dismiss_signup/$', views.DismissSignup.as_view()),
-    url(r'^(?P<public_address>\w+)/dismissed_profile_banner/$', views.DismissCompleteProfileBanner.as_view()),
+    url(r'^(?P<public_address>\w+)/dismiss_profile_banner/$', views.DismissCompleteProfileBanner.as_view()),
     url(r'^', include(router.urls)),
 ]

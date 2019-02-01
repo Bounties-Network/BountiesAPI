@@ -69,6 +69,16 @@ class DismissSignup(APIView):
         return JsonResponse(UserSerializer(request.current_user).data)
 
 
+class DismissCompleteProfileBanner(APIView):
+    permission_classes = [AuthenticationPermission, UserIDMatches]
+
+    def post(self, request, public_address=''):
+        user = User.objects.get(public_address=public_address.lower())
+        user.dismissed_banner_count += 1
+        user.save()
+        return JsonResponse(UserSerializer(user).data)
+
+
 class UserView(APIView):
     def get(self, request):
         if request.is_logged_in:

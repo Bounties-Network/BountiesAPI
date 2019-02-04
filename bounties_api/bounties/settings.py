@@ -79,7 +79,7 @@ INSTALLED_APPS = [
     'user',
     'notifications',
     'django.contrib.sites',
-    'django.contrib.sitemaps'
+    'django.contrib.sitemaps',
 ]
 
 SITE_ID = 1
@@ -129,6 +129,14 @@ DATABASES = {
         'HOST': os.environ.get('psql_host', 'localhost'),
         'PORT': os.environ.get('psql_port', 5432),
     }
+}
+
+GRAPHENE = {
+    'SCHEMA': 'bounties.schema.schema',
+    'MIDDLEWARE': (
+        'graphene_django.debug.DjangoDebugMiddleware',
+    ),
+    'SCHEMA_INDENT': 2,
 }
 
 # Password validation

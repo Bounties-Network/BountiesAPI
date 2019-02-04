@@ -18,6 +18,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from bounties.views import custom_sitemap_index
 from bounties.sitemaps import BountyMap, ProfileMap, StaticMap
+from graphene_django.views import GraphQLView
 
 sitemaps = {
     'BountyMap': BountyMap,
@@ -35,4 +36,5 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name="index.html"), name="docs"),
     url(r'^analytics/', include('analytics.urls', namespace='analytics')),
     url(r'^', include('std_bounties.urls', namespace='std_bounties')),
+    url(r'^graphql', GraphQLView.as_view(graphiql=True)),
 ]

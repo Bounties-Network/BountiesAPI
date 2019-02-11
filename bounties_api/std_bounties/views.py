@@ -21,6 +21,7 @@ from notifications.notification_client import NotificationClient
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
 
+
 notification_client = NotificationClient()
 
 

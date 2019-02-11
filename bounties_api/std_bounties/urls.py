@@ -2,7 +2,6 @@ from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
 from std_bounties import views
 
-
 router = DefaultRouter()
 
 router.register(r'^bounty/draft', views.DraftBountyWriteViewSet)
@@ -18,5 +17,6 @@ urlpatterns = [
     url(r'^leaderboard/fulfiller/$', views.LeaderboardFulfiller.as_view()),
     url(r'^token/$', views.Tokens.as_view()),
     url(r'^bounty/(?P<bounty_id>\d+)/fulfillment/(?P<fulfillment_id>\d+)/review/$', views.SubmissionReviews.as_view()),
-    url(r'^', include(router.urls)),
+    url(r'^application/(?P<pk>\d+)/$', views.FulfillerApplicationApplicantView.as_view()),
+    url(r'^', include(router.urls))
 ]

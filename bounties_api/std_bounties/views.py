@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework import mixins
+from rest_framework import generics
 from django.db import connection
 from django.db.models import Count
 from django.http import JsonResponse, Http404, HttpResponse
@@ -8,14 +9,17 @@ from django.db.models import Q
 from rest_framework.views import APIView
 from bounties.utils import dictfetchall, extractInParams, sqlGenerateOrList, limitOffsetParams
 from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_FULFILLER_QUERY
-from std_bounties.serializers import BountySerializer, FulfillmentSerializer, FulfillerApplicationSerializer, RankedCategorySerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, DraftBountyWriteSerializer, CommentSerializer, ReviewSerializer
-from std_bounties.models import Bounty, DraftBounty, Fulfillment, FulfillerApplication, RankedCategory, Token, Comment, Review
-from std_bounties.filters import BountiesFilter, DraftBountiesFilter, FulfillmentsFilter, RankedCategoryFilter, ReviewsFilter
+from std_bounties.serializers import BountySerializer, FulfillmentSerializer, FulfillerApplicationSerializer, \
+    RankedCategorySerializer, LeaderboardIssuerSerializer, LeaderboardFulfillerSerializer, TokenSerializer, \
+    DraftBountyWriteSerializer, CommentSerializer, ReviewSerializer, FulfillerApplicantSerializer
+from std_bounties.models import Bounty, DraftBounty, Fulfillment, FulfillerApplication, RankedCategory, Token, \
+    Comment, Review
+from std_bounties.filters import BountiesFilter, DraftBountiesFilter, FulfillmentsFilter, RankedCategoryFilter, \
+    ReviewsFilter
 from user.permissions import AuthenticationPermission, UserObjectPermissions
 from notifications.notification_client import NotificationClient
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
-
 
 notification_client = NotificationClient()
 
@@ -107,7 +111,6 @@ class SubmissionReviews(APIView):
 
 
 class BountyComments(mixins.ListModelMixin, viewsets.GenericViewSet):
-
     serializer_class = CommentSerializer
 
     def get_permissions(self):
@@ -304,7 +307,6 @@ class Tokens(APIView):
 
 
 class FulfillerApplicationViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-
     serializer_class = FulfillerApplicationSerializer
 
     def get_permissions(self):
@@ -340,3 +342,23 @@ class FulfillerApplicationViewSet(mixins.ListModelMixin, viewsets.GenericViewSet
         # notification_client.comment_received(bounty.bounty_id, comment.created, comment.id)
 
         return JsonResponse(serializer.data)
+
+
+class FulfillerApplicationApplicantView(generics.GenericAPIView, mixins.UpdateModelMixin):
+    queryset = FulfillerApplication.objects.all()
+    serializer_class = FulfillerApplicantSerializer
+
+    def get_permissions(self):
+        permission_classes = []
+
+        # TODO ensure bounty owner cannot create application
+        # and that only bounty owner can retrieve applications
+        # and that bounty is of correct type for applications
+
+        if self.request.method == 'PUT':
+            permission_classes = [AuthenticationPermission]
+
+        return [permission() for permission in permission_classes]
+
+    def put(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)

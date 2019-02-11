@@ -82,7 +82,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class FulfillerApplicationSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    applicant = UserSerializer(read_only=True)
 
     class Meta:
         model = FulfillerApplication
@@ -137,6 +137,7 @@ class BountySerializer(CustomSerializer):
     current_market_token_data = TokenSerializer(read_only=True, source='token')
     user = UserSerializer(read_only=True)
     fulfillment_count = serializers.ReadOnlyField(source='fulfillments.count')
+    application_count = serializers.SerializerMethodField()
     comment_count = serializers.ReadOnlyField(source='comments.count')
 
     class Meta:
@@ -148,6 +149,9 @@ class BountySerializer(CustomSerializer):
             'data_issuer': {'write_only': True},
             'data_json': {'write_only': True},
         }
+
+    def get_application_count(self, obj):
+        return obj.fulfillerapplication_set.count()
 
 
 class LeaderboardFulfillerSerializer(serializers.Serializer):
@@ -232,3 +236,9 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         instance.usd_price = token_data.get('usd_price')
         instance.save()
         return instance
+
+
+class FulfillerApplicantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FulfillerApplication
+        fields = '__all__'

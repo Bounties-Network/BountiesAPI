@@ -253,6 +253,7 @@ class FulfillerApplicationSerializer(serializers.ModelSerializer):
 
     def to_representation(self, value):
         return {
+            'applicationId': value.id,
             'message': value.message,
             'state': value.state,
             'created': value.created,

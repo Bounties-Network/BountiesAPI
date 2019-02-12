@@ -337,10 +337,10 @@ class FulfillerApplicationViewSet(mixins.ListModelMixin, viewsets.GenericViewSet
         )
 
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        application = serializer.save()
 
-        # notification_client.comment_issued(bounty.bounty_id, comment.created, comment.id)
-        # notification_client.comment_received(bounty.bounty_id, comment.created, comment.id)
+        notification_client.application_created(bounty, application)
+        notification_client.application_received(bounty, application)
 
         return JsonResponse(serializer.data)
 

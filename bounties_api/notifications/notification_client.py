@@ -482,3 +482,37 @@ class NotificationClient:
             string_data=string_data,
             subject='Your Bounty Completed',
             is_activity=False)
+
+    def application_created(self, bounty, application):
+        string_data = notification_templates['ApplicationCreated'].format(
+            bounty_title=bounty.title
+        )
+
+        create_bounty_notification(
+            bounty=bounty,
+            uid='{}-{}-application-created'.format(bounty.id, application.id),
+            notification_name=notifications['ApplicationCreated'],
+            user=application.applicant,
+            from_user=None,
+            notification_created=datetime.utcnow(),
+            string_data=string_data,
+            subject='You Submitted an Application',
+            is_activity=True
+        )
+
+    def application_received(self, bounty, application):
+        string_data = notification_templates['ApplicationReceived'].format(
+            bounty_title=bounty.title
+        )
+
+        create_bounty_notification(
+            bounty=bounty,
+            uid='{}-{}-application-receieved'.format(bounty.id, application.id),
+            notification_name=notifications['ApplicationReceived'],
+            user=bounty.user,
+            from_user=application.applicant,
+            notification_created=datetime.utcnow(),
+            string_data=string_data,
+            subject='You Received a New Application',
+            is_activity=False
+        )

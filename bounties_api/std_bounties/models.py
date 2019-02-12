@@ -75,13 +75,6 @@ class BountyState(models.Model):
 
 
 class BountyAbstract(models.Model):
-    OPEN = 'O'
-    CLOSED = 'C'
-
-    BOUNTY_TYPES = (
-        (OPEN, 'open')
-    )
-
     user = models.ForeignKey('user.User', null=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)

@@ -16,7 +16,7 @@ from std_bounties.models import Bounty, DraftBounty, Fulfillment, FulfillerAppli
     Comment, Review
 from std_bounties.filters import BountiesFilter, DraftBountiesFilter, FulfillmentsFilter, RankedCategoryFilter, \
     ReviewsFilter
-from user.permissions import AuthenticationPermission, UserObjectPermissions
+from user.permissions import AuthenticationPermission, ApplicantPermissions, UserObjectPermissions
 from notifications.notification_client import NotificationClient
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
@@ -352,12 +352,11 @@ class FulfillerApplicationApplicantView(generics.GenericAPIView, mixins.UpdateMo
     def get_permissions(self):
         permission_classes = []
 
-        # TODO ensure bounty owner cannot create application
-        # and that only bounty owner can retrieve applications
-        # and that bounty is of correct type for applications
-
         if self.request.method == 'PUT':
-            permission_classes = [AuthenticationPermission]
+            permission_classes = [
+                AuthenticationPermission,
+                ApplicantPermissions
+            ]
 
         return [permission() for permission in permission_classes]
 

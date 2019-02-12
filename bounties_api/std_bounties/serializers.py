@@ -278,6 +278,7 @@ class FulfillerApplicationSerializer(serializers.ModelSerializer):
         else:
             return all_data
 
+
 class FulfillerApplicantSerializer(serializers.ModelSerializer):
     class Meta:
         model = FulfillerApplication

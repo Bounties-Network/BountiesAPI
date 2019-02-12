@@ -12,7 +12,7 @@ from std_bounties.models import (
     Token,
     DraftBounty,
     Comment,
-    Review
+    Review,
 )
 from std_bounties.client_helpers import map_token_data
 from std_bounties.constants import STAGE_CHOICES
@@ -81,17 +81,6 @@ class CommentSerializer(serializers.ModelSerializer):
         return Comment.objects.create(**updated_data)
 
 
-class FulfillerApplicationSerializer(serializers.ModelSerializer):
-    applicant = UserSerializer(read_only=True)
-
-    class Meta:
-        model = FulfillerApplication
-        fields = '__all__'
-
-    def create(self, validated_data):
-        return FulfillerApplication.objects.create(**validated_data)
-
-
 class BountyFulfillmentSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
 
@@ -152,6 +141,25 @@ class BountySerializer(CustomSerializer):
 
     def get_application_count(self, obj):
         return obj.fulfillerapplication_set.count()
+
+    def to_representation(self, instance):
+        data = super(BountySerializer, self).to_representation(instance)
+
+        # add 'user_has_applied' if the request contains a current user
+        # and the bounty requries fulfillers to obtain approval
+        if (
+            instance.fulfillers_need_approval and
+            'request' in self.context and
+            self.context['request'].current_user
+        ):
+            user_has_applied = FulfillerApplication.objects.filter(
+                bounty=instance.pk,
+                applicant=self.context['request'].current_user.pk
+            )
+
+            data.update({'user_has_applied': user_has_applied.exists()})
+
+        return data
 
 
 class LeaderboardFulfillerSerializer(serializers.Serializer):
@@ -236,6 +244,22 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         instance.usd_price = token_data.get('usd_price')
         instance.save()
         return instance
+
+
+class FulfillerApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FulfillerApplication
+        fields = '__all__'
+
+    def to_representation(self, value):
+        return {
+            'message': value.message,
+            'state': value.state,
+            'created': value.created,
+            'modified': value.modified,
+            'applicant': UserSerializer(value.applicant).data,
+            'bounty': BountySerializer(value.bounty).data
+        }
 
 
 class FulfillerApplicantSerializer(serializers.ModelSerializer):

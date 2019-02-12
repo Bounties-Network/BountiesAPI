@@ -507,7 +507,7 @@ class NotificationClient:
 
         create_bounty_notification(
             bounty=bounty,
-            uid='{}-{}-application-receieved'.format(bounty.id, application.id),
+            uid='{}-{}-application-received'.format(bounty.id, application.id),
             notification_name=notifications['ApplicationReceived'],
             user=bounty.user,
             from_user=application.applicant,

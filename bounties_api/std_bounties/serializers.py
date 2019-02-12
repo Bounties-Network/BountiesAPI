@@ -37,7 +37,6 @@ class CustomSerializer(serializers.ModelSerializer):
 
 
 class RankedCategorySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = RankedCategory
         fields = '__all__'
@@ -252,14 +251,26 @@ class FulfillerApplicationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def to_representation(self, value):
+        if value.bounty.user.public_address == self.context['request'].current_user.public_address:
+            return {
+                'applicationId': value.id,
+                'applicant': UserSerializer(value.applicant).data,
+                'message': value.message,
+                'created': value.created,
+                'modified': value.modified,
+                'state': value.state
+            }
+
+        if (value.applicant == self.context['request'].current_user and value.state == 'R') or (value.state == 'A'):
+            return {
+                'applicationId': value.id,
+                'applicant': UserSerializer(value.applicant).data,
+                'state': value.state
+            }
+
         return {
             'applicationId': value.id,
-            'message': value.message,
-            'state': value.state,
-            'created': value.created,
-            'modified': value.modified,
             'applicant': UserSerializer(value.applicant).data,
-            'bounty': BountySerializer(value.bounty).data
         }
 
 

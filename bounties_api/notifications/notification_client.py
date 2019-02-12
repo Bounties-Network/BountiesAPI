@@ -514,5 +514,6 @@ class NotificationClient:
             notification_created=datetime.utcnow(),
             string_data=string_data,
             subject='You Received a New Application',
+            application_message=application.message,
             is_activity=False
         )

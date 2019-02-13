@@ -154,9 +154,10 @@ class BountySerializer(CustomSerializer):
             user_has_applied = FulfillerApplication.objects.filter(
                 bounty=instance.pk,
                 applicant=self.context['request'].current_user.pk
-            )
+            ).first()
 
-            data.update({'user_has_applied': user_has_applied.exists()})
+            data.update({'user_has_applied': not not user_has_applied})
+            data.update({'user_can_fulfill': user_has_applied and user_has_applied.state == FulfillerApplication.ACCEPTED})
 
         return data
 

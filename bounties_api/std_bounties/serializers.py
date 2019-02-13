@@ -6,12 +6,13 @@ from bounties.serializers import CreatableSlugRelatedField
 from std_bounties.models import (
     Bounty,
     Fulfillment,
+    FulfillerApplication,
     Category,
     RankedCategory,
     Token,
     DraftBounty,
     Comment,
-    Review
+    Review,
 )
 from std_bounties.client_helpers import map_token_data
 from std_bounties.constants import STAGE_CHOICES
@@ -36,7 +37,6 @@ class CustomSerializer(serializers.ModelSerializer):
 
 
 class RankedCategorySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = RankedCategory
         fields = '__all__'
@@ -125,6 +125,7 @@ class BountySerializer(CustomSerializer):
     current_market_token_data = TokenSerializer(read_only=True, source='token')
     user = UserSerializer(read_only=True)
     fulfillment_count = serializers.ReadOnlyField(source='fulfillments.count')
+    application_count = serializers.SerializerMethodField()
     comment_count = serializers.ReadOnlyField(source='comments.count')
 
     class Meta:
@@ -136,6 +137,29 @@ class BountySerializer(CustomSerializer):
             'data_issuer': {'write_only': True},
             'data_json': {'write_only': True},
         }
+
+    def get_application_count(self, obj):
+        return obj.fulfillerapplication_set.count()
+
+    def to_representation(self, instance):
+        data = super(BountySerializer, self).to_representation(instance)
+
+        # add 'user_has_applied' if the request contains a current user
+        # and the bounty requries fulfillers to obtain approval
+        if (
+            instance.fulfillers_need_approval and
+            'request' in self.context and
+            self.context['request'].current_user
+        ):
+            user_has_applied = FulfillerApplication.objects.filter(
+                bounty=instance.pk,
+                applicant=self.context['request'].current_user.pk
+            ).first()
+
+            data.update({'user_has_applied': not not user_has_applied})
+            data.update({'user_can_fulfill': user_has_applied and user_has_applied.state == FulfillerApplication.ACCEPTED})
+
+        return data
 
 
 class LeaderboardFulfillerSerializer(serializers.Serializer):
@@ -188,9 +212,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        instance = super(
-            DraftBountyWriteSerializer,
-            self).create(validated_data)
+        instance = super(DraftBountyWriteSerializer, self).create(validated_data)
         request = self.context.get('request')
         user = request.current_user
         instance.user = user
@@ -208,11 +230,10 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        super(
-            DraftBountyWriteSerializer,
-            self).update(
+        super(DraftBountyWriteSerializer, self).update(
             instance,
-            validated_data)
+            validated_data
+        )
         token_data = map_token_data(
             instance.paysTokens,
             instance.tokenContract,
@@ -223,3 +244,43 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         instance.usd_price = token_data.get('usd_price')
         instance.save()
         return instance
+
+
+class FulfillerApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FulfillerApplication
+        fields = '__all__'
+
+    def to_representation(self, value):
+        all_data = {
+            'applicationId': value.id,
+            'applicant': UserSerializer(value.applicant).data,
+            'message': value.message,
+            'created': value.created,
+            'modified': value.modified,
+            'state': value.state
+        }
+
+        if 'request' in self.context:
+            if value.bounty.user == self.context['request'].current_user:
+                return all_data
+
+            if (value.applicant == self.context['request'].current_user and value.state == 'R') or (value.state == 'A'):
+                return {
+                    'applicationId': value.id,
+                    'applicant': UserSerializer(value.applicant).data,
+                    'state': value.state
+                }
+
+            return {
+                'applicationId': value.id,
+                'applicant': UserSerializer(value.applicant).data,
+            }
+        else:
+            return all_data
+
+
+class FulfillerApplicantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FulfillerApplication
+        fields = '__all__'

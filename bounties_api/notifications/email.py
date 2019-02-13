@@ -33,7 +33,8 @@ class Email:
         constants.BOUNTY_COMMENT_RECEIVED: 'commentOnBounty.html',
         constants.FULFILLMENT_UPDATED: 'fulfillmentUpdated.html',
         constants.RATING_RECEIVED: 'receivedRating.html',
-        constants.BOUNTY_COMPLETED: 'bountyCompleted.html'
+        constants.BOUNTY_COMPLETED: 'bountyCompleted.html',
+        constants.APPLICATION_RECEIVED: 'applicationReceived.html',
     }
     max_description_length = 240
     max_title_length = 120
@@ -64,6 +65,7 @@ class Email:
         comment = kwargs.get('comment')
         description = kwargs.get('fulfillment_description', '')
         preview_text = kwargs.get('string_data', '')
+        application_message = kwargs.get('application_message', '')
 
         if notification_name.__class__ != int:
             raise TypeError('notification_name must be of type int')
@@ -153,41 +155,30 @@ class Email:
             'bounty': bounty,
             'bounty_title': title,
             'url': url,
-            'preferences_link': 'https://{}bounties.network/settings'.format(
-                '' if ENVIRONMENT == 'production' else 'staging.'),
+            'preferences_link': 'https://{}bounties.network/settings'.format('' if ENVIRONMENT == 'production' else 'staging.'),
             'notification_name': notification_name,
             'usd_amount': usd_decimals(bounty.usd_price),
             'token_amount': token_amount,
             'token': bounty.tokenSymbol,
-            'bounty_categories': Email.render_categories(
-                bounty.data_categories),
+            'bounty_categories': Email.render_categories(bounty.data_categories),
             'token_amount_remaining': remaining,
             'usd_amount_remaining': remaining_usd,
             'added_amount': added_amount,
             'remaining_submissions': remaining_submissions,
             'fulfillment_description': description,
+            'application_message': application_message,
             'issuer_name': issuer and issuer.name,
-            'issuer_address': issuer and shorten_address(
-                issuer.public_address),
-            'issuer_profile_image': (
-                issuer and issuer.small_profile_image_url or default_image
-            ),
-            'issuer_address_link': issuer and profile_url_for(
-                issuer.public_address, bounty.platform),
+            'issuer_address': issuer and shorten_address(issuer.public_address),
+            'issuer_profile_image': (issuer and issuer.small_profile_image_url or default_image),
+            'issuer_address_link': issuer and profile_url_for(issuer.public_address, bounty.platform),
             'user_name': user and user.name,
             'user_address': user and shorten_address(user.public_address),
-            'user_profile_image': (
-                user and user.small_profile_image_url or default_image
-            ),
+            'user_profile_image': (user and user.small_profile_image_url or default_image),
             'user_address_link': user_address_link,
             'from_user_name': from_user and from_user.name,
-            'from_user_address': from_user and shorten_address(
-                from_user.public_address),
-            'from_user_profile_image': (
-                from_user and from_user.small_profile_image_url or default_image
-            ),
-            'from_user_address_link': from_user and profile_url_for(
-                from_user.public_address, bounty.platform),
+            'from_user_address': from_user and shorten_address(from_user.public_address),
+            'from_user_profile_image': (from_user and from_user.small_profile_image_url or default_image),
+            'from_user_address_link': from_user and profile_url_for(from_user.public_address, bounty.platform),
             'from_user_email': from_user and from_user.email,
             'review': review and review.review,
             'rating': review and '{}/5'.format(review.rating),

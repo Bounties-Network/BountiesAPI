@@ -24,7 +24,9 @@ notification_templates = {
     'DraftCreated': 'You created draft {draft_id}.',
     'DraftUpdated': 'You updated draft {draft_id}.',
     'ContributionReceived': '{bounty_title} received {amount} in contribution',
-    'BountyCompleted': '{bounty_title} is out of funds'
+    'BountyCompleted': '{bounty_title} is out of funds',
+    'ApplicationCreated': 'You applied to: {bounty_title}',
+    'ApplicationReceived': 'You received an application to your bounty: {bounty_title}'
 }
 
 email_templates = {

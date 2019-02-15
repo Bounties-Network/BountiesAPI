@@ -32,6 +32,8 @@ async function sendEvents(events) {
 
 			bountyId = bountyId === '-1' ? _bountyId : bountyId;
 
+			console.log({ transactionHash })
+
 			const rawTransaction = await getTransaction(transactionHash);
 			const transactionFrom = rawTransaction.from;
 			const rawContractMethodInputs = abiDecoder.decodeMethod(rawTransaction.input);

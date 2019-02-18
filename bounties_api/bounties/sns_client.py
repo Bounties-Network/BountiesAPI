@@ -18,7 +18,7 @@ def sns_publish(receiver, message):
     if settings.ENVIRONMENT not in ['production', 'rinkeby']:
         return
     try:
-        print('Target ARN for publish {}:{}'.format(settings.SNS_ADDRESS, receiver))
+        logger.warning('Target ARN for publish {}:{}'.format(settings.SNS_ADDRESS, receiver))
         client.publish(TargetArn='{}:{}'.format(settings.SNS_ADDRESS, receiver), Message=json.dumps(message))
     except ClientError as e:
         logger.error(e.response['Error']['Message'])

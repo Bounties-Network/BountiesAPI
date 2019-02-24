@@ -517,3 +517,75 @@ class NotificationClient:
             application_message=application.message,
             is_activity=False
         )
+
+    def application_accepted_applicant(self, bounty, application):
+        string_data = notification_templates['ApplicationAcceptedApplicant'].format(
+            bounty_title=bounty.title
+        )
+
+        create_bounty_notification(
+            bounty=bounty,
+            uid='{}-{}-application-accepted-applicant'.format(bounty.id, application.id),
+            notification_name=notifications['ApplicationAcceptedApplicant'],
+            user=application.applicant,
+            from_user=bounty.user,
+            notification_created=datetime.utcnow(),
+            string_data=string_data,
+            subject='Your Application Was Accepted',
+            application_message=application.message,
+            is_activity=False
+        )
+
+    def application_accepted_issuer(self, bounty, application):
+        string_data = notification_templates['ApplicationAcceptedIssuer'].format(
+            bounty_title=bounty.title
+        )
+
+        create_bounty_notification(
+            bounty=bounty,
+            uid='{}-{}-application-accepted-issuer'.format(bounty.id, application.id),
+            notification_name=notifications['ApplicationAcceptedIssuer'],
+            user=bounty.user,
+            from_user=None,
+            notification_created=datetime.utcnow(),
+            string_data=string_data,
+            subject='You Accepted an Application',
+            application_message=application.message,
+            is_activity=True
+        )
+
+    def application_rejected_applicant(self, bounty, application):
+        string_data = notification_templates['ApplicationRejectedApplicant'].format(
+            bounty_title=bounty.title
+        )
+
+        create_bounty_notification(
+            bounty=bounty,
+            uid='{}-{}-application-rejected-applicant'.format(bounty.id, application.id),
+            notification_name=notifications['ApplicationRejectedApplicant'],
+            user=application.applicant,
+            from_user=bounty.user,
+            notification_created=datetime.utcnow(),
+            string_data=string_data,
+            subject='Your Application Was Rejected',
+            application_message=application.message,
+            is_activity=False
+        )
+
+    def application_rejected_issuer(self, bounty, application):
+        string_data = notification_templates['ApplicationRejectedIssuer'].format(
+            bounty_title=bounty.title
+        )
+
+        create_bounty_notification(
+            bounty=bounty,
+            uid='{}-{}-application-rejected-issuer'.format(bounty.id, application.id),
+            notification_name=notifications['ApplicationRejectedIssuer'],
+            user=bounty.user,
+            from_user=None,
+            notification_created=datetime.utcnow(),
+            string_data=string_data,
+            subject='You Rejected an Application',
+            application_message=application.message,
+            is_activity=True
+        )

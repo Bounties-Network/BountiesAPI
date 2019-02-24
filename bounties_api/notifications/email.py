@@ -35,7 +35,10 @@ class Email:
         constants.RATING_RECEIVED: 'receivedRating.html',
         constants.BOUNTY_COMPLETED: 'bountyCompleted.html',
         constants.APPLICATION_RECEIVED: 'applicationReceived.html',
+        constants.APPLICATION_ACCEPTED_APPLICANT: 'applicationAccepted.html',
+        constants.APPLICATION_REJECTED_APPLICANT: 'applicationRejected.html',
     }
+
     max_description_length = 240
     max_title_length = 120
 

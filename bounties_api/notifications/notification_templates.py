@@ -26,7 +26,11 @@ notification_templates = {
     'ContributionReceived': '{bounty_title} received {amount} in contribution',
     'BountyCompleted': '{bounty_title} is out of funds',
     'ApplicationCreated': 'You applied to: {bounty_title}',
-    'ApplicationReceived': 'You received an application to your bounty: {bounty_title}'
+    'ApplicationReceived': 'You received an application to your bounty: {bounty_title}',
+    'ApplicationAcceptedApplicant': 'Your application was accepted for: {bounty_title}',
+    'ApplicationAcceptedIssuer': 'You accepted an application for: {bounty_title}',
+    'ApplicationRejectedApplicant': 'Your application was rejected for: {bounty_title}',
+    'ApplicationRejectedIssuer': 'You rejected an application for: {bounty_title}',
 }
 
 email_templates = {

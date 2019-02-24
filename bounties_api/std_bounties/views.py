@@ -361,4 +361,15 @@ class FulfillerApplicationApplicantView(generics.GenericAPIView, mixins.UpdateMo
         return [permission() for permission in permission_classes]
 
     def put(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
+        response = self.partial_update(request, *args, **kwargs)
+        application = get_object_or_404(FulfillerApplication, pk=response.data['id'])
+
+        if application.state == FulfillerApplication.ACCEPTED:
+            notification_client.application_accepted_applicant(application.bounty, application)
+            notification_client.application_accepted_issuer(application.bounty, application)
+
+        elif application.state == FulfillerApplication.REJECTED:
+            notification_client.application_rejected_applicant(application.bounty, application)
+            notification_client.application_rejected_issuer(application.bounty, application)
+
+        return response

@@ -1,0 +1,36 @@
+{
+  "name": "subscribe_script",
+  "version": "1.0.0",
+  "description": "",
+  "nyc": {
+    "include": [
+      "./**/*.js"
+    ],
+    "exclude": [
+      "./**/*.spec.js",
+      "./test/"
+    ]
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "nyc report --reporter=text-lcov -a mocha > coverage.lcov",
+    "testnoreport": "nyc -a mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "abi-decoder": "^1.0.9",
+    "aws-sdk": "^2.201.0",
+    "delay": "^2.0.0",
+    "express": "^4.16.2",
+    "redis": "^2.8.0",
+    "rollbar": "^2.3.9",
+    "web3": "1.0.0-beta.34"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.1.1",
+    "nyc": "^11.7.1"
+  }
+}

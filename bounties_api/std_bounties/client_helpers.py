@@ -204,3 +204,41 @@ def map_token_data(pays_tokens, token_contract, amount):
         'token': token_model.id if token_model else None,
         'usd_price': usd_price,
     }
+
+
+def map_token_data_v2(token_version, token_contract, amount):
+    token_symbol = 'ETH'
+    token_decimals = 18
+
+    if token_version == 20:
+        HumanStandardToken_abi = bounties_json['interfaces']['HumanStandardToken']
+        DSToken_abi = bounties_json['interfaces']['DSToken']
+
+        try:
+            HumanStandardToken = web3.eth.contract(
+                abi=HumanStandardToken_abi,
+                address=web3.toChecksumAddress(token_contract),
+                ContractFactoryClass=ConciseContract
+            )
+            token_symbol = HumanStandardToken.symbol()
+            token_decimals = HumanStandardToken.decimals()
+        except OverflowError:
+            DSToken = web3.eth.contract(
+                abi=DSToken_abi,
+                address=web3.toChecksumAddress(token_contract),
+                ContractFactoryClass=ConciseContract
+            )
+            # Symbol in DSToken contract is bytes32 and unused chars are padded
+            # with '\x00'
+            token_symbol = DSToken.symbol().decode().rstrip('\x00')
+            token_decimals = DSToken.decimals()
+
+    usd_price, token_model = get_token_pricing(
+        token_symbol, token_decimals, amount)
+
+    return {
+        'tokenSymbol': token_symbol,
+        'tokenDecimals': token_decimals,
+        'token': token_model.id if token_model else None,
+        'usd_price': usd_price,
+    }

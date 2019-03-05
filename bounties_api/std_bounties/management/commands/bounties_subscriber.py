@@ -244,12 +244,20 @@ class Command(BaseCommand):
         event = message.event
         try:
             if event == 'BountyIssued':
+                contract_version = getattr(message, 'contract_version', 1)
+                if contract_version > 1:
+                    resolved_id = contract_version * 1000000 + message.bounty_id
+                else:
+                    resolved_id = message.bounty_id
                 master_client.bounty_issued(
-                    message.bounty_id,
+                    resolved_id,
+                    original_id=message.bounty_id,
+                    contract_version=contract_version,
                     event_date=message.event_date,
                     inputs=message.contract_method_inputs,
                     event_timestamp=message.event_timestamp,
-                    uid=message.message_deduplication_id)
+                    uid=message.message_deduplication_id
+                )
 
             elif event == 'BountyActivated':
                 master_client.bounty_activated(

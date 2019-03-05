@@ -32,11 +32,15 @@ exports.SQS_PARAMS = {
     DataType: 'Number',
     StringValue: '',
    },
+   'ContractVersion': {
+    DataType: 'Number',
+    StringValue: ''
+   }
  },
  MessageBody: 'Event Subscription',
- QueueUrl: process.env['queue_url'] || 'https://sqs.us-east-1.amazonaws.com/802922962628/bounties_development.fifo',
+ QueueUrl: 'https://sqs.us-east-1.amazonaws.com/802922962628/fora-dev.fifo',
  MessageDeduplicationId: '',
- MessageGroupId: 'Event_Subscriber',
+ MessageGroupId: 'Event_Subscriber'
 };
 
 const networks = {
@@ -45,9 +49,10 @@ const networks = {
     'consensysrinkeby': 'https://rinkeby.infura.io/',
     'rinkebystaging': 'https://rinkeby.infura.io/',
     'localhost': 'localhost:8545',
-}
+};
 
-const ethNetwork = process.env['eth_network'] || 'mainNet';
+const ethNetwork = process.env['eth_network'] || 'rinkeby';
 
 exports.ETH_NETWORK = ethNetwork;
 exports.ETH_NETWORK_URL = networks[ethNetwork];
+exports.CONTRACT_VERSION = 2;

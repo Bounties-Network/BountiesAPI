@@ -24,6 +24,7 @@ class Message:
     event_timestamp = -1
     event_date = None
     contract_method_inputs = {}
+    contract_version = 1
 
     @staticmethod
     def from_event(event):
@@ -50,7 +51,8 @@ class Message:
             event_timestamp=event_timestamp,
             event_date=datetime.fromtimestamp(int(event_timestamp)),
             contract_method_inputs=json.loads(
-                message_attributes['ContractMethodInputs']['StringValue'])
+                message_attributes['ContractMethodInputs']['StringValue']),
+            contract_version=int(message_attributes['ContractVersion']['StringValue'])
         )
 
     @staticmethod

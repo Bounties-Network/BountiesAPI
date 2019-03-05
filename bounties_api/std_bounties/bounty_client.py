@@ -3,11 +3,11 @@ from decimal import Decimal
 from std_bounties.models import Fulfillment, DraftBounty
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer
 from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE
-from std_bounties.client_helpers import map_bounty_data, map_token_data, map_fulfillment_data, get_token_pricing, get_historic_pricing
+from std_bounties.client_helpers import map_bounty_data, map_token_data, map_fulfillment_data, get_token_pricing, \
+    get_historic_pricing, map_token_data_v2
 from bounties.utils import getDateTimeFromTimestamp
 from django.db import transaction
 import logging
-
 
 logger = logging.getLogger('django')
 
@@ -17,6 +17,10 @@ issue_bounty_input_keys = [
     'paysTokens',
     'tokenContract',
     'value']
+issue_bounty_input_keys_v2 = [
+    'approvers',
+    'tokenVersion',
+    'token']
 
 
 class BountyClient:
@@ -27,29 +31,42 @@ class BountyClient:
     @transaction.atomic
     def issue_bounty(self, bounty_id, inputs, event_timestamp, **kwargs):
         data_hash = inputs.get('data', 'invalid')
+        original_bounty_id = kwargs.get('original_id', bounty_id)
+        contract_version = kwargs.get('contract_version', 1)
         event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
         ipfs_data = map_bounty_data(data_hash, bounty_id)
-        token_data = map_token_data(
-            inputs.get('paysTokens'),
-            inputs.get('tokenContract'),
-            inputs.get('fulfillmentAmount'))
 
-        plucked_inputs = {key: inputs.get(key)
-                          for key in issue_bounty_input_keys}
+        if contract_version == 1:
+            token_data = map_token_data(
+                inputs.get('paysTokens'),
+                inputs.get('tokenContract'),
+                inputs.get('fulfillmentAmount'))
+            bounty_data = {
+                'id': bounty_id,
+                'bounty_id': original_bounty_id,
+                'issuer': inputs.get('issuer', '').lower(),
+                'deadline': getDateTimeFromTimestamp(inputs.get('deadline', None)),
+                'bountyStage': DRAFT_STAGE,
+                'bounty_created': event_date,
+            }
+            plucked_inputs = {key: inputs.get(key)
+                              for key in issue_bounty_input_keys}
 
-        bounty_data = {
-            'id': bounty_id,
-            'bounty_id': bounty_id,
-            'issuer': inputs.get(
-                'issuer',
-                '').lower(),
-            'deadline': getDateTimeFromTimestamp(
-                inputs.get(
-                    'deadline',
-                    None)),
-            'bountyStage': DRAFT_STAGE,
-            'bounty_created': event_date,
-        }
+        elif contract_version == 2:
+            token_data = map_token_data_v2(inputs.get('tokenVersion'), inputs.get('token'), 0)
+            bounty_data = {
+                'id': bounty_id,
+                'bounty_id': original_bounty_id,
+                'issuers': inputs.get('issuers', []),
+                'deadline': getDateTimeFromTimestamp(inputs.get('deadline', None)),
+                'bounty_created': event_date,
+                'bountyStage': ACTIVE_STAGE,
+                'fulfillmentAmount': 0,
+                'issuer': inputs.get('issuers', [])[0],
+                'paysTokens': inputs.get('tokenVersion') != 0
+            }
+            plucked_inputs = {key: inputs.get(key)
+                              for key in issue_bounty_input_keys_v2}
 
         bounty_serializer = BountySerializer(
             data={

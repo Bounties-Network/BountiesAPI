@@ -42,7 +42,7 @@ class SEOClient:
         if platform not in settings.PLATFORM_MAPPING and platform != 'gitcoin':
             return
 
-        bounty = Bounty.objects.get(bounty_id=bounty_id)
+        bounty = Bounty.objects.get(id=bounty_id)
         bounty_url = bounty_url_for(bounty_id, platform)
         image_uuid = uuid4()
         image_path = '{}/bounty_preview/{}-{}.png'.format(settings.ENVIRONMENT, str(bounty_id), image_uuid)

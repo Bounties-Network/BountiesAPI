@@ -143,6 +143,12 @@ class Command(BaseCommand):
                     key, e))
                 redis_client.lpush(key, retry)
 
+    def resolve_id(self, bounty_id, contract_version):
+        if contract_version > 1:
+            return contract_version * 1000000 + bounty_id
+        else:
+            return bounty_id
+
     def handle_message(self, message):
         logger.info('For bounty id {}, running event {}'.format(
             message.bounty_id, message.event))
@@ -197,7 +203,7 @@ class Command(BaseCommand):
             })
 
         if message.event == 'BountyActivated':
-            bounty = Bounty.objects.get(bounty_id=bounty_id)
+            bounty = Bounty.objects.get(id=bounty_id)
             is_issue_and_activate = message.contract_method_inputs.get(
                 'issuer', None)
             if is_issue_and_activate:
@@ -218,7 +224,7 @@ class Command(BaseCommand):
                 slack_client.bounty_activated(bounty)
 
         if message.event == 'ContributionAdded':
-            bounty = Bounty.objects.get(bounty_id=bounty_id)
+            bounty = Bounty.objects.get(id=bounty_id)
             is_issue_and_activate = message.contract_method_inputs.get(
                 'issuer', None)
             if not is_issue_and_activate:
@@ -232,7 +238,7 @@ class Command(BaseCommand):
                 slack_client.contribution_added(bounty)
 
         if message.event == 'PayoutIncreased':
-            bounty = Bounty.objects.get(bounty_id=bounty_id)
+            bounty = Bounty.objects.get(id=bounty_id)
             notification_client.payout_increased(
                 bounty_id,
                 event_date=message.event_date,
@@ -242,13 +248,10 @@ class Command(BaseCommand):
 
     def notify_master_client(self, message):
         event = message.event
+        contract_version = getattr(message, 'contract_version', 1)
+        resolved_id = self.resolve_id(message.bounty_id, contract_version)
         try:
             if event == 'BountyIssued':
-                contract_version = getattr(message, 'contract_version', 1)
-                if contract_version > 1:
-                    resolved_id = contract_version * 1000000 + message.bounty_id
-                else:
-                    resolved_id = message.bounty_id
                 master_client.bounty_issued(
                     resolved_id,
                     original_id=message.bounty_id,
@@ -302,7 +305,7 @@ class Command(BaseCommand):
 
             elif event == 'ContributionAdded':
                 master_client.contribution_added(
-                    message.bounty_id,
+                    resolved_id,
                     event_date=message.event_date,
                     inputs=message.contract_method_inputs,
                     transaction_from=message.transaction_from,

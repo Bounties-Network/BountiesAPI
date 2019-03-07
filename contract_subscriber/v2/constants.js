@@ -38,7 +38,7 @@ exports.SQS_PARAMS = {
    }
  },
  MessageBody: 'Event Subscription',
- QueueUrl: 'https://sqs.us-east-1.amazonaws.com/802922962628/fora-dev.fifo',
+ QueueUrl: 'https://sqs.us-east-1.amazonaws.com/802922962628/hayder.fifo',
  MessageDeduplicationId: '',
  MessageGroupId: 'Event_Subscriber'
 };

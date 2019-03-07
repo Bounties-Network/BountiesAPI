@@ -26,7 +26,7 @@ def bounty_issued(bounty_id, **kwargs):
     if not is_issue_and_activate:
         notification_client.bounty_issued(bounty_id, **kwargs)
         slack_client.bounty_issued(created_bounty)
-        seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+        seo_client.bounty_preview_screenshot(created_bounty.platform, bounty_id)
         seo_client.publish_new_sitemap(created_bounty.platform)
         activity_client.bounty_issued(created_bounty)
 
@@ -97,10 +97,10 @@ def bounty_killed(bounty_id, **kwargs):
 
 
 def contribution_added(bounty_id, **kwargs):
-    bounty = Bounty.objects.get(bounty_id=bounty_id)
+    bounty = Bounty.objects.get(id=bounty_id)
     bounty_client.add_contribution(bounty, **kwargs)
     inputs = kwargs.get('inputs', {})
-    is_issue_and_activate = inputs.get('issuer', None)
+    is_issue_and_activate = inputs.get('issuer', inputs.get('contributor', None))
     if not is_issue_and_activate:
         seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
         activity_client.bounty_contribution_added(bounty)

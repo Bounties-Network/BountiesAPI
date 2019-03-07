@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.contrib.postgres.fields import JSONField
 
 import uuid
 from django.db import models
@@ -9,6 +8,7 @@ from user.models import User
 from std_bounties.constants import STAGE_CHOICES, DIFFICULTY_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
+from django.contrib.postgres.fields import JSONField
 
 
 class Review(models.Model):
@@ -107,7 +107,7 @@ class BountyAbstract(models.Model):
     sourceFileHash = models.CharField(max_length=256, blank=True)
     sourceDirectoryHash = models.CharField(max_length=256, blank=True)
     webReferenceURL = models.CharField(max_length=256, blank=True)
-    platform = models.CharField(max_length=128, blank=True)
+    platform = models.CharField(max_length=128, blank=True, default="bounties-network")
     schemaVersion = models.CharField(max_length=64, blank=True)
     schemaName = models.CharField(max_length=128, null=True)
 
@@ -141,6 +141,7 @@ class Bounty(BountyAbstract):
     data_issuer = JSONField(null=True)
     data_json = JSONField(null=True)
     contract_version = models.IntegerField(null=False, default=1)
+    contributions = JSONField(null=True, default={})
 
     def save(self, *args, **kwargs):
         fulfillmentAmount = self.fulfillmentAmount

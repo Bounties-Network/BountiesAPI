@@ -220,7 +220,7 @@ if not DEBUG:
     STATIC_URL = 'https://s3.amazonaws.com/assets.bounties.network/' + ENVIRONMENT + '/'
 QUEUE_URL = os.environ.get(
     'queue_url',
-    'https://sqs.us-east-1.amazonaws.com/802922962628/fora-dev.fifo')
+    'https://sqs.us-east-1.amazonaws.com/802922962628/hayder.fifo')
 NOTIFICATIONS_URL = os.environ.get(
     'notifications_url',
     'https://sqs.us-east-1.amazonaws.com/802922962628/notifications_development.fifo')

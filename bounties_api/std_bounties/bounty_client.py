@@ -63,7 +63,9 @@ class BountyClient:
                 'bountyStage': ACTIVE_STAGE,
                 'fulfillmentAmount': 0,
                 'issuer': inputs.get('issuers', [])[0],
-                'paysTokens': inputs.get('tokenVersion') != 0
+                'paysTokens': inputs.get('tokenVersion') != '0',
+                'contract_version': contract_version,
+                'platform': 'bounties-network'
             }
             plucked_inputs = {key: inputs.get(key)
                               for key in issue_bounty_input_keys_v2}
@@ -197,18 +199,28 @@ class BountyClient:
 
     def add_contribution(self, bounty, inputs, event_timestamp, **kwargs):
         event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
-        bounty.balance = Decimal(bounty.balance) + Decimal(inputs.get('value'))
-        if bounty.balance >= bounty.fulfillmentAmount and bounty.bountyStage == EXPIRED_STAGE:
-            bounty.bountyStage = ACTIVE_STAGE
-            bounty.record_bounty_state(event_date)
-        if bounty.balance >= bounty.fulfillmentAmount and bounty.bountyStage == COMPLETED_STAGE:
-            bounty.bountyStage = ACTIVE_STAGE
-            bounty.record_bounty_state(event_date)
-            usd_price = get_token_pricing(
-                bounty.tokenSymbol,
-                bounty.tokenDecimals,
-                bounty.fulfillmentAmount)[0]
-            bounty.usd_price = usd_price
+        bounty.balance = Decimal(bounty.balance) + Decimal(inputs.get('value', inputs.get('amount')))
+        if bounty.contract_version == 1:
+            if bounty.balance >= bounty.fulfillmentAmount and bounty.bountyStage == EXPIRED_STAGE:
+                bounty.bountyStage = ACTIVE_STAGE
+                bounty.record_bounty_state(event_date)
+            if bounty.balance >= bounty.fulfillmentAmount and bounty.bountyStage == COMPLETED_STAGE:
+                bounty.bountyStage = ACTIVE_STAGE
+                bounty.record_bounty_state(event_date)
+                usd_price = get_token_pricing(
+                    bounty.tokenSymbol,
+                    bounty.tokenDecimals,
+                    bounty.fulfillmentAmount)[0]
+                bounty.usd_price = usd_price
+        else:
+            contributions = bounty.contributions
+            contributions[inputs.get('contributionId')] = {
+                'contributor': inputs.get('contributor'),
+                'amount': inputs.get('amount'),
+                'refunded': False
+            }
+            bounty.contributions = contributions
+
         bounty.save()
 
         return bounty

@@ -42,14 +42,11 @@ class NotificationClient:
 
     def bounty_fulfilled(
             self,
-            bounty_id,
-            fulfillment_id,
+            bounty,
+            fulfillment,
             uid,
             event_date,
             **kwargs):
-        bounty = Bounty.objects.get(id=bounty_id)
-        fulfillment = Fulfillment.objects.get(
-            fulfillment_id=fulfillment_id, bounty=bounty)
         string_data_fulfiller = notification_templates['FulfillmentSubmitted'].format(
             bounty_title=bounty.title)
         string_data_issuer = notification_templates['FulfillmentSubmittedIssuer'].format(

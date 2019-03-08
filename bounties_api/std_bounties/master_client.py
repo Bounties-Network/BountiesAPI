@@ -51,13 +51,10 @@ def bounty_activated(bounty_id, **kwargs):
 
 def bounty_fulfilled(bounty_id, **kwargs):
     fulfillment_id = kwargs.get('fulfillment_id')
-    bounty = Bounty.objects.get(bounty_id=bounty_id)
-    bounty_client.fulfill_bounty(bounty, **kwargs)
-    fulfillment = Fulfillment.objects.get(
-        Q(bounty__bounty_id=bounty.bounty_id),
-        Q(fulfillment_id=fulfillment_id)
-    )
-    notification_client.bounty_fulfilled(bounty_id, **kwargs)
+    contract_version = kwargs.get('contract_version')
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
+    fulfillment = bounty_client.fulfill_bounty(bounty, **kwargs)
+    notification_client.bounty_fulfilled(bounty, fulfillment, **kwargs)
     slack_client.bounty_fulfilled(bounty, fulfillment_id)
     activity_client.fulfillment_created(fulfillment, bounty)
 

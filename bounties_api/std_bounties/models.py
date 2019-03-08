@@ -8,7 +8,7 @@ from user.models import User
 from std_bounties.constants import STAGE_CHOICES, DIFFICULTY_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
-from django.contrib.postgres.fields import JSONField
+from django.contrib.postgres.fields import JSONField, ArrayField
 
 
 class Review(models.Model):
@@ -236,6 +236,7 @@ class Fulfillment(models.Model):
     schemaName = models.CharField(max_length=128, blank=True)
     data_fulfiller = JSONField(null=True)
     data_json = JSONField(null=True)
+    fulfillers = ArrayField(models.CharField(max_length=128), null=True)
 
     def save(self, *args, **kwargs):
         user, created = User.objects.get_or_create(

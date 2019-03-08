@@ -114,14 +114,28 @@ class BountyClient:
         ipfs_data = map_fulfillment_data(
             data_hash, bounty.bounty_id, fulfillment_id)
 
-        fulfillment_data = {
-            'fulfillment_id': fulfillment_id,
-            'fulfiller': transaction_issuer.lower(),
-            'bounty': bounty.bounty_id,
-            'accepted': False,
-            'fulfillment_created': datetime.datetime.fromtimestamp(
-                int(event_timestamp)),
-        }
+        if bounty.contract_version == 2:
+            fulfillers = [v.lower() for v in inputs.get("fulfillers")]
+            fulfillment_data = {
+                'fulfillment_id': fulfillment_id,
+                'fulfiller': fulfillers[0],
+                'fulfillers': fulfillers,
+                'submitter': inputs.get('submitter'),
+                'bounty': bounty.id,
+                'accepted': False,
+                'fulfillment_created': datetime.datetime.fromtimestamp(
+                    int(event_timestamp)),
+            }
+        # TODO: Remove else statement when stdbts1 deprecated
+        else:
+            fulfillment_data = {
+                'fulfillment_id': fulfillment_id,
+                'fulfiller': transaction_issuer.lower(),
+                'bounty': bounty.bounty_id,
+                'accepted': False,
+                'fulfillment_created': datetime.datetime.fromtimestamp(
+                    int(event_timestamp)),
+            }
 
         fulfillment_serializer = FulfillmentSerializer(
             data={**fulfillment_data, **ipfs_data})

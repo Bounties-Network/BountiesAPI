@@ -292,6 +292,8 @@ class Command(BaseCommand):
             elif event == 'FulfillmentAccepted':
                 master_client.fulfillment_accepted(
                     message.bounty_id,
+                    contract_version=contract_version,
+                    inputs=message.contract_method_inputs,
                     event_date=message.event_date,
                     fulfillment_id=message.fulfillment_id,
                     event_timestamp=message.event_timestamp,

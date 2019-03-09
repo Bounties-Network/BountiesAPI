@@ -68,16 +68,18 @@ def fullfillment_updated(bounty_id, **kwargs):
 
 
 def fulfillment_accepted(bounty_id, **kwargs):
-    fulfillment_id = kwargs.get('fulfillment_id')
-    bounty = Bounty.objects.get(bounty_id=bounty_id)
+    inputs = kwargs.get('inputs', {})
+    contract_version = kwargs.get('contract_version')
+    fulfillment_id = kwargs.get('fulfillment_id', inputs.get('fulfillmentId'))
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     fulfillment = Fulfillment.objects.get(
-        Q(bounty__bounty_id=bounty.bounty_id),
+        Q(bounty__id=bounty.id),
         Q(fulfillment_id=fulfillment_id)
     )
     bounty_client.accept_fulfillment(bounty, **kwargs)
-    notification_client.fulfillment_accepted(bounty_id, **kwargs)
+    notification_client.fulfillment_accepted(bounty, fulfillment, **kwargs)
     slack_client.fulfillment_accepted(bounty, fulfillment_id)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty)
     activity_client.fulfillment_accepted(fulfillment, bounty)
     if bounty.balance < bounty.fulfillmentAmount:
         notification_client.bounty_completed(bounty, fulfillment_id)

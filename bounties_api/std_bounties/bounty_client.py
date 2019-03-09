@@ -166,14 +166,24 @@ class BountyClient:
             event_timestamp,
             **kwargs):
         event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
-        bounty.balance = bounty.balance - bounty.fulfillmentAmount
+        contract_version = kwargs.get('contract_version')
+        inputs = kwargs.get('inputs', {})
+        if contract_version == 2:
+            # TODO: Fix this after adding tokenVersion to bounty.
+            fulfillment_amount = 0
+            for amount in inputs.get('tokenAmounts'):
+                fulfillment_amount += int(amount)
+        else:
+            fulfillment_amount = bounty.fulfillmentAmount
+        bounty.balance = bounty.balance - fulfillment_amount
+
         usd_price, token_price = get_historic_pricing(
             bounty.tokenSymbol,
             bounty.tokenDecimals,
-            bounty.fulfillmentAmount,
+            fulfillment_amount,
             event_timestamp)
 
-        if bounty.balance < bounty.fulfillmentAmount:
+        if bounty.balance < fulfillment_amount:
             bounty.bountyStage = COMPLETED_STAGE
             bounty.usd_price = usd_price
             bounty.tokenLockPrice = token_price
@@ -181,7 +191,7 @@ class BountyClient:
         bounty.save()
 
         fulfillment = Fulfillment.objects.get(
-            bounty_id=bounty.bounty_id, fulfillment_id=fulfillment_id)
+            bounty_id=bounty.id, fulfillment_id=fulfillment_id)
         fulfillment.accepted = True
         fulfillment.usd_price = usd_price
         fulfillment.accepted_date = getDateTimeFromTimestamp(event_timestamp)

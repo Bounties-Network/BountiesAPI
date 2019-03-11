@@ -53,4 +53,4 @@ async function handler() {
 	}
 }
 
-handler();
+module.exports = { handler }

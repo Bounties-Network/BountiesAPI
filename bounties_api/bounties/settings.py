@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     'rest_framework_filters',
     'std_bounties',
     'analytics',
+    'activity',
     'user',
     'notifications',
     'django.contrib.sites',

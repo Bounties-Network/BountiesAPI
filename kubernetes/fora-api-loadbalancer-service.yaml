@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-east-1:802922962628:certificate/9d946487-cb36-4a92-844f-ace84d027595
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+  labels:
+    component: fora-api
+  name: fora-api
+  namespace: fora-dev
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 83
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 83
+  selector:
+    component: fora-api
+  
+

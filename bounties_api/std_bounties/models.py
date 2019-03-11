@@ -142,6 +142,9 @@ class Bounty(BountyAbstract):
     data_json = JSONField(null=True)
     contract_version = models.IntegerField(null=False, default=1)
     contributions = JSONField(null=True, default={})
+    issuers = JSONField(null=True, default={})
+    approvers = JSONField(null=True, default={})
+    tokenVersion = models.IntegerField(null=True)
 
     def save(self, *args, **kwargs):
         fulfillmentAmount = self.fulfillmentAmount

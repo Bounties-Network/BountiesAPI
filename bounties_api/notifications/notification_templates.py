@@ -31,6 +31,7 @@ notification_templates = {
     'ApplicationAcceptedIssuer': 'You accepted an application for: {bounty_title}',
     'ApplicationRejectedApplicant': 'Your application was rejected for: {bounty_title}',
     'ApplicationRejectedIssuer': 'You rejected an application for: {bounty_title}',
+    'BountyIssuerChanged': 'The issuer for bounty {bounty_title} has changed.',
 }
 
 email_templates = {

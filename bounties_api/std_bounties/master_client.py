@@ -101,7 +101,7 @@ def contribution_added(bounty_id, **kwargs):
     inputs = kwargs.get('inputs', {})
     is_issue_and_activate = inputs.get('issuer', inputs.get('contributor', None))
     if not is_issue_and_activate:
-        seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+        seo_client.bounty_preview_screenshot(bounty.platform, bounty)
         activity_client.bounty_contribution_added(bounty)
     # HOTFIX REMOVED
     #     notification_client.contribution_added(bounty_id, **kwargs)
@@ -142,3 +142,13 @@ def payout_increased(bounty_id, **kwargs):
     # HOTFIX REMOVED
     # notification_client.payout_increased(bounty_id, **kwargs)
     # slack_client.payout_increased(bounty)
+
+
+def bounty_issuer_changed(bounty_id, contract_version, event_date, inputs, uid):
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
+    bounty_client.change_bounty_issuer(bounty,
+                                       issuer_id_to_change=inputs.get('issuerIdToChange'),
+                                       new_issuer=inputs.get('newIssuer'))
+    notification_client.bounty_issuer_changed(bounty)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty)
+    # activity_client.bounty_issuer_changed(bounty) TODO: Figure out what is this

@@ -345,6 +345,14 @@ class Command(BaseCommand):
                     inputs=message.contract_method_inputs,
                     uid=message.message_deduplication_id)
 
+            elif event == 'BountyIssuerChanged':
+                master_client.bounty_issuer_changed(
+                    message.bounty_id,
+                    contract_version=contract_version,
+                    event_date=message.event_date,
+                    inputs=message.contract_method_inputs,
+                    uid=message.message_deduplication_id)
+
             else:
                 logger.warning('Event for bounty id {} not recognized:'
                                '{}'.format(message.bounty_id, event))

@@ -583,3 +583,20 @@ class NotificationClient:
             application_message=application.message,
             is_activity=True
         )
+
+    def bounty_issuer_changed(self, bounty):
+        string_data = notification_templates['BountyIssuerChanged'].format(
+            bounty_title=bounty.title
+        )
+
+        create_bounty_notification(
+            bounty=bounty,
+            uid='{}-{}-bounty-issuer-changed'.format(bounty.id, datetime.utcnow()),
+            notification_name=notifications['BountyIssuerChanged'],
+            user=bounty.user,
+            from_user=None,
+            notification_created=datetime.utcnow(),
+            string_data=string_data,
+            subject='Bounty Issuer Changed.',
+            is_activity=True
+        )

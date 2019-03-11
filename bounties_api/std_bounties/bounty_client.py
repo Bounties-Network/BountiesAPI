@@ -321,3 +321,12 @@ class BountyClient:
         bounty.save()
 
         return bounty
+
+    def change_bounty_issuer(self, bounty, issuer_id_to_change, new_issuer):
+        issuers = bounty.issuers
+        issuers[issuer_id_to_change] = new_issuer
+        bounty.issuers = issuers
+        bounty.save()
+
+        return bounty
+

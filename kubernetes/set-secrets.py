@@ -38,11 +38,17 @@ for secret_name in SECRETS_MAP:
         current_value = b64decode(secret[key] if key in secret else '')
         current_value = current_value.decode('utf-8')
 
-        display_value = f' ({current_value})' if current_value else ''
-        value = input(f'{key}{display_value}: ')
+        display_value = (' (%s)' % current_value) if current_value else ''
+        value = input(('%s%s:' % (key, display_value)))
 
         secret.update({key: value or current_value})
 
     literals = []
     for key, value in secret.items():
-        literals.append(f'--from-literal={key}=\'{value}\'')
+        literals.append('--from-literal=%s=\'%s\'' % (key, value))
+
+    args = ['kubectl', 'create', 'secret', '-n', namespace, 'generic', secret_name, *literals, '--dry-run', '-o', 'yaml', '|', 'kubectl', 'apply', '-f', '-']
+
+    print('')
+    print(' '.join(args))
+    print('')

@@ -1,8 +1,8 @@
 version: 2
 jobs:
   build:
-    docker: 
-      - image: circleci/python:3.6.2 
+    machine:
+      image: circleci/classic:latest
 
     working_directory: ~/repo
 
@@ -12,7 +12,8 @@ jobs:
       - run:
           name: Install flake8 for python linting
           command: |
-            sudo pip install flake8==3.5.0
+            pyenv global 3.5.2
+            pip3 install flake8==3.5.0
 
       - run:
           name: Lint python code
@@ -42,7 +43,7 @@ jobs:
 
       - run:
           name: Install codecov
-          command: sudo pip install codecov==2.0.15
+          command: pip install codecov==2.0.15
 
       - run:
           name: Run and upload code coverage

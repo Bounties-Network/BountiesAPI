@@ -1,6 +1,7 @@
 import time
 import logging
 import pprint
+import re
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -357,6 +358,26 @@ class Command(BaseCommand):
                 logger.warning('Event for bounty id {} not recognized:'
                                '{}'.format(message.bounty_id, event))
 
+        except StatusError as e:
+            if e.original.response.status_code == 504:
+                logger.warning(
+                    'Timeout for bounty id {}'.format(message.bounty_id))
+            raise e
+
+    def notify_master_client_v2(self, message):
+        try:
+            # make camel case
+            event = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', message.event)
+            event = re.sub('([a-z0-9])([A-Z])', r'\1_\2', event).lower()
+
+            master_client[event](
+                message.bounty_id,
+                contract_versio='2',
+                event_data=message.event_date,
+                event_timestamp=message.event_timestamp,
+                uid=message.message_deduplication_id,
+                **message.event_parameters
+            )
         except StatusError as e:
             if e.original.response.status_code == 504:
                 logger.warning(

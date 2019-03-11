@@ -13,8 +13,18 @@ slack_client = SlackMessageClient()
 seo_client = SEOClient()
 
 
-# will be deprecated
-def bounty_issued(bounty_id, **kwargs):
+def bounty_issued(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword creator
+    @keyword issuers
+    @keyword approvers
+    @keyword data
+    @keyword deadline
+    @keyword token
+    @keyword token_version
+    """
     bounty = Bounty.objects.filter(bounty_id=bounty_id)
     inputs = kwargs.get('inputs', {})
     is_issue_and_activate = inputs.get('value', None)
@@ -31,25 +41,62 @@ def bounty_issued(bounty_id, **kwargs):
         activity_client.bounty_issued(created_bounty)
 
 
-def bounty_activated(bounty_id, **kwargs):
-    bounty = Bounty.objects.get(bounty_id=bounty_id)
-    bounty_client.activate_bounty(bounty, **kwargs)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
-    activity_client.bounty_activated(bounty)
+def contribution_added(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword contribution_id
+    @keyword contributor
+    @keyword amount
+    """
+    bounty = Bounty.objects.get(id=bounty_id)
+    bounty_client.add_contribution(bounty, **kwargs)
     inputs = kwargs.get('inputs', {})
-    is_issue_and_activate = inputs.get('issuer', None)
-    if is_issue_and_activate:
-        seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
-        seo_client.publish_new_sitemap(bounty.platform)
+    is_issue_and_activate = inputs.get('issuer', inputs.get('contributor', None))
+    if not is_issue_and_activate:
+        seo_client.bounty_preview_screenshot(bounty.platform, bounty)
+        activity_client.bounty_contribution_added(bounty)
     # HOTFIX REMOVED
-    #     slack_client.bounty_issued_and_activated(bounty)
-    #     notification_client.bounty_issued_and_activated(bounty_id, **kwargs)
-    # else:
-    #     notification_client.bounty_activated(bounty_id, **kwargs)
-    #     slack_client.bounty_activated(bounty)
+    #     notification_client.contribution_added(bounty_id, **kwargs)
+    #     slack_client.contribution_added(bounty)
 
 
-def bounty_fulfilled(bounty_id, **kwargs):
+def contribution_refunded(bounty_id, contract_version, **kwargs):
+    """
+    Refund a contribution
+
+    @param bounty_id
+    @param contract_version
+    @keyword bounty_id
+    @keyword contribution_id
+    """
+
+    pass
+
+
+def action_performed(bounty_id, contract_version, **kwargs):
+    """
+    Perform an arbitrary action on a bounty
+
+    @param bounty_id
+    @param contract_version
+    @keyword fulfiller
+    @keyword data
+    """
+
+    pass
+
+
+def bounty_fulfilled(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword fulfillment_id
+    @keyword fulfillers
+    @keyword data
+    @keyword submitter
+    """
+
     fulfillment_id = kwargs.get('fulfillment_id')
     contract_version = kwargs.get('contract_version')
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
@@ -59,7 +106,15 @@ def bounty_fulfilled(bounty_id, **kwargs):
     activity_client.fulfillment_created(fulfillment, bounty)
 
 
-def fullfillment_updated(bounty_id, **kwargs):
+def fullfillment_updated(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword fulfillment_id
+    @keyword fulfillers
+    @keyword data
+    """
+
     fulfillment_id = kwargs.get('fulfillment_id')
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.update_fulfillment(bounty, **kwargs)
@@ -67,7 +122,15 @@ def fullfillment_updated(bounty_id, **kwargs):
     slack_client.fulfillment_updated(bounty, fulfillment_id)
 
 
-def fulfillment_accepted(bounty_id, **kwargs):
+def fulfillment_accepted(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword fulfillment_id
+    @keyword approver
+    @keyword token_amounts
+    """
+
     inputs = kwargs.get('inputs', {})
     contract_version = kwargs.get('contract_version')
     fulfillment_id = kwargs.get('fulfillment_id', inputs.get('fulfillmentId'))
@@ -86,29 +149,104 @@ def fulfillment_accepted(bounty_id, **kwargs):
         activity_client.bounty_completed(bounty)
 
 
-def bounty_killed(bounty_id, **kwargs):
+def bounty_changed(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword changer
+    @keyword issuers
+    @keyword approvers
+    @keyword data
+    @keyword deadline
+    """
+
     bounty = Bounty.objects.get(bounty_id=bounty_id)
-    bounty_client.kill_bounty(bounty, **kwargs)
-    notification_client.bounty_killed(bounty_id, **kwargs)
-    slack_client.bounty_killed(bounty)
+    bounty_client.change_bounty(bounty, **kwargs)
+    notification_client.bounty_changed(bounty_id, **kwargs)
+    slack_client.bounty_changed(bounty)
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
-    activity_client.bounty_killed(bounty)
 
 
-def contribution_added(bounty_id, **kwargs):
-    bounty = Bounty.objects.get(id=bounty_id)
-    bounty_client.add_contribution(bounty, **kwargs)
-    inputs = kwargs.get('inputs', {})
-    is_issue_and_activate = inputs.get('issuer', inputs.get('contributor', None))
-    if not is_issue_and_activate:
-        seo_client.bounty_preview_screenshot(bounty.platform, bounty)
-        activity_client.bounty_contribution_added(bounty)
-    # HOTFIX REMOVED
-    #     notification_client.contribution_added(bounty_id, **kwargs)
-    #     slack_client.contribution_added(bounty)
+def bounty_data_changed(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword changer
+    @keyword data
+    """
+
+    pass
 
 
-def deadline_extended(bounty_id, **kwargs):
+def bounty_issuer_changed(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword changer
+    @keyword issuer_id
+    @keyword issuer
+    """
+
+    pass
+
+
+def bounty_issuers_added(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword changer
+    @keyword issuers
+    """
+
+    pass
+
+
+def bounty_issuers_replaced(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword changer
+    @keyword issuers
+    """
+
+    pass
+
+
+# we should get rid of this!
+def bounty_approver_changed(*bounty_id, contract_version, **kwargs):
+    pass
+
+
+def bounty_approvers_added(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword changer
+    @keyword approvers
+    """
+
+    pass
+
+
+def bounty_approvers_replaced(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword changer
+    @keyword approvers
+    """
+
+    pass
+
+
+def bounty_deadline_changed(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword changer
+    @keyword deadline
+    """
+
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.extend_deadline(bounty, **kwargs)
     notification_client.deadline_extended(bounty_id, **kwargs)
@@ -117,12 +255,33 @@ def deadline_extended(bounty_id, **kwargs):
     activity_client.bounty_deadline_extended(bounty)
 
 
-def bounty_changed(bounty_id, **kwargs):
+# will be deprecated
+def bounty_activated(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
-    bounty_client.change_bounty(bounty, **kwargs)
-    notification_client.bounty_changed(bounty_id, **kwargs)
-    slack_client.bounty_changed(bounty)
+    bounty_client.activate_bounty(bounty, **kwargs)
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+    activity_client.bounty_activated(bounty)
+    inputs = kwargs.get('inputs', {})
+    is_issue_and_activate = inputs.get('issuer', None)
+    if is_issue_and_activate:
+        seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+        seo_client.publish_new_sitemap(bounty.platform)
+    # HOTFIX REMOVED
+    #     slack_client.bounty_issued_and_activated(bounty)
+    #     notification_client.bounty_issued_and_activated(bounty_id, **kwargs)
+    # else:
+    #     notification_client.bounty_activated(bounty_id, **kwargs)
+    #     slack_client.bounty_activated(bounty)
+
+
+# legacy
+def bounty_killed(bounty_id, **kwargs):
+    bounty = Bounty.objects.get(bounty_id=bounty_id)
+    bounty_client.kill_bounty(bounty, **kwargs)
+    notification_client.bounty_killed(bounty_id, **kwargs)
+    slack_client.bounty_killed(bounty)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+    activity_client.bounty_killed(bounty)
 
 
 def issuer_transferred(bounty_id, **kwargs):
@@ -142,13 +301,3 @@ def payout_increased(bounty_id, **kwargs):
     # HOTFIX REMOVED
     # notification_client.payout_increased(bounty_id, **kwargs)
     # slack_client.payout_increased(bounty)
-
-
-def bounty_issuer_changed(bounty_id, contract_version, event_date, inputs, uid):
-    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
-    bounty_client.change_bounty_issuer(bounty,
-                                       issuer_id_to_change=inputs.get('issuerIdToChange'),
-                                       new_issuer=inputs.get('newIssuer'))
-    notification_client.bounty_issuer_changed(bounty)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty)
-    # activity_client.bounty_issuer_changed(bounty) TODO: Figure out what is this

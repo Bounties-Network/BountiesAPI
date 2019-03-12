@@ -25,20 +25,21 @@ def bounty_issued(bounty_id, contract_version, **kwargs):
     @keyword token
     @keyword token_version
     """
-    bounty = Bounty.objects.filter(bounty_id=bounty_id)
-    inputs = kwargs.get('inputs', {})
-    is_issue_and_activate = inputs.get('value', None)
 
-    if bounty.exists():
+    if Bounty.objects.filter(bounty_id=bounty_id).exists():
         return
 
-    created_bounty = bounty_client.issue_bounty(bounty_id, **kwargs)
-    if not is_issue_and_activate:
-        notification_client.bounty_issued(bounty_id, **kwargs)
-        slack_client.bounty_issued(created_bounty)
-        seo_client.bounty_preview_screenshot(created_bounty.platform, bounty_id)
-        seo_client.publish_new_sitemap(created_bounty.platform)
-        activity_client.bounty_issued(created_bounty)
+    created_bounty = bounty_client.issue_bounty(
+        bounty_id,
+        contract_version,
+        **kwargs
+    )
+
+    notification_client.bounty_issued(bounty_id, **kwargs)
+    slack_client.bounty_issued(created_bounty)
+    seo_client.bounty_preview_screenshot(created_bounty.platform, bounty_id)
+    seo_client.publish_new_sitemap(created_bounty.platform)
+    activity_client.bounty_issued(created_bounty)
 
 
 def contribution_added(bounty_id, contract_version, **kwargs):

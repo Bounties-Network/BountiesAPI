@@ -29,59 +29,68 @@ class BountyClient:
         pass
 
     @transaction.atomic
-    def issue_bounty(self, bounty_id, inputs, event_timestamp, **kwargs):
-        data_hash = inputs.get('data', 'invalid')
-        original_bounty_id = kwargs.get('original_id', bounty_id)
-        contract_version = kwargs.get('contract_version', 1)
+    def issue_bounty(self, bounty_id, contract_version, **kwargs):
+        data_hash = kwargs.get('data', 'invalid')
+
         event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
         ipfs_data = map_bounty_data(data_hash, bounty_id)
 
-        if contract_version == 1:
+        if contract_version == '1':
+            """
             token_data = map_token_data(
                 inputs.get('paysTokens'),
                 inputs.get('tokenContract'),
-                inputs.get('fulfillmentAmount'))
+                inputs.get('fulfillmentAmount')
+            )
+
             bounty_data = {
                 'id': bounty_id,
-                'bounty_id': original_bounty_id,
-                'issuer': inputs.get('issuer', '').lower(),
+                'bounty_id': bounty_id,
+                'contract_version': contract_version,
+                'issuer': [inputs.get('issuer', '').lower()],
                 'deadline': getDateTimeFromTimestamp(inputs.get('deadline', None)),
                 'bountyStage': DRAFT_STAGE,
                 'bounty_created': event_date,
             }
-            plucked_inputs = {key: inputs.get(key)
-                              for key in issue_bounty_input_keys}
+
+            plucked_inputs = {key: kwargs.get(key) for key in issue_bounty_input_keys}
+            """
+            pass
 
         elif contract_version == 2:
-            token_data = map_token_data_v2(inputs.get('tokenVersion'), inputs.get('token'), 0)
+            token_data = map_token_data(inputs.get('tokenVersion'), inputs.get('token'), 0)
+
             bounty_data = {
                 'id': bounty_id,
-                'bounty_id': original_bounty_id,
-                'issuers': inputs.get('issuers', []),
+                'bounty_id': bounty_id,
+                'contract_version': contract_version,
+                'issuers': kwargs.get('issuers', []),
                 'deadline': getDateTimeFromTimestamp(inputs.get('deadline', None)),
                 'bounty_created': event_date,
-                'bountyStage': ACTIVE_STAGE,
+                'bountyStage': DEAD_STAGE,
                 'fulfillmentAmount': 0,
-                'issuer': inputs.get('issuers', [])[0],
                 'paysTokens': inputs.get('tokenVersion') != '0',
                 'contract_version': contract_version,
                 'platform': 'bounties-network'
             }
-            plucked_inputs = {key: inputs.get(key)
-                              for key in issue_bounty_input_keys_v2}
 
-        bounty_serializer = BountySerializer(
-            data={
-                **bounty_data,
-                **plucked_inputs,
-                **ipfs_data,
-                **token_data})
+            plucked_inputs = {key: inputs.get(key) for key in issue_bounty_input_keys_v2}
+
+        bounty_serializer = BountySerializer(data={
+            **bounty_data,
+            **plucked_inputs,
+            **ipfs_data,
+            **token_data
+        })
+
         bounty_serializer.is_valid(raise_exception=True)
+
         saved_bounty = bounty_serializer.save()
-        saved_bounty.save_and_clear_categories(
-            ipfs_data.get('data_categories'))
+        saved_bounty.save_and_clear_categories(ipfs_data.get('data_categories'))
         saved_bounty.record_bounty_state(event_date)
+
         uid = saved_bounty.uid
+
         if uid:
             DraftBounty.objects.filter(uid=uid).update(on_chain=True)
         return saved_bounty

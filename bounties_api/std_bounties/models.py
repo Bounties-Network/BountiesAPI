@@ -76,40 +76,49 @@ class BountyState(models.Model):
 
 class BountyAbstract(models.Model):
     user = models.ForeignKey('user.User', null=True)
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-    categories = models.ManyToManyField(Category)
-    deadline = models.DateTimeField()
-    arbiter = models.CharField(max_length=128, null=True)
-    private_fulfillments = models.BooleanField(default=True)
-    fulfillers_need_approval = models.BooleanField(default=False)
-    fulfillmentAmount = models.DecimalField(decimal_places=0, max_digits=64)
-    calculated_fulfillmentAmount = models.DecimalField(
-        decimal_places=30,
-        max_digits=70,
-        null=True,
-        default=0)
-    paysTokens = models.BooleanField()
-    experienceLevel = models.IntegerField(choices=DIFFICULTY_CHOICES, null=True)
-    revisions = models.IntegerField(null=True)
+
+    # role-based access controls
+    issuers = models.ManyToManyField(User)
+    approvers = models.ManyToManyField(User)
+
+    # bounty data
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField(blank=True)
+    experienceLevel = models.IntegerField(choices=DIFFICULTY_CHOICES, null=True)
+    revisions = models.IntegerField(null=True)
+    categories = models.ManyToManyField(Category)
+    deadline = models.DateTimeField()
+
+    # attached data
+    attached_filename = models.CharField(max_length=256, blank=True)
+    attached_data_hash = models.CharField(max_length=256, blank=True)
+    attached_url = models.CharField(max_length=256, blank=True)
+
+    # payout info
+    paysTokens = models.BooleanField()
     token = models.ForeignKey(Token, null=True)
     tokenSymbol = models.CharField(max_length=128, default='ETH')
     tokenDecimals = models.IntegerField(default=18)
     tokenContract = models.CharField(max_length=128, default='0x0000000000000000000000000000000000000000')
     usd_price = models.FloatField(default=0)
-    issuer_name = models.CharField(max_length=128, blank=True)
-    issuer_email = models.CharField(max_length=128, blank=True)
-    issuer_githubUsername = models.CharField(max_length=128, blank=True)
-    issuer_address = models.CharField(max_length=128, blank=True)
-    sourceFileName = models.CharField(max_length=256, blank=True)
-    sourceFileHash = models.CharField(max_length=256, blank=True)
-    sourceDirectoryHash = models.CharField(max_length=256, blank=True)
-    webReferenceURL = models.CharField(max_length=256, blank=True)
-    platform = models.CharField(max_length=128, blank=True, default="bounties-network")
+    fulfillmentAmount = models.DecimalField(decimal_places=0, max_digits=64)
+    calculated_fulfillmentAmount = models.DecimalField(
+        decimal_places=30,
+        max_digits=70,
+        null=True,
+        default=0
+    )
+
+    # flags
+    private_fulfillments = models.BooleanField(default=True)
+    fulfillers_need_approval = models.BooleanField(default=False)
+
+    # metadata
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     schemaVersion = models.CharField(max_length=64, blank=True)
     schemaName = models.CharField(max_length=128, null=True)
+    platform = models.CharField(max_length=128, blank=True, default="bounties-network")
 
     class Meta:
         abstract = True
@@ -117,34 +126,34 @@ class BountyAbstract(models.Model):
 
 class Bounty(BountyAbstract):
     id = models.IntegerField(primary_key=True)
-    uid = models.CharField(max_length=128, blank=True, null=True)
-    bounty_created = models.DateTimeField(null=True)
-    bountyStage = models.IntegerField(choices=STAGE_CHOICES, default=DRAFT_STAGE)
-    comments = models.ManyToManyField(Comment, related_name='bounty')
     bounty_id = models.IntegerField()
+    uid = models.CharField(max_length=128, blank=True, null=True)
+
+    bounty_created = models.DateTimeField(null=True)
+    bounty_stage = models.IntegerField(choices=STAGE_CHOICES, default=DRAFT_STAGE)
+    comments = models.ManyToManyField(Comment, related_name='bounty')
+
     data = models.CharField(max_length=128)
-    issuer = models.CharField(max_length=128)
     old_balance = models.DecimalField(decimal_places=0, max_digits=64, null=True)
+
     tokenLockPrice = models.FloatField(null=True, blank=True)
+
     balance = models.DecimalField(
         decimal_places=0,
         max_digits=70,
         null=True,
         default=0)
+
     calculated_balance = models.DecimalField(
         decimal_places=30,
         max_digits=70,
         null=True,
         default=0)
+
     image_preview = models.CharField(max_length=256, blank=True)
     data_categories = JSONField(null=True)
     data_issuer = JSONField(null=True)
     data_json = JSONField(null=True)
-    contract_version = models.IntegerField(null=False, default=1)
-    contributions = JSONField(null=True, default={})
-    issuers = JSONField(null=True, default={})
-    approvers = JSONField(null=True, default={})
-    tokenVersion = models.IntegerField(null=True)
 
     def save(self, *args, **kwargs):
         fulfillmentAmount = self.fulfillmentAmount

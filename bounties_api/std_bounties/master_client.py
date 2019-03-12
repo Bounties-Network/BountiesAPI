@@ -206,38 +206,52 @@ def bounty_issuers_replaced(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
     @param contract_version
-    @keyword changer
     @keyword issuers
     """
-
-    pass
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
+    bounty = bounty_client.replace_bounty_issuers(bounty, issuers=kwargs.get('issuers'))
+    # notification_client.bounty_issuer_replaced(bounty)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty)
 
 
 # we should get rid of this!
-def bounty_approver_changed(*bounty_id, contract_version, **kwargs):
-    pass
+def bounty_approver_changed(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword approverId
+    @keyword approver
+    """
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
+    bounty = bounty_client.change_bounty_approver(bounty,
+                                                  approver_id_to_change=kwargs.get('approverId'),
+                                                  new_approver=kwargs.get('approver'))
+    # notification_client.bounty_approver_changed(bounty)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty)
 
 
 def bounty_approvers_added(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
     @param contract_version
-    @keyword changer
     @keyword approvers
     """
-
-    pass
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
+    bounty = bounty_client.add_bounty_approvers(bounty, new_approvers=kwargs.get('approvers'))
+    # notification_client.bounty_approvers_added(bounty)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty)
 
 
 def bounty_approvers_replaced(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
     @param contract_version
-    @keyword changer
     @keyword approvers
     """
-
-    pass
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
+    bounty = bounty_client.replace_bounty_approvers(bounty, new_approvers=kwargs.get('approvers'))
+    # notification_client.bounty_approvers_added(bounty)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty)
 
 
 def bounty_deadline_changed(bounty_id, contract_version, **kwargs):

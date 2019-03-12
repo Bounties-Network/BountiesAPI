@@ -339,3 +339,28 @@ class BountyClient:
 
         return bounty
 
+    def replace_bounty_issuers(self, bounty, issuers):
+        bounty.issuers = issuers
+        bounty.save()
+        return bounty
+
+    def change_bounty_approver(self, bounty, approver_id_to_change, new_approver):
+        approvers = bounty.approvers
+        approvers[approver_id_to_change] = new_approver
+        bounty.approvers = approvers
+        bounty.save()
+
+        return bounty
+
+    # TODO: Need to just emit the whole new object! So we have better data integrity of indexes.
+    # def add_bounty_approvers(self, bounty, new_approvers):
+    #     bounty.approvers = new_approvers
+    #     bounty.save()
+    #
+    #     return bounty
+
+    def replace_bounty_approvers(self, bounty, new_approvers):
+        bounty.approvers = new_approvers
+        bounty.save()
+
+        return bounty

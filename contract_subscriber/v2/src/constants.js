@@ -34,25 +34,25 @@ exports.SQS_PARAMS = {
    },
    'ContractVersion': {
     DataType: 'Number',
-    StringValue: ''
-   }
+    StringValue: '',
+   },
  },
  MessageBody: 'Event Subscription',
- QueueUrl: 'https://sqs.us-east-1.amazonaws.com/802922962628/hayder.fifo',
+ QueueUrl: process.env['queue_url'] || 'https://sqs.us-east-1.amazonaws.com/802922962628/bounties_development.fifo',
  MessageDeduplicationId: '',
- MessageGroupId: 'Event_Subscriber'
+ MessageGroupId: 'Event_Subscriber',
 };
 
 const networks = {
     'mainNet': 'https://mainnet.infura.io/',
     'rinkeby':  'https://rinkeby.infura.io/',
+    'rinkeby-dev': 'https://rinkeby.infura.io',
     'consensysrinkeby': 'https://rinkeby.infura.io/',
     'rinkebystaging': 'https://rinkeby.infura.io/',
     'localhost': 'localhost:8545',
-};
+}
 
-const ethNetwork = process.env['eth_network'] || 'rinkeby';
+const ethNetwork = process.env['eth_network'] || 'mainNet';
 
 exports.ETH_NETWORK = ethNetwork;
 exports.ETH_NETWORK_URL = networks[ethNetwork];
-exports.CONTRACT_VERSION = 2;

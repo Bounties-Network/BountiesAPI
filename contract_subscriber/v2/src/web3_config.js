@@ -7,14 +7,14 @@ const json = require('./contract.json'),
 const web3 = new Web3(ETH_NETWORK_URL);
 
 const StandardBounties = new web3.eth.Contract(
-	json.interfaces.StandardBounty,
+	json.interfaces.StandardBounties,
 	json[ETH_NETWORK].standardBountiesAddress
 );
 
-abiDecoder.addABI(json.interfaces.StandardBounty);
+abiDecoder.addABI(json.interfaces.StandardBounties);
 
 exports.getBlock = web3.eth.getBlock;
-exports.subscribe = web3.eth.subscribe;
 exports.getTransaction = web3.eth.getTransaction;
+exports.getBlock = web3.eth.getBlock;
 exports.abiDecoder = abiDecoder;
 exports.StandardBounties = StandardBounties;

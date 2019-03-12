@@ -1,20 +1,20 @@
 {
-  "mainNet": {
-    "userCommentsAddress": "0xf75a8e70da328ba79482632774dde52d316ecffa",
-    "standardBountiesAddress": "0x2af47a65da8CD66729b4209C22017d6A5C2d2400"
-  },
-  "rinkeby": {
-    "userCommentsAddress": "0xd0a170ba138d1cfe95fd4aba5a897bc4a1b53379",
-    "standardBountiesAddress": "0xef1bd1c5be0500bac2261d6ac6ed8d84c2cbfdc7"
-  },
-  "consensysrinkeby": {
-    "standardBountiesAddress": "0x12708d61650c2462f2e10276e0e65239d9b0df4e"
-  },
-  "rinkebystaging": {
-    "standardBountiesAddress": "0xdd1636b88e9071507e859e61991ed4be6647f420"
-  },
-  "interfaces": {
-    "StandardBounty": [
+	"mainNet": {
+		"userCommentsAddress": "0xf75a8e70da328ba79482632774dde52d316ecffa",
+		"standardBountiesAddress": "0x2af47a65da8CD66729b4209C22017d6A5C2d2400"
+	},
+	"rinkeby": {
+		"userCommentsAddress": "0xd0a170ba138d1cfe95fd4aba5a897bc4a1b53379",
+		"standardBountiesAddress": "0xf209d2b723b6417cbf04c07e733bee776105a073"
+	},
+	"consensysrinkeby": {
+		"standardBountiesAddress": "0x12708d61650c2462f2e10276e0e65239d9b0df4e"
+	},
+	"rinkeby-dev": {
+		"standardBountiesAddress": "0xef1bd1c5be0500bac2261d6ac6ed8d84c2cbfdc7"
+	},
+	"interfaces": {
+    "StandardBounties": [
       {
         "constant": false,
         "inputs": [
@@ -1097,5 +1097,5 @@
         "type": "function"
       }
     ]
-  }
+  }	
 }

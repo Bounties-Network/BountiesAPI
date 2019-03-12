@@ -88,7 +88,7 @@ class BountyFulfillmentSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'bounty_id',
-            'bountyStage',
+            'bounty_stage',
             'title',
             'usd_price',
             'tokenSymbol',
@@ -120,7 +120,7 @@ class TokenSerializer(serializers.ModelSerializer):
 
 
 class BountySerializer(CustomSerializer):
-    bountyStage = serializers.ChoiceField(choices=STAGE_CHOICES)
+    bounty_stage = serializers.ChoiceField(choices=STAGE_CHOICES)
     categories = CategorySerializer(read_only=True, many=True)
     current_market_token_data = TokenSerializer(read_only=True, source='token')
     user = UserSerializer(read_only=True)

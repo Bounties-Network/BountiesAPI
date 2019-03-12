@@ -48,7 +48,7 @@ class DraftBountiesFilter(filters.FilterSet):
     class Meta:
         model = DraftBounty
         fields = {
-            'issuer': ['exact'],
+            'issuers': ['exact'],
             'platform': ['in', 'exact'],
         }
 
@@ -68,10 +68,10 @@ class BountiesFilter(filters.FilterSet):
         model = Bounty
         fields = {
             'platform': ['in', 'exact'],
-            'issuer': ['exact'],
+            'issuers': ['exact'],
             'experienceLevel': ['exact', 'in'],
             'fulfillmentAmount': ['exact', 'lt', 'gt', 'lte'],
-            'bountyStage': ['exact', 'in'],
+            'bounty_stage': ['exact', 'in'],
             'bounty_created': ['lt', 'gt', 'exact'],
             'deadline': ['lt', 'gt', 'exact'],
             'bounty_id': ['exact'],

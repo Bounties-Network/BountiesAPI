@@ -78,8 +78,8 @@ class BountyAbstract(models.Model):
     user = models.ForeignKey('user.User', null=True)
 
     # role-based access controls
-    issuers = models.ManyToManyField(User)
-    approvers = models.ManyToManyField(User)
+    issuers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_related",)
+    approvers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_relateda",)
 
     # bounty data
     title = models.CharField(max_length=256, blank=True)
@@ -97,9 +97,6 @@ class BountyAbstract(models.Model):
     # payout info
     paysTokens = models.BooleanField()
     token = models.ForeignKey(Token, null=True)
-    tokenSymbol = models.CharField(max_length=128, default='ETH')
-    tokenDecimals = models.IntegerField(default=18)
-    tokenContract = models.CharField(max_length=128, default='0x0000000000000000000000000000000000000000')
     usd_price = models.FloatField(default=0)
     fulfillmentAmount = models.DecimalField(decimal_places=0, max_digits=64)
     calculated_fulfillmentAmount = models.DecimalField(
@@ -128,6 +125,8 @@ class Bounty(BountyAbstract):
     id = models.IntegerField(primary_key=True)
     bounty_id = models.IntegerField()
     uid = models.CharField(max_length=128, blank=True, null=True)
+
+    contract_state = JSONField(null=True)
 
     bounty_created = models.DateTimeField(null=True)
     bounty_stage = models.IntegerField(choices=STAGE_CHOICES, default=DRAFT_STAGE)
@@ -202,7 +201,6 @@ class Bounty(BountyAbstract):
 class DraftBounty(BountyAbstract):
     uid = models.UUIDField(default=uuid.uuid4)
     data = models.CharField(max_length=128, null=True, blank=True)
-    issuer = models.CharField(max_length=128, null=True, blank=True)
     on_chain = models.BooleanField(default=False)
     platform = models.CharField(max_length=128, blank=True)
     data_categories = None

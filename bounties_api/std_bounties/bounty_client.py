@@ -4,7 +4,7 @@ from std_bounties.models import Fulfillment, DraftBounty
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer
 from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE
 from std_bounties.client_helpers import map_bounty_data, map_token_data, map_fulfillment_data, get_token_pricing, \
-    get_historic_pricing, map_token_data_v2
+    get_historic_pricing
 from bounties.utils import getDateTimeFromTimestamp
 from django.db import transaction
 import logging
@@ -58,23 +58,23 @@ class BountyClient:
             pass
 
         elif contract_version == 2:
-            token_data = map_token_data(inputs.get('tokenVersion'), inputs.get('token'), 0)
+            token_data = map_token_data(kwargs.get('token_version'), kwargs.get('token'), 0)
 
             bounty_data = {
                 'id': bounty_id,
                 'bounty_id': bounty_id,
                 'contract_version': contract_version,
                 'issuers': kwargs.get('issuers', []),
-                'deadline': getDateTimeFromTimestamp(inputs.get('deadline', None)),
+                'deadline': getDateTimeFromTimestamp(kwargs.get('deadline', None)),
                 'bounty_created': event_date,
                 'bountyStage': DEAD_STAGE,
                 'fulfillmentAmount': 0,
-                'paysTokens': inputs.get('tokenVersion') != '0',
+                'paysTokens': kwargs.get('token_version') != '0',
                 'contract_version': contract_version,
                 'platform': 'bounties-network'
             }
 
-            plucked_inputs = {key: inputs.get(key) for key in issue_bounty_input_keys_v2}
+            plucked_inputs = {key: kwargs.get(key) for key in issue_bounty_input_keys_v2}
 
         bounty_serializer = BountySerializer(data={
             **bounty_data,

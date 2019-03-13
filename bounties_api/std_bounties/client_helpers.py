@@ -23,75 +23,93 @@ if settings.ETH_NETWORK in ['rinkeby', 'consensysrinkeby', 'rinkebystaging', 'ri
     web3.middleware_stack.inject(geth_poa_middleware, layer=0)
 bounties_json = json.loads(data)
 ipfs = ipfsapi.connect(host='https://ipfs.infura.io')
-bounty_data_keys = [
+bounty_v0_data_keys = [
     'uid',
     'description',
     'title',
     'sourceFileName',
     'sourceFileHash',
     'sourceDirectoryHash',
-    'webReferenceURL']
+    'webReferenceURL'
+]
+
+bounty_v1_data_keys = [
+
+]
+
 fulfillment_data_keys = [
     'description',
     'url',
     'sourceFileName',
     'sourceFileHash',
-    'sourceDirectoryHash']
+    'sourceDirectoryHash'
+]
 
 
-def map_bounty_data(data_hash, bounty_id):
-    ipfs_hash = data_hash
+def map_bounty_data(ipfs_hash, bounty_id):
     if len(ipfs_hash) != 46 or not ipfs_hash.startswith('Qm'):
         logger.error('Data Hash Incorrect for bounty: {:d}'.format(bounty_id))
         return {}
-    
+
     raw_ipfs_data = ipfs.cat(ipfs_hash)
 
     data = json.loads(raw_ipfs_data)
     meta = data.get('meta', {})
 
-    if 'payload' in data:
-        data = data.get('payload')
+    schema_version = meta.get('schemaVersion', '0.1')
 
-    metadata = data.get('metadata', {})
+    if schema_version == '0.1' or schema_version != '1.0':
+        if 'payload' in data:
+            data = data.get('payload')
 
-    experienceLevel = metadata.get('experienceLevel') or data.get('difficulty') or ''
-    experienceLevel = 'Advanced' if experienceLevel == 'Expert' else experienceLevel
+        metadata = data.get('metadata', {})
 
-    formattedExperienceLevel = str(experienceLevel).lower().strip().capitalize()
+        experienceLevel = metadata.get('experienceLevel') or data.get('difficulty') or ''
+        experienceLevel = 'Advanced' if experienceLevel == 'Expert' else experienceLevel
 
-    metadata.update({'experienceLevel': rev_mapped_difficulties.get(formattedExperienceLevel, BEGINNER)})
+        formattedExperienceLevel = str(experienceLevel).lower().strip().capitalize()
 
-    data_issuer = data.get('issuer', {})
-    if isinstance(data_issuer, str):
-        logger.error('Issuer schema incorrect for: {:d}'.format(bounty_id))
-        data_issuer = {}
+        metadata.update({'experienceLevel': rev_mapped_difficulties.get(formattedExperienceLevel, BEGINNER)})
 
-    categories = data.get('categories', [])
-    plucked_data = pluck(data, bounty_data_keys)
+        data_issuer = data.get('issuer', {})
+        if isinstance(data_issuer, str):
+            logger.error('Issuer schema incorrect for: {:d}'.format(bounty_id))
+            data_issuer = {}
 
-    bounty = {
-        **plucked_data,
-        **meta,
-        **metadata,
-        'private_fulfillments': data.get('privateFulfillments', True),
-        'fulfillers_need_approval': data.get('fulfillersNeedApproval', False),
-        'issuer_name': data_issuer.get('name', ''),
-        'issuer_email': data_issuer.get('email', '') or data.get('contact', ''),
-        'issuer_githubUsername': data_issuer.get('githubUsername', ''),
-        'issuer_address': data_issuer.get('address', ''),
-        'revisions': data.get('revisions', None),
-        'data_issuer': data_issuer,
-        'data': ipfs_hash,
-        'raw_ipfs_data': str(raw_ipfs_data),
-        'data_categories': categories,
-    }
+        categories = data.get('categories', [])
+        plucked_data = pluck(data, bounty_v0_data_keys)
 
-    # if 'platform' is gitcoin, also return deadline
-    if meta.get('platform', '') == 'gitcoin' and 'expire_date' in data:
-        bounty.update({'deadline': datetime.utcfromtimestamp(int(data.get('expire_date')))})
-    if meta.get('platform', '') == 'gitcoin':
-        bounty.update({'private_fulfillments': False})
+        bounty = {
+            **plucked_data,
+            **meta,
+            **metadata,
+            'private_fulfillments': data.get('privateFulfillments', True),
+            'fulfillers_need_approval': data.get('fulfillersNeedApproval', False),
+            'issuer_name': data_issuer.get('name', ''),
+            'issuer_email': data_issuer.get('email', '') or data.get('contact', ''),
+            'issuer_githubUsername': data_issuer.get('githubUsername', ''),
+            'issuer_address': data_issuer.get('address', ''),
+            'revisions': data.get('revisions', None),
+            'data_issuer': data_issuer,
+            'data': ipfs_hash,
+            'raw_ipfs_data': str(raw_ipfs_data),
+            'data_categories': categories,
+        }
+
+        # if 'platform' is gitcoin, also return deadline
+        if meta.get('platform', '') == 'gitcoin' and 'expire_date' in data:
+            bounty.update({'deadline': datetime.utcfromtimestamp(int(data.get('expire_date')))})
+        if meta.get('platform', '') == 'gitcoin':
+            bounty.update({'private_fulfillments': False})
+    elif 'schema_version' == '1.0':
+        # TODO need to complete still
+        plucked_data = pluck(data, bounty_v1_data_keys)
+
+        bounty = {
+            **plucked_data,
+            'data': ipfs_hash,
+            'raw_ipfs_data': data
+        }
 
     return bounty
 

@@ -27,67 +27,34 @@ class BountyClient:
 
     @transaction.atomic
     def issue_bounty(self, bounty_id, contract_version, **kwargs):
-        data_hash = kwargs.get('data', 'invalid')
-
         event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))
-        ipfs_data = map_bounty_data(data_hash, bounty_id)
 
-        if contract_version == '1':
-            """
-            token_data = map_token_data(
-                inputs.get('paysTokens'),
-                inputs.get('tokenContract'),
-                inputs.get('fulfillmentAmount')
-            )
+        ipfs_data = map_bounty_data(kwargs.get('data', ''), bounty_id)
+        token_data = map_token_data(kwargs.get('token_version'), kwargs.get('token'), 0)
 
-            bounty_data = {
-                'id': bounty_id,
-                'bounty_id': bounty_id,
-                'contract_version': contract_version,
-                'issuer': [inputs.get('issuer', '').lower()],
-                'deadline': getDateTimeFromTimestamp(inputs.get('deadline', None)),
-                'bountyStage': DRAFT_STAGE,
-                'bounty_created': event_date,
-            }
+        # TODO what happens if issuers or approvers is actually blank?
+        issuers = []
+        for issuer in kwargs.get('issuers', []):
+            user = User.objects.get_or_create(public_address=issuer.lower())[0]
+            issuers.append(user.pk)
 
-            plucked_inputs = {key: kwargs.get(key) for key in issue_bounty_input_keys}
-            """
-            pass
+        approvers = []
+        for approver in kwargs.get('approvers', []):
+            user = User.objects.get_or_create(public_address=approver.lower())[0]
+            approvers.append(user.pk)
 
-        elif contract_version == '2':
-            token_data = map_token_data(kwargs.get('token_version'), kwargs.get('token'), 0)
-
-            # TODO what happens if issuers or approvers is actually blank?
-            issuers = []
-            for issuer in kwargs.get('issuers', []):
-                user = User.objects.get_or_create(public_address=issuer.lower())[0]
-                issuers.append(user.pk)
-
-            approvers = []
-            for approver in kwargs.get('approvers', []):
-                user = User.objects.get_or_create(public_address=approver.lower())[0]
-                approvers.append(user.pk)
-
-            print(approvers)
-            bounty_data = {
-                'bounty_id': bounty_id,
-                'contract_version': contract_version,
-                'issuers': issuers,
-                'approvers': approvers,
-                'deadline': getDateTimeFromTimestamp(kwargs.get('deadline', None)),
-                'bounty_created': event_date,
-                'bounty_stage': DEAD_STAGE,
-                'platform': 'bounties-network',
-
-                # need to get this from ipfs!
-                'fulfillment_amount': 0,
-            }
-
-            # plucked_inputs = {key: kwargs.get(key) for key in issue_bounty_input_keys_v2}
+        bounty_data = {
+            'bounty_id': bounty_id,
+            'contract_version': contract_version,
+            'issuers': issuers,
+            'approvers': approvers,
+            'deadline': getDateTimeFromTimestamp(kwargs.get('deadline', None)),
+            'bounty_stage': DEAD_STAGE,
+            'bounty_created': event_date,
+        }
 
         bounty_serializer = BountySerializer(data={
             **bounty_data,
-            # **plucked_inputs,
             **ipfs_data,
             **token_data
         })
@@ -102,6 +69,7 @@ class BountyClient:
 
         if uid:
             DraftBounty.objects.filter(uid=uid).update(on_chain=True)
+
         return saved_bounty
 
     def activate_bounty(self, bounty, inputs, event_timestamp, **kwargs):

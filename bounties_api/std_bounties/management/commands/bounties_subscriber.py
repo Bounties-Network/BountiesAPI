@@ -65,8 +65,7 @@ class Command(BaseCommand):
                 # There is only ever 1 because MaxNumberOfMessages=1
                 message = Message.from_event(messages[0])
 
-                already_deduplicated = redis_client.get(
-                    message.message_deduplication_id)
+                already_deduplicated = redis_client.get(message.message_deduplication_id)
                 if already_deduplicated and already_deduplicated.decode('UTF-8') == 'True':
                     self.remove_from_queue(message)
                     continue
@@ -74,19 +73,15 @@ class Command(BaseCommand):
                 # If someone uploads a data hash that is faulty, then we want to blacklist all events around that
                 # bounty id. It can either be a permanent blacklist, typically added manually, or a pending blacklist.
                 # All the events in the pending blacklist will retry later.
-                permanent_blacklist = redis_client.get(
-                    'blacklist:{}'.format(message.bounty_id))
-                pending_blacklist = redis_client.exists(
-                    'pending_blacklist:{}'.format(message.bounty_id))
+                permanent_blacklist = redis_client.get('blacklist:{}'.format(message.bounty_id))
+                pending_blacklist = redis_client.exists('pending_blacklist:{}'.format(message.bounty_id))
 
                 if permanent_blacklist or pending_blacklist:
                     self.remove_from_queue(message)
                     if permanent_blacklist:
-                        logger.info('Skipping event for {}, permanent blacklist found'.format(
-                            message.bounty_id))
+                        logger.info('Skipping event for {}, permanent blacklist found'.format(message.bounty_id))
                     else:
-                        logger.info('Pending blacklist exists for {}, adding event {}'.format(
-                            message.bounty_id, message.event))
+                        logger.info('Pending blacklist exists for {}, adding event {}'.format(message.bounty_id, message.event))
                         self.add_to_blacklist(message)
                     continue
 
@@ -110,19 +105,15 @@ class Command(BaseCommand):
                 ReceiptHandle=message.receipt_handle,
             )
         except ClientError as e:
-            logger.warning('SQS delete_message hit an error: '.format(
-                e.response['Error']['Message']))
+            logger.warning('SQS delete_message hit an error: '.format(e.response['Error']['Message']))
 
     def add_to_blacklist(self, message):
-        existing = redis_client.lrange('pending_blacklist:{}'.format(
-            message.bounty_id), 0, -1)
-
+        existing = redis_client.lrange('pending_blacklist:{}'.format(message.bounty_id), 0, -1)
         message_string = str(message)
 
         for key in existing:
             if key and key.decode('UTF-8') == message_string:
-                logger.warning('Did not add {} to pending_blacklist, already '
-                               'existed'.format(message.bounty_id))
+                logger.warning('Did not add {} to pending_blacklist, already existed'.format(message.bounty_id))
                 return
 
         redis_client.rpush('pending_blacklist:{}'.format(
@@ -139,10 +130,8 @@ class Command(BaseCommand):
                 logger.warning('Retrying event: {}'.format(retry))
                 self.handle_message(Message.from_string(retry))
             except Exception as e:
-                # Don't re-raise - we just place it back in the list and try
-                # again later
-                logger.warning('Retrying event for {} failed with {}'.format(
-                    key, e))
+                # Don't re-raise - we just place it back in the list and try again later
+                logger.warning('Retrying event for {} failed with {}'.format(key, e))
                 redis_client.lpush(key, retry)
 
     def resolve_id(self, bounty_id, contract_version):
@@ -152,37 +141,33 @@ class Command(BaseCommand):
             return bounty_id
 
     def handle_message(self, message):
-        logger.info('For bounty id {}, running event {}'.format(
-            message.bounty_id, message.event))
-
+        logger.info('For bounty id {}, running event {}'.format(message.bounty_id, message.event))
         self.notify_master_client_v2(message)
 
-        fulfillment_id = message.fulfillment_id
-        if fulfillment_id == -1:
-            fulfillment_id = None
+        # fulfillment_id = message.fulfillment_id
+        # if fulfillment_id == -1:
+        #     fulfillment_id = None
 
-        bounty_id = message.bounty_id
-        if bounty_id == -1:
-            bounty_id = None
+        # bounty_id = message.bounty_id
+        # if bounty_id == -1:
+        #     bounty_id = None
 
-        event_arguments = {
-            'bounty_id': bounty_id,
-            'fulfillment_id': fulfillment_id,
-            'transaction_from': message.transaction_from,
-            # 'contract_inputs': message.contract_method_inputs,
-            'event_date': message.event_date,
-        }
+        # event_arguments = {
+        #     'bounty_id': bounty_id,
+        #     'fulfillment_id': fulfillment_id,
+        #     'transaction_from': message.transaction_from,
+        #     # 'contract_inputs': message.contract_method_inputs,
+        #     'event_date': message.event_date,
+        # }
 
-        logger.info(
-            'For bounty id {}, running get_or_create with defaults'.format(
-                message.bounty_id))
-        pp.pprint(event_arguments)
+        # logger.info('For bounty id {}, running get_or_create with defaults'.format(message.bounty_id))
+        # pp.pprint(event_arguments)
 
-        Event.objects.get_or_create(
-            event=message.event,
-            transaction_hash=message.transaction_hash,
-            defaults=event_arguments
-        )
+        # Event.objects.get_or_create(
+        #     event=message.event,
+        #     transaction_hash=message.transaction_hash,
+        #     defaults=event_arguments
+        # )
 
         # transaction_path = '/bounty/' + str(bounty_id)
         # transaction_link_text = 'View bounty'
@@ -374,7 +359,7 @@ class Command(BaseCommand):
             master_client.client[event](
                 message.bounty_id,
                 contract_version='2',
-                event_data=message.event_date,
+                event_date=message.event_date,
                 event_timestamp=message.event_timestamp,
                 uid=message.message_deduplication_id,
                 **{k: v for (k, v) in message.contract_method_inputs.items() if 'bounty_id' not in k},

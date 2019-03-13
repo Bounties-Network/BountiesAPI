@@ -152,9 +152,13 @@ class Bounty(BountyAbstract):
         default=0)
 
     image_preview = models.CharField(max_length=256, blank=True)
+
     data_categories = JSONField(null=True)
     data_issuer = JSONField(null=True)
     data_json = JSONField(null=True)
+
+    raw_ipfs_data = JSONField(null=True)
+    raw_event_data = JSONField(null=True)
 
     def save(self, *args, **kwargs):
         fulfillment_amount = self.fulfillment_amount

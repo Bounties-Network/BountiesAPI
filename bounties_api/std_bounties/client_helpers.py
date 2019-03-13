@@ -43,12 +43,11 @@ def map_bounty_data(data_hash, bounty_id):
     ipfs_hash = data_hash
     if len(ipfs_hash) != 46 or not ipfs_hash.startswith('Qm'):
         logger.error('Data Hash Incorrect for bounty: {:d}'.format(bounty_id))
-        ipfs_hash = 'invalid'
-        data_JSON = "{}"
-    else:
-        data_JSON = ipfs.cat(ipfs_hash)
+        return {}
+    
+    raw_ipfs_data = ipfs.cat(ipfs_hash)
 
-    data = json.loads(data_JSON)
+    data = json.loads(raw_ipfs_data)
     meta = data.get('meta', {})
 
     if 'payload' in data:
@@ -84,7 +83,7 @@ def map_bounty_data(data_hash, bounty_id):
         'revisions': data.get('revisions', None),
         'data_issuer': data_issuer,
         'data': ipfs_hash,
-        'data_json': str(data_JSON),
+        'raw_ipfs_data': str(raw_ipfs_data),
         'data_categories': categories,
     }
 
@@ -153,27 +152,28 @@ def get_token_pricing(token_symbol, token_decimals, value):
 
 
 def get_historic_pricing(token_symbol, token_decimals, value, timestamp):
-    r = requests.get(
-        'https://min-api.cryptocompare.com/data/pricehistorical?fsym={}&tsyms=USD&ts={}&extraParams=bountiesnetwork'.format(
-            token_symbol,
-            timestamp))
+    r = requests.get('https://min-api.cryptocompare.com/data/pricehistorical?fsym={}&tsyms=USD&ts={}&extraParams=bountiesnetwork'.format(
+        token_symbol,
+        timestamp
+    ))
+
     r.raise_for_status()
+
     coin_data = r.json()
+
     if coin_data.get('Response', None) == 'Error':
         usd_price, token_model = get_token_pricing(token_symbol, token_decimals, value)
         token_price = token_model.price_usd if token_model else 0
         return usd_price, token_price
+
     token_price = coin_data[token_symbol]['USD']
-    return calculate_usd_price(
-        value,
-        token_decimals,
-        token_price), token_price
+
+    return calculate_usd_price(value, token_decimals, token_price), token_price
 
 
 def map_token_data(version, token_contract, amount):
     token_symbol = 'ETH'
     token_decimals = 18
-    token_contract = '0x1B5Bb3145eCD17bddF160d23bC79f6598baa7170'
 
     if version == '0':
         pass
@@ -190,7 +190,7 @@ def map_token_data(version, token_contract, amount):
 
             token_symbol = HumanStandardToken.symbol()
             token_decimals = HumanStandardToken.decimals()
-         
+
         except OverflowError:
             DSToken = web3.eth.contract(
                 abi=DSToken_abi,
@@ -206,7 +206,7 @@ def map_token_data(version, token_contract, amount):
         # todo
         pass
     else:
-        raise "unknown token type %s | %s | %s" % (version, token_contract, amount)
+        raise 'unknown token type'
 
     usd_price, token_model = get_token_pricing(
         token_symbol,

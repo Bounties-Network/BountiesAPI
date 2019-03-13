@@ -1,3 +1,4 @@
+import json
 import datetime
 from decimal import Decimal
 from std_bounties.models import Fulfillment, DraftBounty
@@ -287,6 +288,20 @@ class BountyClient:
 
         return saved_bounty
 
+    def change_data(self, bounty, **kwargs):
+        updated_data = map_bounty_data(kwargs.get('data', ''))
+
+        bounty_serializer = BountySerializer(
+            bounty,
+            data=updated_data,
+            partial=True,
+        )
+
+        bounty_serializer.is_valid()
+        saved_bounty = bounty_serializer.save()
+
+        return saved_bounty
+
     def transfer_issuer(self, bounty, inputs, **kwargs):
         bounty.issuer = inputs.get('newIssuer')
         bounty.save()
@@ -317,8 +332,19 @@ class BountyClient:
         return bounty
 
     def replace_bounty_issuers(self, bounty, issuers):
-        bounty.issuers = issuers
+        users = []
+        for issuer in issuers:
+            user = User.objects.get_or_create(public_address=issuer.lower())[0]
+            users.append(user.pk)
+
+        bounty.issuers = users
+
+        contract_state = json.loads(bounty.contract_state)
+        contract_state.update({'issuers': {k: v for v, k in enumerate(issuers)}})
+        bounty.contract_state = json.dumps(contract_state)
+
         bounty.save()
+
         return bounty
 
     def change_bounty_approver(self, bounty, approver_id_to_change, new_approver):
@@ -336,8 +362,18 @@ class BountyClient:
     #
     #     return bounty
 
-    def replace_bounty_approvers(self, bounty, new_approvers):
-        bounty.approvers = new_approvers
+    def replace_bounty_approvers(self, bounty, approvers):
+        users = []
+        for approver in approvers:
+            user = User.objects.get_or_create(public_address=approver.lower())[0]
+            users.append(user.pk)
+
+        bounty.issuers = users
+
+        contract_state = json.loads(bounty.contract_state)
+        contract_state.update({'approvers': {k: v for v, k in enumerate(approvers)}})
+        bounty.contract_state = json.dumps(contract_state)
+
         bounty.save()
 
         return bounty

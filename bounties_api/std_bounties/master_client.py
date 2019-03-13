@@ -194,7 +194,8 @@ def bounty_data_changed(bounty_id, contract_version, **kwargs):
     @keyword data
     """
 
-    pass
+    bounty = Bounty.objects.get(bounty_id=bounty_id)
+    bounty_client.change_data(bounty, **kwargs)
 
 
 @export

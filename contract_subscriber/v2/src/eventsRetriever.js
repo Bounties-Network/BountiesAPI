@@ -5,14 +5,18 @@ const { cloneDeep, chain } = require('lodash'),
 		sqs = require('./sqs_config'),
 		rollbar = require('./rollbar');
 
+camelToUnderscore= (key) => {
+    return key.replace( /([A-Z])/g, "_$1").toLowerCase();
+}
 
 sanitizeEventData = (obj) => {
     const sanitizedObj = {};
     Object.keys(obj).forEach(key => {
         if (key.match(/_.+/g)) {
-            sanitizedObj[key.substring(1)] = obj[key];
+            sanitizedObj[camelToUnderscore(key.substring(1))] = obj[key];
         }
     });
+
     return sanitizedObj;
 };
 

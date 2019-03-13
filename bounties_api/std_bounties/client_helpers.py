@@ -19,7 +19,7 @@ import logging
 logger = logging.getLogger('django')
 
 web3 = Web3(HTTPProvider(settings.ETH_NETWORK_URL))
-if settings.ETH_NETWORK in ['rinkeby', 'consensysrinkeby', 'rinkebystaging']:
+if settings.ETH_NETWORK in ['rinkeby', 'consensysrinkeby', 'rinkebystaging', 'rinkeby-dev']:
     web3.middleware_stack.inject(geth_poa_middleware, layer=0)
 bounties_json = json.loads(data)
 ipfs = ipfsapi.connect(host='https://ipfs.infura.io')
@@ -43,11 +43,10 @@ def map_bounty_data(data_hash, bounty_id):
     ipfs_hash = data_hash
     if len(ipfs_hash) != 46 or not ipfs_hash.startswith('Qm'):
         logger.error('Data Hash Incorrect for bounty: {:d}'.format(bounty_id))
+        ipfs_hash = 'invalid'
         data_JSON = "{}"
     else:
         data_JSON = ipfs.cat(ipfs_hash)
-    if len(ipfs_hash) == 0:
-        ipfs_hash = 'invalid'
 
     data = json.loads(data_JSON)
     meta = data.get('meta', {})
@@ -174,8 +173,11 @@ def get_historic_pricing(token_symbol, token_decimals, value, timestamp):
 def map_token_data(version, token_contract, amount):
     token_symbol = 'ETH'
     token_decimals = 18
+    token_contract = '0x1B5Bb3145eCD17bddF160d23bC79f6598baa7170'
 
-    if version == 20:
+    if version == '0':
+        pass
+    elif version == '20':
         HumanStandardToken_abi = bounties_json['interfaces']['HumanStandardToken']
         DSToken_abi = bounties_json['interfaces']['DSToken']
 
@@ -188,6 +190,7 @@ def map_token_data(version, token_contract, amount):
 
             token_symbol = HumanStandardToken.symbol()
             token_decimals = HumanStandardToken.decimals()
+         
         except OverflowError:
             DSToken = web3.eth.contract(
                 abi=DSToken_abi,
@@ -199,11 +202,11 @@ def map_token_data(version, token_contract, amount):
             # with '\x00'
             token_symbol = DSToken.symbol().decode().rstrip('\x00')
             token_decimals = DSToken.decimals()
-    elif version == 721:
+    elif version == '721':
         # todo
         pass
     else:
-        raise 'unknown token type'
+        raise "unknown token type %s | %s | %s" % (version, token_contract, amount)
 
     usd_price, token_model = get_token_pricing(
         token_symbol,
@@ -212,8 +215,8 @@ def map_token_data(version, token_contract, amount):
     )
 
     return {
-        'tokenSymbol': token_symbol,
-        'tokenDecimals': token_decimals,
+        'token_symbol': token_symbol,
+        'token_decimals': token_decimals,
         'token': token_model.id if token_model else None,
         'usd_price': usd_price,
     }

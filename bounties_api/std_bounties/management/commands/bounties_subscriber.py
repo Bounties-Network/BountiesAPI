@@ -95,9 +95,10 @@ class Command(BaseCommand):
 
             except Exception as e:
                 # goes to rollbar
-                logger.error(e)
-                self.remove_from_queue(message)
-                self.add_to_blacklist(message)
+                raise e
+                # logger.error(e)
+                # self.remove_from_queue(message)
+                # self.add_to_blacklist(message)
 
     def remove_from_queue(self, message):
         # This means the contract subscriber will never send this event
@@ -154,7 +155,7 @@ class Command(BaseCommand):
         logger.info('For bounty id {}, running event {}'.format(
             message.bounty_id, message.event))
 
-        self.notify_master_client(message)
+        self.notify_master_client_v2(message)
 
         fulfillment_id = message.fulfillment_id
         if fulfillment_id == -1:
@@ -168,7 +169,7 @@ class Command(BaseCommand):
             'bounty_id': bounty_id,
             'fulfillment_id': fulfillment_id,
             'transaction_from': message.transaction_from,
-            'contract_inputs': message.contract_method_inputs,
+            # 'contract_inputs': message.contract_method_inputs,
             'event_date': message.event_date,
         }
 
@@ -183,69 +184,69 @@ class Command(BaseCommand):
             defaults=event_arguments
         )
 
-        transaction_path = '/bounty/' + str(bounty_id)
-        transaction_link_text = 'View bounty'
-        transaction_message = 'Transaction confirmed'
+        # transaction_path = '/bounty/' + str(bounty_id)
+        # transaction_link_text = 'View bounty'
+        # transaction_message = 'Transaction confirmed'
 
-        if message.event == 'FulfillmentAccepted':
-            transaction_path = '{}/?fulfillment_id={}&rating=true'.format(
-                transaction_path,
-                fulfillment_id)
-            transaction_link_text = 'Rate fulfiller'
-            transaction_message = 'Submission accepted'
+        # if message.event == 'FulfillmentAccepted':
+        #     transaction_path = '{}/?fulfillment_id={}&rating=true'.format(
+        #         transaction_path,
+        #         fulfillment_id)
+        #     transaction_link_text = 'Rate fulfiller'
+        #     transaction_message = 'Submission accepted'
 
-        transactions = Transaction.objects.filter(
-            tx_hash=message.transaction_hash)
-        if transactions.exists():
-            transactions.update(completed=True, viewed=False, data={
-                'link': transaction_path,
-                'linkText': transaction_link_text,
-                'message': transaction_message,
-            })
+        # transactions = Transaction.objects.filter(
+        #     tx_hash=message.transaction_hash)
+        # if transactions.exists():
+        #     transactions.update(completed=True, viewed=False, data={
+        #         'link': transaction_path,
+        #         'linkText': transaction_link_text,
+        #         'message': transaction_message,
+        #     })
 
-        if message.event == 'BountyActivated':
-            bounty = Bounty.objects.get(id=bounty_id)
-            is_issue_and_activate = message.contract_method_inputs.get(
-                'issuer', None)
-            if is_issue_and_activate:
-                slack_client.bounty_issued_and_activated(bounty)
-                notification_client.bounty_issued_and_activated(
-                    bounty_id,
-                    event_date=message.event_date,
-                    inputs=message.contract_method_inputs,
-                    event_timestamp=message.event_timestamp,
-                    uid=message.message_deduplication_id)
-            else:
-                notification_client.bounty_activated(
-                    bounty_id,
-                    event_date=message.event_date,
-                    inputs=message.contract_method_inputs,
-                    event_timestamp=message.event_timestamp,
-                    uid=message.message_deduplication_id)
-                slack_client.bounty_activated(bounty)
+        # if message.event == 'BountyActivated':
+        #     bounty = Bounty.objects.get(id=bounty_id)
+        #     is_issue_and_activate = message.contract_method_inputs.get(
+        #         'issuer', None)
+        #     if is_issue_and_activate:
+        #         slack_client.bounty_issued_and_activated(bounty)
+        #         notification_client.bounty_issued_and_activated(
+        #             bounty_id,
+        #             event_date=message.event_date,
+        #             inputs=message.contract_method_inputs,
+        #             event_timestamp=message.event_timestamp,
+        #             uid=message.message_deduplication_id)
+        #     else:
+        #         notification_client.bounty_activated(
+        #             bounty_id,
+        #             event_date=message.event_date,
+        #             inputs=message.contract_method_inputs,
+        #             event_timestamp=message.event_timestamp,
+        #             uid=message.message_deduplication_id)
+        #         slack_client.bounty_activated(bounty)
 
-        if message.event == 'ContributionAdded':
-            bounty = Bounty.objects.get(id=bounty_id)
-            is_issue_and_activate = message.contract_method_inputs.get(
-                'issuer', None)
-            if not is_issue_and_activate:
-                notification_client.contribution_added(
-                    bounty_id,
-                    event_date=message.event_date,
-                    inputs=message.contract_method_inputs,
-                    event_timestamp=message.event_timestamp,
-                    transaction_from=message.transaction_from,
-                    uid=message.message_deduplication_id)
-                slack_client.contribution_added(bounty)
+        # if message.event == 'ContributionAdded':
+        #     bounty = Bounty.objects.get(id=bounty_id)
+        #     is_issue_and_activate = message.contract_method_inputs.get(
+        #         'issuer', None)
+        #     if not is_issue_and_activate:
+        #         notification_client.contribution_added(
+        #             bounty_id,
+        #             event_date=message.event_date,
+        #             inputs=message.contract_method_inputs,
+        #             event_timestamp=message.event_timestamp,
+        #             transaction_from=message.transaction_from,
+        #             uid=message.message_deduplication_id)
+        #         slack_client.contribution_added(bounty)
 
-        if message.event == 'PayoutIncreased':
-            bounty = Bounty.objects.get(id=bounty_id)
-            notification_client.payout_increased(
-                bounty_id,
-                event_date=message.event_date,
-                inputs=message.contract_method_inputs,
-                uid=message.message_deduplication_id)
-            slack_client.payout_increased(bounty)
+        # if message.event == 'PayoutIncreased':
+        #     bounty = Bounty.objects.get(id=bounty_id)
+        #     notification_client.payout_increased(
+        #         bounty_id,
+        #         event_date=message.event_date,
+        #         inputs=message.contract_method_inputs,
+        #         uid=message.message_deduplication_id)
+        #     slack_client.payout_increased(bounty)
 
     def notify_master_client(self, message):
         event = message.event
@@ -370,13 +371,13 @@ class Command(BaseCommand):
             event = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', message.event)
             event = re.sub('([a-z0-9])([A-Z])', r'\1_\2', event).lower()
 
-            master_client[event](
+            master_client.client[event](
                 message.bounty_id,
-                contract_versio='2',
+                contract_version='2',
                 event_data=message.event_date,
                 event_timestamp=message.event_timestamp,
                 uid=message.message_deduplication_id,
-                **message.event_parameters
+                **{k: v for (k, v) in message.contract_method_inputs.items() if 'bounty_id' not in k},
             )
         except StatusError as e:
             if e.original.response.status_code == 504:

@@ -39,7 +39,7 @@ class FulfillmentsFilter(filters.FilterSet):
             'fulfillment_id': ['exact'],
             'fulfiller': ['exact'],
             'bounty': ['exact'],
-            'bounty__user__public_address': ['exact'],
+            # 'bounty__user__public_address': ['exact'],
             'platform': ['exact', 'in'],
         }
 
@@ -69,8 +69,8 @@ class BountiesFilter(filters.FilterSet):
         fields = {
             'platform': ['in', 'exact'],
             'issuers': ['exact'],
-            'experienceLevel': ['exact', 'in'],
-            'fulfillmentAmount': ['exact', 'lt', 'gt', 'lte'],
+            'experience_level': ['exact', 'in'],
+            'fulfillment_amount': ['exact', 'lt', 'gt', 'lte'],
             'bounty_stage': ['exact', 'in'],
             'bounty_created': ['lt', 'gt', 'exact'],
             'deadline': ['lt', 'gt', 'exact'],

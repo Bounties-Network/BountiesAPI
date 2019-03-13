@@ -1,6 +1,7 @@
 import datetime
 from decimal import Decimal
 from std_bounties.models import Fulfillment, DraftBounty
+from user.models import User
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer
 from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE
 from std_bounties.client_helpers import map_bounty_data, map_token_data, map_fulfillment_data, get_token_pricing, \
@@ -17,10 +18,6 @@ issue_bounty_input_keys = [
     'paysTokens',
     'tokenContract',
     'value']
-issue_bounty_input_keys_v2 = [
-    'approvers',
-    'tokenVersion',
-    'token']
 
 
 class BountyClient:
@@ -32,7 +29,7 @@ class BountyClient:
     def issue_bounty(self, bounty_id, contract_version, **kwargs):
         data_hash = kwargs.get('data', 'invalid')
 
-        event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
+        event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))
         ipfs_data = map_bounty_data(data_hash, bounty_id)
 
         if contract_version == '1':
@@ -57,28 +54,40 @@ class BountyClient:
             """
             pass
 
-        elif contract_version == 2:
+        elif contract_version == '2':
             token_data = map_token_data(kwargs.get('token_version'), kwargs.get('token'), 0)
 
+            # TODO what happens if issuers or approvers is actually blank?
+            issuers = []
+            for issuer in kwargs.get('issuers', []):
+                user = User.objects.get_or_create(public_address=issuer.lower())[0]
+                issuers.append(user.pk)
+
+            approvers = []
+            for approver in kwargs.get('approvers', []):
+                user = User.objects.get_or_create(public_address=approver.lower())[0]
+                approvers.append(user.pk)
+
+            print(approvers)
             bounty_data = {
-                'id': bounty_id,
                 'bounty_id': bounty_id,
                 'contract_version': contract_version,
-                'issuers': kwargs.get('issuers', []),
+                'issuers': issuers,
+                'approvers': approvers,
                 'deadline': getDateTimeFromTimestamp(kwargs.get('deadline', None)),
                 'bounty_created': event_date,
-                'bountyStage': DEAD_STAGE,
-                'fulfillmentAmount': 0,
-                'paysTokens': kwargs.get('token_version') != '0',
-                'contract_version': contract_version,
-                'platform': 'bounties-network'
+                'bounty_stage': DEAD_STAGE,
+                'platform': 'bounties-network',
+
+                # need to get this from ipfs!
+                'fulfillment_amount': 0,
             }
 
-            plucked_inputs = {key: kwargs.get(key) for key in issue_bounty_input_keys_v2}
+            # plucked_inputs = {key: kwargs.get(key) for key in issue_bounty_input_keys_v2}
 
         bounty_serializer = BountySerializer(data={
             **bounty_data,
-            **plucked_inputs,
+            # **plucked_inputs,
             **ipfs_data,
             **token_data
         })

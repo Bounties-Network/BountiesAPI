@@ -22,4 +22,14 @@ DIFFICULTY_CHOICES = (
     (ADVANCED, 'Advanced'),
 )
 
+ETH = 0
+ERC_20 = 20
+ERC_721 = 721
+
+TOKEN_CHOICES = (
+    (ETH, 'Ether'),
+    (ERC_20, 'ERC-20'),
+    (ERC_721, 'ERC-721'),
+)
+
 rev_mapped_difficulties = dict((y, x) for x, y in DIFFICULTY_CHOICES)

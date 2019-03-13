@@ -13,6 +13,14 @@ slack_client = SlackMessageClient()
 seo_client = SEOClient()
 
 
+client = {}
+
+
+def export(f):
+    client.setdefault(f.__name__, f)
+
+
+@export
 def bounty_issued(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -26,6 +34,8 @@ def bounty_issued(bounty_id, contract_version, **kwargs):
     @keyword token_version
     """
 
+    print(locals())
+
     if Bounty.objects.filter(bounty_id=bounty_id).exists():
         return
 
@@ -35,13 +45,14 @@ def bounty_issued(bounty_id, contract_version, **kwargs):
         **kwargs
     )
 
-    notification_client.bounty_issued(bounty_id, **kwargs)
-    slack_client.bounty_issued(created_bounty)
-    seo_client.bounty_preview_screenshot(created_bounty.platform, bounty_id)
-    seo_client.publish_new_sitemap(created_bounty.platform)
-    activity_client.bounty_issued(created_bounty)
+    # notification_client.bounty_issued(bounty_id, **kwargs)
+    # slack_client.bounty_issued(created_bounty)
+    # seo_client.bounty_preview_screenshot(created_bounty.platform, bounty_id)
+    # seo_client.publish_new_sitemap(created_bounty.platform)
+    # activity_client.bounty_issued(created_bounty)
 
 
+@export
 def contribution_added(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -62,6 +73,7 @@ def contribution_added(bounty_id, contract_version, **kwargs):
     #     slack_client.contribution_added(bounty)
 
 
+@export
 def contribution_refunded(bounty_id, contract_version, **kwargs):
     """
     Refund a contribution
@@ -75,6 +87,7 @@ def contribution_refunded(bounty_id, contract_version, **kwargs):
     pass
 
 
+@export
 def action_performed(bounty_id, contract_version, **kwargs):
     """
     Perform an arbitrary action on a bounty
@@ -88,6 +101,7 @@ def action_performed(bounty_id, contract_version, **kwargs):
     pass
 
 
+@export
 def bounty_fulfilled(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -107,6 +121,7 @@ def bounty_fulfilled(bounty_id, contract_version, **kwargs):
     activity_client.fulfillment_created(fulfillment, bounty)
 
 
+@export
 def fullfillment_updated(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -123,6 +138,7 @@ def fullfillment_updated(bounty_id, contract_version, **kwargs):
     slack_client.fulfillment_updated(bounty, fulfillment_id)
 
 
+@export
 def fulfillment_accepted(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -150,6 +166,7 @@ def fulfillment_accepted(bounty_id, contract_version, **kwargs):
         activity_client.bounty_completed(bounty)
 
 
+@export
 def bounty_changed(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -168,6 +185,7 @@ def bounty_changed(bounty_id, contract_version, **kwargs):
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
 
 
+@export
 def bounty_data_changed(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -179,6 +197,7 @@ def bounty_data_changed(bounty_id, contract_version, **kwargs):
     pass
 
 
+@export
 def bounty_issuer_changed(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -191,6 +210,7 @@ def bounty_issuer_changed(bounty_id, contract_version, **kwargs):
     pass
 
 
+@export
 def bounty_issuers_added(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -202,6 +222,7 @@ def bounty_issuers_added(bounty_id, contract_version, **kwargs):
     pass
 
 
+@export
 def bounty_issuers_replaced(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -230,6 +251,7 @@ def bounty_approver_changed(bounty_id, contract_version, **kwargs):
     seo_client.bounty_preview_screenshot(bounty.platform, bounty)
 
 
+@export
 def bounty_approvers_added(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -242,6 +264,7 @@ def bounty_approvers_added(bounty_id, contract_version, **kwargs):
     seo_client.bounty_preview_screenshot(bounty.platform, bounty)
 
 
+@export
 def bounty_approvers_replaced(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -254,6 +277,7 @@ def bounty_approvers_replaced(bounty_id, contract_version, **kwargs):
     seo_client.bounty_preview_screenshot(bounty.platform, bounty)
 
 
+@export
 def bounty_deadline_changed(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -271,6 +295,7 @@ def bounty_deadline_changed(bounty_id, contract_version, **kwargs):
 
 
 # will be deprecated
+@export
 def bounty_activated(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.activate_bounty(bounty, **kwargs)
@@ -290,6 +315,7 @@ def bounty_activated(bounty_id, **kwargs):
 
 
 # legacy
+@export
 def bounty_killed(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.kill_bounty(bounty, **kwargs)
@@ -299,6 +325,7 @@ def bounty_killed(bounty_id, **kwargs):
     activity_client.bounty_killed(bounty)
 
 
+@export
 def issuer_transferred(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.transfer_issuer(bounty, **kwargs)
@@ -308,6 +335,7 @@ def issuer_transferred(bounty_id, **kwargs):
     activity_client.bounty_transferred(bounty)
 
 
+@export
 def payout_increased(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.increase_payout(bounty, **kwargs)

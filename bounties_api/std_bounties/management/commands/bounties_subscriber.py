@@ -135,12 +135,6 @@ class Command(BaseCommand):
                 logger.warning('Retrying event for {} failed with {}'.format(key, e))
                 redis_client.lpush(key, retry)
 
-    def resolve_id(self, bounty_id, contract_version):
-        if contract_version > 1:
-            return contract_version * 1000000 + bounty_id
-        else:
-            return bounty_id
-
     def handle_message(self, message):
         logger.info('For bounty id {}, running event {}'.format(message.bounty_id, message.event))
         self.notify_master_client_v2(message)
@@ -237,12 +231,10 @@ class Command(BaseCommand):
     def notify_master_client(self, message):
         event = message.event
         contract_version = getattr(message, 'contract_version', 1)
-        resolved_id = self.resolve_id(message.bounty_id, contract_version)
         try:
             if event == 'BountyIssued':
                 master_client.bounty_issued(
-                    resolved_id,
-                    original_id=message.bounty_id,
+                    bounty_id=message.bounty_id,
                     contract_version=contract_version,
                     event_date=message.event_date,
                     inputs=message.contract_method_inputs,
@@ -296,7 +288,8 @@ class Command(BaseCommand):
 
             elif event == 'ContributionAdded':
                 master_client.contribution_added(
-                    resolved_id,
+                    bounty_id=message.bounty_id,
+                    contract_version=contract_version,
                     event_date=message.event_date,
                     inputs=message.contract_method_inputs,
                     transaction_from=message.transaction_from,

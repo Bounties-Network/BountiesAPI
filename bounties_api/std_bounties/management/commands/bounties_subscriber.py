@@ -252,7 +252,7 @@ class Command(BaseCommand):
 
             elif event == 'BountyFulfilled':
                 master_client.bounty_fulfilled(
-                    message.bounty_id,
+                    bounty_id=message.bounty_id,
                     contract_version=contract_version,
                     fulfillment_id=message.fulfillment_id,
                     event_date=message.event_date,

@@ -113,16 +113,20 @@ def bounty_fulfilled(bounty_id, contract_version, **kwargs):
     """
 
     fulfillment_id = kwargs.get('fulfillment_id')
-    contract_version = kwargs.get('contract_version')
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
-    fulfillment = bounty_client.fulfill_bounty(bounty, **kwargs)
+    fulfillment = bounty_client.fulfill_bounty(
+        bounty,
+        inputs=kwargs.get('inputs', {}),
+        transaction_issuer=kwargs.get('transaction_issuer'),
+        **kwargs
+    )
     notification_client.bounty_fulfilled(bounty, fulfillment, **kwargs)
     slack_client.bounty_fulfilled(bounty, fulfillment_id)
     activity_client.fulfillment_created(fulfillment, bounty)
 
 
 @export
-def fullfillment_updated(bounty_id, contract_version, **kwargs):
+def fulfillment_updated(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
     @param contract_version

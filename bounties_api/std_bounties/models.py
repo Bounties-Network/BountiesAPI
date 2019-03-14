@@ -216,6 +216,7 @@ class Fulfillment(models.Model):
     fulfillment_id = models.IntegerField()
     user = models.ForeignKey('user.User', null=True)
     bounty = models.ForeignKey(Bounty, related_name='fulfillments')
+    contract_version = models.IntegerField(choices=CONTRACT_VERSION_CHOICES, default=STANDARD_BOUNTIES_V1)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     fulfillment_created = models.DateTimeField(null=True)

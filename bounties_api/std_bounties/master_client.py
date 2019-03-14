@@ -63,7 +63,7 @@ def contribution_added(bounty_id, contract_version, **kwargs):
     """
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty_client.add_contribution(bounty, **kwargs)
-    
+
     # is_issue_and_activate = inputs.get('issuer', inputs.get('contributor', None))
     # if not is_issue_and_activate:
     #     seo_client.bounty_preview_screenshot(bounty.platform, bounty)
@@ -112,17 +112,11 @@ def bounty_fulfilled(bounty_id, contract_version, **kwargs):
     @keyword submitter
     """
 
-    fulfillment_id = kwargs.get('fulfillment_id')
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
-    fulfillment = bounty_client.fulfill_bounty(
-        bounty,
-        inputs=kwargs.get('inputs', {}),
-        transaction_issuer=kwargs.get('transaction_issuer'),
-        **kwargs
-    )
-    notification_client.bounty_fulfilled(bounty, fulfillment, **kwargs)
-    slack_client.bounty_fulfilled(bounty, fulfillment_id)
-    activity_client.fulfillment_created(fulfillment, bounty)
+    bounty_client.fulfill_bounty(bounty, **kwargs)
+    # notification_client.bounty_fulfilled(bounty, fulfillment, **kwargs)
+    # slack_client.bounty_fulfilled(bounty, fulfillment_id)
+    # activity_client.fulfillment_created(fulfillment, bounty)
 
 
 @export
@@ -152,22 +146,24 @@ def fulfillment_accepted(bounty_id, contract_version, **kwargs):
     @keyword token_amounts
     """
 
-    inputs = kwargs.get('inputs', {})
-    contract_version = kwargs.get('contract_version')
-    fulfillment_id = kwargs.get('fulfillment_id', inputs.get('fulfillmentId'))
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
+
+    fulfillment_id = kwargs.get('fulfillment_id')
     fulfillment = Fulfillment.objects.get(
         Q(bounty__id=bounty.id),
         Q(fulfillment_id=fulfillment_id)
     )
-    bounty_client.accept_fulfillment(bounty, **kwargs)
-    notification_client.fulfillment_accepted(bounty, fulfillment, **kwargs)
-    slack_client.fulfillment_accepted(bounty, fulfillment_id)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty)
-    activity_client.fulfillment_accepted(fulfillment, bounty)
-    if bounty.balance < bounty.fulfillmentAmount:
-        notification_client.bounty_completed(bounty, fulfillment_id)
-        activity_client.bounty_completed(bounty)
+
+    bounty_client.accept_fulfillment(bounty, fulfillment, **kwargs)
+
+    # notification_client.fulfillment_accepted(bounty, fulfillment, **kwargs)
+    # slack_client.fulfillment_accepted(bounty, fulfillment_id)
+    # seo_client.bounty_preview_screenshot(bounty.platform, bounty)
+    # activity_client.fulfillment_accepted(fulfillment, bounty)
+    #
+    # if bounty.balance < bounty.fulfillmentAmount:
+    #     notification_client.bounty_completed(bounty, fulfillment_id)
+    #     activity_client.bounty_completed(bounty)
 
 
 @export

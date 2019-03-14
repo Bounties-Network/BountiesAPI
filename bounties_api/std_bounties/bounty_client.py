@@ -1,6 +1,7 @@
 import json
 import datetime
 from decimal import Decimal
+from functools import reduce
 from std_bounties.models import Contribution, DraftBounty, Fulfillment
 from user.models import User
 from std_bounties.serializers import BountySerializer, FulfillmentSerializer, ContributionSerializer
@@ -81,55 +82,32 @@ class BountyClient:
 
         return bounty
 
-    def fulfill_bounty(
-            self,
-            bounty,
-            fulfillment_id,
-            inputs,
-            event_timestamp,
-            transaction_issuer,
-            **kwargs):
-
-        fulfillment = Fulfillment.objects.filter(
-            fulfillment_id=fulfillment_id, bounty_id=bounty.bounty_id
-        )
-
+    def fulfill_bounty(self, bounty, **kwargs):
+        fulfillment_id = kwargs.get('fulfillment_id')
+        fulfillment = Fulfillment.objects.filter(fulfillment_id=fulfillment_id, bounty_id=bounty.bounty_id)
         if fulfillment.exists():
             return
 
-        data_hash = inputs.get('data')
-        ipfs_data = map_fulfillment_data(
-            data_hash, bounty.bounty_id, fulfillment_id)
+        data_hash = kwargs.get('data')
+        ipfs_data = map_fulfillment_data(data_hash, bounty.bounty_id, fulfillment_id)
 
-        if bounty.contract_version == 2:
-            fulfillers = [v.lower() for v in inputs.get("fulfillers")]
-            fulfillment_data = {
-                'fulfillment_id': fulfillment_id,
-                'fulfiller': fulfillers[0],
-                'fulfillers': fulfillers,
-                'submitter': inputs.get('submitter'),
-                'bounty': bounty.id,
-                'accepted': False,
-                'fulfillment_created': datetime.datetime.fromtimestamp(
-                    int(event_timestamp)),
-            }
-        # TODO: Remove else statement when stdbts1 deprecated
-        else:
-            fulfillment_data = {
-                'fulfillment_id': fulfillment_id,
-                'fulfiller': transaction_issuer.lower(),
-                'bounty': bounty.bounty_id,
-                'accepted': False,
-                'fulfillment_created': datetime.datetime.fromtimestamp(
-                    int(event_timestamp)),
-            }
+        fulfillment_data = {
+            'contract_version': bounty.contract_version,
+            'fulfillment_id': fulfillment_id,
+            'fulfiller': kwargs.get('fulfillers')[0],
+            'bounty': bounty.id,
+            'accepted': False,
+            'fulfillment_created': datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp'))),
+        }
 
-        fulfillment_serializer = FulfillmentSerializer(
-            data={**fulfillment_data, **ipfs_data})
+        fulfillment_serializer = FulfillmentSerializer(data={
+            **fulfillment_data,
+            **ipfs_data
+        })
+
         fulfillment_serializer.is_valid(raise_exception=True)
-        instance = fulfillment_serializer.save()
 
-        return instance
+        return fulfillment_serializer.save()
 
     def update_fulfillment(self, bounty, fulfillment_id, inputs, **kwargs):
         fulfillment = Fulfillment.objects.get(
@@ -146,39 +124,30 @@ class BountyClient:
         return instance
 
     @transaction.atomic
-    def accept_fulfillment(
-            self,
-            bounty,
-            fulfillment_id,
-            event_timestamp,
-            **kwargs):
+    def accept_fulfillment(self, bounty, fulfillment, **kwargs):
+        event_timestamp = kwargs.get('event_timestamp')
         event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
-        contract_version = kwargs.get('contract_version')
-        inputs = kwargs.get('inputs', {})
-        if contract_version == 2:
-            # TODO: Fix this after adding tokenVersion to bounty.
-            fulfillment_amount = 0
-            for amount in inputs.get('tokenAmounts'):
-                fulfillment_amount += int(amount)
-        else:
-            fulfillment_amount = bounty.fulfillmentAmount
-        bounty.balance = bounty.balance - fulfillment_amount
 
+        fulfillment_amount = bounty.fulfillment_amount
+        token_amounts = kwargs.get('token_amounts', [fulfillment_amount])
+        fulfillment_amount = reduce((lambda x, y: int(x) + int(y)), token_amounts)
+
+        bounty.balance = bounty.balance - fulfillment_amount
         usd_price, token_price = get_historic_pricing(
-            bounty.tokenSymbol,
-            bounty.tokenDecimals,
+            bounty.token_symbol,
+            bounty.token_decimals,
             fulfillment_amount,
-            event_timestamp)
+            kwargs.get('event_timestamp'),
+        )
 
         if bounty.balance < fulfillment_amount:
             bounty.bountyStage = COMPLETED_STAGE
             bounty.usd_price = usd_price
             bounty.tokenLockPrice = token_price
             bounty.record_bounty_state(event_date)
+
         bounty.save()
 
-        fulfillment = Fulfillment.objects.get(
-            bounty_id=bounty.id, fulfillment_id=fulfillment_id)
         fulfillment.accepted = True
         fulfillment.usd_price = usd_price
         fulfillment.accepted_date = getDateTimeFromTimestamp(event_timestamp)

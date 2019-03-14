@@ -280,6 +280,31 @@ class Event(models.Model):
     event_date = models.DateTimeField()
 
 
+class Contribution(models.Model):
+    contributor = models.ForeignKey(User)
+    bounty = models.ForeignKey(Bounty)
+
+    refunded = models.BooleanField(default=False)
+
+    amount = models.DecimalField(decimal_places=0, max_digits=64)
+    calculated_amount = models.DecimalField(decimal_places=30, max_digits=70, null=True, default=0)
+    usd_amount = models.FloatField(default=0)
+
+    platform = models.CharField(max_length=128, blank=True, default='bounties-network')
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    raw_event_data = JSONField(null=True)
+
+    def save(self, *args, **kwargs):
+        amount = self.amount
+        decimals = self.bounty.token_decimals
+        self.calculated_amount = calculate_token_value(amount, decimals)
+
+        super(Contribution, self).save(*args, **kwargs)
+
+
 class FulfillerApplication(models.Model):
     ACCEPTED = 'A'
     REJECTED = 'R'

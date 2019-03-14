@@ -13,6 +13,7 @@ from bounties.sqs_client import sqs_client
 from std_bounties import master_client
 from std_bounties.models import Event
 from std_bounties.message import Message
+from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2
 from notifications.models import Transaction
 
 from std_bounties.bounty_client import BountyClient
@@ -356,9 +357,11 @@ class Command(BaseCommand):
             event = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', message.event)
             event = re.sub('([a-z0-9])([A-Z])', r'\1_\2', event).lower()
 
+            print(message.contract_method_inputs)
+
             master_client.client[event](
                 message.bounty_id,
-                contract_version='2',
+                contract_version=STANDARD_BOUNTIES_V2,
                 event_date=message.event_date,
                 event_timestamp=message.event_timestamp,
                 uid=message.message_deduplication_id,

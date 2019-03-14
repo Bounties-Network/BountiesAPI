@@ -32,4 +32,11 @@ TOKEN_CHOICES = (
     (ERC_721, 'ERC-721'),
 )
 
+STANDARD_BOUNTIES_V1 = 1
+STANDARD_BOUNTIES_V2 = 2
+CONTRACT_VERSION_CHOICES = (
+    (STANDARD_BOUNTIES_V1, 'v1'),
+    (STANDARD_BOUNTIES_V2, 'v2'),
+)
+
 rev_mapped_difficulties = dict((y, x) for x, y in DIFFICULTY_CHOICES)

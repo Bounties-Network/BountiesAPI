@@ -33,10 +33,10 @@ async function handler() {
 
 			console.log('eventBlock: ', eventBlock);
 			if (eventBlock) {
-				await writeAsync('currentBlock', eventBlock);
+				await writeAsync('currentBlock', eventBlock + 1);
 			}
 
-			await delay(1000);
+			await delay(5000);
 
 		} catch (err) {
 			rollbar.error(err);

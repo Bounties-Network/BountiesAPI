@@ -1,9 +1,9 @@
 import json
 import datetime
 from decimal import Decimal
-from std_bounties.models import Fulfillment, DraftBounty
+from std_bounties.models import Contribution, DraftBounty, Fulfillment
 from user.models import User
-from std_bounties.serializers import BountySerializer, FulfillmentSerializer
+from std_bounties.serializers import BountySerializer, FulfillmentSerializer, ContributionSerializer
 from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE
 from std_bounties.client_helpers import map_bounty_data, map_token_data, map_fulfillment_data, get_token_pricing, \
     get_historic_pricing
@@ -208,31 +208,36 @@ class BountyClient:
 
         return bounty
 
-    def add_contribution(self, bounty, inputs, event_timestamp, **kwargs):
-        event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
-        bounty.balance = Decimal(bounty.balance) + Decimal(inputs.get('value', inputs.get('amount')))
-        if bounty.contract_version == 1:
-            if bounty.balance >= bounty.fulfillmentAmount and bounty.bountyStage == EXPIRED_STAGE:
-                bounty.bountyStage = ACTIVE_STAGE
-                bounty.record_bounty_state(event_date)
-            if bounty.balance >= bounty.fulfillmentAmount and bounty.bountyStage == COMPLETED_STAGE:
-                bounty.bountyStage = ACTIVE_STAGE
-                bounty.record_bounty_state(event_date)
-                usd_price = get_token_pricing(
-                    bounty.tokenSymbol,
-                    bounty.tokenDecimals,
-                    bounty.fulfillmentAmount)[0]
-                bounty.usd_price = usd_price
-        else:
-            contributions = bounty.contributions
-            contributions[inputs.get('contributionId')] = {
-                'contributor': inputs.get('contributor'),
-                'amount': inputs.get('amount'),
-                'refunded': False
-            }
-            bounty.contributions = contributions
+    def add_contribution(self, bounty, **kwargs):
+        event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))
+        bounty.balance = Decimal(bounty.balance) + Decimal(kwargs.get('value', kwargs.get('amount')))
+
+        # not sure about this ... what if the bounty expired because the deadline passed?
+        if bounty.balance >= bounty.fulfillment_amount and bounty.bounty_stage == EXPIRED_STAGE:
+            bounty.bounty_stage = ACTIVE_STAGE
+            bounty.record_bounty_state(event_date)
+
+        if bounty.balance >= bounty.fulfillment_amount and bounty.bounty_stage == COMPLETED_STAGE:
+            bounty.bountyStage = ACTIVE_STAGE
+            bounty.record_bounty_state(event_date)
+            bounty.usd_price = get_token_pricing(
+                bounty.token_symbol,
+                bounty.token_decimals,
+                bounty.fulfillment_amount
+            )[0]
 
         bounty.save()
+
+        contribution_serializer = ContributionSerializer(data={
+            'contributor': User.objects.get_or_create(public_address=kwargs.get('contributor'))[0].pk,
+            'bounty': bounty.pk,
+            'contribution_id': kwargs.get('contribution_id'),
+            'amount': kwargs.get('amount'),
+            # 'raw_event_data': json.dumps(kwargs),
+        })
+
+        contribution_serializer.is_valid(raise_exception=True)
+        contribution_serializer.save()
 
         return bounty
 

@@ -61,13 +61,13 @@ def contribution_added(bounty_id, contract_version, **kwargs):
     @keyword contributor
     @keyword amount
     """
-    bounty = Bounty.objects.get(id=bounty_id)
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty_client.add_contribution(bounty, **kwargs)
-    inputs = kwargs.get('inputs', {})
-    is_issue_and_activate = inputs.get('issuer', inputs.get('contributor', None))
-    if not is_issue_and_activate:
-        seo_client.bounty_preview_screenshot(bounty.platform, bounty)
-        activity_client.bounty_contribution_added(bounty)
+    
+    # is_issue_and_activate = inputs.get('issuer', inputs.get('contributor', None))
+    # if not is_issue_and_activate:
+    #     seo_client.bounty_preview_screenshot(bounty.platform, bounty)
+    #     activity_client.bounty_contribution_added(bounty)
     # HOTFIX REMOVED
     #     notification_client.contribution_added(bounty_id, **kwargs)
     #     slack_client.contribution_added(bounty)

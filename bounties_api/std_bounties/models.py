@@ -5,7 +5,7 @@ import uuid
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from user.models import User
-from std_bounties.constants import STAGE_CHOICES, DIFFICULTY_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE, TOKEN_CHOICES
+from std_bounties.constants import STAGE_CHOICES, CONTRACT_VERSION_CHOICES, STANDARD_BOUNTIES_V1, DIFFICULTY_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE, TOKEN_CHOICES
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
 from django.contrib.postgres.fields import JSONField, ArrayField
@@ -101,7 +101,7 @@ class BountyAbstract(models.Model):
 
     # payout info
     usd_price = models.FloatField(default=0)
-    fulfillment_amount = models.DecimalField(decimal_places=0, max_digits=64)
+    fulfillment_amount = models.DecimalField(decimal_places=0, max_digits=64, default=0)
     calculated_fulfillment_amount = models.DecimalField(
         decimal_places=30,
         max_digits=70,
@@ -129,6 +129,7 @@ class Bounty(BountyAbstract):
     uid = models.CharField(max_length=128, blank=True, null=True)
 
     contract_state = JSONField(null=True)
+    contract_version = models.IntegerField(choices=CONTRACT_VERSION_CHOICES, default=STANDARD_BOUNTIES_V1)
 
     bounty_created = models.DateTimeField(null=True)
     bounty_stage = models.IntegerField(choices=STAGE_CHOICES, default=DRAFT_STAGE)
@@ -285,6 +286,7 @@ class Contribution(models.Model):
     bounty = models.ForeignKey(Bounty)
 
     refunded = models.BooleanField(default=False)
+    contribution_id = models.IntegerField()
 
     amount = models.DecimalField(decimal_places=0, max_digits=64)
     calculated_amount = models.DecimalField(decimal_places=30, max_digits=70, null=True, default=0)

@@ -5,6 +5,7 @@ from rest_framework import serializers
 from bounties.serializers import CreatableSlugRelatedField
 from std_bounties.models import (
     Bounty,
+    Contribution,
     Fulfillment,
     FulfillerApplication,
     Category,
@@ -96,6 +97,12 @@ class BountyFulfillmentSerializer(serializers.ModelSerializer):
             'fulfillmentAmount',
             'calculated_fulfillmentAmount',
             'user']
+
+
+class ContributionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contribution
+        fields = '__all__'
 
 
 class FulfillmentSerializer(CustomSerializer):

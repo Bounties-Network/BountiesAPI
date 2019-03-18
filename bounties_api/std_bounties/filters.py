@@ -75,4 +75,5 @@ class BountiesFilter(filters.FilterSet):
             'bounty_created': ['lt', 'gt', 'exact'],
             'deadline': ['lt', 'gt', 'exact'],
             'bounty_id': ['exact'],
+            'contract_version': ['exact']
         }

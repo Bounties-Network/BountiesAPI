@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import uuid
+import json
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from user.models import User
@@ -75,6 +76,8 @@ class BountyState(models.Model):
 
 
 class BountyAbstract(models.Model):
+    user = models.ForeignKey('user.User', null=True)
+
     # role-based access controls
     issuers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_related",)
     approvers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_relateda",)
@@ -167,6 +170,11 @@ class Bounty(BountyAbstract):
         decimals = self.token_decimals
         self.calculated_balance = calculate_token_value(balance, decimals)
         self.calculated_fulfillment_amount = calculate_token_value(fulfillment_amount, decimals)
+
+        issuers = json.loads(self.contract_state)['issuers']
+        issuer = next((address for address, index in issuers.items() if index == 0), None)
+        user, created = User.objects.get_or_create(public_address=issuer)
+        self.user = user
 
         super(Bounty, self).save(*args, **kwargs)
 

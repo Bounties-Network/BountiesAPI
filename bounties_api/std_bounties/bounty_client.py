@@ -35,21 +35,25 @@ class BountyClient:
         token_data = map_token_data(kwargs.get('token_version'), kwargs.get('token'), 0)
 
         # TODO what happens if issuers or approvers is actually blank?
+        contract_state = {'issuers': {}, 'approvers': {}}
         issuers = []
-        for issuer in kwargs.get('issuers', []):
+        for index, issuer in enumerate(kwargs.get('issuers', [])):
             user = User.objects.get_or_create(public_address=issuer.lower())[0]
             issuers.append(user.pk)
+            contract_state['issuers'].update({issuer: index})
 
         approvers = []
-        for approver in kwargs.get('approvers', []):
+        for index, approver in enumerate(kwargs.get('approvers', [])):
             user = User.objects.get_or_create(public_address=approver.lower())[0]
             approvers.append(user.pk)
+            contract_state['approvers'].update({approver: index})
 
         bounty_data = {
             'bounty_id': bounty_id,
             'contract_version': contract_version,
             'issuers': issuers,
             'approvers': approvers,
+            'contract_state': json.dumps(contract_state),
             'deadline': getDateTimeFromTimestamp(kwargs.get('deadline', None)),
             'bounty_stage': DEAD_STAGE,
             'bounty_created': event_date,

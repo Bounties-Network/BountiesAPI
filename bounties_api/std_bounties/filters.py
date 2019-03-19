@@ -39,7 +39,7 @@ class FulfillmentsFilter(filters.FilterSet):
             'fulfillment_id': ['exact'],
             'fulfiller': ['exact'],
             'bounty': ['exact'],
-            'bounty__user__public_address': ['exact'],
+            # 'bounty__user__public_address': ['exact'],
             'platform': ['exact', 'in'],
         }
 
@@ -48,7 +48,7 @@ class DraftBountiesFilter(filters.FilterSet):
     class Meta:
         model = DraftBounty
         fields = {
-            'issuer': ['exact'],
+            'issuers': ['exact'],
             'platform': ['in', 'exact'],
         }
 
@@ -68,11 +68,12 @@ class BountiesFilter(filters.FilterSet):
         model = Bounty
         fields = {
             'platform': ['in', 'exact'],
-            'issuer': ['exact'],
-            'experienceLevel': ['exact', 'in'],
-            'fulfillmentAmount': ['exact', 'lt', 'gt', 'lte'],
-            'bountyStage': ['exact', 'in'],
+            'issuers': ['exact'],
+            'experience_level': ['exact', 'in'],
+            'fulfillment_amount': ['exact', 'lt', 'gt', 'lte'],
+            'bounty_stage': ['exact', 'in'],
             'bounty_created': ['lt', 'gt', 'exact'],
             'deadline': ['lt', 'gt', 'exact'],
             'bounty_id': ['exact'],
+            'contract_version': ['exact']
         }

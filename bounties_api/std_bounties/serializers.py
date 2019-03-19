@@ -5,6 +5,7 @@ from rest_framework import serializers
 from bounties.serializers import CreatableSlugRelatedField
 from std_bounties.models import (
     Bounty,
+    Contribution,
     Fulfillment,
     FulfillerApplication,
     Category,
@@ -88,7 +89,7 @@ class BountyFulfillmentSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'bounty_id',
-            'bountyStage',
+            'bounty_stage',
             'title',
             'usd_price',
             'tokenSymbol',
@@ -96,6 +97,12 @@ class BountyFulfillmentSerializer(serializers.ModelSerializer):
             'fulfillmentAmount',
             'calculated_fulfillmentAmount',
             'user']
+
+
+class ContributionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contribution
+        fields = '__all__'
 
 
 class FulfillmentSerializer(CustomSerializer):
@@ -120,7 +127,7 @@ class TokenSerializer(serializers.ModelSerializer):
 
 
 class BountySerializer(CustomSerializer):
-    bountyStage = serializers.ChoiceField(choices=STAGE_CHOICES)
+    bounty_stage = serializers.ChoiceField(choices=STAGE_CHOICES)
     categories = CategorySerializer(read_only=True, many=True)
     current_market_token_data = TokenSerializer(read_only=True, source='token')
     user = UserSerializer(read_only=True)

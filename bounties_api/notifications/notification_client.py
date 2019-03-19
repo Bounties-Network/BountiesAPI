@@ -42,14 +42,11 @@ class NotificationClient:
 
     def bounty_fulfilled(
             self,
-            bounty_id,
-            fulfillment_id,
+            bounty,
+            fulfillment,
             uid,
             event_date,
             **kwargs):
-        bounty = Bounty.objects.get(id=bounty_id)
-        fulfillment = Fulfillment.objects.get(
-            fulfillment_id=fulfillment_id, bounty=bounty)
         string_data_fulfiller = notification_templates['FulfillmentSubmitted'].format(
             bounty_title=bounty.title)
         string_data_issuer = notification_templates['FulfillmentSubmittedIssuer'].format(
@@ -108,14 +105,11 @@ class NotificationClient:
 
     def fulfillment_accepted(
             self,
-            bounty_id,
-            fulfillment_id,
+            bounty,
+            fulfillment,
             uid,
             event_date,
             **kwargs):
-        bounty = Bounty.objects.get(id=bounty_id)
-        fulfillment = Fulfillment.objects.get(
-            bounty_id=bounty, fulfillment_id=fulfillment_id)
         string_data_issuer = notification_templates['FulfillmentAccepted'].format(
             bounty_title=bounty.title)
         string_data_fulfiller = notification_templates['FulfillmentAcceptedFulfiller'].format(
@@ -132,7 +126,7 @@ class NotificationClient:
             from_user=fulfillment.user,
             string_data=string_data_issuer,
             subject='Submission Accepted',
-            fulfillment_id=fulfillment_id,
+            fulfillment_id=fulfillment.fulfillment_id,
             string_data_email=string_data_issuer_email,
             notification_created=event_date,
             email_button_string='Rate Fulfiller')
@@ -145,7 +139,7 @@ class NotificationClient:
             string_data=string_data_fulfiller,
             subject='Your Submission was Accepted',
             fulfillment_description=fulfillment.description,
-            fulfillment_id=fulfillment_id,
+            fulfillment_id=fulfillment.fulfillment_id,
             is_activity=False,
             string_data_email=string_data_fulfiller_email,
             notification_created=event_date,
@@ -587,5 +581,22 @@ class NotificationClient:
             string_data=string_data,
             subject='You Rejected an Application',
             application_message=application.message,
+            is_activity=True
+        )
+
+    def bounty_issuer_changed(self, bounty):
+        string_data = notification_templates['BountyIssuerChanged'].format(
+            bounty_title=bounty.title
+        )
+
+        create_bounty_notification(
+            bounty=bounty,
+            uid='{}-{}-bounty-issuer-changed'.format(bounty.id, datetime.utcnow()),
+            notification_name=notifications['BountyIssuerChanged'],
+            user=bounty.user,
+            from_user=None,
+            notification_created=datetime.utcnow(),
+            string_data=string_data,
+            subject='Bounty Issuer Changed.',
             is_activity=True
         )

@@ -40,7 +40,7 @@ exports.SQS_PARAMS = {
 };
 
 const networks = {
-    'mainNet': 'https://mainnet.infura.io/',
+    'mainNet': 'https://mainnet.infura.io/v3/5eb45628ce2c4ecebcce7f201f352792',
     'rinkeby':  'https://rinkeby.infura.io/',
     'consensysrinkeby': 'https://rinkeby.infura.io/',
     'rinkebystaging': 'https://rinkeby.infura.io/',

@@ -293,6 +293,7 @@ class Event(models.Model):
     transaction_hash = models.CharField(max_length=128)
     transaction_from = models.CharField(max_length=128)
     contract_inputs = JSONField(null=True)
+    contract_event_data = JSONField(null=True)
     event_date = models.DateTimeField()
 
 

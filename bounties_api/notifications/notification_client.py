@@ -26,8 +26,7 @@ class NotificationClient:
     def __init__(self):
         pass
 
-    def bounty_issued(self, bounty_id, uid, event_date, **kwargs):
-        bounty = Bounty.objects.get(id=bounty_id)
+    def bounty_issued(self, bounty, uid, event_date, **kwargs):
         string_data = notification_templates['BountyIssued'].format(
             bounty_title=bounty.title)
         create_bounty_notification(

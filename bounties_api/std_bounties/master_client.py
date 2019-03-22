@@ -40,7 +40,7 @@ def bounty_issued(bounty_id, contract_version, **kwargs):
         **kwargs
     )
 
-    notification_client.bounty_issued(bounty_id, **kwargs)
+    notification_client.bounty_issued(created_bounty, **kwargs)
     slack_client.bounty_issued(created_bounty)
     seo_client.bounty_preview_screenshot(created_bounty.platform, bounty_id)
     seo_client.publish_new_sitemap(created_bounty.platform)

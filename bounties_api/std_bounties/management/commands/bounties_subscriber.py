@@ -152,11 +152,14 @@ class Command(BaseCommand):
         if bounty_id == -1:
             bounty_id = None
 
+        bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=message.contract_version)
+
         event_arguments = {
-            'bounty_id': bounty_id,
+            'bounty_id': bounty.pk,
             'fulfillment_id': fulfillment_id,
             'transaction_from': message.transaction_from,
             'contract_inputs': message.contract_method_inputs,
+            'contract_event_data': message.contract_event_data,
             'event_date': message.event_date,
         }
 
@@ -348,7 +351,7 @@ class Command(BaseCommand):
                 event_date=message.event_date,
                 event_timestamp=message.event_timestamp,
                 uid=message.message_deduplication_id,
-                **{k: v for (k, v) in message.contract_method_inputs.items() if 'bounty_id' not in k},
+                **{k: v for (k, v) in message.contract_event_data.items() if 'bounty_id' not in k},
             )
         except StatusError as e:
             if e.original.response.status_code == 504:

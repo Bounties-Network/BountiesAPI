@@ -138,7 +138,7 @@ class Command(BaseCommand):
 
     def handle_message(self, message):
         logger.info('For bounty id {}, running event {}'.format(message.bounty_id, message.event))
-        print(message)
+        
         if message.contract_version == STANDARD_BOUNTIES_V1:
             self.notify_master_client(message)
         else:

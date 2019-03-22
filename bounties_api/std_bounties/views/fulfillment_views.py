@@ -1,5 +1,5 @@
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from rest_framework_filters import OrderingFilter
+from rest_framework.filters import OrderingFilter
 from rest_framework_filters.backends import DjangoFilterBackend
 from django.db.models import Q
 from std_bounties.serializers import FulfillmentSerializer

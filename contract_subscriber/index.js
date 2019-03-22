@@ -1,10 +1,10 @@
 'use strict';
 
-const delay = require('delay'),
-	  rollbar = require('./rollbar'),
-	{ StandardBounties, getBlock } = require('./web3_config'),
-	{ getAsync, writeAsync } = require('./redis_config'),
-	{ sendEvents } = require('./eventsRetriever');
+const delay = require('delay');
+const rollbar = require('./rollbar');
+const { StandardBounties, getBlock } = require('./web3_config');
+const { getAsync, writeAsync } = require('./redis_config');
+const { sendEvents } = require('./eventsRetriever');
 
 async function handler() {
 	while (true) {
@@ -33,7 +33,7 @@ async function handler() {
 
 			console.log('eventBlock: ', eventBlock);
 			if (eventBlock) {
-				await writeAsync('currentBlock', eventBlock);
+				await writeAsync('currentBlock', eventBlock + 1);
 			}
 
 			await delay(1000);

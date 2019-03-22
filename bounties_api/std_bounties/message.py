@@ -1,6 +1,8 @@
 import json
 from datetime import datetime
 
+from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2
+
 
 def to_serializable(val):
     """JSON serializer for objects not serializable by default"""
@@ -39,18 +41,15 @@ class Message:
             receipt_handle=event['ReceiptHandle'],
             event=message_attributes['Event']['StringValue'],
             bounty_id=int(message_attributes['BountyId']['StringValue']),
-            fulfillment_id=int(message_attributes[
-                               'FulfillmentId']['StringValue']),
-            message_deduplication_id=message_attributes[
-                'MessageDeduplicationId']['StringValue'],
-            transaction_from=message_attributes[
-                'TransactionFrom']['StringValue'],
-            transaction_hash=message_attributes[
-                'TransactionHash']['StringValue'],
+            fulfillment_id=int(message_attributes['FulfillmentId']['StringValue']),
+            message_deduplication_id=message_attributes['MessageDeduplicationId']['StringValue'],
+            transaction_from=message_attributes['TransactionFrom']['StringValue'],
+            transaction_hash=message_attributes['TransactionHash']['StringValue'],
             event_timestamp=event_timestamp,
             event_date=datetime.fromtimestamp(int(event_timestamp)),
-            contract_method_inputs=json.loads(
-                message_attributes['ContractMethodInputs']['StringValue'])
+            contract_method_inputs=json.loads(message_attributes['ContractMethodInputs']['StringValue']),
+            contract_event_data=json.loads(message_attributes['ContractEventData']['StringValue']),
+            contract_version=STANDARD_BOUNTIES_V2 if message_attributes['ContractVersion']['StringValue'] == 'v2' else STANDARD_BOUNTIES_V1
         )
 
     @staticmethod

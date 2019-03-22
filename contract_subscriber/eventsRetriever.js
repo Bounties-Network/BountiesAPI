@@ -1,10 +1,25 @@
-const { cloneDeep, chain } = require('lodash'),
-	  { getAsync } = require('./redis_config'),
-	  { SQS_PARAMS } = require('./constants'),
-	  { abiDecoder, getTransaction, getBlock } = require('./web3_config'),
-		sqs = require('./sqs_config'),
-		rollbar = require('./rollbar');
+const { cloneDeep, chain } = require('lodash');
+const { getAsync } = require('./redis_config');
+const { CONTRACT_VERSION, SQS_PARAMS } = require('./constants');
+const { abiDecoder, getTransaction, getBlock } = require('./web3_config');
+const sqs = require('./sqs_config');
+const rollbar = require('./rollbar');
 
+
+camelToUnderscore= (key) => {
+    return key.replace( /([A-Z])/g, "_$1").toLowerCase();
+}
+
+sanitizeEventData = (obj) => {
+    const sanitizedObj = {};
+    Object.keys(obj).forEach(key => {
+        if (key.match(/_.+/g)) {
+            sanitizedObj[camelToUnderscore(key.substring(1))] = obj[key];
+        }
+    });
+
+    return sanitizedObj;
+};
 
 async function sendEvents(events) {
 	try {
@@ -37,24 +52,28 @@ async function sendEvents(events) {
 
 			const rawTransaction = await getTransaction(transactionHash);
 			const transactionFrom = rawTransaction.from;
-			const rawContractMethodInputs = abiDecoder.decodeMethod(rawTransaction.input);
+			let contractMethodInputs = {};	
 
-			// if the bounty contract is called as an internal transaction, it will fail here
-			// because we use the tx input to populate our database. In the case of internal
-			// transactions, that tx input is the original input to a smart contract wallet
-			// or whatever contract made the internal call to bounties
-			if (!rawContractMethodInputs) {
-				rollbar.error(`Unable to decode transaction input using ABI: ${transactionHash}`);
-				continue;
+			if (CONTRACT_VERSION == 'v1') {
+				const rawContractMethodInputs = abiDecoder.decodeMethod(rawTransaction.input);
+
+				// if the bounty contract is called as an internal transaction, it will fail here
+				// because we use the tx input to populate our database. In the case of internal
+				// transactions, that tx input is the original input to a smart contract wallet
+				// or whatever contract made the internal call to bounties
+				if (!rawContractMethodInputs) {
+					rollbar.error(`Unable to decode transaction input using ABI: ${transactionHash}`);
+					continue;
+				}
+
+				contractMethodInputs = chain(rawContractMethodInputs.params)
+					.keyBy('name')
+					.mapValues('value')
+					.mapKeys((value, key) => key.substring(1))
+					.value();
 			}
 
-			const contractMethodInputs = chain(rawContractMethodInputs.params)
-				.keyBy('name')
-				.mapValues('value')
-				.mapKeys((value, key) => key.substring(1))
-				.value();
 			const blockData = await getBlock(blockNumber);
-
 			if (!('timestamp' in blockData)) {
 				highestBlock = blockNumber;
 				continue;
@@ -70,6 +89,8 @@ async function sendEvents(events) {
 			messageParams.MessageAttributes.MessageDeduplicationId.StringValue = messageDeduplicationId;
 			messageParams.MessageAttributes.TransactionHash.StringValue = transactionHash;
 			messageParams.MessageAttributes.ContractMethodInputs.StringValue = JSON.stringify(contractMethodInputs);
+			messageParams.MessageAttributes.ContractEventData.StringValue = JSON.stringify(sanitizeEventData(event.returnValues))
+			messageParams.MessageAttributes.ContractVersion.StringValue = CONTRACT_VERSION;
 			messageParams.MessageAttributes.TimeStamp.StringValue = eventTimestamp;
 			messageParams.MessageAttributes.TransactionFrom.StringValue = transactionFrom || '0x';
 			messageParams.MessageDeduplicationId = messageDeduplicationId;

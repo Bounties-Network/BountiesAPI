@@ -24,6 +24,14 @@ exports.SQS_PARAMS = {
     DataType: 'String',
     StringValue: '',
    },
+   'ContractEventData': {
+    DataType: 'String',
+    StringValue: '',
+   },
+   'ContractVersion': {
+    DataType: 'String',
+    StringValue: '',
+   },
    'TransactionFrom': {
     DataType: 'String',
     StringValue: '',
@@ -48,6 +56,8 @@ const networks = {
 }
 
 const ethNetwork = process.env['eth_network'] || 'mainNet';
+const contractVersion = process.env['contract_version'] || 'v1';
 
 exports.ETH_NETWORK = ethNetwork;
 exports.ETH_NETWORK_URL = networks[ethNetwork];
+exports.CONTRACT_VERSION = contractVersion;

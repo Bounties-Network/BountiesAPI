@@ -104,7 +104,7 @@ def bounty_fulfilled(bounty_id, contract_version, **kwargs):
     """
 
     fulfillment = Fulfillment.objects.filter(
-        fulfillment_id=kwargs('fulfillment_id'),
+        fulfillment_id=kwargs.get('fulfillment_id'),
         bounty_id=bounty_id,
         contract_version=contract_version
     )
@@ -113,10 +113,10 @@ def bounty_fulfilled(bounty_id, contract_version, **kwargs):
         return
 
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
-    bounty_client.fulfill_bounty(bounty, **kwargs)
+    fulfillment = bounty_client.fulfill_bounty(bounty, **kwargs)
 
     fulfillment_id = kwargs.get('fulfillment_id')
-    notification_client.bounty_fulfilled(bounty_id, **kwargs)
+    notification_client.bounty_fulfilled(bounty, fulfillment, **kwargs)
     slack_client.bounty_fulfilled(bounty, fulfillment_id)
 
 

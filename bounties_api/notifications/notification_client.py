@@ -39,42 +39,35 @@ class NotificationClient:
             notification_created=event_date,
             subject='New bounty issued')
 
-    def bounty_fulfilled(
-            self,
-            bounty_id,
-            fulfillment_id,
-            uid,
-            event_date,
-            **kwargs):
-        bounty = Bounty.objects.get(id=bounty_id)
-        fulfillment = Fulfillment.objects.get(
-            fulfillment_id=fulfillment_id, bounty=bounty)
-        string_data_fulfiller = notification_templates['FulfillmentSubmitted'].format(
-            bounty_title=bounty.title)
-        string_data_issuer = notification_templates['FulfillmentSubmittedIssuer'].format(
-            bounty_title=bounty.title)
+    def bounty_fulfilled(self, bounty, fulfillment, **kwargs):
+        string_data_fulfiller = notification_templates['FulfillmentSubmitted'].format(bounty_title=bounty.title)
+        string_data_issuer = notification_templates['FulfillmentSubmittedIssuer'].format(bounty_title=bounty.title)
+
         # to fulfiller
         create_bounty_notification(
             bounty=bounty,
-            uid=str(uid) + str(notifications['FulfillmentSubmitted']),
+            uid=str(kwargs.get('uid')) + str(notifications['FulfillmentSubmitted']),
             notification_name=notifications['FulfillmentSubmitted'],
             user=fulfillment.user,
             from_user=bounty.user,
             string_data=string_data_fulfiller,
-            notification_created=event_date,
-            subject='New Submission')
+            notification_created=fulfillment.created,
+            subject='New Submission'
+        )
+
         # to bounty issuer
         create_bounty_notification(
             bounty=bounty,
-            uid=str(uid) + str(notifications['FulfillmentSubmittedIssuer']),
+            uid=str(kwargs.get('uid')) + str(notifications['FulfillmentSubmittedIssuer']),
             notification_name=notifications['FulfillmentSubmittedIssuer'],
             user=bounty.user,
             from_user=fulfillment.user,
             string_data=string_data_issuer,
             subject='You Received a New Submission',
             fulfillment_description=fulfillment.description,
-            notification_created=event_date,
-            is_activity=False)
+            notification_created=fulfillment.created,
+            is_activity=False
+        )
 
     def bounty_activated(self, bounty_id, event_date, uid, **kwargs):
         bounty = Bounty.objects.get(id=bounty_id)

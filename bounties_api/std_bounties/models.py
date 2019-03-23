@@ -146,7 +146,7 @@ class Bounty(BountyAbstract):
     data = models.CharField(max_length=128)
     old_balance = models.DecimalField(decimal_places=0, max_digits=64, null=True)
 
-    tokenLockPrice = models.FloatField(null=True, blank=True)
+    token_lock_price = models.FloatField(null=True, blank=True)
 
     balance = models.DecimalField(
         decimal_places=0,

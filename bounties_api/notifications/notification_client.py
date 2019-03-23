@@ -98,50 +98,41 @@ class NotificationClient:
             notification_created=event_date,
             subject='Bounty Issued and Activated')
 
-    def fulfillment_accepted(
-            self,
-            bounty_id,
-            fulfillment_id,
-            uid,
-            event_date,
-            **kwargs):
-        bounty = Bounty.objects.get(id=bounty_id)
-        fulfillment = Fulfillment.objects.get(
-            bounty_id=bounty, fulfillment_id=fulfillment_id)
-        string_data_issuer = notification_templates['FulfillmentAccepted'].format(
-            bounty_title=bounty.title)
-        string_data_fulfiller = notification_templates['FulfillmentAcceptedFulfiller'].format(
-            bounty_title=bounty.title)
-        string_data_issuer_email = email_templates['FulfillmentAccepted'].format(
-            bounty_title=bounty.title)
-        string_data_fulfiller_email = email_templates['FulfillmentAcceptedFulfiller'].format(
-            bounty_title=bounty.title)
+    def fulfillment_accepted(self, bounty, fulfillment, **kwargs):
+        string_data_issuer = notification_templates['FulfillmentAccepted'].format(bounty_title=bounty.title)
+        string_data_fulfiller = notification_templates['FulfillmentAcceptedFulfiller'].format(bounty_title=bounty.title)
+        string_data_issuer_email = email_templates['FulfillmentAccepted'].format(bounty_title=bounty.title)
+        string_data_fulfiller_email = email_templates['FulfillmentAcceptedFulfiller'].format(bounty_title=bounty.title)
+
         create_bounty_notification(
             bounty=bounty,
-            uid=str(uid) + str(notifications['FulfillmentAccepted']),
+            uid=str(kwargs.get('uid')) + str(notifications['FulfillmentAccepted']),
             notification_name=notifications['FulfillmentAccepted'],
             user=bounty.user,
             from_user=fulfillment.user,
             string_data=string_data_issuer,
             subject='Submission Accepted',
-            fulfillment_id=fulfillment_id,
+            fulfillment_id=fulfillment.fulfillment_id,
             string_data_email=string_data_issuer_email,
-            notification_created=event_date,
-            email_button_string='Rate Fulfiller')
+            notification_created=kwargs.get('event_date'),
+            email_button_string='Rate Fulfiller'
+        )
+
         create_bounty_notification(
             bounty=bounty,
-            uid=str(uid) + str(notifications['FulfillmentAcceptedFulfiller']),
+            uid=str(kwargs.get('uid')) + str(notifications['FulfillmentAcceptedFulfiller']),
             notification_name=notifications['FulfillmentAcceptedFulfiller'],
             user=fulfillment.user,
             from_user=bounty.user,
             string_data=string_data_fulfiller,
             subject='Your Submission was Accepted',
             fulfillment_description=fulfillment.description,
-            fulfillment_id=fulfillment_id,
+            fulfillment_id=fulfillment.fulfillment_id,
             is_activity=False,
             string_data_email=string_data_fulfiller_email,
-            notification_created=event_date,
-            email_button_string='Rate Issuer')
+            notification_created=kwargs.get('event_date'),
+            email_button_string='Rate Issuer'
+        )
 
     def fulfillment_updated(
             self,
@@ -453,8 +444,8 @@ class NotificationClient:
             subject='')
 
     def bounty_completed(self, bounty, fulfillment_id):
-        string_data = notification_templates['BountyCompleted'].format(
-            bounty_title=bounty.title)
+        string_data = notification_templates['BountyCompleted'].format(bounty_title=bounty.title)
+
         create_bounty_notification(
             bounty=bounty,
             uid='{}-{}-completed'.format(bounty.id, fulfillment_id),
@@ -464,7 +455,8 @@ class NotificationClient:
             notification_created=datetime.utcnow(),
             string_data=string_data,
             subject='Your Bounty Completed',
-            is_activity=False)
+            is_activity=False
+        )
 
     def application_created(self, bounty, application):
         string_data = notification_templates['ApplicationCreated'].format(

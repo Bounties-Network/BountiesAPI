@@ -139,32 +139,29 @@ class BountyClient:
         return instance
 
     @transaction.atomic
-    def accept_fulfillment(
-            self,
-            bounty,
-            fulfillment_id,
-            event_timestamp,
-            **kwargs):
-        event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
-        bounty.balance = bounty.balance - bounty.fulfillmentAmount
-        usd_price, token_price = get_historic_pricing(
-            bounty.tokenSymbol,
-            bounty.tokenDecimals,
-            bounty.fulfillmentAmount,
-            event_timestamp)
+    def accept_fulfillment(self, bounty, **kwargs):
+        event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))
+        bounty.balance = bounty.balance - bounty.fulfillment_amount
 
-        if bounty.balance < bounty.fulfillmentAmount:
-            bounty.bountyStage = COMPLETED_STAGE
+        usd_price, token_price = get_historic_pricing(
+            bounty.token_symbol,
+            bounty.token_decimals,
+            bounty.fulfillment_amount,
+            kwargs.get('event_timestamp')
+        )
+
+        if bounty.balance < bounty.fulfillment_amount:
+            bounty.bounty_stage = COMPLETED_STAGE
             bounty.usd_price = usd_price
-            bounty.tokenLockPrice = token_price
+            bounty.token_lock_price = token_price
             bounty.record_bounty_state(event_date)
+
         bounty.save()
 
-        fulfillment = Fulfillment.objects.get(
-            bounty_id=bounty.bounty_id, fulfillment_id=fulfillment_id)
+        fulfillment = Fulfillment.objects.get(bounty=bounty.pk, fulfillment_id=kwargs.get('fulfillment_id'))
         fulfillment.accepted = True
         fulfillment.usd_price = usd_price
-        fulfillment.accepted_date = getDateTimeFromTimestamp(event_timestamp)
+        fulfillment.accepted_date = getDateTimeFromTimestamp(kwargs.get('event_timestamp'))
         fulfillment.save()
 
         return fulfillment

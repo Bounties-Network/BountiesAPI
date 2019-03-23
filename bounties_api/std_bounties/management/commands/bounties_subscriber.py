@@ -138,20 +138,15 @@ class Command(BaseCommand):
 
     def handle_message(self, message):
         logger.info('For bounty id {}, running event {}'.format(message.bounty_id, message.event))
-        
+
         if message.contract_version == STANDARD_BOUNTIES_V1:
+            raise 'not working rn'
             self.notify_master_client(message)
         else:
             self.notify_master_client_v2(message)
 
-        fulfillment_id = message.fulfillment_id
-        if fulfillment_id == -1:
-            fulfillment_id = None
-
-        bounty_id = message.bounty_id
-        if bounty_id == -1:
-            bounty_id = None
-
+        bounty_id = message.bounty_id if message.bounty_id != -1 else None
+        fulfillment_id = message.fulfillment_id if message.fulfillment_id != -1 else None
         bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=message.contract_version)
 
         event_arguments = {
@@ -163,10 +158,8 @@ class Command(BaseCommand):
             'event_date': message.event_date,
         }
 
-        logger.info(
-            'For bounty id {}, running get_or_create with defaults'.format(
-                message.bounty_id))
-        pp.pprint(event_arguments)
+        # logger.info('For bounty id {}, running get_or_create with defaults'.format(message.bounty_id))
+        # pp.pprint(event_arguments)
 
         Event.objects.get_or_create(
             event=message.event,
@@ -214,20 +207,6 @@ class Command(BaseCommand):
                     event_timestamp=message.event_timestamp,
                     uid=message.message_deduplication_id)
                 slack_client.bounty_activated(bounty)
-
-        if message.event == 'ContributionAdded':
-            bounty = Bounty.objects.get(bounty_id=bounty_id)
-            is_issue_and_activate = message.contract_method_inputs.get(
-                'issuer', None)
-            if not is_issue_and_activate:
-                notification_client.contribution_added(
-                    bounty_id,
-                    event_date=message.event_date,
-                    inputs=message.contract_method_inputs,
-                    event_timestamp=message.event_timestamp,
-                    transaction_from=message.transaction_from,
-                    uid=message.message_deduplication_id)
-                slack_client.contribution_added(bounty)
 
         if message.event == 'PayoutIncreased':
             bounty = Bounty.objects.get(bounty_id=bounty_id)

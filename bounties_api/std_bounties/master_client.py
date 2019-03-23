@@ -2,7 +2,7 @@ from std_bounties.bounty_client import BountyClient
 from notifications.notification_client import NotificationClient
 from std_bounties.slack_client import SlackMessageClient
 from std_bounties.seo_client import SEOClient
-from std_bounties.models import Bounty
+from std_bounties.models import Bounty, Fulfillment
 
 
 bounty_client = BountyClient()
@@ -46,6 +46,7 @@ def bounty_issued(bounty_id, contract_version, **kwargs):
     seo_client.publish_new_sitemap(created_bounty.platform)
 
 
+@export
 def contribution_added(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -56,13 +57,13 @@ def contribution_added(bounty_id, contract_version, **kwargs):
     """
 
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
-    bounty_client.add_contribution(bounty, **kwargs)
+    contribution = bounty_client.add_contribution(bounty, **kwargs)
 
-    #  if not is_issue_and_activate:
-    #      seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
-    # HOTFIX REMOVED
-    #     notification_client.contribution_added(bounty_id, **kwargs)
-    #     slack_client.contribution_added(bounty)
+    # only create notifications if it isn't the first contribution
+    if int(kwargs.get('contribution_id')) != 0:
+        seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+        notification_client.contribution_added(contribution, **kwargs)
+        slack_client.contribution_added(bounty)
 
 
 @export
@@ -101,6 +102,15 @@ def bounty_fulfilled(bounty_id, contract_version, **kwargs):
     @keyword data
     @keyword submitter
     """
+
+    fulfillment = Fulfillment.objects.filter(
+        fulfillment_id=kwargs('fulfillment_id'),
+        bounty_id=bounty_id,
+        contract_version=contract_version
+    )
+
+    if fulfillment.exists():
+        return
 
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty_client.fulfill_bounty(bounty, **kwargs)

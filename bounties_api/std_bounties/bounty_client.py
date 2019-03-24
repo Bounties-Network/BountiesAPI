@@ -221,14 +221,17 @@ class BountyClient:
 
         return contribution
 
-    def extend_deadline(self, bounty, inputs, event_timestamp, **kwargs):
-        event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
-        bounty.deadline = getDateTimeFromTimestamp(
-            inputs.get('newDeadline', None))
-        if bounty.deadline > datetime.datetime.now(
-        ) and bounty.bountyStage == EXPIRED_STAGE:
-            bounty.bountyStage = ACTIVE_STAGE
+    def change_deadline(self, bounty, **kwargs):
+        event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))
+        bounty.deadline = getDateTimeFromTimestamp(kwargs.get('deadline'))
+
+        if bounty.deadline > datetime.datetime.now() and bounty.bounty_stage == EXPIRED_STAGE:
+            bounty.bounty_stage = ACTIVE_STAGE
             bounty.record_bounty_state(event_date)
+        elif bounty.deadline < datetime.datetime.now() and bounty.bounty_stage == ACTIVE_STAGE:
+            bounty.bounty_stage = EXPIRED_STAGE
+            bounty.record_bounty_state(event_date)
+
         bounty.save()
 
         return bounty

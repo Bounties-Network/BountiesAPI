@@ -231,6 +231,19 @@ def bounty_issuers_replaced(bounty_id, contract_version, **kwargs):
     seo_client.bounty_preview_screenshot(bounty.platform, bounty)
 
 
+@export
+def bounty_issuers_updated(bounty_id, contract_version, **kwargs):
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword issuers
+    @keyword changer
+    """
+
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
+    bounty = bounty_client.update_issuers(bounty, **kwargs)
+
+
 def bounty_approver_changed(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -284,9 +297,10 @@ def bounty_deadline_changed(bounty_id, contract_version, **kwargs):
     @keyword deadline
     """
 
-    bounty = Bounty.objects.get(bounty_id=bounty_id)
-    bounty_client.extend_deadline(bounty, **kwargs)
-    notification_client.deadline_extended(bounty_id, **kwargs)
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
+    bounty_client.change_deadline(bounty, **kwargs)
+
+    notification_client.deadline_changed(bounty, **kwargs)
     slack_client.deadline_extended(bounty)
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
 

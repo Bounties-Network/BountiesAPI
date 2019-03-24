@@ -324,6 +324,16 @@ class Command(BaseCommand):
 
             print(message.contract_event_data)
 
+            events_to_skip = [
+                # not relevant for getting stb 2.0 to be compatible with stb 1.0,
+                # and this event may change to `bounty_issuers_changed` instead
+                'bounty_issuers_updated',
+                'bounty_approvers_updated',
+            ]
+
+            if event in events_to_skip:
+                return
+
             master_client.client[event](
                 message.bounty_id,
                 contract_version=STANDARD_BOUNTIES_V2,

@@ -175,7 +175,7 @@ def bounty_changed(bounty_id, contract_version, **kwargs):
 
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.change_bounty(bounty, **kwargs)
-    notification_client.bounty_changed(bounty_id, **kwargs)
+    notification_client.bounty_changed(bounty, **kwargs)
     slack_client.bounty_changed(bounty)
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
 

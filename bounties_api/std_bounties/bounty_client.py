@@ -236,49 +236,45 @@ class BountyClient:
 
         return bounty
 
-    @transaction.atomic
-    def change_bounty(self, bounty, inputs, **kwargs):
+    def change_data(self, bounty, **kwargs):
         updated_data = {}
-        data_hash = inputs.get('newData', None) or inputs.get('data', None)
-        deadline = inputs.get('newDeadline', None)
-        fulfillmentAmount = inputs.get('newFulfillmentAmount', None)
-        arbiter = inputs.get('newArbiter', None)
 
-        if data_hash:
-            updated_data = map_bounty_data(data_hash, bounty.bounty_id)
+        updated_data = map_bounty_data(kwargs.get('data'), bounty.bounty_id)
 
-        if deadline:
-            updated_data['deadline'] = datetime.datetime.fromtimestamp(
-                int(deadline))
-
-        if fulfillmentAmount:
-            updated_data['fulfillmentAmount'] = Decimal(fulfillmentAmount)
-
-        if arbiter:
-            updated_data['arbiter'] = arbiter
-
-        bounty_serializer = BountySerializer(
-            bounty, data=updated_data, partial=True)
+        bounty_serializer = BountySerializer(bounty, data=updated_data, partial=True)
         bounty_serializer.is_valid(raise_exception=True)
         saved_bounty = bounty_serializer.save()
 
-        if data_hash:
-            saved_bounty.save_and_clear_categories(
-                updated_data.get('data_categories'))
-
-        if fulfillmentAmount:
-            usd_price = get_token_pricing(
-                saved_bounty.tokenSymbol,
-                saved_bounty.tokenDecimals,
-                fulfillmentAmount)[0]
-            saved_bounty.usd_price = usd_price
-            saved_bounty.save()
+        bounty.save_and_clear_categories(updated_data.get('data_categories'))
 
         return saved_bounty
 
-    def transfer_issuer(self, bounty, inputs, **kwargs):
-        bounty.issuer = inputs.get('newIssuer')
-        bounty.save()
+    def update_bounty_issuers(self, bounty, **kwargs):
+        bounty.issuers.clear()
+
+        issuers = kwargs.get('issuers')
+        for issuer in issuers:
+            bounty.issuers.add(User.objects.get_or_create(public_address=issuer)[0].pk)
+
+        bounty.issuer = issuers[0]
+
+        return bounty
+
+    def update_bounty_approvers(self, bounty, **kwargs):
+        bounty.approvers.clear()
+
+        approvers = kwargs.get('approvers')
+        for approver in approvers:
+            bounty.approvers.add(User.objects.get_or_create(public_address=approver)[0].pk)
+
+        return bounty
+
+    @transaction.atomic
+    def change_bounty(self, bounty, **kwargs):
+        bounty = self.change_data(bounty, **kwargs)
+        bounty = self.change_deadline(bounty, **kwargs)
+        bounty = self.update_bounty_issuers(bounty, **kwargs)
+        bounty = self.update_bounty_approvers(bounty, **kwargs)
 
         return bounty
 

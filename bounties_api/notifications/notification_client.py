@@ -256,19 +256,19 @@ class NotificationClient:
             subject='Deadline Extended'
         )
 
-    def bounty_changed(self, bounty_id, event_date, uid, **kwargs):
-        bounty = Bounty.objects.get(id=bounty_id)
-        string_data = notification_templates['BountyChanged'].format(
-            bounty_title=bounty.title)
+    def bounty_changed(self, bounty, **kwargs):
+        string_data = notification_templates['BountyChanged'].format(bounty_title=bounty.title)
+
         create_bounty_notification(
             bounty=bounty,
-            uid=uid,
+            uid=kwargs.get('uid'),
             notification_name=notifications['BountyChanged'],
             user=bounty.user,
             from_user=None,
             string_data=string_data,
-            notification_created=event_date,
-            subject='Bounty Updated')
+            notification_created=kwargs.get('event_date'),
+            subject='Bounty Updated'
+        )
 
     def issuer_transferred(
             self,

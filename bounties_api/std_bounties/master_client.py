@@ -76,7 +76,8 @@ def contribution_refunded(bounty_id, contract_version, **kwargs):
     @keyword contribution_id
     """
 
-    pass
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
+    bounty_client.refund_contribution(bounty, **kwargs)
 
 
 @export
@@ -88,6 +89,8 @@ def action_performed(bounty_id, contract_version, **kwargs):
     @keyword fulfiller
     @keyword data
     """
+
+    # this will need to be implemented on a case-by-case basis
 
     pass
 
@@ -194,44 +197,6 @@ def bounty_data_changed(bounty_id, contract_version, **kwargs):
 
 
 @export
-def bounty_issuer_changed(bounty_id, contract_version, **kwargs):
-    """
-    @param bounty_id
-    @param contract_version
-    @keyword changer
-    @keyword issuer_id
-    @keyword issuer
-    """
-
-    pass
-
-
-@export
-def bounty_issuers_added(bounty_id, contract_version, **kwargs):
-    """
-    @param bounty_id
-    @param contract_version
-    @keyword changer
-    @keyword issuers
-    """
-
-    pass
-
-
-@export
-def bounty_issuers_replaced(bounty_id, contract_version, **kwargs):
-    """
-    @param bounty_id
-    @param contract_version
-    @keyword issuers
-    """
-    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
-    bounty = bounty_client.replace_bounty_issuers(bounty, issuers=kwargs.get('issuers'))
-    # notification_client.bounty_issuer_replaced(bounty)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty)
-
-
-@export
 def bounty_issuers_updated(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -242,49 +207,18 @@ def bounty_issuers_updated(bounty_id, contract_version, **kwargs):
 
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty = bounty_client.update_issuers(bounty, **kwargs)
-
-
-def bounty_approver_changed(bounty_id, contract_version, **kwargs):
-    """
-    @param bounty_id
-    @param contract_version
-    @keyword approverId
-    @keyword approver
-    """
-    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
-    bounty = bounty_client.change_bounty_approver(
-        bounty,
-        approver_id_to_change=kwargs.get('approverId'),
-        new_approver=kwargs.get('approver')
-    )
-
-    # notification_client.bounty_approver_changed(bounty)
     seo_client.bounty_preview_screenshot(bounty.platform, bounty)
 
 
-@export
-def bounty_approvers_added(bounty_id, contract_version, **kwargs):
+def bounty_approvers_updated(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
     @param contract_version
     @keyword approvers
+    @keyword changer
     """
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
-    bounty = bounty_client.add_bounty_approvers(bounty, new_approvers=kwargs.get('approvers'))
-    # notification_client.bounty_approvers_added(bounty)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty)
-
-
-@export
-def bounty_approvers_replaced(bounty_id, contract_version, **kwargs):
-    """
-    @param bounty_id
-    @param contract_version
-    @keyword approvers
-    """
-    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
-    bounty = bounty_client.replace_bounty_approvers(bounty, new_approvers=kwargs.get('approvers'))
-    # notification_client.bounty_approvers_added(bounty)
+    bounty_client.change_bounty_approver(bounty, **kwargs)
     seo_client.bounty_preview_screenshot(bounty.platform, bounty)
 
 

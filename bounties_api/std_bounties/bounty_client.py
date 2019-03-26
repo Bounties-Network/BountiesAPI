@@ -1,7 +1,7 @@
 import json
 import datetime
 from decimal import Decimal
-from std_bounties.models import Fulfillment, DraftBounty
+from std_bounties.models import Contribution, Fulfillment, DraftBounty
 from std_bounties.serializers import BountySerializer, ContributionSerializer, FulfillmentSerializer
 from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE
 from std_bounties.client_helpers import map_bounty_data, map_token_data, map_fulfillment_data, get_token_pricing, get_historic_pricing
@@ -85,7 +85,7 @@ class BountyClient:
 
     def activate_bounty(self, bounty, inputs, event_timestamp, **kwargs):
         event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
-        bounty.bountyStage = ACTIVE_STAGE
+        bounty.bounty_stage = ACTIVE_STAGE
         bounty.record_bounty_state(event_date)
         bounty.save()
 
@@ -198,7 +198,7 @@ class BountyClient:
             bounty.record_bounty_state(event_date)
 
         if bounty.balance >= bounty.fulfillment_amount and bounty.bounty_stage == COMPLETED_STAGE:
-            bounty.bountyStage = ACTIVE_STAGE
+            bounty.bounty_stage = ACTIVE_STAGE
             bounty.record_bounty_state(event_date)
             bounty.usd_price = get_token_pricing(
                 bounty.token_symbol,
@@ -220,6 +220,20 @@ class BountyClient:
         contribution = contribution_serializer.save()
 
         return contribution
+
+    def refund_contribution(self, bounty, **kwargs):
+        contribution = Contribution.objects.get(bounty=bounty.pk, contribution_id=kwargs.get('contribution_id'))
+        contribution.refunded = True
+
+        bounty.balance = Decimal(bounty.balance) - Decimal(contribution.amount)
+
+        if bounty.balance < bounty.fulfillment_amount and bounty.bounty_stage == ACTIVE_STAGE:
+            # TODO: set bounty to completed or expired
+            pass
+
+        bounty.save()
+
+        return contribution.save()
 
     def change_deadline(self, bounty, **kwargs):
         event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))

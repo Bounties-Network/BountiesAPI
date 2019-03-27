@@ -106,15 +106,6 @@ def bounty_fulfilled(bounty_id, contract_version, **kwargs):
     @keyword submitter
     """
 
-    fulfillment = Fulfillment.objects.filter(
-        fulfillment_id=kwargs.get('fulfillment_id'),
-        bounty_id=bounty_id,
-        contract_version=contract_version
-    )
-
-    if fulfillment.exists():
-        return
-
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     fulfillment = bounty_client.fulfill_bounty(bounty, **kwargs)
 
@@ -240,15 +231,13 @@ def bounty_deadline_changed(bounty_id, contract_version, **kwargs):
 
 
 # will be deprecated
+@export
 def bounty_activated(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.activate_bounty(bounty, **kwargs)
+
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
-    inputs = kwargs.get('inputs', {})
-    is_issue_and_activate = inputs.get('issuer', None)
-    if is_issue_and_activate:
-        seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
-        seo_client.publish_new_sitemap(bounty.platform)
+
     # HOTFIX REMOVED
     #     slack_client.bounty_issued_and_activated(bounty)
     #     notification_client.bounty_issued_and_activated(bounty_id, **kwargs)

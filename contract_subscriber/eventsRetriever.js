@@ -13,8 +13,8 @@ camelToUnderscore= (key) => {
 sanitizeEventData = (obj) => {
     const sanitizedObj = {};
     Object.keys(obj).forEach(key => {
-        if (key.match(/_.+/g)) {
-            sanitizedObj[camelToUnderscore(key.substring(1))] = obj[key];
+        if (isNaN(key)) {
+            sanitizedObj[camelToUnderscore(key[0] == '_' ? key.substring(1) : key)] = obj[key];
         }
     });
 
@@ -52,7 +52,7 @@ async function sendEvents(events) {
 
 			const rawTransaction = await getTransaction(transactionHash);
 			const transactionFrom = rawTransaction.from;
-			let contractMethodInputs = {};	
+			let contractMethodInputs = {};
 
 			if (CONTRACT_VERSION == 'v1') {
 				const rawContractMethodInputs = abiDecoder.decodeMethod(rawTransaction.input);

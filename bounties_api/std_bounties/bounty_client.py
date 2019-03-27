@@ -89,8 +89,11 @@ class BountyClient:
 
         return saved_bounty
 
-    def activate_bounty(self, bounty, inputs, event_timestamp, **kwargs):
-        event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
+    def activate_bounty(self, bounty, **kwargs):
+        if bounty.bounty_stage == ACTIVE_STAGE:
+            raise Exception('Activating a bounty that is already active')
+
+        event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))
         bounty.bounty_stage = ACTIVE_STAGE
         bounty.record_bounty_state(event_date)
         bounty.save()
@@ -100,15 +103,6 @@ class BountyClient:
     def fulfill_bounty(self, bounty, **kwargs):
         fulfillment_id = kwargs.get('fulfillment_id')
 
-        fulfillment = Fulfillment.objects.filter(
-            fulfillment_id=fulfillment_id,
-            bounty_id=bounty.bounty_id,
-            contract_version=bounty.contract_version,
-        )
-
-        if fulfillment.exists():
-            return
-
         data_hash = kwargs.get('data')
         ipfs_data = map_fulfillment_data(data_hash, bounty.bounty_id, fulfillment_id)
 
@@ -116,7 +110,7 @@ class BountyClient:
             'contract_version': bounty.contract_version,
             'fulfillment_id': fulfillment_id,
             'fulfiller': kwargs.get('fulfillers')[0],
-            'bounty': bounty.id,
+            'bounty': bounty.pk,
             'accepted': False,
             'fulfillment_created': datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp'))),
         }

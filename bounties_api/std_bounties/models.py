@@ -178,7 +178,7 @@ class Bounty(BountyAbstract):
 
         issuers = json.loads(self.contract_state)['issuers']
         issuer = next((address for address, index in issuers.items() if index == 0), None)
-        user, created = User.objects.get_or_create(public_address=issuer)
+        user, created = User.objects.get_or_create(public_address=issuer.lower())
         self.user = user
 
         super(Bounty, self).save(*args, **kwargs)

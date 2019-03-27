@@ -209,7 +209,7 @@ class BountyClient:
         bounty.save()
 
         contribution_serializer = ContributionSerializer(data={
-            'contributor': User.objects.get_or_create(public_address=kwargs.get('contributor'))[0].pk,
+            'contributor': User.objects.get_or_create(public_address=kwargs.get('contributor').lower())[0].pk,
             'bounty': bounty.pk,
             'contribution_id': kwargs.get('contribution_id'),
             'amount': kwargs.get('amount'),
@@ -268,7 +268,7 @@ class BountyClient:
 
         issuers = kwargs.get('issuers')
         for issuer in issuers:
-            bounty.issuers.add(User.objects.get_or_create(public_address=issuer)[0].pk)
+            bounty.issuers.add(User.objects.get_or_create(public_address=issuer.lower())[0].pk)
 
         bounty.issuer = issuers[0]
 
@@ -279,7 +279,7 @@ class BountyClient:
 
         approvers = kwargs.get('approvers')
         for approver in approvers:
-            bounty.approvers.add(User.objects.get_or_create(public_address=approver)[0].pk)
+            bounty.approvers.add(User.objects.get_or_create(public_address=approver.lower())[0].pk)
 
         return bounty
 

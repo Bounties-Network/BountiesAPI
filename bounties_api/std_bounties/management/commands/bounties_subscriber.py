@@ -140,7 +140,6 @@ class Command(BaseCommand):
         logger.info('For bounty id {}, running event {}'.format(message.bounty_id, message.event))
 
         if message.contract_version == STANDARD_BOUNTIES_V1:
-            raise 'not working rn'
             self.notify_master_client(message)
         else:
             self.notify_master_client_v2(message)
@@ -219,14 +218,29 @@ class Command(BaseCommand):
 
     def notify_master_client(self, message):
         event = message.event
+        inputs = message.contract_method_inputs
+        print(inputs)
+
         try:
             if event == 'BountyIssued':
-                master_client.bounty_issued(
+                master_client.client['bounty_issued'](
                     message.bounty_id,
+                    contract_version=STANDARD_BOUNTIES_V1,
                     event_date=message.event_date,
-                    inputs=message.contract_method_inputs,
                     event_timestamp=message.event_timestamp,
-                    uid=message.message_deduplication_id)
+                    uid=message.message_deduplication_id,
+                    **{
+                        'creator': inputs.get('issuer'),
+                        'issuers': [inputs.get('issuer')],
+                        'approvers': [inputs.get('issuer')],
+                        'data': inputs.get('data'),
+                        'deadline': inputs.get('deadline'),
+                        'fulfillment_amount': inputs.get('fulfillmentAmount'),
+                        'value': inputs.get('value'),
+                        'token': inputs.get('tokenContract'),
+                        'token_version': '20' if inputs.get('paysTokens') else '0',
+                    },
+                )
 
             elif event == 'BountyActivated':
                 master_client.bounty_activated(

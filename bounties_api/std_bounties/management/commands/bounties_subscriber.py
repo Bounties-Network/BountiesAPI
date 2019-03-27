@@ -148,7 +148,7 @@ class Command(BaseCommand):
 
         event_arguments = {
             'bounty_id': bounty.pk,
-            'fulfillment_id': message.contract_event_data['fulfillment_id'],
+            'fulfillment_id': message.contract_event_data.get('fulfillment_id', None),
             'transaction_from': message.transaction_from,
             'contract_inputs': message.contract_method_inputs,
             'contract_event_data': message.contract_event_data,
@@ -310,13 +310,15 @@ class Command(BaseCommand):
                     }
                 )
 
+            # untested
             elif event == 'DeadlineExtended':
-                master_client.deadline_extended(
-                    message.bounty_id,
-                    event_date=message.event_date,
-                    inputs=message.contract_method_inputs,
-                    event_timestamp=message.event_timestamp,
-                    uid=message.message_deduplication_id)
+                master_client.client['deadline_changed'](
+                    **base_event_data,
+                    **{
+                        'changer': message.transaction_from,
+                        'deadline': event_data.get('new_deadline'),
+                    },
+                )
 
             elif event == 'BountyChanged':
                 master_client.bounty_changed(

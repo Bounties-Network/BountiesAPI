@@ -3,7 +3,7 @@ import datetime
 from decimal import Decimal
 from std_bounties.models import Contribution, Fulfillment, DraftBounty
 from std_bounties.serializers import BountySerializer, ContributionSerializer, FulfillmentSerializer
-from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE
+from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE, STANDARD_BOUNTIES_V1
 from std_bounties.client_helpers import map_bounty_data, map_token_data, map_fulfillment_data, get_token_pricing, get_historic_pricing
 from user.models import User
 from bounties.utils import getDateTimeFromTimestamp
@@ -18,7 +18,8 @@ issue_bounty_input_keys = [
     'arbiter',
     'paysTokens',
     'tokenContract',
-    'value']
+    'value'
+]
 
 
 class BountyClient:
@@ -64,6 +65,9 @@ class BountyClient:
             'bounty_created': event_date,
         }
 
+        if contract_version == STANDARD_BOUNTIES_V1:
+            bounty_data.update({'fulfillment_amount': kwargs.get('fulfillment_amount')})
+
         bounty_serializer = BountySerializer(data={
             **bounty_data,
             **ipfs_data,
@@ -73,7 +77,9 @@ class BountyClient:
         bounty_serializer.is_valid(raise_exception=True)
 
         saved_bounty = bounty_serializer.save()
+
         saved_bounty.save_and_clear_categories(ipfs_data.get('data_categories'))
+        saved_bounty.bounty_stage = ACTIVE_STAGE
         saved_bounty.record_bounty_state(event_date)
 
         uid = saved_bounty.uid

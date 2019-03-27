@@ -292,15 +292,15 @@ class BountyClient:
 
         return bounty
 
-    def increase_payout(self, bounty, inputs, **kwargs):
-        value = inputs.get('value')
-        fulfillment_amount = inputs.get('newFulfillmentAmount')
-        if value:
-            bounty.balance = bounty.balance + Decimal(value)
+    def increase_payout(self, bounty, **kwargs):
+        fulfillment_amount = kwargs.get('fulfillment_amount')
+
         usd_price = get_token_pricing(
             bounty.tokenSymbol,
             bounty.tokenDecimals,
-            fulfillment_amount)[0]
+            fulfillment_amount
+        )[0]
+
         bounty.fulfillmentAmount = Decimal(fulfillment_amount)
         bounty.usd_price = usd_price
         bounty.save()

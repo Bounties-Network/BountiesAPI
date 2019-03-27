@@ -263,10 +263,18 @@ def issuer_transferred(bounty_id, **kwargs):
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
 
 
-def payout_increased(bounty_id, **kwargs):
-    bounty = Bounty.objects.get(bounty_id=bounty_id)
+@export
+def payout_increased(bounty_id, contract_version, **kwargs):
+    '''
+    @param bounty_id
+    @param contract_version
+    @keyword fulfillment_amount
+    '''
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty_client.increase_payout(bounty, **kwargs)
+
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+
     # HOTFIX REMOVED
     # notification_client.payout_increased(bounty_id, **kwargs)
     # slack_client.payout_increased(bounty)

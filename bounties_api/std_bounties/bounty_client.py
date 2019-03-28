@@ -166,21 +166,26 @@ class BountyClient:
 
         return fulfillment
 
-    def kill_bounty(self, bounty, event_timestamp, **kwargs):
-        event_date = datetime.datetime.fromtimestamp(int(event_timestamp))
+    def kill_bounty(self, bounty, **kwargs):
+        event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))
+
         bounty.old_balance = bounty.balance
         bounty.balance = 0
+
         usd_price, token_price = get_historic_pricing(
             bounty.tokenSymbol,
             bounty.tokenDecimals,
             bounty.fulfillmentAmount,
-            event_timestamp)
-        has_accepted_fulfillments = bounty.fulfillments.filter(
-            accepted=True).exists()
+            kwargs.get('event_timestamp')
+        )
+
+        has_accepted_fulfillments = bounty.fulfillments.filter(accepted=True).exists()
+
         if has_accepted_fulfillments:
             bounty.bountyStage = COMPLETED_STAGE
         else:
             bounty.bountyStage = DEAD_STAGE
+
         bounty.usd_price = usd_price
         bounty.tokenLockPrice = token_price
         bounty.record_bounty_state(event_date)

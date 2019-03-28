@@ -293,12 +293,11 @@ class Command(BaseCommand):
                     },
                 )
 
+            # untested
             elif event == 'BountyKilled':
                 master_client.bounty_killed(
-                    message.bounty_id,
-                    event_date=message.event_date,
-                    event_timestamp=message.event_timestamp,
-                    uid=message.message_deduplication_id)
+                    **base_event_data,
+                )
 
             elif event == 'ContributionAdded':
                 master_client.client['contribution_added'](
@@ -321,19 +320,26 @@ class Command(BaseCommand):
                 )
 
             elif event == 'BountyChanged':
-                master_client.bounty_changed(
-                    message.bounty_id,
-                    event_date=message.event_date,
-                    inputs=message.contract_method_inputs,
-                    uid=message.message_deduplication_id)
+                # this event only occurs when a draft bounty is edited
+                pass
 
+            # untested
             elif event == 'IssuerTransferred':
-                master_client.issuer_transferred(
-                    message.bounty_id,
-                    transaction_from=message.transaction_from,
-                    event_date=message.event_date,
-                    inputs=message.contract_method_inputs,
-                    uid=message.message_deduplication_id)
+                master_client.client['bounty_issuers_updated'](
+                    **base_event_data,
+                    **{
+                        'changer': message.transaction_from,
+                        'issuers': [event_data.get('new_issuer')],
+                    },
+                )
+
+                master_client.client['bounty_approvers_updated'](
+                    **base_event_data,
+                    **{
+                        'changer': message.transaction_from,
+                        'approvers': [event_data.get('new_issuer')],
+                    },
+                )
 
             # untested
             elif event == 'PayoutIncreased':

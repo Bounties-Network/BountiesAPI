@@ -247,19 +247,17 @@ def bounty_activated(bounty_id, **kwargs):
 
 
 # legacy
-def bounty_killed(bounty_id, **kwargs):
-    bounty = Bounty.objects.get(bounty_id=bounty_id)
+def bounty_killed(bounty_id, contract_version, **kwargs):
+    '''
+    @param bounty_id
+    @param contract_version
+    '''
+
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty_client.kill_bounty(bounty, **kwargs)
+
     notification_client.bounty_killed(bounty_id, **kwargs)
     slack_client.bounty_killed(bounty)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
-
-
-def issuer_transferred(bounty_id, **kwargs):
-    bounty = Bounty.objects.get(bounty_id=bounty_id)
-    bounty_client.transfer_issuer(bounty, **kwargs)
-    notification_client.issuer_transferred(bounty_id, **kwargs)
-    slack_client.issuer_transferred(bounty)
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
 
 
@@ -270,6 +268,7 @@ def payout_increased(bounty_id, contract_version, **kwargs):
     @param contract_version
     @keyword fulfillment_amount
     '''
+
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty_client.increase_payout(bounty, **kwargs)
 

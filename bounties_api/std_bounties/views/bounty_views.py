@@ -21,5 +21,6 @@ class BountyViewSet(ReadOnlyModelViewSet):
         'title',
         'description',
         'categories__normalized_name',
-        'issuer'
+        'issuer',
+        'contract_version',
     )

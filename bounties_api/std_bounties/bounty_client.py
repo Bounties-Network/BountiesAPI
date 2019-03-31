@@ -54,7 +54,7 @@ class BountyClient:
 
             # legacy for stb 1.0
             'user': issuers[0],
-            'issuer': kwargs.get('issuers')[0],
+            'issuer': kwargs.get('issuers')[0].lower(),
             ###
 
             'issuers': issuers,

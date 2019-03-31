@@ -23,21 +23,21 @@ services:
       - redis_bounties:/data
     ports:
       - "6379:6379"
-  # bounties_api:
-  #   build:
-  #     context: ./bounties_api
-  #     dockerfile: Dockerfile
-  #   restart: always
-  #   env_file:
-  #     - .env
-  #   command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:83"
-  #   volumes:
-  #     - ./bounties_api:/code
-  #   ports:
-  #     - "8000:83"
-  #   depends_on:
-  #     - db
-  #     - redis
+  bounties_api:
+    build:
+      context: ./bounties_api
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:83"
+    volumes:
+      - ./bounties_api:/code
+    ports:
+      - "8000:83"
+    depends_on:
+      - db
+      - redis
   bounties_subscriber:
     build:
       context: ./bounties_api
@@ -106,29 +106,14 @@ services:
   #   depends_on:
   #     - sqs
   #     - redis
-  contract_subscriber_v1:
-    build:
-      context: ./contract_subscriber
-    restart: always
-    env_file:
-      - .env
-    environment:
-        contract_version: v1
-    command: npm start
-    volumes:
-      - ./contract_subscriber:/usr/src/app
-      - /usr/src/app/node_modules
-    depends_on:
-      - sqs
-      - redis
-  # contract_subscriber_v2:
+  # contract_subscriber_v1:
   #   build:
   #     context: ./contract_subscriber
   #   restart: always
   #   env_file:
   #     - .env
   #   environment:
-  #       contract_version: v2
+  #       contract_version: v1
   #   command: npm start
   #   volumes:
   #     - ./contract_subscriber:/usr/src/app
@@ -136,6 +121,21 @@ services:
   #   depends_on:
   #     - sqs
   #     - redis
+  contract_subscriber_v2:
+    build:
+      context: ./contract_subscriber
+    restart: always
+    env_file:
+      - .env
+    environment:
+        contract_version: v2
+    command: npm start
+    volumes:
+      - ./contract_subscriber:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - sqs
+      - redis
 volumes:
   psql_bounties:
     external: true

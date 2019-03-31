@@ -17,7 +17,7 @@ jobs:
 
       - run:
           name: Lint python code
-          command: flake8 --ignore=E501,F405,W191
+          command: flake8 --ignore=E501,F405,F401,W191
 
       - run:
           name: Build docker image

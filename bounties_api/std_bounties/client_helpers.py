@@ -229,5 +229,6 @@ def map_token_data(version, token_contract, amount):
         'token_symbol': token_symbol,
         'token_decimals': token_decimals,
         'token': token_model.id if token_model else None,
+        'token_version': version,
         'usd_price': usd_price,
     }

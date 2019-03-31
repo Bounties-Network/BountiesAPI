@@ -214,7 +214,9 @@ class NotificationClient:
                 string_data=added_string_data,
                 notification_created=contribution.created,
                 subject='Contribution Added',
-                is_activity=True)
+                is_activity=True,
+                amount=kwargs.get('amount')
+            )
         else:
             # notification to bounty issuer
             create_bounty_notification(
@@ -226,7 +228,8 @@ class NotificationClient:
                 string_data=received_string_data,
                 notification_created=contribution.created,
                 subject='Contribution Received',
-                is_activity=False
+                is_activity=False,
+                amount=kwargs.get('amount')
             )
 
             # activity to user contributing to the bounty
@@ -239,7 +242,8 @@ class NotificationClient:
                 string_data=added_string_data,
                 notification_created=contribution.created,
                 subject='Contribution Added',
-                is_activity=True
+                is_activity=True,
+                amount=kwargs.get('amount')
             )
 
     def deadline_changed(self, bounty, **kwargs):
@@ -253,7 +257,7 @@ class NotificationClient:
             from_user=None,
             string_data=string_data,
             notification_created=kwargs.get('event_date'),
-            subject='Deadline Extended'
+            subject='Deadline Extended',
         )
 
     def bounty_changed(self, bounty, **kwargs):

@@ -31,7 +31,10 @@ def bounty_issued(bounty_id, contract_version, **kwargs):
     @keyword token_version
     """
 
-    if Bounty.objects.filter(bounty_id=bounty_id).exists():
+    if Bounty.objects.filter(
+            bounty_id=bounty_id,
+            contract_version=contract_version
+    ).exists():
         return
 
     created_bounty = bounty_client.issue_bounty(
@@ -42,7 +45,7 @@ def bounty_issued(bounty_id, contract_version, **kwargs):
 
     notification_client.bounty_issued(created_bounty, **kwargs)
     slack_client.bounty_issued(created_bounty)
-    seo_client.bounty_preview_screenshot(created_bounty.platform, bounty_id)
+    seo_client.bounty_preview_screenshot(created_bounty.platform, bounty_id, contract_version)
     seo_client.publish_new_sitemap(created_bounty.platform)
 
 
@@ -61,7 +64,7 @@ def contribution_added(bounty_id, contract_version, **kwargs):
 
     # only create notifications if it isn't the first contribution
     if int(kwargs.get('contribution_id')) != 0:
-        seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+        seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, contract_version)
         notification_client.contribution_added(contribution, **kwargs)
         slack_client.contribution_added(bounty)
 
@@ -149,7 +152,7 @@ def fulfillment_accepted(bounty_id, contract_version, **kwargs):
 
     notification_client.fulfillment_accepted(bounty, fulfillment, **kwargs)
     slack_client.fulfillment_accepted(bounty, fulfillment_id)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, contract_version)
 
     if bounty.balance < bounty.fulfillment_amount:
         notification_client.bounty_completed(bounty, fulfillment_id)
@@ -167,11 +170,11 @@ def bounty_changed(bounty_id, contract_version, **kwargs):
     @keyword deadline
     """
 
-    bounty = Bounty.objects.get(bounty_id=bounty_id)
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty_client.change_bounty(bounty, **kwargs)
     notification_client.bounty_changed(bounty, **kwargs)
     slack_client.bounty_changed(bounty)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, contract_version)
 
 
 @export
@@ -183,7 +186,7 @@ def bounty_data_changed(bounty_id, contract_version, **kwargs):
     @keyword data
     """
 
-    bounty = Bounty.objects.get(bounty_id=bounty_id)
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty_client.change_data(bounty, **kwargs)
 
 
@@ -198,7 +201,7 @@ def bounty_issuers_updated(bounty_id, contract_version, **kwargs):
 
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty = bounty_client.update_issuers(bounty, **kwargs)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty, contract_version)
 
 
 def bounty_approvers_updated(bounty_id, contract_version, **kwargs):
@@ -210,7 +213,7 @@ def bounty_approvers_updated(bounty_id, contract_version, **kwargs):
     """
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty_client.change_bounty_approver(bounty, **kwargs)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty, contract_version)
 
 
 @export
@@ -227,7 +230,7 @@ def bounty_deadline_changed(bounty_id, contract_version, **kwargs):
 
     notification_client.deadline_changed(bounty, **kwargs)
     slack_client.deadline_extended(bounty)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, contract_version)
 
 
 # will be deprecated
@@ -236,7 +239,7 @@ def bounty_activated(bounty_id, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id)
     bounty_client.activate_bounty(bounty, **kwargs)
 
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, 1)
 
     # HOTFIX REMOVED
     #     slack_client.bounty_issued_and_activated(bounty)
@@ -258,7 +261,7 @@ def bounty_killed(bounty_id, contract_version, **kwargs):
 
     notification_client.bounty_killed(bounty_id, **kwargs)
     slack_client.bounty_killed(bounty)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, contract_version)
 
 
 @export
@@ -272,7 +275,7 @@ def payout_increased(bounty_id, contract_version, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty_client.increase_payout(bounty, **kwargs)
 
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, contract_version)
 
     # HOTFIX REMOVED
     # notification_client.payout_increased(bounty_id, **kwargs)

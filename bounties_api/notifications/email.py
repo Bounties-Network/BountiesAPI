@@ -120,9 +120,9 @@ class Email:
         added_amount = 0
         if (notification_name == constants.CONTRIBUTION_RECEIVED or
                 notification_name == constants.CONTRIBUTION_ADDED):
-            inputs = kwargs['inputs']
+            amount = kwargs['amount']
             added_amount = token_decimals(calculate_token_value(
-                int(Decimal(inputs['value'])), bounty.token_decimals))
+                int(Decimal(amount)), bounty.token_decimals))
 
         rating_url = url
         if notification_name == constants.FULFILLMENT_ACCEPTED_FULFILLER:

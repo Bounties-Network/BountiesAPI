@@ -78,7 +78,6 @@ class BountyState(models.Model):
 class BountyAbstract(models.Model):
     # legacy fields
     user = models.ForeignKey('user.User', null=True)
-    paysTokens = models.BooleanField()
 
     # role-based access controls
     issuers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_related",)

@@ -311,7 +311,7 @@ class Command(BaseCommand):
 
             # untested
             elif event == 'DeadlineExtended':
-                master_client.client['deadline_changed'](
+                master_client.client['bounty_deadline_changed'](
                     **base_event_data,
                     **{
                         'changer': message.transaction_from,
@@ -350,7 +350,7 @@ class Command(BaseCommand):
                     },
                 )
 
-                master_client.client['add_contribution'](
+                master_client.client['contribution_added'](
                     **base_event_data,
                     **{
                         'contribution_id': 0,

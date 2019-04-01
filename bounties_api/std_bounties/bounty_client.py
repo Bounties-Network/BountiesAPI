@@ -92,7 +92,7 @@ class BountyClient:
 
     def activate_bounty(self, bounty, **kwargs):
         if bounty.bounty_stage == ACTIVE_STAGE:
-            raise Exception('Activating a bounty that is already active')
+            print('Activating a bounty that is already active')  # maybe this should be an error
 
         event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))
         bounty.bounty_stage = ACTIVE_STAGE
@@ -174,21 +174,21 @@ class BountyClient:
         bounty.balance = 0
 
         usd_price, token_price = get_historic_pricing(
-            bounty.tokenSymbol,
-            bounty.tokenDecimals,
-            bounty.fulfillmentAmount,
+            bounty.token_symbol,
+            bounty.token_decimals,
+            bounty.fulfillment_amount,
             kwargs.get('event_timestamp')
         )
 
         has_accepted_fulfillments = bounty.fulfillments.filter(accepted=True).exists()
 
         if has_accepted_fulfillments:
-            bounty.bountyStage = COMPLETED_STAGE
+            bounty.bounty_stage = COMPLETED_STAGE
         else:
-            bounty.bountyStage = DEAD_STAGE
+            bounty.bounty_stage = DEAD_STAGE
 
         bounty.usd_price = usd_price
-        bounty.tokenLockPrice = token_price
+        bounty.token_lock_price = token_price
         bounty.record_bounty_state(event_date)
         bounty.save()
 
@@ -302,8 +302,8 @@ class BountyClient:
         fulfillment_amount = kwargs.get('fulfillment_amount')
 
         usd_price = get_token_pricing(
-            bounty.tokenSymbol,
-            bounty.tokenDecimals,
+            bounty.token_symbol,
+            bounty.token_decimals,
             fulfillment_amount
         )[0]
 

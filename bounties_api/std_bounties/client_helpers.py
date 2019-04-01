@@ -27,14 +27,6 @@ bounty_v0_data_keys = [
     'uid',
     'description',
     'title',
-    'sourceFileName',
-    'sourceFileHash',
-    'sourceDirectoryHash',
-    'webReferenceURL'
-]
-
-bounty_v1_data_keys = [
-
 ]
 
 fulfillment_data_keys = [
@@ -69,7 +61,7 @@ def map_bounty_data(ipfs_hash, bounty_id):
 
         formattedExperienceLevel = str(experienceLevel).lower().strip().capitalize()
 
-        metadata.update({'experienceLevel': rev_mapped_difficulties.get(formattedExperienceLevel, BEGINNER)})
+        metadata.update({'experience_level': rev_mapped_difficulties.get(formattedExperienceLevel, BEGINNER)})
 
         data_issuer = data.get('issuer', {})
         if isinstance(data_issuer, str):
@@ -90,12 +82,15 @@ def map_bounty_data(ipfs_hash, bounty_id):
             'issuer_githubUsername': data_issuer.get('githubUsername', ''),
             'issuer_address': data_issuer.get('address', ''),
             'revisions': data.get('revisions', None),
+            'attached_filename': data.get('sourceFileName', None),
+            'attached_data_hash': data.get('sourceDirectoryHash', None),
+            'attached_url': data.get('webReferenceURL', None),
             'data_issuer': data_issuer,
             'data': ipfs_hash,
             'raw_ipfs_data': str(raw_ipfs_data),
             'data_categories': categories,
             'schema_version': schema_version,
-            'schema_name': meta.get('schemaname', ''),
+            'schema_name': meta.get('schemaName'),
         }
 
         # if 'platform' is gitcoin, also return deadline

@@ -92,9 +92,9 @@ class BountyAbstract(models.Model):
     deadline = models.DateTimeField()
 
     # attached data
-    attached_filename = models.CharField(max_length=256, blank=True)
-    attached_data_hash = models.CharField(max_length=256, blank=True)
-    attached_url = models.CharField(max_length=256, blank=True)
+    attached_filename = models.CharField(max_length=256, blank=True, null=True)
+    attached_data_hash = models.CharField(max_length=256, blank=True, null=True)
+    attached_url = models.CharField(max_length=256, blank=True, null=True)
 
     # token info
     token = models.ForeignKey(Token, null=True)

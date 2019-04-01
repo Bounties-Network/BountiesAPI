@@ -5,6 +5,7 @@ const rollbar = require('./rollbar');
 const { StandardBounties, getBlock } = require('./web3_config');
 const { getAsync, writeAsync } = require('./redis_config');
 const { sendEvents } = require('./eventsRetriever');
+const { CONTRACT_VERSION } = require('./constants');
 
 async function handler() {
 	while (true) {
@@ -14,7 +15,7 @@ async function handler() {
 			// are essentially accomplishing the same thing
 
 			// StandardBounties latest events
-			let fromBlock = await getAsync('currentBlock') || 0;
+			let fromBlock = await getAsync(`currentBlock_${CONTRACT_VERSION}`) || 0;
 			fromBlock = parseInt(fromBlock);
 			const latestBlockData = await getBlock('latest');
 			const latestBlock = latestBlockData.number;
@@ -33,7 +34,7 @@ async function handler() {
 
 			console.log('eventBlock: ', eventBlock);
 			if (eventBlock) {
-				await writeAsync('currentBlock', eventBlock + 1);
+				await writeAsync(`currentBlock_${CONTRACT_VERSION}`, eventBlock + 1);
 			}
 
 			await delay(1000);

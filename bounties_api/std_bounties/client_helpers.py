@@ -6,7 +6,7 @@ from datetime import datetime
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from web3.middleware import geth_poa_middleware
-from std_bounties.constants import rev_mapped_difficulties, BEGINNER
+from std_bounties.constants import rev_mapped_difficulties, BEGINNER, INTERMEDIATE, ADVANCED
 from std_bounties.contract import data
 from std_bounties.models import Token
 from utils.functional_tools import pluck
@@ -94,6 +94,8 @@ def map_bounty_data(ipfs_hash, bounty_id):
             'data': ipfs_hash,
             'raw_ipfs_data': str(raw_ipfs_data),
             'data_categories': categories,
+            'schema_version': schema_version,
+            'schema_name': meta.get('schemaname', ''),
         }
 
         # if 'platform' is gitcoin, also return deadline
@@ -101,8 +103,40 @@ def map_bounty_data(ipfs_hash, bounty_id):
             bounty.update({'deadline': datetime.utcfromtimestamp(int(data.get('expire_date')))})
         if meta.get('platform', '') == 'gitcoin':
             bounty.update({'private_fulfillments': False})
-    elif 'schema_version' == '1.0':
-        raise 'this is where your new schema should go'
+    elif schema_version == '1.0':
+        payload = data.get('payload')
+        meta = data.get('meta')
+
+        difficulty = int(payload.get('difficulty'))
+        if difficulty == 3:
+            difficulty = ADVANCED
+        elif difficulty == 2:
+            difficulty = INTERMEDIATE
+        else:
+            difficulty = BEGINNER
+
+        bounty = {
+            # required
+            'title': payload.get('title'),
+            'description': payload.get('description'),
+            'fulfillment_amount': int(payload.get('fulfillment_amount')),
+
+            'revisions': payload.get('expectedRevisions'),
+            'difficulty': difficulty,
+            'private_fulfillments': payload.get('privateFulfillments'),
+            'fulfillers_need_approval': payload.get('fulfillersNeedApproval'),
+
+            # optional
+            'categories': payload.get('categories', []),
+            'attached_filename': payload.get('ipfsFilename', None),
+            'attached_data_hash': payload.get('ipfsHash', None),
+            'attached_url': payload.get('webReferenceURL', None),
+
+            # meta
+            'schema_version': schema_version,
+            'schema_name': meta.get('schemaname'),
+            'platform': meta.get('platform'),
+        }
 
     return bounty
 

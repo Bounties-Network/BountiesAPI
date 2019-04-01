@@ -120,8 +120,8 @@ class BountyAbstract(models.Model):
     # metadata
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    schemaVersion = models.CharField(max_length=64, blank=True)
-    schemaName = models.CharField(max_length=128, null=True)
+    schema_version = models.CharField(max_length=64, blank=True)
+    schema_name = models.CharField(max_length=128, null=True)
     platform = models.CharField(max_length=128, blank=True, default="bounties-network")
 
     class Meta:

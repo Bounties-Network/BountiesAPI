@@ -21,10 +21,10 @@ class Command(BaseCommand):
             while True:
                 expired_bounties = Bounty.objects.filter(
                     deadline__lt=datetime.now(timezone.utc),
-                    bountyStage=ACTIVE_STAGE
+                    bounty_stage=ACTIVE_STAGE
                 )
                 for bounty in expired_bounties:
-                    bounty.bountyStage = EXPIRED_STAGE
+                    bounty.bounty_stage = EXPIRED_STAGE
                     bounty.save()
                     bounty_state = bounty.record_bounty_state(bounty.deadline)
                     notification_client.bounty_expired(

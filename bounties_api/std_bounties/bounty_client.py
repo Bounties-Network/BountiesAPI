@@ -203,7 +203,7 @@ class BountyClient:
             bounty.bounty_stage = ACTIVE_STAGE
             bounty.record_bounty_state(event_date)
 
-        if bounty.balance >= bounty.fulfillment_amount and bounty.bounty_stage == COMPLETED_STAGE:
+        if bounty.balance >= bounty.fulfillment_amount and (bounty.bounty_stage == COMPLETED_STAGE or bounty.bounty_stage == DEAD_STAGE):
             bounty.bounty_stage = ACTIVE_STAGE
             bounty.record_bounty_state(event_date)
             bounty.usd_price = get_token_pricing(

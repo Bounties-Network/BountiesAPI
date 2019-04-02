@@ -102,7 +102,11 @@ def map_bounty_data(ipfs_hash, bounty_id):
         payload = data.get('payload')
         meta = data.get('meta')
 
-        difficulty = int(payload.get('difficulty'))
+        try:
+            difficulty = int(payload.get('difficulty'))
+        except ValueError:
+            difficulty = 1
+
         if difficulty == 3:
             difficulty = ADVANCED
         elif difficulty == 2:

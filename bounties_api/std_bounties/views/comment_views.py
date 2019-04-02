@@ -23,17 +23,21 @@ class BountyComments(ListModelMixin, GenericViewSet):
 
     @staticmethod
     def post(request, bounty_id):
-        bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
+        bounty = get_object_or_404(Bounty, pk=bounty_id)
+
         serializer = CommentSerializer(
             data=request.data,
             context={
                 'request': request
-            })
+            }
+        )
+
         serializer.is_valid(raise_exception=True)
         comment = serializer.save()
+
         bounty.comments.add(comment)
-        notification_client.comment_issued(
-            bounty.bounty_id, comment.created, comment.id)
-        notification_client.comment_received(
-            bounty.bounty_id, comment.created, comment.id)
+
+        notification_client.comment_issued(bounty.pk, comment.created, comment.id)
+        notification_client.comment_received(bounty.pk, comment.created, comment.id)
+
         return JsonResponse(serializer.data)

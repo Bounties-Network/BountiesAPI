@@ -135,6 +135,9 @@ def map_bounty_data(ipfs_hash, bounty_id):
             'schema_version': schema_version,
             'schema_name': meta.get('schemaname'),
             'platform': meta.get('platform'),
+
+            # db
+            'data': ipfs_hash,
         }
 
     return bounty

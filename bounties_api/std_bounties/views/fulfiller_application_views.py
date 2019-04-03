@@ -25,10 +25,10 @@ class FulfillerApplicationViewSet(ListModelMixin, GenericViewSet):
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
-        return FulfillerApplication.objects.filter(bounty__bounty_id=self.kwargs['bounty_id']).order_by('-created')
+        return FulfillerApplication.objects.filter(bounty_id=self.kwargs['bounty_id']).order_by('-created')
 
     def post(self, request, bounty_id):
-        bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
+        bounty = get_object_or_404(Bounty, pk=bounty_id)
 
         serializer = FulfillerApplicationSerializer(
             data={

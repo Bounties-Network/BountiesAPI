@@ -199,7 +199,6 @@ def bounty_issuers_updated(bounty_id, contract_version, **kwargs):
     @keyword changer
     """
 
-    print('doing bounty issuers update')
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty = bounty_client.update_bounty_issuers(bounty, **kwargs)
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, contract_version)

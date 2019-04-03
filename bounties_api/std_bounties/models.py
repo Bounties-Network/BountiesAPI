@@ -176,10 +176,12 @@ class Bounty(BountyAbstract):
         self.calculated_balance = calculate_token_value(balance, decimals)
         self.calculated_fulfillment_amount = calculate_token_value(fulfillment_amount, decimals)
 
-        issuers = json.loads(self.contract_state)['issuers']
-        issuer = next((address for address, index in issuers.items() if index == 0), None)
-        user, created = User.objects.get_or_create(public_address=issuer.lower())
-        self.user = user
+        issuers = json.loads(self.contract_state or '{}').get('issuers', None)
+
+        if issuers:
+            issuer = next((address for address, index in issuers.items() if index == 0), None)
+            user, created = User.objects.get_or_create(public_address=issuer.lower())
+            self.user = user
 
         super(Bounty, self).save(*args, **kwargs)
 

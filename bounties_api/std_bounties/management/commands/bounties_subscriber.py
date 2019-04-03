@@ -164,7 +164,7 @@ class Command(BaseCommand):
             defaults=event_arguments
         )
 
-        transaction_path = ''  # '/bounty/' + str(bounty_id)
+        transaction_path = '/bounty/' + str(bounty.pk)
         transaction_link_text = 'View bounty'
         transaction_message = 'Transaction confirmed'
 

@@ -40,13 +40,13 @@ class BountyClient:
         for index, issuer in enumerate(kwargs.get('issuers', [])):
             user = User.objects.get_or_create(public_address=issuer.lower())[0]
             issuers.append(user.pk)
-            contract_state['issuers'].update({issuer: index})
+            contract_state['issuers'].update({issuer.lower(): index})
 
         approvers = []
         for index, approver in enumerate(kwargs.get('approvers', [])):
             user = User.objects.get_or_create(public_address=approver.lower())[0]
             approvers.append(user.pk)
-            contract_state['approvers'].update({approver: index})
+            contract_state['approvers'].update({approver.lower(): index})
 
         bounty_data = {
             'bounty_id': bounty_id,
@@ -273,10 +273,16 @@ class BountyClient:
         bounty.issuers.clear()
 
         issuers = kwargs.get('issuers')
-        for issuer in issuers:
+        issuers_state = {}
+        for (index, issuer) in enumerate(issuers):
             bounty.issuers.add(User.objects.get_or_create(public_address=issuer.lower())[0].pk)
+            issuers_state.update({issuer.lower(): index})
 
-        bounty.issuer = issuers[0]
+        contract_state = json.loads(bounty.contract_state)
+        contract_state.update({'issuers': issuers_state})
+        bounty.contract_state = json.dumps(contract_state)
+
+        bounty.save()
 
         return bounty
 
@@ -284,8 +290,16 @@ class BountyClient:
         bounty.approvers.clear()
 
         approvers = kwargs.get('approvers')
-        for approver in approvers:
+        approvers_state = {}
+        for (index, approver) in enumerate(approvers):
             bounty.approvers.add(User.objects.get_or_create(public_address=approver.lower())[0].pk)
+            approvers_state.update({approver.lower(): index})
+
+        contract_state = json.loads(bounty.contract_state)
+        contract_state.update({'approvers': approvers_state})
+        bounty.contract_state = json.dumps(contract_state)
+
+        bounty.save()
 
         return bounty
 

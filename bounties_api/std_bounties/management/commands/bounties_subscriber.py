@@ -378,8 +378,8 @@ class Command(BaseCommand):
             events_to_skip = [
                 # not relevant for getting stb 2.0 to be compatible with stb 1.0,
                 # and this event may change to `bounty_issuers_changed` instead
-                'bounty_issuers_updated',
-                'bounty_approvers_updated',
+                # 'bounty_issuers_updated',
+                # 'bounty_approvers_updated',
             ]
 
             if event in events_to_skip:

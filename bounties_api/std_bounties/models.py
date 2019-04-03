@@ -182,6 +182,7 @@ class Bounty(BountyAbstract):
             issuer = next((address for address, index in issuers.items() if index == 0), None)
             user, created = User.objects.get_or_create(public_address=issuer.lower())
             self.user = user
+            self.issuer = issuer
 
         super(Bounty, self).save(*args, **kwargs)
 

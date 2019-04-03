@@ -199,11 +199,13 @@ def bounty_issuers_updated(bounty_id, contract_version, **kwargs):
     @keyword changer
     """
 
+    print('doing bounty issuers update')
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
-    bounty = bounty_client.update_issuers(bounty, **kwargs)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty, contract_version)
+    bounty = bounty_client.update_bounty_issuers(bounty, **kwargs)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, contract_version)
 
 
+@export
 def bounty_approvers_updated(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
@@ -212,8 +214,8 @@ def bounty_approvers_updated(bounty_id, contract_version, **kwargs):
     @keyword changer
     """
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
-    bounty_client.change_bounty_approver(bounty, **kwargs)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty, contract_version)
+    bounty_client.update_bounty_approvers(bounty, **kwargs)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, contract_version)
 
 
 @export

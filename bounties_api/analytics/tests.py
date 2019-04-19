@@ -8,7 +8,8 @@ from std_bounties.constants import EXPIRED_STAGE, DEAD_STAGE, COMPLETED_STAGE, A
 from analytics.management.commands.timeline_generator import diff_time, diff_days, day_bounds, range_days, \
     get_bounty_draft, get_bounty_completed, get_bounty_active, get_bounty_expired, get_bounty_dead, \
     get_fulfillment_acceptance_rate, get_bounty_fulfilled_rate, get_avg_fulfiller_acceptance_rate, \
-    get_avg_fulfillment_amount, get_total_fulfillment_amount, generate_timeline, week_bounds, range_weeks
+    get_avg_fulfillment_amount, get_total_fulfillment_amount, generate_timeline, week_bounds, range_weeks, \
+    month_bounds, range_months
 from std_bounties.models import BountyState, Fulfillment, Bounty
 
 
@@ -42,6 +43,19 @@ class DateUtilsTest(unittest.TestCase):
 
         self.assertEqual(floor.day, 21)
         self.assertEqual(ceil.day, 27)
+        self.assertEqual(floor.minute, 0)
+        self.assertEqual(floor.hour, 0)
+        self.assertEqual(floor.second, 0)
+        self.assertEqual(ceil.minute, 59)
+        self.assertEqual(ceil.hour, 23)
+        self.assertEqual(ceil.second, 59)
+
+    def test_month_bounds(self):
+        first_day = datetime(2018, 5, 26, 12, 55)
+        (floor, ceil) = month_bounds(first_day)
+
+        self.assertEqual(floor.day, 1)
+        self.assertEqual(ceil.day, 31)
         self.assertEqual(floor.minute, 0)
         self.assertEqual(floor.hour, 0)
         self.assertEqual(floor.second, 0)

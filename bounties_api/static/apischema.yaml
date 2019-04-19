@@ -40,6 +40,11 @@ paths:
         description: "Display aggregated by week"
         required: true
       - in: query
+        name: is_month
+        type: boolean
+        description: "Display aggregated by month"
+        required: true
+      - in: query
         name: bounties_issued_cum
         type: integer
       - in: query
@@ -1939,6 +1944,9 @@ definitions:
         format: date
       is_week:
         title: is_week
+        type: boolean
+      is_month:
+        title: is_month
         type: boolean
       bounties_issued_cum:
         title: bounties_issued_cum

@@ -13,7 +13,7 @@ docker-compose up
 ```
 Locally, you will now be syncing directly from the contract. You may access the api at:
 
-http://locahost:8000
+http://localhost:8000
 
 The API will automatically restart if you make code changes. To turn off the services, run `docker-compose down`. Keep in mind, the volumes make it so your DB and redis cache will be in the same state if you start the services again with `docker-compose up`. If you would like to wipe out your databases and start again, then run:
 ```

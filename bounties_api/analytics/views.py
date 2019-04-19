@@ -61,7 +61,17 @@ class TimelineBounties(APIView):
                     ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
 
                     queryset = gitcoinQuery | standardQuery
+                if platform == '!gitcoin':
+                    ranked_category_list = RankedCategory.objects.distinct().values('normalized_name', 'name')
+                    ranked_categories = dict(map(lambda x: (x['normalized_name'], x['name']), ranked_category_list))
 
+                    standardQuery = Category.objects.select_related('bounty').filter(
+                        bounty__bounty_created__gte=since_date,
+                        bounty__bounty_created__lte=until_date,
+                        bounty__platform__exact='bounties-network'
+                    ).distinct().exclude(normalized_name__exact='').values('normalized_name').annotate(total=Count('bounty'))
+
+                    queryset = standardQuery
                 else:
                     ranked_category_list = RankedCategory.objects.distinct().values('normalized_name', 'name')
                     ranked_categories = dict(map(lambda x: (x['normalized_name'], x['name']), ranked_category_list))

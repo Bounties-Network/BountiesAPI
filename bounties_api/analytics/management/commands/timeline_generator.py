@@ -38,6 +38,12 @@ def week_bounds(day):
 
     return floor.datetime, ceil.datetime
 
+def month_bounds(day):
+    utc_day = arrow.get(day).to('utc')
+    floor = utc_day.floor('month')
+    ceil = utc_day.ceil('month')
+
+    return floor.datetime, ceil.datetime
 
 def range_days(since, until):
     return arrow.Arrow.range('day', since, until)
@@ -46,6 +52,8 @@ def range_days(since, until):
 def range_weeks(since, until):
     return arrow.Arrow.range('week', since, until)
 
+def range_months(since, until):
+    return arrow.Arrow.range('month', since, until)
 
 def get_date(time_frame):
     return time_frame.last().change_date
@@ -311,7 +319,7 @@ class Command(BaseCommand):
 
         for platform in platforms:
             needs_genesis = not BountiesTimeline.objects.filter(
-                platform=platform, is_week=False).exists()
+                platform=platform, is_week=False, is_month=False).exists()
 
             first_date = BountyState.objects.first()
             last_date = datetime.utcnow()
@@ -330,7 +338,7 @@ class Command(BaseCommand):
                     bounty_day.save()
             else:
                 last_update = BountiesTimeline.objects.filter(
-                    platform=platform, is_week=False).order_by('date').last()
+                    platform=platform, is_week=False, is_month=False).order_by('date').last()
                 since = arrow.get(last_update.date).to('utc')
                 days = range_days(since, datetime.utcnow())
 
@@ -352,7 +360,7 @@ class Command(BaseCommand):
 
         for platform in platforms:
             needs_genesis = not BountiesTimeline.objects.filter(
-                platform=platform, is_week=True).exists()
+                platform=platform, is_week=True, is_month=False).exists()
 
             first_date = BountyState.objects.first()
             last_date = datetime.utcnow()
@@ -369,7 +377,7 @@ class Command(BaseCommand):
                     bounty_week.save()
             else:
                 last_update = BountiesTimeline.objects.filter(
-                    platform=platform, is_week=True).order_by('date').last()
+                    platform=platform, is_week=True, is_month=False).order_by('date').last()
                 since = arrow.get(last_update.date).to('utc')
                 weeks = range_weeks(since, datetime.utcnow())
 
@@ -385,3 +393,38 @@ class Command(BaseCommand):
 
                     bounty_week.is_week = True
                     bounty_week.save()
+        for platform in platforms:
+            needs_genesis = not BountiesTimeline.objects.filter(
+                platform=platform, is_week=False, is_month=True).exists()
+
+            first_date = BountyState.objects.first()
+            last_date = datetime.utcnow()
+
+            if needs_genesis:
+                bounties_by_month = range_months(
+                    first_date.change_date, last_date + timedelta(days=7))
+
+                for month in bounties_by_month:
+                    bounty_month = generate_timeline(
+                        month_bounds(month), platform=platform)
+                    bounty_month.is_month = True
+
+                    bounty_month.save()
+            else:
+                last_update = BountiesTimeline.objects.filter(
+                    platform=platform, is_week=False, is_month=True).order_by('date').last()
+                since = arrow.get(last_update.date).to('utc')
+                months = range_months(since, datetime.utcnow())
+
+                for month in months:
+                    bounds = month_bounds(month)
+                    bounty_month = generate_timeline(bounds, platform=platform)
+                    bounty_points = BountiesTimeline.objects.filter(
+                        date=bounds[0].date(), platform=platform, is_Month=True)
+
+                    if bounty_points.exists():
+                        bounty_point = bounty_points.first()
+                        bounty_month.id = bounty_point.id
+
+                    bounty_month.is_month = True
+                    bounty_month.save()

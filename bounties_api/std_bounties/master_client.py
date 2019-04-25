@@ -264,6 +264,19 @@ def bounty_killed(bounty_id, contract_version, **kwargs):
     slack_client.bounty_killed(bounty)
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, contract_version)
 
+@export
+def bounty_drained(bounty_id, contract_version, **kwargs):
+
+    """
+    @param bounty_id
+    @param contract_version
+    @keyword amounts
+    """
+
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
+    bounty_client.kill_bounty(bounty, **kwargs)
+    slack_client.bounty_killed(bounty)
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, contract_version)
 
 @export
 def payout_increased(bounty_id, contract_version, **kwargs):

@@ -92,8 +92,8 @@ class Command(BaseCommand):
             except Exception as e:
                 # goes to rollbar
                 # logger.error(e)
-                #  self.remove_from_queue(message)
-                #  self.add_to_blacklist(message)
+                # self.remove_from_queue(message)
+                # self.add_to_blacklist(message)
                 raise e
 
     def remove_from_queue(self, message):

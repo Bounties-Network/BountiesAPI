@@ -36,3 +36,10 @@ class ApplicantPermissions(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return obj.bounty.user == request.current_user
+
+
+class BountyStatePermissions(permissions.BasePermission):
+    message = 'Unauthorized'
+
+    def has_object_permission(self, request, view, obj):
+        return obj.bounty.user == request.current_user

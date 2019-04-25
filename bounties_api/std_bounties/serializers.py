@@ -14,6 +14,7 @@ from std_bounties.models import (
     DraftBounty,
     Comment,
     Review,
+    BountyState,
 )
 from std_bounties.client_helpers import map_token_data
 from std_bounties.constants import STAGE_CHOICES
@@ -292,3 +293,10 @@ class FulfillerApplicantSerializer(serializers.ModelSerializer):
     class Meta:
         model = FulfillerApplication
         fields = '__all__'
+
+
+class BountyStateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BountyState
+        fields = '__all__'
+

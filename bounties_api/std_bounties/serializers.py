@@ -198,7 +198,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
     # In general try and not have all this logic in a serializer
     categories = CreatableSlugRelatedField(
         many=True, slug_field='name', queryset=Category.objects.all())
-    tokenContract = serializers.CharField(required=False, allow_blank=True)
+    token_contract = serializers.CharField(required=False, allow_blank=True)
     tokenSymbol = serializers.CharField(read_only=True)
     tokenDecimals = serializers.IntegerField(read_only=True)
     arbiter = serializers.CharField(allow_blank=True, required=False)
@@ -207,7 +207,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
     current_market_token_data = TokenSerializer(read_only=True, source='token')
     webReferenceURL = serializers.CharField(required=False, allow_blank=True)
     uid = serializers.CharField(read_only=True)
-    calculated_fulfillmentAmount = serializers.DecimalField(
+    calculated_fulfillment_amount = serializers.DecimalField(
         decimal_places=30,
         max_digits=70,
         read_only=True)
@@ -225,11 +225,11 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         user = request.current_user
         instance.user = user
         token_data = map_token_data(
-            validated_data.get('paysTokens'),
-            validated_data.get('tokenContract'),
-            validated_data.get('fulfillmentAmount'))
-        instance.tokenSymbol = token_data.get('tokenSymbol')
-        instance.tokenDecimals = token_data.get('tokenDecimals')
+            str(instance.token_version),
+            validated_data.get('token_contract'),
+            validated_data.get('fulfillment_amount'))
+        instance.token_symbol = token_data.get('token_symbol')
+        instance.token_decimals = token_data.get('token_decimals')
         instance.token_id = token_data.get('token')
         instance.usd_price = token_data.get('usd_price')
         instance.issuer = user.public_address
@@ -243,11 +243,11 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
             validated_data
         )
         token_data = map_token_data(
-            instance.paysTokens,
-            instance.tokenContract,
-            instance.fulfillmentAmount)
-        instance.tokenSymbol = token_data.get('tokenSymbol')
-        instance.tokenDecimals = token_data.get('tokenDecimals')
+            instance.token_version,
+            instance.token_contract,
+            instance.fulfillment_amount)
+        instance.token_symbol = token_data.get('token_symbol')
+        instance.token_decimals = token_data.get('token_decimals')
         instance.token_id = token_data.get('token')
         instance.usd_price = token_data.get('usd_price')
         instance.save()

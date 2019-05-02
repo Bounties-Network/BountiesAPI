@@ -126,7 +126,8 @@ def map_bounty_data(ipfs_hash, bounty_id):
             'fulfillers_need_approval': payload.get('fulfillersNeedApproval'),
 
             # optional
-            'categories': payload.get('categories', []),
+            'raw_ipfs_data': str(raw_ipfs_data),
+            'data_categories': payload.get('categories', []),
             'attached_filename': payload.get('ipfsFilename', None),
             'attached_data_hash': payload.get('ipfsHash', None),
             'attached_url': payload.get('webReferenceURL', None),
@@ -221,7 +222,6 @@ def get_historic_pricing(token_symbol, token_decimals, value, timestamp):
 def map_token_data(version, token_contract, amount):
     token_symbol = 'ETH'
     token_decimals = 18
-
     if version == '0':
         pass
     elif version == '20':

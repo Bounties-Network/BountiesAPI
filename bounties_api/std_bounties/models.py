@@ -79,10 +79,6 @@ class BountyAbstract(models.Model):
     # legacy fields
     user = models.ForeignKey('user.User', null=True)
 
-    # role-based access controls
-    issuers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_related",)
-    approvers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_relateda",)
-
     # bounty data
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField(blank=True)
@@ -131,6 +127,10 @@ class BountyAbstract(models.Model):
 class Bounty(BountyAbstract):
     # legacy fields
     issuer = models.CharField(max_length=128)
+
+    # role-based access controls
+    issuers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_related",)
+    approvers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_relateda",)
 
     # id fields
     bounty_id = models.IntegerField()
@@ -222,10 +222,10 @@ class DraftBounty(BountyAbstract):
         ordering = ['-created']
 
     def save(self, *args, **kwargs):
-        fulfillmentAmount = self.fulfillmentAmount
-        decimals = self.tokenDecimals
-        self.calculated_fulfillmentAmount = calculate_token_value(
-            fulfillmentAmount, decimals)
+        fulfillment_amount = self.fulfillment_amount
+        decimals = self.token_decimals
+        self.calculated_fulfillment_amount = calculate_token_value(
+            fulfillment_amount, decimals)
         super(DraftBounty, self).save(*args, **kwargs)
 
 

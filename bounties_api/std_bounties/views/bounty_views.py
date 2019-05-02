@@ -12,7 +12,7 @@ class BountyViewSet(ReadOnlyModelViewSet):
     filter_class = BountiesFilter
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend)
     ordering_fields = (
-        'fulfillmentAmount',
+        'fulfillment_amount',
         'deadline',
         'bounty_created',
         'usd_price'

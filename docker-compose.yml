@@ -52,47 +52,47 @@ services:
       - sqs
       - db
       - redis
-  #   - bounties_api
-  # sql_jobs:
-  #   # In production, these run an as an hourly cronjob.
-  #   # Here, we use a local.sh to just run it more often
-  #   build:
-  #     context: ./sql_jobs
-  #     dockerfile: Dockerfile
-  #   command: bash -c "./local.sh"
-  #   env_file:
-  #     - .env
-  #   volumes:
-  #     - ./sql_jobs:/usr/src/app
-  # track_bounty_expirations:
-  #   # TODO - just make this a cronjob. It does not need to be a long-running job
-  #   build:
-  #     context: ./bounties_api
-  #     dockerfile: Dockerfile
-  #   restart: always
-  #   env_file:
-  #     - .env
-  #   command: python3 manage.py track_bounty_expirations
-  #   volumes:
-  #     - ./bounties_api:/code
-  #   depends_on:
-  #     - db
-  #     - bounties_api
-  # get_token_values:
-  #   # In production, these run an as an every 5 minute cronjob.
-  #   # Here, we use a local.sh to just put it in a bash loop
-  #   build:
-  #     context: ./bounties_api
-  #     dockerfile: Dockerfile
-  #   restart: always
-  #   env_file:
-  #     - .env
-  #   command: bash -c "./local.sh"
-  #   volumes:
-  #     - ./bounties_api:/code
-  #   depends_on:
-  #     - db
-  #     - bounties_api
+      - bounties_api
+  sql_jobs:
+   # In production, these run an as an hourly cronjob.
+   # Here, we use a local.sh to just run it more often
+   build:
+     context: ./sql_jobs
+     dockerfile: Dockerfile
+   command: bash -c "./local.sh"
+   env_file:
+     - .env
+   volumes:
+     - ./sql_jobs:/usr/src/app
+  track_bounty_expirations:
+   # TODO - just make this a cronjob. It does not need to be a long-running job
+   build:
+     context: ./bounties_api
+     dockerfile: Dockerfile
+   restart: always
+   env_file:
+     - .env
+   command: python3 manage.py track_bounty_expirations
+   volumes:
+     - ./bounties_api:/code
+   depends_on:
+     - db
+     - bounties_api
+  get_token_values:
+   # In production, these run an as an every 5 minute cronjob.
+   # Here, we use a local.sh to just put it in a bash loop
+   build:
+     context: ./bounties_api
+     dockerfile: Dockerfile
+   restart: always
+   env_file:
+     - .env
+   command: bash -c "./local.sh"
+   volumes:
+     - ./bounties_api:/code
+   depends_on:
+     - db
+     - bounties_api
   # contract_subscriber:
   #   build:
   #     context: ./contract_subscriber
@@ -106,21 +106,21 @@ services:
   #   depends_on:
   #     - sqs
   #     - redis
-  # contract_subscriber_v1:
-  #   build:
-  #     context: ./contract_subscriber
-  #   restart: always
-  #   env_file:
-  #     - .env
-  #   environment:
-  #       contract_version: v1
-  #   command: npm start
-  #   volumes:
-  #     - ./contract_subscriber:/usr/src/app
-  #     - /usr/src/app/node_modules
-  #   depends_on:
-  #     - sqs
-  #     - redis
+  contract_subscriber_v1:
+   build:
+     context: ./contract_subscriber
+   restart: always
+   env_file:
+     - .env
+   environment:
+       contract_version: v1
+   command: npm start
+   volumes:
+     - ./contract_subscriber:/usr/src/app
+     - /usr/src/app/node_modules
+   depends_on:
+     - sqs
+     - redis
   contract_subscriber_v2:
     build:
       context: ./contract_subscriber

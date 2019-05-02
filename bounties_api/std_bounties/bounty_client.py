@@ -78,7 +78,7 @@ class BountyClient:
 
         saved_bounty = bounty_serializer.save()
 
-        saved_bounty.save_and_clear_categories(ipfs_data.get('data_categories'))
+        saved_bounty.save_and_clear_categories(ipfs_data.get('categories'))
         saved_bounty.bounty_stage = ACTIVE_STAGE
         saved_bounty.record_bounty_state(event_date)
 

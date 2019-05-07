@@ -107,9 +107,9 @@ def map_bounty_data(ipfs_hash, bounty_id):
         except ValueError:
             difficulty = 1
 
-        if difficulty == 3:
+        if difficulty == 2:
             difficulty = ADVANCED
-        elif difficulty == 2:
+        elif difficulty == 1:
             difficulty = INTERMEDIATE
         else:
             difficulty = BEGINNER

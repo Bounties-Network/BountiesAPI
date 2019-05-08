@@ -34,12 +34,12 @@ class Command(BaseCommand):
                     **coin_data, defaults={'price_usd': price_usd})
 
             all_bounties = Bounty.objects.exclude(
-                bountyStage__in=[DEAD_STAGE, COMPLETED_STAGE])
+                bounty_stage__in=[DEAD_STAGE, COMPLETED_STAGE])
             for bounty in all_bounties:
-                price = token_cache.get(bounty.tokenSymbol, None)
+                price = token_cache.get(bounty.token_symbol, None)
                 if not price:
                     try:
-                        current_token = Token.objects.get(symbol=bounty.tokenSymbol)
+                        current_token = Token.objects.get(symbol=bounty.token_symbol)
                         price = current_token.price_usd
                     except Token.DoesNotExist:
                         price = None
@@ -53,7 +53,7 @@ class Command(BaseCommand):
                     bounty.save()
                 # maybe a token was not added to coinmarketcap until later
                 if price is not None and not bounty.token:
-                    token_model = Token.objects.get(symbol=bounty.tokenSymbol)
+                    token_model = Token.objects.get(symbol=bounty.token_symbol)
                     bounty.token = token_model
                     bounty.save()
 

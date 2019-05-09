@@ -243,7 +243,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
             validated_data
         )
         token_data = map_token_data(
-            instance.token_version,
+            str(instance.token_version),
             instance.token_contract,
             instance.fulfillment_amount)
         instance.token_symbol = token_data.get('token_symbol')

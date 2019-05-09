@@ -87,6 +87,12 @@ class BountyAbstract(models.Model):
     categories = models.ManyToManyField(Category)
     deadline = models.DateTimeField()
 
+    # user data
+    issuer_name = models.CharField(max_length=128, blank=True)
+    issuer_email = models.CharField(max_length=128, blank=True)
+    issuer_githubUsername = models.CharField(max_length=128, blank=True)
+    issuer_address = models.CharField(max_length=128, blank=True)
+
     # attached data
     attached_filename = models.CharField(max_length=256, blank=True, null=True)
     attached_data_hash = models.CharField(max_length=256, blank=True, null=True)
@@ -180,7 +186,14 @@ class Bounty(BountyAbstract):
 
         if issuers:
             issuer = next((address for address, index in issuers.items() if index == 0), None)
-            user, created = User.objects.get_or_create(public_address=issuer.lower())
+            user, created = User.objects.get_or_create(
+                public_address=issuer.lower(),
+                defaults={
+	                'name': self.issuer_name,
+	                'email': self.issuer_email,
+	                'github': self.issuer_githubUsername,
+	            }
+            )
             self.user = user
             self.issuer = issuer
 

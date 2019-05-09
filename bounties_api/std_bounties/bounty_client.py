@@ -56,7 +56,7 @@ class BountyClient:
             'user': issuers[0],
             'issuer': kwargs.get('issuers')[0].lower(),
             ###
-
+    
             'issuers': issuers,
             'approvers': approvers,
             'contract_state': json.dumps(contract_state),

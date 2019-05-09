@@ -227,7 +227,6 @@ def map_token_data(version, token_contract, amount):
     elif version == '20':
         HumanStandardToken_abi = bounties_json['interfaces']['HumanStandardToken']
         DSToken_abi = bounties_json['interfaces']['DSToken']
-
         try:
             HumanStandardToken = web3.eth.contract(
                 abi=HumanStandardToken_abi,
@@ -264,6 +263,7 @@ def map_token_data(version, token_contract, amount):
     return {
         'token_symbol': token_symbol,
         'token_decimals': token_decimals,
+        'token_contract': token_contract,
         'token': token_model.id if token_model else None,
         'token_version': version,
         'usd_price': usd_price,

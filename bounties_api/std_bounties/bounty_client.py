@@ -17,7 +17,7 @@ issue_bounty_input_keys = [
     'fulfillmentAmount',
     'arbiter',
     'paysTokens',
-    'tokenContract',
+    'token_contract',
     'value'
 ]
 
@@ -67,6 +67,9 @@ class BountyClient:
 
         if contract_version == STANDARD_BOUNTIES_V1:
             bounty_data.update({'fulfillment_amount': kwargs.get('fulfillment_amount')})
+        else:
+            bounty_data.update({'fulfillment_amount': ipfs_data.get('fulfillment_amount')})
+
 
         bounty_serializer = BountySerializer(data={
             **bounty_data,

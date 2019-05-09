@@ -27,7 +27,7 @@ def bounty_issued(bounty_id, contract_version, **kwargs):
     @keyword approvers
     @keyword data
     @keyword deadline
-    @keyword token
+    @keyword token_contract
     @keyword token_version
     """
 

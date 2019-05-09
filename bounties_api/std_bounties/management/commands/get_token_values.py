@@ -46,9 +46,9 @@ class Command(BaseCommand):
 
                 if price is not None:
                     decimals = bounty.token_decimals
-                    fulfillmentAmount = bounty.fulfillmentAmount
+                    fulfillment_amount = bounty.fulfillment_amount
                     bounty.usd_price = (
-                        fulfillmentAmount / Decimal(pow(10, decimals))) * Decimal(price)
+                        fulfillment_amount / Decimal(pow(10, decimals))) * Decimal(price)
                     bounty.tokenLockPrice = None
                     bounty.save()
                 # maybe a token was not added to coinmarketcap until later
@@ -62,9 +62,9 @@ class Command(BaseCommand):
                 price = token_cache.get(draft_bounty.token_symbol, None)
                 if price is not None:
                     decimals = draft_bounty.token_decimals
-                    fulfillmentAmount = draft_bounty.fulfillmentAmount
+                    fulfillment_amount = draft_bounty.fulfillment_amount
                     draft_bounty.usd_price = (
-                        fulfillmentAmount / Decimal(pow(10, decimals))) * Decimal(price)
+                        fulfillment_amount / Decimal(pow(10, decimals))) * Decimal(price)
                     draft_bounty.save()
                 # maybe a token was not added to coinmarketcap until later
                 if price is not None and not draft_bounty.token:

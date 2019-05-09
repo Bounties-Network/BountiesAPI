@@ -199,12 +199,12 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
     categories = CreatableSlugRelatedField(
         many=True, slug_field='name', queryset=Category.objects.all())
     token_contract = serializers.CharField(required=False, allow_blank=True)
-    tokenSymbol = serializers.CharField(read_only=True)
-    tokenDecimals = serializers.IntegerField(read_only=True)
+    token_symbol = serializers.CharField(read_only=True)
+    token_decimals = serializers.IntegerField(read_only=True)
     arbiter = serializers.CharField(allow_blank=True, required=False)
     usd_price = serializers.FloatField(read_only=True)
     on_chain = serializers.BooleanField(read_only=True)
-    current_market_token_data = TokenSerializer(read_only=True, source='token')
+    #current_market_token_data = TokenSerializer(read_only=True, source='token')
     webReferenceURL = serializers.CharField(required=False, allow_blank=True)
     uid = serializers.CharField(read_only=True)
     calculated_fulfillment_amount = serializers.DecimalField(
@@ -220,6 +220,8 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
+        print('validated data')
+        print(validated_data)
         instance = super(DraftBountyWriteSerializer, self).create(validated_data)
         request = self.context.get('request')
         user = request.current_user
@@ -244,8 +246,8 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         )
         token_data = map_token_data(
             str(instance.token_version),
-            instance.token_contract,
-            instance.fulfillment_amount)
+            validated_data.get('token_contract'),
+            validated_data.get('fulfillment_amount'))
         instance.token_symbol = token_data.get('token_symbol')
         instance.token_decimals = token_data.get('token_decimals')
         instance.token_contract = token_data.get('token_contract')

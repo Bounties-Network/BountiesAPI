@@ -230,7 +230,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
             validated_data.get('fulfillment_amount'))
         instance.token_symbol = token_data.get('token_symbol')
         instance.token_decimals = token_data.get('token_decimals')
-        instance.token_id = token_data.get('token')
+        instance.token_id = token_data.get('token_contract')
         instance.usd_price = token_data.get('usd_price')
         instance.issuer = user.public_address
         instance.save()
@@ -248,7 +248,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
             instance.fulfillment_amount)
         instance.token_symbol = token_data.get('token_symbol')
         instance.token_decimals = token_data.get('token_decimals')
-        instance.token_id = token_data.get('token')
+        instance.token_contract = token_data.get('token_contract')
         instance.usd_price = token_data.get('usd_price')
         instance.save()
         return instance

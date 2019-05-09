@@ -90,7 +90,7 @@ class BountyClient:
         if uid:
             DraftBounty.objects.filter(uid=uid).update(on_chain=True)
 
-        print('bounty info: ', saved_bounty.id, saved_bounty.contract_version)
+        print('bounty info: ', saved_bounty.id, saved_bounty.contract_version, saved_bounty.token_contract)
         return saved_bounty
 
     def activate_bounty(self, bounty, **kwargs):

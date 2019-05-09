@@ -128,8 +128,8 @@ def map_bounty_data(ipfs_hash, bounty_id):
             # optional
             'raw_ipfs_data': str(raw_ipfs_data),
             'data_categories': payload.get('categories', []),
-            'attached_filename': payload.get('ipfsFilename', None),
-            'attached_data_hash': payload.get('ipfsHash', None),
+            'attached_filename': payload.get('sourceFileName', None),
+            'attached_data_hash': payload.get('sourceDirectoryHash', None),
             'attached_url': payload.get('webReferenceURL', None),
 
             # meta

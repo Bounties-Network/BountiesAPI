@@ -230,6 +230,8 @@ class DraftBounty(BountyAbstract):
     data_categories = None
     data_issuer = None
     data_json = None
+    sourceFileName = models.CharField(max_length=256, blank=True)
+    sourceDirectoryHash = models.CharField(max_length=256, blank=True)
 
     class Meta:
         ordering = ['-created']

@@ -56,7 +56,7 @@ class BountyClient:
             'user': issuers[0],
             'issuer': kwargs.get('issuers')[0].lower(),
             ###
-    
+
             'issuers': issuers,
             'approvers': approvers,
             'contract_state': json.dumps(contract_state),
@@ -80,7 +80,6 @@ class BountyClient:
         bounty_serializer.is_valid(raise_exception=True)
 
         saved_bounty = bounty_serializer.save()
-
         saved_bounty.save_and_clear_categories(ipfs_data.get('data_categories'))
         saved_bounty.bounty_stage = ACTIVE_STAGE
         saved_bounty.record_bounty_state(event_date)
@@ -90,7 +89,7 @@ class BountyClient:
         if uid:
             DraftBounty.objects.filter(uid=uid).update(on_chain=True)
 
-        print('bounty info: ', saved_bounty.id, saved_bounty.contract_version, saved_bounty.token_contract)
+        print('bounty info: ', saved_bounty.id, saved_bounty.contract_version, saved_bounty.token_contract, saved_bounty.revisions)
         return saved_bounty
 
     def activate_bounty(self, bounty, **kwargs):

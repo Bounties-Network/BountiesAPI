@@ -120,7 +120,7 @@ def map_bounty_data(ipfs_hash, bounty_id):
             'description': payload.get('description'),
             'fulfillment_amount': int(payload.get('fulfillmentAmount')),
 
-            'revisions': payload.get('expectedRevisions'),
+            'revisions': payload.get('revisions'),
             'experience_level': difficulty,
             'private_fulfillments': payload.get('privateFulfillments'),
             'fulfillers_need_approval': payload.get('fulfillersNeedApproval'),

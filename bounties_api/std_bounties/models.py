@@ -6,7 +6,8 @@ import json
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from user.models import User
-from std_bounties.constants import STAGE_CHOICES, CONTRACT_VERSION_CHOICES, STANDARD_BOUNTIES_V1, DIFFICULTY_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE, TOKEN_CHOICES
+from std_bounties.constants import STAGE_CHOICES, CONTRACT_VERSION_CHOICES, STANDARD_BOUNTIES_V1, DIFFICULTY_CHOICES, \
+    DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE, TOKEN_CHOICES
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
 from django.contrib.postgres.fields import JSONField, ArrayField
@@ -135,8 +136,8 @@ class Bounty(BountyAbstract):
     issuer = models.CharField(max_length=128)
 
     # role-based access controls
-    issuers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_related",)
-    approvers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_relateda",)
+    issuers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_related", )
+    approvers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_relateda", )
 
     # id fields
     bounty_id = models.IntegerField()
@@ -189,10 +190,10 @@ class Bounty(BountyAbstract):
             user, created = User.objects.get_or_create(
                 public_address=issuer.lower(),
                 defaults={
-	                'name': self.issuer_name,
-	                'email': self.issuer_email,
-	                'github': self.issuer_githubUsername,
-	            }
+                    'name': self.issuer_name,
+                    'email': self.issuer_email,
+                    'github': self.issuer_githubUsername,
+                }
             )
             self.user = user
             self.issuer = issuer

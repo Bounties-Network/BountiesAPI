@@ -70,7 +70,6 @@ class BountyClient:
         else:
             bounty_data.update({'fulfillment_amount': ipfs_data.get('fulfillment_amount')})
 
-
         bounty_serializer = BountySerializer(data={
             **bounty_data,
             **ipfs_data,

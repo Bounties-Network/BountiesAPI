@@ -155,9 +155,9 @@ class BountySerializer(CustomSerializer):
         # add 'user_has_applied' if the request contains a current user
         # and the bounty requries fulfillers to obtain approval
         if (
-            instance.fulfillers_need_approval and
-            'request' in self.context and
-            self.context['request'].current_user
+                instance.fulfillers_need_approval and
+                'request' in self.context and
+                self.context['request'].current_user
         ):
             user_has_applied = FulfillerApplication.objects.filter(
                 bounty=instance.pk,
@@ -165,7 +165,8 @@ class BountySerializer(CustomSerializer):
             ).first()
 
             data.update({'user_has_applied': not not user_has_applied})
-            data.update({'user_can_fulfill': user_has_applied and user_has_applied.state == FulfillerApplication.ACCEPTED})
+            data.update(
+                {'user_can_fulfill': user_has_applied and user_has_applied.state == FulfillerApplication.ACCEPTED})
 
         return data
 
@@ -204,7 +205,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
     arbiter = serializers.CharField(allow_blank=True, required=False)
     usd_price = serializers.FloatField(read_only=True)
     on_chain = serializers.BooleanField(read_only=True)
-    #current_market_token_data = TokenSerializer(read_only=True, source='token')
+    # current_market_token_data = TokenSerializer(read_only=True, source='token')
     webReferenceURL = serializers.CharField(required=False, allow_blank=True)
     uid = serializers.CharField(read_only=True)
     calculated_fulfillment_amount = serializers.DecimalField(

@@ -223,6 +223,8 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         print('validated data')
         print(validated_data)
         instance = super(DraftBountyWriteSerializer, self).create(validated_data)
+        print('instance')
+        print(instance)
         request = self.context.get('request')
         user = request.current_user
         instance.user = user
@@ -232,10 +234,11 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
             validated_data.get('fulfillment_amount'))
         instance.token_symbol = token_data.get('token_symbol')
         instance.token_decimals = token_data.get('token_decimals')
-        instance.token_id = token_data.get('token_contract')
+        instance.token_contract = token_data.get('token_contract')
         instance.usd_price = token_data.get('usd_price')
         instance.issuer = user.public_address
         instance.save()
+        print('finished saving')
         return instance
 
     @transaction.atomic

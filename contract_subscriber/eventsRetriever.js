@@ -74,6 +74,9 @@ async function sendEvents(events) {
 			}
 
 			const blockData = await getBlock(blockNumber);
+
+      console.log('blockData', blockData);
+
 			if (!('timestamp' in blockData)) {
 				highestBlock = blockNumber;
 				continue;

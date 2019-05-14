@@ -94,7 +94,6 @@ class Command(BaseCommand):
                 logger.error(e)
                 self.remove_from_queue(message)
                 self.add_to_blacklist(message)
-                raise e
 
     def remove_from_queue(self, message):
         # This means the contract subscriber will never send this event

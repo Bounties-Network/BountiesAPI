@@ -206,7 +206,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
     usd_price = serializers.FloatField(read_only=True)
     on_chain = serializers.BooleanField(read_only=True)
     # current_market_token_data = TokenSerializer(read_only=True, source='token')
-    webReferenceURL = serializers.CharField(required=False, allow_blank=True)
+    attached_url = serializers.CharField(required=False, allow_blank=True)
     uid = serializers.CharField(read_only=True)
     calculated_fulfillment_amount = serializers.DecimalField(
         decimal_places=30,
@@ -238,6 +238,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         instance.token_contract = token_data.get('token_contract')
         instance.usd_price = token_data.get('usd_price')
         instance.issuer = user.public_address
+        # instance.attached_url = validated_data.get('attached_url')
         instance.save()
         print('finished saving')
         return instance

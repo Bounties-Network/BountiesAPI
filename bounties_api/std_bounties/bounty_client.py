@@ -266,7 +266,7 @@ class BountyClient:
         bounty_serializer.is_valid(raise_exception=True)
         saved_bounty = bounty_serializer.save()
 
-        bounty.save_and_clear_categories(updated_data.get('data_categories'))
+        saved_bounty.save_and_clear_categories(updated_data.get('data_categories'))
 
         return saved_bounty
 

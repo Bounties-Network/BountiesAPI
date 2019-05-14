@@ -34,7 +34,7 @@ async function handler() {
 
 			console.log('eventBlock: ', eventBlock);
 			if (eventBlock) {
-				await writeAsync(`currentBlock_${CONTRACT_VERSION}`, eventBlock + 1);
+				await writeAsync(`currentBlock_${CONTRACT_VERSION}`, eventBlock);
 			}
 
 			await delay(1000);

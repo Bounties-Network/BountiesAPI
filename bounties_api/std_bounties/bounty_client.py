@@ -111,7 +111,7 @@ class BountyClient:
         fulfillment_data = {
             'contract_version': bounty.contract_version,
             'fulfillment_id': fulfillment_id,
-            'fulfiller': kwargs.get('fulfillers')[0],
+            'fulfiller': kwargs.get('fulfillers')[0].lower(),
             'bounty': bounty.pk,
             'accepted': False,
             'fulfillment_created': datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp'))),

@@ -35,7 +35,7 @@ class FulfillmentReviews(APIView):
         bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
         fulfillment = get_object_or_404(
             Fulfillment,
-            bounty=bounty,
+            bounty_id=bounty_id,
             fulfillment_id=fulfillment_id,
             accepted=True)
         current_user = request.current_user

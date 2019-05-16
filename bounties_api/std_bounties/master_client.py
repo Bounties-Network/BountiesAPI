@@ -237,7 +237,7 @@ def bounty_deadline_changed(bounty_id, contract_version, **kwargs):
 # will be deprecated
 @export
 def bounty_activated(bounty_id, **kwargs):
-    bounty = Bounty.objects.get(bounty_id=bounty_id)
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty_client.activate_bounty(bounty, **kwargs)
 
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, 1)

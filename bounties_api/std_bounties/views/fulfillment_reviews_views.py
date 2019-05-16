@@ -32,6 +32,13 @@ class FulfillmentReviews(APIView):
 
     @staticmethod
     def post(request, bounty_id, fulfillment_id):
+
+        print('bounty id')
+        print(bounty_id)
+
+        print('fulfillment id')
+        print(fulfillment_id)
+
         bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
         fulfillment = get_object_or_404(
             Fulfillment,
@@ -42,11 +49,21 @@ class FulfillmentReviews(APIView):
         reviewer = None
         reviewee = None
 
+        print('bounty')
+        print(bounty.title)
+        print('fulfillment')
+        print(fulfillment.description)
         print('is fulfiller')
         print(fulfillment.user == current_user)
         print('is issuer')
         print(bounty.user == current_user)
-        
+        print('current public address')
+        print(current_user.public_address)
+        print('fulfiller public address')
+        print(fulfillment.user.public_address)
+        print('issuer public address')
+        print(bounty.user.public_address)
+
         if fulfillment.user == current_user and not fulfillment.issuer_review:
             reviewer = fulfillment.user
             reviewee = bounty.user

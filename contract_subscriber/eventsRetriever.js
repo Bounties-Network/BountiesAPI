@@ -50,7 +50,13 @@ async function sendEvents(events) {
 
 			console.log({ transactionHash });
 
-			const rawTransaction = await getTransaction(transactionHash);
+			let rawTransaction = await getTransaction(transactionHash);
+
+      // retries incase the first call failed
+      while (!rawTransaction){
+        console.log('retrying transaction:', transactionHash);
+        rawTransaction = await getTransaction(transactionHash);
+      }
 			const transactionFrom = rawTransaction.from;
 			let contractMethodInputs = {};
 
@@ -73,9 +79,13 @@ async function sendEvents(events) {
 					.value();
 			}
 
-			const blockData = await getBlock(blockNumber);
+			let blockData = await getBlock(blockNumber);
 
-      console.log('blockData', blockData);
+      // retries incase the first call failed
+      while (!blockData){
+        console.log('retrying blockdata:', blockNumber);
+        blockData = await getBlock(blockNumber);
+      }
 
 			if (!('timestamp' in blockData)) {
 				highestBlock = blockNumber;

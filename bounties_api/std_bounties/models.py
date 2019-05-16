@@ -221,6 +221,11 @@ class Bounty(BountyAbstract):
                     except ObjectDoesNotExist:
                         self.categories.create(name=category.strip())
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['bounty_id', 'contract_version']),
+        ]
+
 
 class DraftBounty(BountyAbstract):
     uid = models.UUIDField(default=uuid.uuid4)

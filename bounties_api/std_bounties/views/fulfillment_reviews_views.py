@@ -39,7 +39,7 @@ class FulfillmentReviews(APIView):
         print('fulfillment id')
         print(fulfillment_id)
 
-        bounty = get_object_or_404(Bounty, bounty_id=bounty_id)
+        bounty = get_object_or_404(Bounty, pk=bounty_id)
         fulfillment = get_object_or_404(
             Fulfillment,
             bounty=bounty,

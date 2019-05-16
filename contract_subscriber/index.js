@@ -22,6 +22,7 @@ async function handler() {
 			console.log('fromBlock: ', fromBlock);
 			console.log('latestBlock: ', latestBlock)
 			let eventBlock;
+
 			while (fromBlock < latestBlock) {
 				let events = await StandardBounties.getPastEvents({fromBlock, toBlock: fromBlock + 100000});
 				console.log('currentCheck: ', fromBlock);

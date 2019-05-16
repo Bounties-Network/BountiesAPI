@@ -107,10 +107,10 @@ class BountyClient:
 
         data_hash = kwargs.get('data')
         ipfs_data = map_fulfillment_data(data_hash, bounty.bounty_id, fulfillment_id)
-
         fulfillment_data = {
             'contract_version': bounty.contract_version,
             'fulfillment_id': fulfillment_id,
+            'fulfiller_address': kwargs.get('fulfillers')[0].lower(),
             'fulfiller': kwargs.get('fulfillers')[0].lower(),
             'bounty': bounty.pk,
             'accepted': False,

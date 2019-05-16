@@ -5,5 +5,4 @@ while :
 do
 	sleep 30
 	python3 manage.py bounties_subscriber --blacklist
-	sleep 300
 done

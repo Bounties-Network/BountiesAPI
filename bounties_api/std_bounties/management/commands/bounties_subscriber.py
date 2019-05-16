@@ -134,6 +134,9 @@ class Command(BaseCommand):
                 logger.warning('Retrying event for {} failed with {}'.format(
                     key, e))
                 redis_client.lpush(key, retry)
+                retries = redis_client.lrange(key, 0, -1)
+                print('length of retries')
+                print(len(retries))
 
     def handle_message(self, message):
         logger.info('For bounty id {}, running event {}'.format(message.bounty_id, message.event))

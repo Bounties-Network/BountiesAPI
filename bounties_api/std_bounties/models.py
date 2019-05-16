@@ -22,7 +22,7 @@ class Review(models.Model):
         validators=[
             MaxValueValidator(5),
             MinValueValidator(1)])
-    review = models.TextField()
+    review = models.TextField(blank=True)
     platform = models.CharField(max_length=128, blank=True)
 
 

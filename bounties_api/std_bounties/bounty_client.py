@@ -322,7 +322,7 @@ class BountyClient:
             fulfillment_amount
         )[0]
 
-        bounty.fulfillmentAmount = Decimal(fulfillment_amount)
+        bounty.fulfillment_amount = Decimal(fulfillment_amount)
         bounty.usd_price = usd_price
         bounty.save()
 

@@ -270,6 +270,7 @@ def bounty_killed(bounty_id, contract_version, **kwargs):
     slack_client.bounty_killed(bounty)
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, STANDARD_BOUNTIES_V1)
 
+
 @export
 def bounty_drained(bounty_id, contract_version, **kwargs):
 

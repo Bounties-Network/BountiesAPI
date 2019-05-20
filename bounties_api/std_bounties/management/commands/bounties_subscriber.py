@@ -224,6 +224,7 @@ class Command(BaseCommand):
 
         print('contract inputs = ', inputs)
         print('event data = ', event_data)
+        print('message = ', message)
 
         try:
             base_event_data = {
@@ -297,7 +298,7 @@ class Command(BaseCommand):
 
             # untested
             elif event == 'BountyKilled':
-                master_client.bounty_killed(
+                master_client.client['bounty_killed'](
                     **base_event_data,
                 )
 

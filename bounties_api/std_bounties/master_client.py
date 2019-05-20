@@ -3,6 +3,7 @@ from notifications.notification_client import NotificationClient
 from std_bounties.slack_client import SlackMessageClient
 from std_bounties.seo_client import SEOClient
 from std_bounties.models import Bounty, Fulfillment
+from std_bounties.constants import STANDARD_BOUNTIES_V1
 
 
 bounty_client = BountyClient()
@@ -237,7 +238,7 @@ def bounty_deadline_changed(bounty_id, contract_version, **kwargs):
 # will be deprecated
 @export
 def bounty_activated(bounty_id, **kwargs):
-    bounty = Bounty.objects.get(bounty_id=bounty_id)
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=STANDARD_BOUNTIES_V1)
     bounty_client.activate_bounty(bounty, **kwargs)
 
     seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, 1)
@@ -251,19 +252,23 @@ def bounty_activated(bounty_id, **kwargs):
 
 
 # legacy
+@export
 def bounty_killed(bounty_id, contract_version, **kwargs):
     '''
     @param bounty_id
     @param contract_version
     '''
 
-    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
+    print('bounty id')
+    print(bounty_id)
+    print('contract version')
+    print(STANDARD_BOUNTIES_V1)
+    bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=STANDARD_BOUNTIES_V1)
     bounty_client.kill_bounty(bounty, **kwargs)
 
     notification_client.bounty_killed(bounty_id, **kwargs)
     slack_client.bounty_killed(bounty)
-    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, contract_version)
-
+    seo_client.bounty_preview_screenshot(bounty.platform, bounty_id, STANDARD_BOUNTIES_V1)
 
 @export
 def bounty_drained(bounty_id, contract_version, **kwargs):

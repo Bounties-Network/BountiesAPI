@@ -114,8 +114,6 @@ def map_bounty_data(ipfs_hash, bounty_id):
         else:
             difficulty = BEGINNER
 
-        print('web reference URL')
-        print(payload.get('webReferenceURL', None))
         bounty = {
             # required
             'title': payload.get('title'),

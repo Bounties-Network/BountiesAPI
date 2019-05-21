@@ -259,10 +259,6 @@ def bounty_killed(bounty_id, contract_version, **kwargs):
     @param contract_version
     '''
 
-    print('bounty id')
-    print(bounty_id)
-    print('contract version')
-    print(STANDARD_BOUNTIES_V1)
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=STANDARD_BOUNTIES_V1)
     bounty_client.kill_bounty(bounty, **kwargs)
 

@@ -222,10 +222,6 @@ class Command(BaseCommand):
         inputs = message.contract_method_inputs
         event_data = message.contract_event_data
 
-        print('contract inputs = ', inputs)
-        print('event data = ', event_data)
-        print('message = ', message)
-
         try:
             base_event_data = {
                 'bounty_id': message.bounty_id,
@@ -375,8 +371,6 @@ class Command(BaseCommand):
             # make camel case
             event = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', message.event)
             event = re.sub('([a-z0-9])([A-Z])', r'\1_\2', event).lower()
-
-            print(message.contract_event_data)
 
             events_to_skip = [
                 # not relevant for getting stb 2.0 to be compatible with stb 1.0,

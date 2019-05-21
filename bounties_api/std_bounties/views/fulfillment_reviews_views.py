@@ -32,13 +32,6 @@ class FulfillmentReviews(APIView):
 
     @staticmethod
     def post(request, bounty_id, fulfillment_id):
-
-        print('bounty id')
-        print(bounty_id)
-
-        print('fulfillment id')
-        print(fulfillment_id)
-
         bounty = get_object_or_404(Bounty, pk=bounty_id)
         fulfillment = get_object_or_404(
             Fulfillment,

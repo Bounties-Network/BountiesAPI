@@ -221,11 +221,7 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        print('validated data')
-        print(validated_data)
         instance = super(DraftBountyWriteSerializer, self).create(validated_data)
-        print('instance')
-        print(instance)
         request = self.context.get('request')
         user = request.current_user
         instance.user = user
@@ -240,7 +236,6 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         instance.issuer = user.public_address
         # instance.attached_url = validated_data.get('attached_url')
         instance.save()
-        print('finished saving')
         return instance
 
     @transaction.atomic

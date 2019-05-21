@@ -9,8 +9,6 @@ def to_token_type(apps, schema_editor):
     Bounty = apps.get_model('std_bounties', 'Bounty')
     Draft = apps.get_model('std_bounties', 'DraftBounty')
 
-    print('beginning')
-
     for bounty in Bounty.objects.all():
         if bounty.paysTokens:
             bounty.token_version = 20

@@ -6,11 +6,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ('std_bounties', '0019_auto_20190331_1807'),
-    ]
-
     operations = [
         migrations.RemoveField(
             model_name='bounty',

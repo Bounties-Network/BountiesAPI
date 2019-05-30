@@ -15,7 +15,7 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [('std_bounties', '0015_auto_20180906_0552'), ('std_bounties', '0016_bounty_image_preview'), ('std_bounties', '0017_auto_20190131_0525'), ('std_bounties', '0018_auto_20190331_1807'), ('std_bounties', '0019_auto_20190331_1807'), ('std_bounties', '0020_auto_20190331_1916'), ('std_bounties', '0021_auto_20190401_1836'), ('std_bounties', '0022_auto_20190401_1856'), ('std_bounties', '0023_auto_20190502_2217'), ('std_bounties', '0024_auto_20190509_1256'), ('std_bounties', '0025_auto_20190509_1751')]
+    replaces = [('std_bounties', '0015_auto_20180906_0552'), ('std_bounties', '0016_bounty_image_preview'), ('std_bounties', '0017_auto_20190131_0525'), ('std_bounties', '0018_auto_20190331_1807'), ('std_bounties', '0020_auto_20190331_1916'), ('std_bounties', '0021_auto_20190401_1836'), ('std_bounties', '0022_auto_20190401_1856'), ('std_bounties', '0023_auto_20190502_2217'), ('std_bounties', '0024_auto_20190509_1256'), ('std_bounties', '0025_auto_20190509_1751')]
 
     dependencies = [
         ('user', '0027_auto_20190223_1548'),
@@ -325,9 +325,6 @@ class Migration(migrations.Migration):
             model_name='contribution',
             name='contributor',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='user.User'),
-        ),
-        migrations.RunPython(
-            code=std_bounties.migrations.0019_auto_20190331_1807.to_token_type,
         ),
         migrations.RemoveField(
             model_name='bounty',

@@ -64,6 +64,10 @@ class BountyClient:
             'bounty_stage': DEAD_STAGE,
             'bounty_created': event_date,
         }
+        print('contract version')
+        print(contract_version)
+        print('fulfillment amount')
+        print(ipfs_data.get('fulfillmentAmount'))
 
         if contract_version == STANDARD_BOUNTIES_V1:
             bounty_data.update({'fulfillment_amount': kwargs.get('fulfillment_amount')})

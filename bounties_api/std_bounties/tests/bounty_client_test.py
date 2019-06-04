@@ -311,7 +311,7 @@ class TestBountyClient(unittest.TestCase):
             deadline=deadline,
             issuer='0x4242424242424242424242424242424242424242',
             issuer_name='Vlad'
-            )
+        )
         bounty_to_transfer_issuer.save()
         bounty_to_transfer_issuer_id = bounty_to_transfer_issuer.id
         # Transfer issuer

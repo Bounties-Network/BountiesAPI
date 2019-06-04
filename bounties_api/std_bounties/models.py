@@ -148,7 +148,7 @@ class Bounty(BountyAbstract):
         decimals = self.tokenDecimals
         self.calculated_balance = calculate_token_value(balance, decimals)
         self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
-        user = User.objects.get_or_create(
+        user, created = User.objects.get_or_create(
             public_address=self.issuer
         )
         if not user.profile_touched_manually and not self.transferred:

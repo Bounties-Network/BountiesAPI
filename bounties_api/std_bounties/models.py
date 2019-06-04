@@ -149,14 +149,9 @@ class Bounty(BountyAbstract):
         self.calculated_balance = calculate_token_value(balance, decimals)
         self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
         user, created = User.objects.get_or_create(
-            public_address=self.issuer,
-            defaults={
-                'name': self.issuer_name,
-                'email': self.issuer_email,
-                'github': self.issuer_githubUsername,
-            }
+            public_address=self.issuer
         )
-        if not created and not user.profile_touched_manually and not self.transfered:
+        if not user.profile_touched_manually and not self.transfered:
             user.name = self.issuer_name
             user.email = self.issuer_email
             user.github = self.issuer_githubUsername

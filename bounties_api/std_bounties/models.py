@@ -110,7 +110,7 @@ class BountyAbstract(models.Model):
     platform = models.CharField(max_length=128, blank=True)
     schemaVersion = models.CharField(max_length=64, blank=True)
     schemaName = models.CharField(max_length=128, null=True)
-    
+
     class Meta:
         abstract = True
 

@@ -124,7 +124,7 @@ class Bounty(BountyAbstract):
     bounty_id = models.IntegerField()
     data = models.CharField(max_length=128)
     issuer = models.CharField(max_length=128)
-    transfered = models.BooleanField
+    transferred = models.BooleanField
     old_balance = models.DecimalField(decimal_places=0, max_digits=64, null=True)
     tokenLockPrice = models.FloatField(null=True, blank=True)
     balance = models.DecimalField(
@@ -148,10 +148,10 @@ class Bounty(BountyAbstract):
         decimals = self.tokenDecimals
         self.calculated_balance = calculate_token_value(balance, decimals)
         self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
-        user, created = User.objects.get_or_create(
+        user = User.objects.get_or_create(
             public_address=self.issuer
         )
-        if not user.profile_touched_manually and not self.transfered:
+        if not user.profile_touched_manually and not self.transferred:
             user.name = self.issuer_name
             user.email = self.issuer_email
             user.github = self.issuer_githubUsername

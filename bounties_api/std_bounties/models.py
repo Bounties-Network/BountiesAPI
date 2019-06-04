@@ -110,7 +110,7 @@ class BountyAbstract(models.Model):
     platform = models.CharField(max_length=128, blank=True)
     schemaVersion = models.CharField(max_length=64, blank=True)
     schemaName = models.CharField(max_length=128, null=True)
-
+    
     class Meta:
         abstract = True
 
@@ -124,6 +124,7 @@ class Bounty(BountyAbstract):
     bounty_id = models.IntegerField()
     data = models.CharField(max_length=128)
     issuer = models.CharField(max_length=128)
+    transfered = models.BooleanField
     old_balance = models.DecimalField(decimal_places=0, max_digits=64, null=True)
     tokenLockPrice = models.FloatField(null=True, blank=True)
     balance = models.DecimalField(
@@ -155,7 +156,7 @@ class Bounty(BountyAbstract):
                 'github': self.issuer_githubUsername,
             }
         )
-        if not created and not user.profile_touched_manually:
+        if not created and not user.profile_touched_manually and not self.transfered:
             user.name = self.issuer_name
             user.email = self.issuer_email
             user.github = self.issuer_githubUsername

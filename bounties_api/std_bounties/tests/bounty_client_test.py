@@ -321,6 +321,7 @@ class TestBountyClient(unittest.TestCase):
             bounty=bounty_to_transfer_issuer,
             inputs=inputs)
         self.assertEqual(result.issuer, inputs['newIssuer'])
+        self.assertNotEqual(result.user.name, result.issuer_name)
 
     def test_increase_payout(self):
         # Create bounty

@@ -250,6 +250,7 @@ class BountyClient:
 
     def transfer_issuer(self, bounty, inputs, **kwargs):
         bounty.issuer = inputs.get('newIssuer')
+        bounty.transfered = True
         bounty.save()
 
         return bounty

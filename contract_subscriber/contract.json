@@ -11,7 +11,7 @@
 			}
 		},
 		"v2": {
-			"mainNet":  "NOT DEPLOYED YET",
+			"mainNet":  "0xE7F69EA2a79521136eE0bf3c50f6B5F1Ea0AB0cd",
 			"rinkebystaging": "0xa78c680ceaa0de08ee58a28c82193fcfae22379c",
 			"rinkeby": "0xa78c680ceaa0de08ee58a28c82193fcfae22379c",
 			"interfaces": {

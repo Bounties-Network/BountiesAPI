@@ -60,10 +60,10 @@ class TokenListSerializer(serializers.ModelSerializer):
         return obj.get('count', 0)
 
     def get_token_symbol(self, obj):
-        return obj.get('tokenSymbol')
+        return obj.get('token_symbol')
 
     def get_token_contract(self, obj):
-        return obj.get('tokenContract')
+        return obj.get('token_contract')
 
     def get_price_usd(self, obj):
         token_array = obj.get('token')

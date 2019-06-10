@@ -82,8 +82,7 @@ class Email:
         issuer = bounty.user
 
         remaining = token_decimals(bounty.calculated_balance)
-        token_amount = token_decimals(
-            bounty.calculated_fulfillmentAmount)
+        token_amount = token_decimals(bounty.calculated_fulfillment_amount)
 
         if len(description) > self.max_description_length:
             # Cut off at the closest word after the limit
@@ -111,9 +110,9 @@ class Email:
             ).all().count()
 
         remaining_usd = ' unknown'
-        if bounty.tokenLockPrice:
+        if bounty.token_lock_price:
             remaining_usd = usd_decimals(
-                remaining * usd_decimals(bounty.tokenLockPrice))
+                remaining * usd_decimals(bounty.token_lock_price))
         elif bounty.token and bounty.token.price_usd:
             remaining_usd = usd_decimals(
                 remaining * usd_decimals(bounty.token.price_usd))
@@ -121,9 +120,9 @@ class Email:
         added_amount = 0
         if (notification_name == constants.CONTRIBUTION_RECEIVED or
                 notification_name == constants.CONTRIBUTION_ADDED):
-            inputs = kwargs['inputs']
+            amount = kwargs['amount']
             added_amount = token_decimals(calculate_token_value(
-                int(Decimal(inputs['value'])), bounty.tokenDecimals))
+                int(Decimal(amount)), bounty.token_decimals))
 
         rating_url = url
         if notification_name == constants.FULFILLMENT_ACCEPTED_FULFILLER:
@@ -162,7 +161,7 @@ class Email:
             'notification_name': notification_name,
             'usd_amount': usd_decimals(bounty.usd_price),
             'token_amount': token_amount,
-            'token': bounty.tokenSymbol,
+            'token': bounty.token_symbol,
             'bounty_categories': Email.render_categories(bounty.data_categories),
             'token_amount_remaining': remaining,
             'usd_amount_remaining': remaining_usd,

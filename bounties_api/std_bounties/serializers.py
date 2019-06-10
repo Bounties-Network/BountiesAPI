@@ -5,6 +5,7 @@ from rest_framework import serializers
 from bounties.serializers import CreatableSlugRelatedField
 from std_bounties.models import (
     Bounty,
+    Contribution,
     Fulfillment,
     FulfillerApplication,
     Category,
@@ -88,14 +89,21 @@ class BountyFulfillmentSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'bounty_id',
-            'bountyStage',
+            'bounty_stage',
             'title',
             'usd_price',
-            'tokenSymbol',
-            'tokenDecimals',
-            'fulfillmentAmount',
-            'calculated_fulfillmentAmount',
-            'user']
+            'token_symbol',
+            'token_decimals',
+            'fulfillment_amount',
+            'calculated_fulfillment_amount',
+            'user'
+        ]
+
+
+class ContributionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contribution
+        fields = '__all__'
 
 
 class FulfillmentSerializer(CustomSerializer):
@@ -120,7 +128,7 @@ class TokenSerializer(serializers.ModelSerializer):
 
 
 class BountySerializer(CustomSerializer):
-    bountyStage = serializers.ChoiceField(choices=STAGE_CHOICES)
+    bounty_stage = serializers.ChoiceField(choices=STAGE_CHOICES)
     categories = CategorySerializer(read_only=True, many=True)
     current_market_token_data = TokenSerializer(read_only=True, source='token')
     user = UserSerializer(read_only=True)
@@ -147,9 +155,9 @@ class BountySerializer(CustomSerializer):
         # add 'user_has_applied' if the request contains a current user
         # and the bounty requries fulfillers to obtain approval
         if (
-            instance.fulfillers_need_approval and
-            'request' in self.context and
-            self.context['request'].current_user
+                instance.fulfillers_need_approval and
+                'request' in self.context and
+                self.context['request'].current_user
         ):
             user_has_applied = FulfillerApplication.objects.filter(
                 bounty=instance.pk,
@@ -157,7 +165,8 @@ class BountySerializer(CustomSerializer):
             ).first()
 
             data.update({'user_has_applied': not not user_has_applied})
-            data.update({'user_can_fulfill': user_has_applied and user_has_applied.state == FulfillerApplication.ACCEPTED})
+            data.update(
+                {'user_can_fulfill': user_has_applied and user_has_applied.state == FulfillerApplication.ACCEPTED})
 
         return data
 
@@ -190,16 +199,16 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
     # In general try and not have all this logic in a serializer
     categories = CreatableSlugRelatedField(
         many=True, slug_field='name', queryset=Category.objects.all())
-    tokenContract = serializers.CharField(required=False, allow_blank=True)
-    tokenSymbol = serializers.CharField(read_only=True)
-    tokenDecimals = serializers.IntegerField(read_only=True)
+    token_contract = serializers.CharField(required=False, allow_blank=True)
+    token_symbol = serializers.CharField(read_only=True)
+    token_decimals = serializers.IntegerField(read_only=True)
     arbiter = serializers.CharField(allow_blank=True, required=False)
     usd_price = serializers.FloatField(read_only=True)
     on_chain = serializers.BooleanField(read_only=True)
-    current_market_token_data = TokenSerializer(read_only=True, source='token')
-    webReferenceURL = serializers.CharField(required=False, allow_blank=True)
+    # current_market_token_data = TokenSerializer(read_only=True, source='token')
+    attached_url = serializers.CharField(required=False, allow_blank=True)
     uid = serializers.CharField(read_only=True)
-    calculated_fulfillmentAmount = serializers.DecimalField(
+    calculated_fulfillment_amount = serializers.DecimalField(
         decimal_places=30,
         max_digits=70,
         read_only=True)
@@ -217,14 +226,15 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
         user = request.current_user
         instance.user = user
         token_data = map_token_data(
-            validated_data.get('paysTokens'),
-            validated_data.get('tokenContract'),
-            validated_data.get('fulfillmentAmount'))
-        instance.tokenSymbol = token_data.get('tokenSymbol')
-        instance.tokenDecimals = token_data.get('tokenDecimals')
-        instance.token_id = token_data.get('token')
+            str(instance.token_version),
+            validated_data.get('token_contract'),
+            validated_data.get('fulfillment_amount'))
+        instance.token_symbol = token_data.get('token_symbol')
+        instance.token_decimals = token_data.get('token_decimals')
+        instance.token_contract = token_data.get('token_contract')
         instance.usd_price = token_data.get('usd_price')
         instance.issuer = user.public_address
+        # instance.attached_url = validated_data.get('attached_url')
         instance.save()
         return instance
 
@@ -235,12 +245,12 @@ class DraftBountyWriteSerializer(serializers.ModelSerializer):
             validated_data
         )
         token_data = map_token_data(
-            instance.paysTokens,
-            instance.tokenContract,
-            instance.fulfillmentAmount)
-        instance.tokenSymbol = token_data.get('tokenSymbol')
-        instance.tokenDecimals = token_data.get('tokenDecimals')
-        instance.token_id = token_data.get('token')
+            str(instance.token_version),
+            validated_data.get('token_contract'),
+            validated_data.get('fulfillment_amount'))
+        instance.token_symbol = token_data.get('token_symbol')
+        instance.token_decimals = token_data.get('token_decimals')
+        instance.token_contract = token_data.get('token_contract')
         instance.usd_price = token_data.get('usd_price')
         instance.save()
         return instance

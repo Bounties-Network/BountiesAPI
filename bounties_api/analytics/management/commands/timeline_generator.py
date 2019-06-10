@@ -53,7 +53,7 @@ def get_date(time_frame):
 
 def add_on(stage):
     return lambda current, next_value: current + \
-        1 if next_value.bountyStage == stage else current
+        1 if next_value.bounty_stage == stage else current
 
 
 def get_bounties_issued(time_frame):
@@ -113,7 +113,7 @@ def get_total_amount_paid(time_frame, accepted_date=datetime.now()):
 
 def get_avg_fulfillment_amount(time_frame):
     completed_bounties = filter(
-        lambda bounty: bounty.bountyStage == COMPLETED_STAGE,
+        lambda bounty: bounty.bounty_stage == COMPLETED_STAGE,
         time_frame)
     (total, count) = reduce(lambda prev, current: (
         prev[0] + current.bounty.usd_price, prev[1] + 1), completed_bounties, (0, 0))
@@ -123,12 +123,12 @@ def get_avg_fulfillment_amount(time_frame):
 
 def get_total_fulfillment_amount(time_frame):
     completed_bounties = filter(
-        lambda bounty: bounty.bountyStage == COMPLETED_STAGE,
+        lambda bounty: bounty.bounty_stage == COMPLETED_STAGE,
         time_frame)
     return reduce(
         lambda prev,
         current: prev +
-        current.bounty.fulfillmentAmount,
+        current.bounty.fulfillment_amount,
         completed_bounties,
         0)
 
@@ -185,9 +185,9 @@ def build_stages(time_frame):
         bounty_states = time_frame.filter(
             bounty=bounty_id).order_by(
             '-change_date',
-            '-bountyStage')
-        bounty_stages[bounty_id] = map(lambda b: b.bountyStage, bounty_states)
-        current_stage = bounty_states.first().bountyStage
+            '-bounty_stage')
+        bounty_stages[bounty_id] = map(lambda b: b.bounty_stage, bounty_states)
+        current_stage = bounty_states.first().bounty_stage
         stages[current_stage] = stages[current_stage] + 1
 
     return stages, bounty_stages
@@ -220,7 +220,7 @@ def generate_timeline(time_frame, platform=DEFAULT_PLATFORM):
             bounty__platform=platform)
 
     bounties_state_frame_day = bounty_state_platform.filter(
-        change_date__range=time_frame, bountyStage=DRAFT_STAGE)
+        change_date__range=time_frame, bounty_stage=DRAFT_STAGE)
     bounties_state_frame = bounty_state_platform.filter(
         change_date__lte=time_frame[1])
     fulfillment_accepted_frame = fulfillment_platform.filter(

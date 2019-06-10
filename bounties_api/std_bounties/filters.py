@@ -69,10 +69,11 @@ class BountiesFilter(filters.FilterSet):
         fields = {
             'platform': ['in', 'exact'],
             'issuer': ['exact'],
-            'experienceLevel': ['exact', 'in'],
-            'fulfillmentAmount': ['exact', 'lt', 'gt', 'lte'],
-            'bountyStage': ['exact', 'in'],
+            'experience_level': ['exact', 'in'],
+            'fulfillment_amount': ['exact', 'lt', 'gt', 'lte'],
+            'bounty_stage': ['exact', 'in'],
             'bounty_created': ['lt', 'gt', 'exact'],
             'deadline': ['lt', 'gt', 'exact'],
             'bounty_id': ['exact'],
+            'contract_version': ['exact']
         }

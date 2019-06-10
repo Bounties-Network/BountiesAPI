@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.contrib.postgres.fields import JSONField
 
 import uuid
+import json
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from user.models import User
-from std_bounties.constants import STAGE_CHOICES, DIFFICULTY_CHOICES, DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE
+from std_bounties.constants import STAGE_CHOICES, CONTRACT_VERSION_CHOICES, STANDARD_BOUNTIES_V1, DIFFICULTY_CHOICES, \
+    DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE, TOKEN_CHOICES
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
+from django.contrib.postgres.fields import JSONField, ArrayField
 
 
 class Review(models.Model):
@@ -20,7 +22,7 @@ class Review(models.Model):
         validators=[
             MaxValueValidator(5),
             MinValueValidator(1)])
-    review = models.TextField()
+    review = models.TextField(blank=True)
     platform = models.CharField(max_length=128, blank=True)
 
 
@@ -49,7 +51,7 @@ class Token(models.Model):
 
 class BountyState(models.Model):
     bounty = models.ForeignKey('Bounty')
-    bountyStage = models.IntegerField(null=False)
+    bounty_stage = models.IntegerField(null=False)
     change_date = models.DateTimeField(null=False)
 
     def save(self, *args, **kwargs):
@@ -59,13 +61,13 @@ class BountyState(models.Model):
         queryset = BountyState.objects.filter(bounty=self.bounty)
         if queryset.exists():
             last_record = queryset.latest()
-            last_stage = last_record.bountyStage
+            last_stage = last_record.bounty_stage
             if last_stage == EXPIRED_STAGE and self.change_date < last_record.change_date:
                 last_record.delete()
             if last_stage == ACTIVE_STAGE and self.bounty.deadline < self.change_date:
                 BountyState.objects.create(
                     bounty=self.bounty,
-                    bountyStage=EXPIRED_STAGE,
+                    bounty_stage=EXPIRED_STAGE,
                     change_date=self.bounty.deadline
                 )
         super(BountyState, self).save(*args, **kwargs)
@@ -75,92 +77,127 @@ class BountyState(models.Model):
 
 
 class BountyAbstract(models.Model):
+    # legacy fields
     user = models.ForeignKey('user.User', null=True)
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-    categories = models.ManyToManyField(Category)
-    deadline = models.DateTimeField()
-    arbiter = models.CharField(max_length=128, null=True)
-    private_fulfillments = models.BooleanField(default=True)
-    fulfillers_need_approval = models.BooleanField(default=False)
-    fulfillmentAmount = models.DecimalField(decimal_places=0, max_digits=64)
-    calculated_fulfillmentAmount = models.DecimalField(
-        decimal_places=30,
-        max_digits=70,
-        null=True,
-        default=0)
-    paysTokens = models.BooleanField()
-    experienceLevel = models.IntegerField(choices=DIFFICULTY_CHOICES, null=True)
-    revisions = models.IntegerField(null=True)
+
+    # bounty data
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField(blank=True)
-    token = models.ForeignKey(Token, null=True)
-    tokenSymbol = models.CharField(max_length=128, default='ETH')
-    tokenDecimals = models.IntegerField(default=18)
-    tokenContract = models.CharField(max_length=128, default='0x0000000000000000000000000000000000000000')
-    usd_price = models.FloatField(default=0)
+    experience_level = models.IntegerField(choices=DIFFICULTY_CHOICES, null=True)
+    revisions = models.IntegerField(null=True)
+    categories = models.ManyToManyField(Category)
+    deadline = models.DateTimeField()
+
+    # user data
     issuer_name = models.CharField(max_length=128, blank=True)
     issuer_email = models.CharField(max_length=128, blank=True)
     issuer_githubUsername = models.CharField(max_length=128, blank=True)
     issuer_address = models.CharField(max_length=128, blank=True)
-    sourceFileName = models.CharField(max_length=256, blank=True)
-    sourceFileHash = models.CharField(max_length=256, blank=True)
-    sourceDirectoryHash = models.CharField(max_length=256, blank=True)
-    webReferenceURL = models.CharField(max_length=256, blank=True)
-    platform = models.CharField(max_length=128, blank=True)
-    schemaVersion = models.CharField(max_length=64, blank=True)
-    schemaName = models.CharField(max_length=128, null=True)
+
+    # attached data
+    attached_filename = models.CharField(max_length=256, blank=True, null=True)
+    attached_data_hash = models.CharField(max_length=256, blank=True, null=True)
+    attached_url = models.CharField(max_length=256, blank=True, null=True)
+
+    # token info
+    token = models.ForeignKey(Token, null=True)
+    token_symbol = models.CharField(max_length=128, default='ETH')
+    token_decimals = models.IntegerField(default=18)
+    token_version = models.IntegerField(choices=TOKEN_CHOICES, null=True)
+    token_contract = models.CharField(max_length=128, default='0x0000000000000000000000000000000000000000')
+
+    # payout info
+    usd_price = models.FloatField(default=0)
+    fulfillment_amount = models.DecimalField(decimal_places=0, max_digits=64, default=0)
+    calculated_fulfillment_amount = models.DecimalField(
+        decimal_places=30,
+        max_digits=70,
+        null=True,
+        default=0
+    )
+
+    # flags
+    private_fulfillments = models.BooleanField(default=True)
+    fulfillers_need_approval = models.BooleanField(default=False)
+
+    # metadata
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    schema_version = models.CharField(max_length=64, blank=True)
+    schema_name = models.CharField(max_length=128, null=True)
+    platform = models.CharField(max_length=128, blank=True, default="bounties-network")
 
     class Meta:
         abstract = True
 
 
 class Bounty(BountyAbstract):
-    id = models.IntegerField(primary_key=True)
-    uid = models.CharField(max_length=128, blank=True, null=True)
-    bounty_created = models.DateTimeField(null=True)
-    bountyStage = models.IntegerField(choices=STAGE_CHOICES, default=DRAFT_STAGE)
-    comments = models.ManyToManyField(Comment, related_name='bounty')
-    bounty_id = models.IntegerField()
-    data = models.CharField(max_length=128)
+    # legacy fields
     issuer = models.CharField(max_length=128)
+
+    # role-based access controls
+    issuers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_related", )
+    approvers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_relateda", )
+
+    # id fields
+    bounty_id = models.IntegerField()
+    uid = models.CharField(max_length=128, blank=True, null=True)
+    contract_version = models.IntegerField(choices=CONTRACT_VERSION_CHOICES, default=STANDARD_BOUNTIES_V1)
+
+    # other fields
+    contract_state = JSONField(null=True)
+    bounty_created = models.DateTimeField(null=True)
+    bounty_stage = models.IntegerField(choices=STAGE_CHOICES, default=DRAFT_STAGE)
+    comments = models.ManyToManyField(Comment, related_name='bounty')
+
+    data = models.CharField(max_length=128)
     old_balance = models.DecimalField(decimal_places=0, max_digits=64, null=True)
-    tokenLockPrice = models.FloatField(null=True, blank=True)
+
+    token_lock_price = models.FloatField(null=True, blank=True)
+
     balance = models.DecimalField(
         decimal_places=0,
         max_digits=70,
         null=True,
         default=0)
+
     calculated_balance = models.DecimalField(
         decimal_places=30,
         max_digits=70,
         null=True,
         default=0)
+
     image_preview = models.CharField(max_length=256, blank=True)
+
     data_categories = JSONField(null=True)
     data_issuer = JSONField(null=True)
     data_json = JSONField(null=True)
 
+    raw_ipfs_data = JSONField(null=True)
+    raw_event_data = JSONField(null=True)
+
     def save(self, *args, **kwargs):
-        fulfillmentAmount = self.fulfillmentAmount
+        fulfillment_amount = self.fulfillment_amount
         balance = self.balance
-        decimals = self.tokenDecimals
+        decimals = self.token_decimals
         self.calculated_balance = calculate_token_value(balance, decimals)
-        self.calculated_fulfillmentAmount = calculate_token_value(fulfillmentAmount, decimals)
-        user, created = User.objects.get_or_create(
-            public_address=self.issuer,
-            defaults={
-                'name': self.issuer_name,
-                'email': self.issuer_email,
-                'github': self.issuer_githubUsername,
-            }
-        )
-        if not created and not user.profile_touched_manually:
-            user.name = self.issuer_name
-            user.email = self.issuer_email
-            user.github = self.issuer_githubUsername
-            user.save()
-        self.user = user
+        self.calculated_fulfillment_amount = calculate_token_value(fulfillment_amount, decimals)
+
+        issuers = json.loads(self.contract_state or '{}').get('issuers', None)
+
+        if issuers:
+            issuer = next((address for address, index in issuers.items() if index == 0), None)
+            user, created = User.objects.get_or_create(
+                public_address=issuer.lower(),
+                defaults={
+                    'name': self.issuer_name,
+                    'email': self.issuer_email,
+                    'github': self.issuer_githubUsername,
+                }
+            )
+            self.user = user
+            self.issuer = issuer
+
         super(Bounty, self).save(*args, **kwargs)
 
     def record_bounty_state(self, event_date):
@@ -168,7 +205,7 @@ class Bounty(BountyAbstract):
         # Need to make this a post_event signal. The only problem is we need a better event system
         # since this call requires an event_date
         return BountyState.objects.get_or_create(
-            bounty=self, bountyStage=self.bountyStage, change_date=event_date)
+            bounty=self, bounty_stage=self.bounty_stage, change_date=event_date)
 
     def save_and_clear_categories(self, categories):
         # this is really messy, but this is bc of psql django bugs
@@ -184,6 +221,11 @@ class Bounty(BountyAbstract):
                     except ObjectDoesNotExist:
                         self.categories.create(name=category.strip())
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['bounty_id', 'contract_version']),
+        ]
+
 
 class DraftBounty(BountyAbstract):
     uid = models.UUIDField(default=uuid.uuid4)
@@ -194,15 +236,17 @@ class DraftBounty(BountyAbstract):
     data_categories = None
     data_issuer = None
     data_json = None
+    sourceFileName = models.CharField(max_length=256, blank=True)
+    sourceDirectoryHash = models.CharField(max_length=256, blank=True)
 
     class Meta:
         ordering = ['-created']
 
     def save(self, *args, **kwargs):
-        fulfillmentAmount = self.fulfillmentAmount
-        decimals = self.tokenDecimals
-        self.calculated_fulfillmentAmount = calculate_token_value(
-            fulfillmentAmount, decimals)
+        fulfillment_amount = self.fulfillment_amount
+        decimals = self.token_decimals
+        self.calculated_fulfillment_amount = calculate_token_value(
+            fulfillment_amount, decimals)
         super(DraftBounty, self).save(*args, **kwargs)
 
 
@@ -210,6 +254,7 @@ class Fulfillment(models.Model):
     fulfillment_id = models.IntegerField()
     user = models.ForeignKey('user.User', null=True)
     bounty = models.ForeignKey(Bounty, related_name='fulfillments')
+    contract_version = models.IntegerField(choices=CONTRACT_VERSION_CHOICES, default=STANDARD_BOUNTIES_V1)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     fulfillment_created = models.DateTimeField(null=True)
@@ -234,6 +279,7 @@ class Fulfillment(models.Model):
     schemaName = models.CharField(max_length=128, blank=True)
     data_fulfiller = JSONField(null=True)
     data_json = JSONField(null=True)
+    fulfillers = ArrayField(models.CharField(max_length=128), null=True)
 
     def save(self, *args, **kwargs):
         user, created = User.objects.get_or_create(
@@ -271,7 +317,34 @@ class Event(models.Model):
     transaction_hash = models.CharField(max_length=128)
     transaction_from = models.CharField(max_length=128)
     contract_inputs = JSONField(null=True)
+    contract_event_data = JSONField(null=True)
     event_date = models.DateTimeField()
+
+
+class Contribution(models.Model):
+    contributor = models.ForeignKey(User)
+    bounty = models.ForeignKey(Bounty)
+
+    refunded = models.BooleanField(default=False)
+    contribution_id = models.IntegerField()
+
+    amount = models.DecimalField(decimal_places=0, max_digits=64)
+    calculated_amount = models.DecimalField(decimal_places=30, max_digits=70, null=True, default=0)
+    usd_amount = models.FloatField(default=0)
+
+    platform = models.CharField(max_length=128, blank=True, default='bounties-network')
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    raw_event_data = JSONField(null=True)
+
+    def save(self, *args, **kwargs):
+        amount = self.amount
+        decimals = self.bounty.token_decimals
+        self.calculated_amount = calculate_token_value(amount, decimals)
+
+        super(Contribution, self).save(*args, **kwargs)
 
 
 class FulfillerApplication(models.Model):

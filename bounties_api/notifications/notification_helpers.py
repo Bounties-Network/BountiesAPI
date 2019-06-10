@@ -10,8 +10,7 @@ from notifications.email import Email
 
 def create_bounty_notification(**kwargs):
     bounty = kwargs.get('bounty')
-    bounty_url = bounty_url_for(
-        bounty.bounty_id, bounty.platform) + kwargs.get('url_query', '')
+    bounty_url = bounty_url_for(bounty.id, bounty.platform) + kwargs.get('url_query', '')
     kwargs.update({
         'url': bounty_url,
         'platform': bounty.platform
@@ -95,8 +94,7 @@ def create_notification(**kwargs):
     if is_activity and not activity_emails:
         return
 
-    if (not is_activity and
-            notification_name not in user.settings.accepted_email_settings()):
+    if (not is_activity and notification_name not in user.settings.accepted_email_settings()):
         return
 
     if platform not in settings.PLATFORM_MAPPING:

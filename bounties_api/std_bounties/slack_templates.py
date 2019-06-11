@@ -1,12 +1,12 @@
 templates = {
     'BountyIssued': """"{title}, id: {bounty_id}
-    ${usd_price}, {total_value} {tokenSymbol} @ ${token_price}
+    ${usd_price}, {total_value} {token_symbol} @ ${token_price}
     Deadline: {deadline}
     {link} :tada:
     """,
 
     'BountyActivated': """{title}, id: {bounty_id}
-    ${usd_price}, {total_value} {tokenSymbol} @ ${token_price}
+    ${usd_price}, {total_value} {token_symbol} @ ${token_price}
     {link}
     """,
 
@@ -19,7 +19,7 @@ templates = {
     """,
 
     'FulfillmentAccepted': """{title}, id: {bounty_id}, fulfillment id: {fulfillment_id}
-    ${usd_price}, {total_value} {tokenSymbol} @ ${token_lock_price}
+    ${usd_price}, {total_value} {token_symbol} @ ${token_lock_price}
     Deadline: {deadline}
     {link}
     """,

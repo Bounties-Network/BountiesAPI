@@ -497,10 +497,7 @@ paths:
                 type: array
                 items:
                   type: string
-              tokenContract:
-                type: string
-                maxLength: 128
-              arbiter:
+              token_contract:
                 type: string
                 maxLength: 128
               on_chain:
@@ -511,11 +508,11 @@ paths:
               deadline:
                 type: string
                 format: datetime
-              fulfillmentAmount:
+              fulfillment_amount:
                 type: number
               paysTokens:
                 type: boolean
-              experienceLevel:
+              experience_level:
                 type: integer
                 enum: [ 0,1,2 ]
               revisions:
@@ -529,8 +526,6 @@ paths:
               issuer_email:
                 type: string
                 format: email
-              issuer_githubUsername:
-                type: string
               issuer_address:
                 type: string
               sourceFileName:
@@ -1605,13 +1600,13 @@ definitions:
         type: array
         items:
           type: string
-      tokenContract:
+      token_contract:
         type: string
         maxLength: 128
-      tokenSymbol:
+      token_symbol:
         type: string
         maxLength: 128
-      tokenDecimals:
+      token_decimals:
         type: integer
       arbiter:
         type: string
@@ -1641,11 +1636,11 @@ definitions:
       deadline:
         type: string
         format: datetime
-      fulfillmentAmount:
+      fulfillment_amount:
         type: number
       paysTokens:
         type: boolean
-      experienceLevel:
+      experience_level:
         type: integer
         enum: [ 0,1,2 ]
       revisions:

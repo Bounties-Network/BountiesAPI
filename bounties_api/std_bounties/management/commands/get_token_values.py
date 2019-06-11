@@ -34,42 +34,42 @@ class Command(BaseCommand):
                     **coin_data, defaults={'price_usd': price_usd})
 
             all_bounties = Bounty.objects.exclude(
-                bountyStage__in=[DEAD_STAGE, COMPLETED_STAGE])
+                bounty_stage__in=[DEAD_STAGE, COMPLETED_STAGE])
             for bounty in all_bounties:
-                price = token_cache.get(bounty.tokenSymbol, None)
+                price = token_cache.get(bounty.token_symbol, None)
                 if not price:
                     try:
-                        current_token = Token.objects.get(symbol=bounty.tokenSymbol)
+                        current_token = Token.objects.get(symbol=bounty.token_symbol)
                         price = current_token.price_usd
                     except Token.DoesNotExist:
                         price = None
 
                 if price is not None:
-                    decimals = bounty.tokenDecimals
-                    fulfillmentAmount = bounty.fulfillmentAmount
+                    decimals = bounty.token_decimals
+                    fulfillment_amount = bounty.fulfillment_amount
                     bounty.usd_price = (
-                        fulfillmentAmount / Decimal(pow(10, decimals))) * Decimal(price)
+                        fulfillment_amount / Decimal(pow(10, decimals))) * Decimal(price)
                     bounty.tokenLockPrice = None
                     bounty.save()
                 # maybe a token was not added to coinmarketcap until later
                 if price is not None and not bounty.token:
-                    token_model = Token.objects.get(symbol=bounty.tokenSymbol)
+                    token_model = Token.objects.get(symbol=bounty.token_symbol)
                     bounty.token = token_model
                     bounty.save()
 
             all_draft_bounties = DraftBounty.objects.filter(on_chain=False)
             for draft_bounty in all_draft_bounties:
-                price = token_cache.get(draft_bounty.tokenSymbol, None)
+                price = token_cache.get(draft_bounty.token_symbol, None)
                 if price is not None:
-                    decimals = draft_bounty.tokenDecimals
-                    fulfillmentAmount = draft_bounty.fulfillmentAmount
+                    decimals = draft_bounty.token_decimals
+                    fulfillment_amount = draft_bounty.fulfillment_amount
                     draft_bounty.usd_price = (
-                        fulfillmentAmount / Decimal(pow(10, decimals))) * Decimal(price)
+                        fulfillment_amount / Decimal(pow(10, decimals))) * Decimal(price)
                     draft_bounty.save()
                 # maybe a token was not added to coinmarketcap until later
                 if price is not None and not draft_bounty.token:
                     token_model = Token.objects.get(
-                        symbol=draft_bounty.tokenSymbol)
+                        symbol=draft_bounty.token_symbol)
                     draft_bounty.token = token_model
                     draft_bounty.save()
 

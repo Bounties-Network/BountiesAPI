@@ -1,6 +1,6 @@
 from decimal import Decimal
 from datetime import datetime
-from std_bounties.models import Fulfillment, Bounty, Comment
+from std_bounties.models import Fulfillment, Bounty, Comment, Application
 from user.models import User
 from notifications.constants import notifications
 from notifications.notification_helpers import (
@@ -265,7 +265,7 @@ class NotificationClient:
         string_data_applicant = notification_templates['BountyChangedApplicant'].format(bounty_title=bounty.title)
 
         fulfillers = list(map(lambda f: f.user, bounty.fulfillments.all()))
-        applicants = list(map(lambda f: f.user, bounty.applications.all()))
+        applicants = list(map(lambda a: a.applicant, Application.objects.get(bounty_id=bounty.bounty_id)))
 
         users = [user for user in applicants if user not in fulfillers]
 

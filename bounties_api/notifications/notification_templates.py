@@ -1,7 +1,6 @@
 notification_templates = {
     'BountyIssued': 'You issued a bounty for: {bounty_title}.',
     'FulfillmentSubmitted': 'You made a submission to: {bounty_title}.',
-    # Question or Corwin and Mark - do we even want notifications around this?
     'FulfillmentSubmittedIssuer': 'You have a pending submission for: {bounty_title}.',
     'BountyActivated': 'Your Bounty Has Been Released to the Wild: {bounty_title}.',
     'FulfillmentAcceptedFulfiller': 'Your submission has been accepted for: {bounty_title}.',

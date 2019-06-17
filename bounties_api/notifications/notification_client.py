@@ -377,7 +377,8 @@ class NotificationClient:
     def comment_received(self, bounty_id, event_date, uid, **kwargs):
         bounty = Bounty.objects.get(pk=bounty_id)
         comment = Comment.objects.get(id=uid)
-        string_data = notification_templates['BountyCommentReceived'].format(bounty_title=bounty.title)
+        fulfiller_string_data = notification_templates['BountyCommentReceivedFulfiller'].format(bounty_title=bounty.title)
+        commenter_string_data = notification_templates['BountyCommentReceivedCommenter'].format(bounty_title=bounty.title)
         issuer_string_data = notification_templates['BountyCommentReceivedIssuer'].format(bounty_title=bounty.title)
 
         commenters = list(map(lambda c: c.user, bounty.comments.all()))
@@ -400,7 +401,7 @@ class NotificationClient:
                 notification_name=notifications['BountyCommentReceivedFulfiller'],
                 user=user,
                 from_user=comment.user,
-                string_data=string_data,
+                string_data=fulfiller_string_data,
                 subject='Someone Commented on a Bounty',
                 notification_created=event_date,
                 comment=comment,
@@ -413,7 +414,7 @@ class NotificationClient:
                 notification_name=notifications['BountyCommentReceivedCommenter'],
                 user=user,
                 from_user=comment.user,
-                string_data=string_data,
+                string_data=commenter_string_data,
                 subject='Someone Commented on a Bounty',
                 notification_created=event_date,
                 comment=comment,

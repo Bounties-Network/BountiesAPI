@@ -261,18 +261,36 @@ class NotificationClient:
         )
 
     def bounty_changed(self, bounty, **kwargs):
-        string_data = notification_templates['BountyChanged'].format(bounty_title=bounty.title)
+        string_data_fulfiller = notification_templates['BountyChangedFulfiller'].format(bounty_title=bounty.title)
+        string_data_applicant = notification_templates['BountyChangedApplicant'].format(bounty_title=bounty.title)
 
-        create_bounty_notification(
-            bounty=bounty,
-            uid=kwargs.get('uid'),
-            notification_name=notifications['BountyChanged'],
-            user=bounty.user,
-            from_user=None,
-            string_data=string_data,
-            notification_created=kwargs.get('event_date'),
-            subject='Bounty Updated'
-        )
+        fulfillers = list(map(lambda f: f.user, bounty.fulfillments.all()))
+        applicants = list(map(lambda f: f.user, bounty.applications.all()))
+
+        users = [user for user in applicants if user not in fulfillers]
+
+        for user in set(users):
+            create_bounty_notification(
+                bounty=bounty,
+                uid=kwargs.get('uid'),
+                notification_name=notifications['BountyChangedApplicant'],
+                user=bounty.user,
+                from_user=None,
+                string_data=string_data,
+                notification_created=kwargs.get('event_date'),
+                subject='Bounty Updated'
+            )
+        for user in set(fulfillers):
+            create_bounty_notification(
+                bounty=bounty,
+                uid=kwargs.get('uid'),
+                notification_name=notifications['BountyChangedFulfiller'],
+                user=bounty.user,
+                from_user=None,
+                string_data=string_data,
+                notification_created=kwargs.get('event_date'),
+                subject='Bounty Updated'
+            )
 
     def issuer_transferred(
             self,

@@ -1,6 +1,6 @@
 from decimal import Decimal
 from datetime import datetime
-from std_bounties.models import Fulfillment, Bounty, Comment, Application
+from std_bounties.models import Fulfillment, Bounty, Comment, FulfillerApplication
 from user.models import User
 from notifications.constants import notifications
 from notifications.notification_helpers import (

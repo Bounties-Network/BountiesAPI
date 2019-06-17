@@ -30,7 +30,7 @@ class Email:
         constants.ISSUER_TRANSFERRED: 'bountyTransferSent.html',
         constants.TRANSFER_RECIPIENT: 'bountyTransferReceived.html',
         constants.BOUNTY_EXPIRED: 'bountyExpired.html',
-        constants.BOUNTY_COMMENT_RECEIVED: 'commentOnBounty.html',\
+        constants.BOUNTY_COMMENT_RECEIVED: 'commentOnBounty.html',
         constants.BOUNTY_COMMENT_RECEIVED_ISSUER: 'commentOnMyBounty.html',
         constants.FULFILLMENT_UPDATED: 'fulfillmentUpdated.html',
         constants.RATING_RECEIVED: 'receivedRating.html',

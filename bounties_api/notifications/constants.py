@@ -45,7 +45,7 @@ NOTIFICATION_IDS = (
     (BOUNTY_KILLED, 'BountyKilled'),
     (CONTRIBUTION_ADDED, 'ContributionAdded'),
     (DEADLINE_EXTENDED, 'DeadlineExtended'),
-    (BOUNTY_CHANGED, 'BountyChanged'),
+    (BOUNTY_CHANGED_FULFILLER, 'BountyChangedFulfiller'),
     (ISSUER_TRANSFERRED, 'IssuerTransferred'),
     (TRANSFER_RECIPIENT, 'TransferRecipient'),
     (PAYOUT_INCREASED, 'PayoutIncreased'),

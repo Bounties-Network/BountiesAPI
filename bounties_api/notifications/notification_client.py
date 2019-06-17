@@ -276,7 +276,7 @@ class NotificationClient:
                 notification_name=notifications['BountyChangedApplicant'],
                 user=bounty.user,
                 from_user=None,
-                string_data=string_data,
+                string_data=string_data_applicant,
                 notification_created=kwargs.get('event_date'),
                 subject='Bounty Updated'
             )
@@ -287,7 +287,7 @@ class NotificationClient:
                 notification_name=notifications['BountyChangedFulfiller'],
                 user=bounty.user,
                 from_user=None,
-                string_data=string_data,
+                string_data=string_data_fulfiller,
                 notification_created=kwargs.get('event_date'),
                 subject='Bounty Updated'
             )
@@ -380,7 +380,6 @@ class NotificationClient:
         string_data = notification_templates['BountyCommentReceived'].format(bounty_title=bounty.title)
         issuer_string_data = notification_templates['BountyCommentReceived'].format(bounty_title=bounty.title)
 
-
         commenters = list(map(lambda c: c.user, bounty.comments.all()))
         fulfillers = list(map(lambda f: f.user, bounty.fulfillments.all()))
 
@@ -408,7 +407,7 @@ class NotificationClient:
             notification_name=notifications['BountyCommentReceivedIssuer'],
             user=bounty.user,
             from_user=comment.user,
-            string_data=string_data,
+            string_data=issuer_string_data,
             subject='Someone Commented on your Bounty',
             notification_created=event_date,
             comment=comment,

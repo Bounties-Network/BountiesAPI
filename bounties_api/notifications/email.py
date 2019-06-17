@@ -30,7 +30,7 @@ class Email:
         constants.ISSUER_TRANSFERRED: 'bountyTransferSent.html',
         constants.TRANSFER_RECIPIENT: 'bountyTransferReceived.html',
         constants.BOUNTY_EXPIRED: 'bountyExpired.html',
-        constants.BOUNTY_COMMENT_RECEIVED_FULFILLER: 'commentOnFulfilledBounty.html',
+        constants.BOUNTY_COMMENT_RECEIVED: 'commentOnFulfilledBounty.html',
         constants.BOUNTY_COMMENT_RECEIVED_COMMENTER: 'commentOnBounty.html',
         constants.BOUNTY_COMMENT_RECEIVED_ISSUER: 'commentOnMyBounty.html',
         constants.FULFILLMENT_UPDATED: 'fulfillmentUpdated.html',
@@ -39,7 +39,7 @@ class Email:
         constants.APPLICATION_RECEIVED: 'applicationReceived.html',
         constants.APPLICATION_ACCEPTED_APPLICANT: 'applicationAccepted.html',
         constants.APPLICATION_REJECTED_APPLICANT: 'applicationRejected.html',
-        constants.BOUNTY_COMPLETED: 'bountyChanged.html',
+        constants.BOUNTY_CHANGED: 'bountyChanged.html',
 
     }
 

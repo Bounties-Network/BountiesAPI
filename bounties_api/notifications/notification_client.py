@@ -398,7 +398,7 @@ class NotificationClient:
             create_bounty_notification(
                 bounty=bounty,
                 uid='{}-{}'.format(uid, user.id),
-                notification_name=notifications['BountyCommentReceivedFulfiller'],
+                notification_name=notifications['BountyCommentReceived'],
                 user=user,
                 from_user=comment.user,
                 string_data=fulfiller_string_data,

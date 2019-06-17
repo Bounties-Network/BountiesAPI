@@ -265,7 +265,7 @@ class NotificationClient:
         string_data_applicant = notification_templates['BountyChangedApplicant'].format(bounty_title=bounty.title)
 
         fulfillers = list(map(lambda f: f.user, bounty.fulfillments.all()))
-        applicants = list(map(lambda a: a.applicant, FulfillerApplication.objects.get(bounty_id=bounty.bounty_id)))
+        applicants = list(map(lambda a: a.applicant, FulfillerApplication.objects.filter(bounty_id=bounty.id)))
 
         users = [user for user in applicants if user not in fulfillers]
 

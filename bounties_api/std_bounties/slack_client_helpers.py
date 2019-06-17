@@ -24,7 +24,7 @@ def get_base_bounty_values(bounty):
         bounty,
         [
             'title',
-            'bounty_id',
+            'id',
             'token_symbol',
             'token_decimals'
         ]

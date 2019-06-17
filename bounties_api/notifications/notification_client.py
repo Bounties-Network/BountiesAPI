@@ -360,6 +360,8 @@ class NotificationClient:
         bounty = Bounty.objects.get(pk=bounty_id)
         comment = Comment.objects.get(id=uid)
         string_data = notification_templates['BountyCommentReceived'].format(bounty_title=bounty.title)
+        issuer_string_data = notification_templates['BountyCommentReceived'].format(bounty_title=bounty.title)
+
 
         commenters = list(map(lambda c: c.user, bounty.comments.all()))
         fulfillers = list(map(lambda f: f.user, bounty.fulfillments.all()))
@@ -369,9 +371,6 @@ class NotificationClient:
             commenters + fulfillers
         ))
 
-        if bounty.user != comment.user:
-            users.append(bounty.user)
-
         for user in set(users):
             create_bounty_notification(
                 bounty=bounty,
@@ -380,11 +379,23 @@ class NotificationClient:
                 user=user,
                 from_user=comment.user,
                 string_data=string_data,
-                subject='You Received a Comment',
+                subject='Someone Commented on a Bounty',
                 notification_created=event_date,
                 comment=comment,
                 is_activity=False
             )
+        create_bounty_notification(
+            bounty=bounty,
+            uid='{}-{}'.format(uid, bounty.user.id),
+            notification_name=notifications['BountyCommentReceivedIssuer'],
+            user=bounty.user,
+            from_user=comment.user,
+            string_data=string_data,
+            subject='Someone Commented on your Bounty',
+            notification_created=event_date,
+            comment=comment,
+            is_activity=False
+        )
 
     def rating_issued(
             self,

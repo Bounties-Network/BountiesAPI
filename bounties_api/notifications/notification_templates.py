@@ -16,7 +16,7 @@ notification_templates = {
     'TransferredRecipient': 'You are now the owner of: {bounty_title}.',
     'PayoutIncreased': 'You increased the payout of: {bounty_title}.',
     'BountyExpired': 'Yikes! Your bounty has expired: {bounty_title}.',
-    'BountyCommentReceived': 'A comment was added for the bounty: {bounty_title}.',
+    'BountyCommentReceivedFulfiller': 'A comment was added for the bounty: {bounty_title}.',
     'RatingReceived': 'You received a review for your experience with: {bounty_title}.',
     'RatingIssued': 'You left a review for your experience with: {bounty_title}.',
     'ProfileUpdated': 'You updated your profile assciated with: {public_address}.',
@@ -33,6 +33,7 @@ notification_templates = {
     'ApplicationRejectedIssuer': 'You rejected an application for: {bounty_title}',
     'BountyCommentReceivedIssuer': 'A comment was added for your bounty: {bounty_title}.',
     'BountyChangedApplicant': 'The bounty you applied to has been updated: {bounty_title}.',
+    'BountyCommentReceivedCommenter': 'A comment was added for the bounty: {bounty_title}.',
 
 }
 

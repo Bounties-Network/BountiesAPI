@@ -273,8 +273,6 @@ class NotificationClient:
         print(len(fulfillers))
         print('total applicants')
         print(len(users))
-        
-
         for user in set(users):
             create_bounty_notification(
                 bounty=bounty,

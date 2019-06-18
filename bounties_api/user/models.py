@@ -50,7 +50,7 @@ class Settings(models.Model):
             **self.emails['both'],
             **self.emails['fulfiller']}
 
-        opted_out = [setting for setting in merged_settings if not merged_settings[setting]]
+        opted_out = [setting for setting in merged_settings if merged_settings[setting] == False]
         print('opted out')
         print(opted_out)
         return [setting for setting in list(notifications.keys) if setting not in opted_out]

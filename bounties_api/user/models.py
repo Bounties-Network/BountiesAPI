@@ -56,6 +56,9 @@ class Settings(models.Model):
         print(opted_out)
         print('opted in')
         print(opted_in)
+        notifs = [setting for setting, value in notifications.items() if setting not in opted_out]
+        print('notifs')
+        print(notifs)
         # return [setting for setting in list(notifications.keys) if setting not in opted_out]
         return []
 

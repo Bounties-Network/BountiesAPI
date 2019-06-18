@@ -278,7 +278,8 @@ class NotificationClient:
                 from_user=None,
                 string_data=string_data_applicant,
                 notification_created=kwargs.get('event_date'),
-                subject='Bounty Updated'
+                subject='Bounty Updated',
+                is_activity=False
             )
         for user in set(fulfillers):
             create_bounty_notification(
@@ -289,7 +290,8 @@ class NotificationClient:
                 from_user=None,
                 string_data=string_data_fulfiller,
                 notification_created=kwargs.get('event_date'),
-                subject='Bounty Updated'
+                subject='Bounty Updated',
+                is_activity=False
             )
 
     def issuer_transferred(

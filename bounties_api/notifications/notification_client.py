@@ -269,7 +269,12 @@ class NotificationClient:
 
         users = [user for user in applicants if user not in fulfillers]
 
+        print('length of fulfillers:')
+        print(len(fulfillers))
+        print('length of applicants:')
+        print(len(users))
         for user in set(users):
+            print('about to send applicant email')
             create_bounty_notification(
                 bounty=bounty,
                 uid=kwargs.get('uid'),
@@ -282,6 +287,7 @@ class NotificationClient:
                 is_activity=False
             )
         for user in set(fulfillers):
+            print('about to send fulfiller email')
             create_bounty_notification(
                 bounty=bounty,
                 uid=kwargs.get('uid'),

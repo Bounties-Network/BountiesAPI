@@ -270,7 +270,6 @@ class NotificationClient:
         users = [user for user in applicants if user not in fulfillers]
 
         for user in set(users):
-            print('emailing applicant')
             create_bounty_notification(
                 bounty=bounty,
                 uid=kwargs.get('uid'),
@@ -282,7 +281,6 @@ class NotificationClient:
                 subject='Bounty Updated'
             )
         for user in set(fulfillers):
-            print('emailing fulfiller')
             create_bounty_notification(
                 bounty=bounty,
                 uid=kwargs.get('uid'),

@@ -277,7 +277,7 @@ class NotificationClient:
             print('about to send applicant email')
             create_bounty_notification(
                 bounty=bounty,
-                uid=kwargs.get('uid'),
+                uid='{}-{}-notification'.format(kwargs.get('uid'), user.public_address),
                 notification_name=notifications['BountyChangedApplicant'],
                 user=user,
                 from_user=bounty.user,
@@ -290,7 +290,7 @@ class NotificationClient:
             print('about to send fulfiller email')
             create_bounty_notification(
                 bounty=bounty,
-                uid=kwargs.get('uid'),
+                uid='{}-{}-notification'.format(kwargs.get('uid'), user.public_address),
                 notification_name=notifications['BountyChanged'],
                 user=user,
                 from_user=bounty.user,

@@ -115,7 +115,6 @@ def map_bounty_data(ipfs_hash, bounty_id):
 
         print('data')
         print(data.get('sourceFileName', None))
-        
         bounty = {
             # required
             'title': payload.get('title'),

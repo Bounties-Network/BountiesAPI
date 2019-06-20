@@ -66,6 +66,7 @@ class Email:
         bounty = kwargs['bounty']
         url = kwargs['url']
         user = kwargs['user']
+        issuer = kwargs['issuer']
         from_user = kwargs['from_user']
         notification_name = kwargs['notification_name']
         review = kwargs.get('review')
@@ -83,7 +84,6 @@ class Email:
         if bounty.__class__ != Bounty:
             raise TypeError('bounty must be of type Bounty')
 
-        issuer = bounty.from_user
 
         remaining = token_decimals(bounty.calculated_balance)
         token_amount = token_decimals(bounty.calculated_fulfillment_amount)

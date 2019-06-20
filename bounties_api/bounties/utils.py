@@ -85,6 +85,8 @@ def calculate_token_value(value, decimals):
 
 
 def base_url_for(platform=None):
+    print('platform')
+    print(platform)
     base_url = settings.DEPLOY_URL
     if platform in settings.PLATFORM_MAPPING:
         base_url = settings.PLATFORM_MAPPING[platform]

@@ -101,7 +101,7 @@ class Email:
             title = wrap(title, self.max_title_length)[0] + ' ...'
 
         if not url or len(url) == 0:
-            url = bounty_url_for(bounty.bounty_id, bounty.platform)
+            url = bounty_url_for(bounty.id, bounty.platform)
 
         remaining_submissions = 0
 

@@ -45,14 +45,14 @@ def create_rating_notification(**kwargs):
 
 @transaction.atomic
 def create_notification(**kwargs):
-    uid = kwargs['uid']
-    notification_name = kwargs['notification_name']
-    string_data = kwargs['string_data']
-    user = kwargs['user']
-    from_user = kwargs['from_user']
-    notification_created = kwargs['notification_created']
+    uid = kwargs.get('uid')
+    notification_name = kwargs.get('notification_name')
+    string_data = kwargs.get('string_data')
+    user = kwargs.get('user')
+    from_user = kwargs.get('from_user')
+    notification_created = kwargs.get('notification_created')
     bounty = kwargs.get('bounty')
-    subject = kwargs['subject']
+    subject = kwargs.get('subject')
     platform = kwargs.get('platform', '')
     is_activity = kwargs.get('is_activity', True)
     url = kwargs.get('url', '')

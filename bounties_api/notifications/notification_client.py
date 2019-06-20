@@ -520,7 +520,6 @@ class NotificationClient:
             str(int(datetime.utcnow().timestamp())) + 'ProfileUpdated',
             notification_name=notifications['ProfileUpdated'],
             user=user,
-            issuer=bounty.user,
             from_user=None,
             notification_created=datetime.utcnow(),
             string_data=string_data,

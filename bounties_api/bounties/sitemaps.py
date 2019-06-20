@@ -31,33 +31,33 @@ class BountyMap(SiteMapDomainMixin):
 
     def items(self):
         return Bounty.objects.filter(
-            **self.platform_filter).exclude(bountyStage=DRAFT_STAGE).order_by('-modified')
+            **self.platform_filter).exclude(bounty_stage=DRAFT_STAGE).order_by('-modified')
 
     def priority(self, obj):
-        if obj.bountyStage == ACTIVE_STAGE:
+        if obj.bounty_stage == ACTIVE_STAGE:
             return 1
-        if obj.bountyStage == DEAD_STAGE:
+        if obj.bounty_stage == DEAD_STAGE:
             return .5
-        if obj.bountyStage == COMPLETED_STAGE:
+        if obj.bounty_stage == COMPLETED_STAGE:
             return .75
-        if obj.bountyStage == EXPIRED_STAGE:
+        if obj.bounty_stage == EXPIRED_STAGE:
             return .5
 
     def changefreq(self, obj):
-        if obj.bountyStage == ACTIVE_STAGE:
+        if obj.bounty_stage == ACTIVE_STAGE:
             return 'hourly'
-        if obj.bountyStage == DEAD_STAGE:
+        if obj.bounty_stage == DEAD_STAGE:
             return 'daily'
-        if obj.bountyStage == COMPLETED_STAGE:
+        if obj.bounty_stage == COMPLETED_STAGE:
             return 'daily'
-        if obj.bountyStage == EXPIRED_STAGE:
+        if obj.bounty_stage == EXPIRED_STAGE:
             return 'daily'
 
     def lastmod(self, obj):
         return obj.modified
 
     def location(self, obj):
-        return '/bounty/' + str(obj.bounty_id)
+        return '/bounty/' + str(obj.id)
 
 
 class ProfileMap(SiteMapDomainMixin):

@@ -246,12 +246,22 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 NOTIFICATIONS_SLACK_CHANNEL = '#bounty_notifs' if ENVIRONMENT == 'production' else ENVIRONMENT + '_bounty_notifs'
 
 PLATFORM_MAPPING = {
-    'hiring': 'https://hiring.bounties.network',
-    'sf': 'https://sf.bounties.network',
     'berlin': 'https://berlin.bounties.network',
+    'bgc': 'https://bgc.bounties.network',
+    'boost': 'https://boost.bounties.network',
+    'bounties-network': 'https://explorer.bounties.network',
+    'colorado': 'https://colorado.bounties.network',
+    'consensys': 'https://surge.bounties.network',
+    'hiring': 'https://hiring.bounties.network',
+    'korea': 'https://korea.bounties.network',
+    'nyc': 'https://surge.bounties.network',
+    'paris': 'https://paris.bounties.network',
     'prague': 'https://prague.bounties.network',
     'pollenbees': 'https://bees.bounties.network',
-    'bounties-network': 'https://explorer.bounties.network'
+    'rinkeby': 'https://surge.bounties.network',
+    'sa': 'https://sa.bounties.network',
+    'sf': 'https://sf.bounties.network',
+    'surge': 'https://surge.bounties.network',
 }
 
 if not DEBUG:

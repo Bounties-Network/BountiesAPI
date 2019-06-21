@@ -322,6 +322,7 @@ class NotificationClient:
             subject='Bounty Updated',
             is_activity=True
         )
+
     def issuer_transferred(
             self,
             bounty_id,

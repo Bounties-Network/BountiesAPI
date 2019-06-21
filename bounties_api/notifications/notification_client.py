@@ -277,6 +277,7 @@ class NotificationClient:
     def bounty_changed(self, bounty, **kwargs):
         string_data_fulfiller = notification_templates['BountyChanged'].format(bounty_title=bounty.title)
         string_data_applicant = notification_templates['BountyChangedApplicant'].format(bounty_title=bounty.title)
+        string_data_issuer = notification_templates['BountyChangedIssuer'].format(bounty_title=bounty.title)
 
         fulfillers = list(map(lambda f: f.user, bounty.fulfillments.all()))
         applicants = list(map(lambda a: a.applicant, FulfillerApplication.objects.filter(bounty_id=bounty.id)))
@@ -309,7 +310,18 @@ class NotificationClient:
                 subject='Bounty Updated',
                 is_activity=False
             )
-
+        create_bounty_notification(
+            bounty=bounty,
+            uid='{}-{}-notification'.format(kwargs.get('uid'), bounty.user.public_address),
+            notification_name=notifications['BountyChangedIssuer'],
+            user=bounty.user,
+            issuer=bounty.user,
+            from_user=bounty.user,
+            string_data=string_data_fulfiller,
+            notification_created=kwargs.get('event_date'),
+            subject='Bounty Updated',
+            is_activity=True
+        )
     def issuer_transferred(
             self,
             bounty_id,

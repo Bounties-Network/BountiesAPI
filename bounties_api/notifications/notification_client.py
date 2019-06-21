@@ -317,7 +317,7 @@ class NotificationClient:
             user=bounty.user,
             issuer=bounty.user,
             from_user=bounty.user,
-            string_data=string_data_fulfiller,
+            string_data=string_data_issuer,
             notification_created=kwargs.get('event_date'),
             subject='Bounty Updated',
             is_activity=True

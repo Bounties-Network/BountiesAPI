@@ -30,13 +30,17 @@ class Email:
         constants.ISSUER_TRANSFERRED: 'bountyTransferSent.html',
         constants.TRANSFER_RECIPIENT: 'bountyTransferReceived.html',
         constants.BOUNTY_EXPIRED: 'bountyExpired.html',
-        constants.BOUNTY_COMMENT_RECEIVED: 'commentOnBounty.html',
+        constants.BOUNTY_COMMENT_RECEIVED: 'commentOnFulfilledBounty.html',
+        constants.BOUNTY_COMMENT_RECEIVED_COMMENTER: 'commentOnBounty.html',
+        constants.BOUNTY_COMMENT_RECEIVED_ISSUER: 'commentOnMyBounty.html',
         constants.FULFILLMENT_UPDATED: 'fulfillmentUpdated.html',
         constants.RATING_RECEIVED: 'receivedRating.html',
         constants.BOUNTY_COMPLETED: 'bountyCompleted.html',
         constants.APPLICATION_RECEIVED: 'applicationReceived.html',
         constants.APPLICATION_ACCEPTED_APPLICANT: 'applicationAccepted.html',
         constants.APPLICATION_REJECTED_APPLICANT: 'applicationRejected.html',
+        constants.BOUNTY_CHANGED: 'bountyChangedFulfiller.html',
+        constants.BOUNTY_CHANGED_APPLICANT: 'bountyChangedApplicant.html',
     }
 
     max_description_length = 240
@@ -62,6 +66,7 @@ class Email:
         bounty = kwargs['bounty']
         url = kwargs['url']
         user = kwargs['user']
+        issuer = kwargs['issuer']
         from_user = kwargs['from_user']
         notification_name = kwargs['notification_name']
         review = kwargs.get('review')
@@ -79,8 +84,6 @@ class Email:
         if bounty.__class__ != Bounty:
             raise TypeError('bounty must be of type Bounty')
 
-        issuer = bounty.user
-
         remaining = token_decimals(bounty.calculated_balance)
         token_amount = token_decimals(bounty.calculated_fulfillment_amount)
 
@@ -97,7 +100,7 @@ class Email:
             title = wrap(title, self.max_title_length)[0] + ' ...'
 
         if not url or len(url) == 0:
-            url = bounty_url_for(bounty.bounty_id, bounty.platform)
+            url = bounty_url_for(bounty.id, bounty.platform)
 
         remaining_submissions = 0
 

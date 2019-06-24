@@ -24,7 +24,7 @@ def get_base_bounty_values(bounty):
         bounty,
         [
             'title',
-            'bounty_id',
+            'id',
             'token_symbol',
             'token_decimals'
         ]
@@ -35,6 +35,6 @@ def get_base_bounty_values(bounty):
     base_fields['deadline'] = bounty.deadline.strftime('%m/%d/%Y')
     base_fields['token_price'] = 'Unkown Price' if not bounty.token else Decimal(bounty.token.price_usd).quantize(Decimal(10) ** -2)
     base_fields['token_lock_price'] = 'Unkown Price' if not bounty.token_lock_price else Decimal(bounty.token_lock_price).quantize(Decimal(10) ** -2)
-    base_fields['link'] = bounty_url_for(bounty.bounty_id, bounty.platform)
+    base_fields['link'] = bounty_url_for(bounty.id, bounty.platform)
 
     return base_fields

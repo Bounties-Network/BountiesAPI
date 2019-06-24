@@ -31,6 +31,11 @@ APPLICATION_ACCEPTED_APPLICANT = 29
 APPLICATION_ACCEPTED_ISSUER = 30
 APPLICATION_REJECTED_APPLICANT = 31
 APPLICATION_REJECTED_ISSUER = 32
+BOUNTY_COMMENT_RECEIVED_ISSUER = 33
+BOUNTY_CHANGED_APPLICANT = 34
+BOUNTY_COMMENT_RECEIVED_COMMENTER = 35
+BOUNTY_CHANGED_ISSUER = 36
+
 
 NOTIFICATION_IDS = (
     (FULFILLMENT_SUBMITTED, 'FulfillmentSubmitted'),
@@ -44,6 +49,7 @@ NOTIFICATION_IDS = (
     (CONTRIBUTION_ADDED, 'ContributionAdded'),
     (DEADLINE_EXTENDED, 'DeadlineExtended'),
     (BOUNTY_CHANGED, 'BountyChanged'),
+    (BOUNTY_CHANGED_ISSUER, 'BountyChangedIssuer'),
     (ISSUER_TRANSFERRED, 'IssuerTransferred'),
     (TRANSFER_RECIPIENT, 'TransferRecipient'),
     (PAYOUT_INCREASED, 'PayoutIncreased'),
@@ -66,6 +72,9 @@ NOTIFICATION_IDS = (
     (APPLICATION_ACCEPTED_ISSUER, 'ApplicationAcceptedIssuer'),
     (APPLICATION_REJECTED_APPLICANT, 'ApplicationRejectedApplicant'),
     (APPLICATION_REJECTED_ISSUER, 'ApplicationRejectedIssuer'),
+    (BOUNTY_COMMENT_RECEIVED_ISSUER, 'BountyCommentReceivedIssuer'),
+    (BOUNTY_COMMENT_RECEIVED_COMMENTER, 'BountyCommentReceivedCommenter'),
+    (BOUNTY_CHANGED_APPLICANT, 'BountyChangedApplicant'),
 )
 
 id_to_notification = dict(NOTIFICATION_IDS)
@@ -78,7 +87,7 @@ push_notification_options = {
             FULFILLMENT_UPDATED_ISSUER,
             TRANSFER_RECIPIENT,
             BOUNTY_EXPIRED,
-            BOUNTY_COMMENT_RECEIVED,
+            BOUNTY_COMMENT_RECEIVED_ISSUER,
             CONTRIBUTION_RECEIVED,
             BOUNTY_COMPLETED,
             APPLICATION_RECEIVED,
@@ -88,6 +97,10 @@ push_notification_options = {
             FULFILLMENT_ACCEPTED_FULFILLER,
             APPLICATION_ACCEPTED_APPLICANT,
             APPLICATION_REJECTED_APPLICANT,
+            BOUNTY_CHANGED_APPLICANT,
+            BOUNTY_CHANGED,
+            BOUNTY_COMMENT_RECEIVED_COMMENTER,
+            BOUNTY_COMMENT_RECEIVED,
         ]],
     'both': [
         id_to_notification[notif] for notif in [RATING_RECEIVED]],

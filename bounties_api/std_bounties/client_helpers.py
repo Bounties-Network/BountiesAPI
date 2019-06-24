@@ -70,7 +70,6 @@ def map_bounty_data(ipfs_hash, bounty_id):
 
         categories = data.get('categories', [])
         plucked_data = pluck(data, bounty_v0_data_keys)
-
         bounty = {
             **plucked_data,
             **meta,
@@ -114,6 +113,8 @@ def map_bounty_data(ipfs_hash, bounty_id):
         else:
             difficulty = BEGINNER
 
+        print('data')
+        print(data.get('sourceFileName', None))
         bounty = {
             # required
             'title': payload.get('title'),

@@ -17,7 +17,7 @@ class SlackMessageClient:
     def bounty_issued(self, bounty):
         message = pipe(bounty, [get_base_bounty_values, wrapped_partial(pluck, fields=[
             'title',
-            'bounty_id',
+            'id',
             'usd_price',
             'total_value',
             'token_symbol',
@@ -31,7 +31,7 @@ class SlackMessageClient:
     def bounty_issued_and_activated(self, bounty):
         message = pipe(bounty, [get_base_bounty_values, wrapped_partial(pluck, fields=[
             'title',
-            'bounty_id',
+            'id',
             'usd_price',
             'total_value',
             'token_symbol',
@@ -45,7 +45,7 @@ class SlackMessageClient:
     def bounty_activated(self, bounty):
         message = pipe(bounty, [get_base_bounty_values, wrapped_partial(pluck, fields=[
             'title',
-            'bounty_id',
+            'id',
             'usd_price',
             'total_value',
             'token_symbol',
@@ -59,7 +59,7 @@ class SlackMessageClient:
             bounty, [
                 get_base_bounty_values, wrapped_partial(
                     pluck, fields=[
-                        'title', 'bounty_id', 'link']), wrapped_partial(
+                        'title', 'id', 'link']), wrapped_partial(
                     format_message, msg_string=templates['BountyFulfilled'], fulfillment_id=fulfillment_id)])
         notify_slack(sc, channel, 'Bounty Fulfilled', message)
 
@@ -68,7 +68,7 @@ class SlackMessageClient:
             bounty, [
                 get_base_bounty_values, wrapped_partial(
                     pluck, fields=[
-                        'title', 'bounty_id', 'link']), wrapped_partial(
+                        'title', 'id', 'link']), wrapped_partial(
                     format_message, msg_string=templates['FulfillmentUpdated'], fulfillment_id=fulfillment_id)])
         notify_slack(sc, channel, 'Fulfillment Updated', message)
 
@@ -77,7 +77,7 @@ class SlackMessageClient:
                        [get_base_bounty_values,
                         wrapped_partial(pluck,
                                         fields=['title',
-                                                'bounty_id',
+                                                'id',
                                                 'usd_price',
                                                 'total_value',
                                                 'token_symbol',
@@ -95,7 +95,7 @@ class SlackMessageClient:
             bounty, [
                 get_base_bounty_values, wrapped_partial(
                     pluck, fields=[
-                        'title', 'bounty_id', 'link']), wrapped_partial(
+                        'title', 'id', 'link']), wrapped_partial(
                     format_message, msg_string=templates['BountyKilled'])])
         notify_slack(sc, channel, 'Bounty Killed', message)
 
@@ -104,7 +104,7 @@ class SlackMessageClient:
             bounty, [
                 get_base_bounty_values, wrapped_partial(
                     pluck, fields=[
-                        'title', 'bounty_id', 'link']), wrapped_partial(
+                        'title', 'id', 'link']), wrapped_partial(
                     format_message, msg_string=templates['ContributionAdded'])])
         notify_slack(sc, channel, 'Contribution Added', message)
 
@@ -113,7 +113,7 @@ class SlackMessageClient:
             bounty, [
                 get_base_bounty_values, wrapped_partial(
                     pluck, fields=[
-                        'title', 'bounty_id', 'deadline', 'link']), wrapped_partial(
+                        'title', 'id', 'deadline', 'link']), wrapped_partial(
                     format_message, msg_string=templates['DeadlineExtended'])])
         notify_slack(sc, channel, 'Deadline Extended', message)
 
@@ -122,7 +122,7 @@ class SlackMessageClient:
             bounty, [
                 get_base_bounty_values, wrapped_partial(
                     pluck, fields=[
-                        'title', 'bounty_id', 'link']), wrapped_partial(
+                        'title', 'id', 'link']), wrapped_partial(
                     format_message, msg_string=templates['BountyChanged'])])
         notify_slack(sc, channel, 'Bounty Changed', message)
 
@@ -131,7 +131,7 @@ class SlackMessageClient:
             bounty, [
                 get_base_bounty_values, wrapped_partial(
                     pluck, fields=[
-                        'title', 'bounty_id', 'link']), wrapped_partial(
+                        'title', 'id', 'link']), wrapped_partial(
                     format_message, msg_string=templates['IssuerTransferred'])])
         notify_slack(sc, channel, 'Issuer Transferred', message)
 
@@ -140,6 +140,6 @@ class SlackMessageClient:
             bounty, [
                 get_base_bounty_values, wrapped_partial(
                     pluck, fields=[
-                        'title', 'bounty_id', 'link']), wrapped_partial(
+                        'title', 'id', 'link']), wrapped_partial(
                     format_message, msg_string=templates['PayoutIncreased'])])
         notify_slack(sc, channel, 'Payout Increased', message)

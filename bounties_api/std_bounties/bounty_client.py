@@ -314,6 +314,13 @@ class BountyClient:
         bounty = self.update_bounty_issuers(bounty, **kwargs)
         bounty = self.update_bounty_approvers(bounty, **kwargs)
 
+        usd_price = get_token_pricing(
+            bounty.token_symbol,
+            bounty.token_decimals,
+            bounty.fulfillment_amount
+        )[0]
+        bounty.usd_price = usd_price
+
         return bounty
 
     def increase_payout(self, bounty, **kwargs):

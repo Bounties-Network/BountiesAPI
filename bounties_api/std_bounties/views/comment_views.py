@@ -42,6 +42,7 @@ class BountyComments(ListModelMixin, GenericViewSet):
 
         return JsonResponse(serializer.data)
 
+
 class FulfillmentComments(ListModelMixin, GenericViewSet):
     serializer_class = CommentSerializer
 
@@ -69,8 +70,5 @@ class FulfillmentComments(ListModelMixin, GenericViewSet):
         comment = serializer.save()
 
         fulfillment.comments.add(comment)
-
-        #notification_client.comment_issued(bounty.pk, comment.created, comment.id)
-        #notification_client.comment_received(bounty.pk, comment.created, comment.id)
 
         return JsonResponse(serializer.data)

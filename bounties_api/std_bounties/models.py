@@ -280,6 +280,8 @@ class Fulfillment(models.Model):
     data_fulfiller = JSONField(null=True)
     data_json = JSONField(null=True)
     fulfillers = ArrayField(models.CharField(max_length=128), null=True)
+    comments = models.ManyToManyField(Comment, related_name='fulfillment')
+
 
     def save(self, *args, **kwargs):
         user, created = User.objects.get_or_create(

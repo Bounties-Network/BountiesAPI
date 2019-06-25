@@ -282,7 +282,6 @@ class Fulfillment(models.Model):
     fulfillers = ArrayField(models.CharField(max_length=128), null=True)
     comments = models.ManyToManyField(Comment, related_name='fulfillment')
 
-
     def save(self, *args, **kwargs):
         user, created = User.objects.get_or_create(
             public_address=self.fulfiller,

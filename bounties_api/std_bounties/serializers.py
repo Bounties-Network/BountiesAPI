@@ -115,7 +115,6 @@ class FulfillmentSerializer(CustomSerializer):
 
     class Meta:
         model = Fulfillment
-        fields = '__all__'
         exclude = ('comments',)
         extra_kwargs = {
             'data_json': {'write_only': True},

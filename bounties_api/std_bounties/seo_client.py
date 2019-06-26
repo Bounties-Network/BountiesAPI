@@ -43,9 +43,9 @@ class SEOClient:
             return
 
         bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
-        bounty_url = bounty_url_for(bounty_id, platform)
+        bounty_url = bounty_url_for(bounty.id, platform)
         image_uuid = uuid4()
-        image_path = '{}/bounty_preview/{}-{}.png'.format(settings.ENVIRONMENT, str(bounty_id), image_uuid)
+        image_path = '{}/bounty_preview/{}-{}.png'.format(settings.ENVIRONMENT, str(bounty.id), image_uuid)
         image_url = 'https://assets.bounties.network/' + image_path
         sns_publish('screenshot', {'url': bounty_url, 'key': image_path})
         bounty.image_preview = image_url

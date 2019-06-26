@@ -111,10 +111,12 @@ class FulfillmentSerializer(CustomSerializer):
     fulfiller_review = ReviewSerializer(read_only=True)
     issuer_review = ReviewSerializer(read_only=True)
     user = UserSerializer(read_only=True)
+    comment_count = serializers.ReadOnlyField(source='comments.count')
 
     class Meta:
         model = Fulfillment
         fields = '__all__'
+        exclude = ('comments',)
         extra_kwargs = {
             'data_json': {'write_only': True},
             'data_fulfiller': {'write_only': True},

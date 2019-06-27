@@ -24,9 +24,9 @@ class LeaderboardFulfiller(APIView):
         platform_in = platform_in + platform_in
         if token_in:
             sql_param += 'AND ( '
-            sql_param += 'bounty.token_contract = \"'
+            sql_param += 'bounty.\"token_contract\" = \"'
             sql_param += token_in[0]
-            sql_param += ' \")'
+            sql_param += '\")'
             formatted_query = LEADERBOARD_FULFILLER_QUERY_TOKENS.format(sql_param)
         else:
             formatted_query = LEADERBOARD_FULFILLER_QUERY.format(sql_param)

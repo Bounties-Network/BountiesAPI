@@ -3,7 +3,7 @@ from django.db import connection
 from rest_framework.views import APIView
 from bounties.utils import extractInParams, limitOffsetParams, sqlGenerateOrList, dictfetchall
 from std_bounties.serializers import LeaderboardIssuerSerializer
-from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_ISSUER_QUERY
+from std_bounties.queries import LEADERBOARD_ISSUER_QUERY, LEADERBOARD_ISSUER_QUERY_TOKENS
 
 
 class LeaderboardIssuer(APIView):
@@ -11,6 +11,7 @@ class LeaderboardIssuer(APIView):
     def get(request):
         sql_param = ''
         platform_in = extractInParams(request, 'platform', 'platform__in')
+        token_in = extractInParams(request, 'token', 'token__in')
         startIndex, endIndex = limitOffsetParams(request)
         if platform_in:
             sql_param = 'AND ( '

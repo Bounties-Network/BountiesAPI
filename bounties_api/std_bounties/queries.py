@@ -63,7 +63,7 @@ GROUP BY bounty.issuer, profile.name, profile.email, profile.github, profile.sma
 ORDER BY total_usd desc, total desc
 """
 
-LEADERBOARD_ISSUER_QUERY = """
+LEADERBOARD_ISSUER_QUERY_TOKENS = """
 SELECT
 	bounty.issuer as address,
 	profile.name as name,

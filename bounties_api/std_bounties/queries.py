@@ -28,7 +28,7 @@ SELECT
 	profile.email as email,
 	profile.github as githubUsername,
 	profile.small_profile_image_url as profile_image,
-	SUM(bounty.calculated_fulfillment_amount) as total,
+	SUM(bounty.fulfillment_amount) as total,
 	SUM(fulfillment.usd_price) as total_usd,
 	COUNT(bounty) as bounties_fulfilled,
 	COUNT(fulfillment.id) as fulfillments_accepted

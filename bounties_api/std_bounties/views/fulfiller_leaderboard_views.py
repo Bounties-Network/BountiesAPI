@@ -31,8 +31,6 @@ class LeaderboardFulfiller(APIView):
         else:
             formatted_query = LEADERBOARD_FULFILLER_QUERY.format(sql_param)
 
-        print('formatted query')
-        print(formatted_query)
         cursor = connection.cursor()
         cursor.execute(formatted_query, platform_in)
         query_result = dictfetchall(cursor)

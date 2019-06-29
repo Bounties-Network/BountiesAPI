@@ -1,0 +1,163 @@
+* {
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #5a28c6;
+}
+
+a {
+  color: #4a93ff;
+}
+
+.email-bg {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: #5a28c6;
+  font-size: 14px;
+  padding: 24px 0 80px;
+  overflow: hidden;
+}
+
+.logo-container {
+  text-align: center;
+  padding-bottom: 32px;
+}
+
+.logo {
+  width: 60px;
+  height: auto;
+}
+
+.pre-header {
+  color: #5a28c6;
+  font-size: 5px;
+  left: -9999px;
+  position: absolute;
+}
+
+.wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 50px 10px;
+}
+
+.content-container {
+  background-color: #fff;
+  margin: 0;
+  padding: 32px;
+  border-radius: 8px;
+}
+
+.heading {
+  font-size: 20px;
+  text-align: center;
+  font-weight: 500;
+  line-height: 1.5;
+  padding: 32px 75px 75px;
+}
+
+.bounty-preview {
+  background: #fff;
+  border: 1px solid #eaebeb;
+  border-radius: 8px;
+  width: 100%;
+  padding: 16px;
+  box-shadow: 0px 2px 4px rgba(17, 22, 24, 0.08);
+}
+
+.bounty-title {
+  font-size: 14px;
+  color: #000;
+  font-weight: 500;
+  padding-bottom: 4px;
+  max-width: 300px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.value-usd {
+  color: #5a28c6;
+  text-align: right;
+  font-weight: 600;
+}
+
+.metadata {
+  color: #8d9496;
+  font-size: 12px;
+}
+
+.value-eth {
+  text-align: right;
+  color: #8d9496;
+  text-align: right;
+  font-size: 12px;
+}
+
+.message-container {
+  padding: 32px 0 80px;
+}
+
+.label {
+  display: block;
+  font-size: 12px;
+  color: #8d9496;
+  padding-bottom: 8px;
+}
+
+.message {
+  background: #f8f9fb;
+  border: 1px solid #f1f1f1;
+  border-radius: 8px;
+  color: #474b4d;
+  line-height: 1.5;
+  padding: 16px;
+}
+
+.primary-cta {
+  background: #4a93ff;
+  text-align: center;
+  text-decoration: none;
+  color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  display: block;
+}
+
+.social-icons {
+  border-bottom: 1px solid #7a4ddb;
+  list-style-type: none;
+  padding: 32px 0;
+}
+
+.social-icons li {
+  display: inline-block;
+  padding: 10px;
+}
+
+.social-icons img {
+  width: 18px;
+  height: auto;
+}
+
+.footer {
+  color: #fff;
+  text-align: center;
+}
+
+.footer a {
+  color: #fff;
+}
+
+.footer-copy {
+  line-height: 1.5;
+  padding: 32px;
+}
+
+.copyright {
+  padding-bottom: 24px;
+}

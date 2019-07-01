@@ -9,7 +9,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <link href="./email.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="email.css" />
     <title>Someone applied to your bounty!</title>
   </head>
   <body>
@@ -18,11 +18,24 @@
       <tr>
         <td>
           <!-- Pre-header -->
-          <div class="template__pre-header">
-            This is your pre-header text.
-          </div>
+          <table>
+            <tr>
+              <td class="template__pre-header">
+                This is your pre-header text.
+              </td>
+            </tr>
+          </table>
 
           <!-- Template Wrapper -->
+
+          <!--[if mso]>
+          <table cellpadding="0" cellspacing="0" border="0" style="padding:0px;margin:0px;width:100%;">
+            <tr><td colspan="3" style="padding:0px;margin:0px;font-size:20px;height:20px;" height="20">&nbsp;</td></tr>
+            <tr>
+              <td style="padding:0px;margin:0px;">&nbsp;</td>
+              <td style="padding:0px;margin:0px;" width="575">
+          <![endif]-->
+
           <table
             class="template__wrapper"
             align="center"
@@ -36,7 +49,7 @@
                   <img
                     class="template__logo"
                     src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/7cb83b9a-59f7-4a7c-a019-1696a5a3fc88.png"
-                    alt=""
+                    alt="The Bounties Network"
                   />
                 </a>
               </td>
@@ -46,6 +59,7 @@
             <tr>
               <td class="content__container">
                 <table cellspacing="0" cellpadding="0">
+                  <!-- Email Heading -->
                   <tr>
                     <td class="heading__padding-box">
                       <h1 class="content__heading">
@@ -60,32 +74,57 @@
                     </td>
                   </tr>
 
+                  <!-- Bounty Preview -->
                   <tr>
                     <td class="bounty-preview__padding-box">
                       <table class="bounty-preview">
                         <tr>
-                          <td class="bounty-preview__title">
-                            This is a bounty title that is pretty long to see if
-                            the ellipsis will display correctly.
+                          <td class="bounty-preview__text">
+                            <table>
+                              <tr><td class="bounty-preview__text--title">
+                                This is a bounty title that is pretty long to see if
+                                the ellipsis will display correctly.
+                              </td></tr>
+                              <tr>
+                                <tr>
+                                  <td class="bounty-preview__text--metadata">
+                                    2 days remaining • 2 submissions
+                                  </td>
+                                </tr>
+                              </tr>
+                            </table>
                           </td>
-                          <td class="bounty-preview__value--usd">$999</td>
-                        </tr>
-                        <tr>
-                          <td class="bounty-preview__metadata">
-                            2 days remaining • 2 submissions
+                          <td class="bounty-preview__value">
+                            <table>
+                              <tr>
+                                <td class="bounty-preview__value--usd">
+                                  $999
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="bounty-preview__value--eth">
+                                  0.005 ETH
+                                </td>
+                              </tr>
+                            </table>
                           </td>
-                          <td class="bounty-preview__value--eth">0.005 ETH</td>
                         </tr>
                       </table>
                     </td>
                   </tr>
 
+                  <!-- Email message -->
                   <tr>
                     <td class="message__padding-box">
                       <table class="message__wrapper">
                         <tr class="message__container">
                           <td class="message__content">
-                            <span class="message__label">Label</span>
+                            <table>
+                              <tr>
+                                <td class="message__label">Label</td>
+                              </tr>
+                            </table>
+
                             Greetings! This is a test of our new responsive
                             notification emails! If you are receiving this,
                             don't panic. It just to notify you that you are
@@ -100,6 +139,7 @@
                     </td>
                   </tr>
 
+                  <!-- Email CTA -->
                   <tr>
                     <td class="cta__padding-box">
                       <table class="email-cta">
@@ -125,39 +165,39 @@
                   cellpadding="0"
                 >
                   <tr>
-                    <td>
+                    <td class="social-links_item">
                       <a href=""
                         ><img
                           src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/6ff9131b-5dfc-4051-addf-b5245f06ac3e.png"
-                          alt=""
+                          alt="Twitter"
                       /></a>
                     </td>
-                    <td>
+                    <td class="social-links_item">
                       <a href=""
                         ><img
                           src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/db9f1d0e-dda4-454d-97ad-b09008a3bb92.png"
-                          alt=""
+                          alt="Medium"
                       /></a>
                     </td>
-                    <td>
+                    <td class="social-links_item">
                       <a href=""
                         ><img
                           src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/61f309b8-a240-4afe-b840-97cf6102157d.png"
-                          alt=""
+                          alt="Github"
                       /></a>
                     </td>
-                    <td>
+                    <td class="social-links_item">
                       <a href=""
                         ><img
                           src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/5563c814-6193-4c88-900f-630a485e12b8.png"
-                          alt=""
+                          alt="Facebook"
                       /></a>
                     </td>
-                    <td>
+                    <td class="social-links_item">
                       <a href=""
                         ><img
                           src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/d22156dd-4933-40f7-a903-69cca2675aa6.png"
-                          alt=""
+                          alt="The Bounties Network"
                       /></a>
                     </td>
                   </tr>
@@ -193,6 +233,14 @@
               </td>
             </tr>
           </table>
+
+          <!--[if mso]>
+                </td>
+                <td style="padding:0px;margin:0px;">&nbsp;</td>
+              </tr>
+            <tr><td colspan="3" style="padding:0px;margin:0px;font-size:20px;height:20px;" height="20">&nbsp;</td></tr>
+          </table>
+          <![endif]-->
 
           <!--End of Wrapper-->
         </td>

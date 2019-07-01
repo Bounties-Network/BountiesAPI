@@ -9,323 +9,179 @@
       rel="stylesheet"
       type="text/css"
     />
+    <link href="./email.css" rel="stylesheet" type="text/css" />
     <title>Someone applied to your bounty!</title>
-    <style type="text/css">
-      html {
-        margin: 0;
-        border: 0;
-        padding: 0;
-      }
-
-      body {
-        background-color: #5a28c6;
-      }
-
-      a {
-        color: #4a93ff;
-      }
-
-      .email-bg {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-          Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
-          sans-serif;
-        background-color: #5a28c6;
-        font-size: 14px;
-        padding: 24px 0 80px;
-        overflow: hidden;
-      }
-
-      .logo-container {
-        text-align: center;
-        padding-bottom: 32px;
-      }
-
-      .logo {
-        width: 60px;
-        height: auto;
-      }
-
-      .pre-header {
-        color: #5a28c6;
-        font-size: 5px;
-        left: -9999px;
-        position: absolute;
-      }
-
-      .wrapper {
-        max-width: 575px;
-        margin: 0 auto;
-        padding: 24px 10px;
-      }
-
-      .content-container {
-        background-color: #fff;
-        margin: 0;
-        padding: 16px;
-        border-radius: 8px;
-      }
-
-      @media screen and (min-width: 575px) {
-        .content-container {
-          padding: 32px !important;
-        }
-      }
-
-      .heading {
-        font-size: 20px;
-        text-align: center;
-        font-weight: 500;
-        line-height: 1.5;
-        padding: 32px 0 75px;
-      }
-
-      @media screen and (min-width: 500px) {
-        .heading {
-          padding-left: 75px !important;
-          padding-right: 75px !important;
-        }
-      }
-
-      .bounty-preview {
-        background: #fff;
-        border: 1px solid #eaebeb;
-        border-radius: 8px;
-        width: 100%;
-        padding: 10px;
-        box-shadow: 0px 2px 4px rgba(17, 22, 24, 0.08);
-      }
-
-      .bounty-title {
-        font-size: 14px;
-        color: #000;
-        font-weight: 500;
-        line-height: 1.3;
-        padding-bottom: 4px;
-        vertical-align: top;
-        text-overflow: clip;
-        overflow: auto;
-        white-space: normal;
-        max-width: 100%;
-      }
-
-      @media screen and (min-width: 575px) {
-        .bounty-title {
-          max-width: 300px !important;
-          text-overflow: ellipsis !important;
-          overflow: hidden !important;
-          white-space: nowrap !important;
-        }
-      }
-
-      .value-usd {
-        color: #5a28c6;
-        text-align: right;
-        font-weight: 400;
-        font-size: 18px;
-        vertical-align: top;
-      }
-
-      @media screen and (min-width: 575px) {
-        .value-usd {
-          font-size: 16px !important;
-          font-weight: 500 !important;
-        }
-      }
-
-      .metadata {
-        color: #8d9496;
-        font-size: 12px;
-      }
-
-      .value-eth {
-        text-align: right;
-        color: #8d9496;
-        min-width: 75px;
-        text-align: right;
-        font-size: 12px;
-        vertical-align: top;
-      }
-
-      @media screen and (min-width: 575px) {
-        .value-eth {
-          vertical-align: bottom !important;
-        }
-      }
-
-      .message-container {
-        padding: 32px 0 80px;
-      }
-
-      .label {
-        display: block;
-        font-size: 12px;
-        color: #8d9496;
-        padding-bottom: 8px;
-      }
-
-      .message {
-        background: #f8f9fb;
-        border: 1px solid #f1f1f1;
-        border-radius: 8px;
-        color: #474b4d;
-        line-height: 1.5;
-        padding: 16px;
-      }
-
-      .primary-cta {
-        background: #4a93ff;
-        text-align: center;
-        text-decoration: none;
-        color: #fff;
-        border-radius: 8px;
-        padding: 16px;
-        cursor: pointer;
-        display: block;
-      }
-
-      .social-icons {
-        border-bottom: 1px solid #7a4ddb;
-        list-style-type: none;
-        padding: 32px 0;
-      }
-
-      .social-icons li {
-        display: inline-block;
-        padding: 10px;
-      }
-
-      .social-icons img {
-        width: 18px;
-        height: auto;
-      }
-
-      .footer {
-        color: #fff;
-        text-align: center;
-      }
-
-      .footer a {
-        color: #fff;
-      }
-
-      .footer-copy {
-        font-size: 12px;
-        line-height: 1.5;
-        padding: 32px;
-      }
-    </style>
   </head>
   <body>
-    <div class="email-bg">
-      <div class="pre-header">
-        This is your pre-header text.
-      </div>
-      <div class="wrapper">
-        <div class="header">
-          <div class="logo-container">
-            <a id="logo-link" href="">
-              <img
-                class="logo"
-                src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/7cb83b9a-59f7-4a7c-a019-1696a5a3fc88.png"
-                alt=""
-              />
-            </a>
+    <!-- Colored Background -->
+    <table class="template__bg">
+      <tr>
+        <td>
+          <!-- Pre-header -->
+          <div class="template__pre-header">
+            This is your pre-header text.
           </div>
-        </div>
-        <div class="content-container">
-          <h1 class="heading">
-            <a
-              href="https://giphy.com/gifs/girls-beauty-coup-smrAGct3Dx5DO/fullscreen"
-              class="username"
-              target="_blank"
-              >Hello co-founders!</a
-            >
-            This is an email notification test!
-          </h1>
 
-          <table class="bounty-preview">
+          <!-- Template Wrapper -->
+          <table class="template__wrapper" align="center">
+            <!-- Logo Header -->
             <tr>
-              <td class="bounty-title">
-                This is a bounty title that is pretty long to see if the
-                ellipsis will display correctly.
+              <td class="template__logo-container">
+                <a id="template__logo-link" href="">
+                  <img
+                    class="template__logo"
+                    src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/7cb83b9a-59f7-4a7c-a019-1696a5a3fc88.png"
+                    alt=""
+                  />
+                </a>
               </td>
-              <td class="value-usd">$999</td>
             </tr>
+
+            <!-- Main Email Content -->
             <tr>
-              <td class="metadata">2 days remaining • 2 submissions</td>
-              <td class="value-eth">0.005 ETH</td>
+              <td class="content__container">
+                <table>
+                  <tr>
+                    <td class="heading__padding-box">
+                      <h1 class="content__heading">
+                        <a
+                          href="https://giphy.com/gifs/girls-beauty-coup-smrAGct3Dx5DO/fullscreen"
+                          class="username"
+                          target="_blank"
+                          >Hello co-founders!</a
+                        >
+                        This is an email notification test!
+                      </h1>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td class="bounty-preview__padding-box">
+                      <table class="bounty-preview">
+                        <tr>
+                          <td class="bounty-preview__title">
+                            This is a bounty title that is pretty long to see if
+                            the ellipsis will display correctly.
+                          </td>
+                          <td class="bounty-preview__value--usd">$999</td>
+                        </tr>
+                        <tr>
+                          <td class="bounty-preview__metadata">
+                            2 days remaining • 2 submissions
+                          </td>
+                          <td class="bounty-preview__value--eth">0.005 ETH</td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td class="message__padding-box">
+                      <table class="message__wrapper">
+                        <tr class="message__container">
+                          <td class="message__content">
+                            <span class="message__label">Label</span>
+                            Greetings! This is a test of our new responsive
+                            notification emails! If you are receiving this,
+                            don't panic. It just to notify you that you are
+                            awesome. If you have any thoughts or feedback around
+                            the email design, let me know! Check it out on both
+                            mobile and desktop to make sure it adapts correctly.
+                            Outlook on Windows still does not want to cooperate,
+                            but I am determined to bend it to my will.
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td class="cta__padding-box">
+                      <table class="email-cta">
+                        <tr>
+                          <td class="cta__primary">
+                            <a href="" target="_blank">Button</a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Social Links -->
+            <tr>
+              <td class="social__padding-box">
+                <table class="social-links" align="center">
+                  <tr>
+                    <td>
+                      <a href=""
+                        ><img
+                          src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/6ff9131b-5dfc-4051-addf-b5245f06ac3e.png"
+                          alt=""
+                      /></a>
+                    </td>
+                    <td>
+                      <a href=""
+                        ><img
+                          src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/db9f1d0e-dda4-454d-97ad-b09008a3bb92.png"
+                          alt=""
+                      /></a>
+                    </td>
+                    <td>
+                      <a href=""
+                        ><img
+                          src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/61f309b8-a240-4afe-b840-97cf6102157d.png"
+                          alt=""
+                      /></a>
+                    </td>
+                    <td>
+                      <a href=""
+                        ><img
+                          src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/5563c814-6193-4c88-900f-630a485e12b8.png"
+                          alt=""
+                      /></a>
+                    </td>
+                    <td>
+                      <a href=""
+                        ><img
+                          src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/d22156dd-4933-40f7-a903-69cca2675aa6.png"
+                          alt=""
+                      /></a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td class="footer__padding-box">
+                <table class="template__footer-text" align="center">
+                  <tr>
+                    <td class="copyright">
+                      Copyright © 2019 The Bounties Network, All rights
+                      reserved.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="email-preferences">
+                      If you want to make changes to your email preferences, you
+                      may do so by viewing your
+                      <a href="" class="account-settings-link"
+                        >account settings</a
+                      >.
+                    </td>
+                  </tr>
+                </table>
+              </td>
             </tr>
           </table>
 
-          <div class="message-container">
-            <div class="message">
-              <span class="label">Label</span>
-              <p>
-                Greetings! This is a test of our new responsive notification
-                emails! If you are receiving this, don't panic. It just to
-                notify you that you are awesome. If you have any thoughts or
-                feedback around the email design, let me know! Check it out on
-                both mobile and desktop to make sure it adapts correctly.
-                Outlook on Windows still does not want to cooperate, but I am
-                determined to bend it to my will.
-              </p>
-            </div>
-          </div>
-
-          <div class="email-cta">
-            <a href="" class="primary-cta" target="_blank">Button</a>
-          </div>
-        </div>
-
-        <div class="footer">
-          <ul class="social-icons">
-            <li>
-              <a href=""
-                ><img
-                  src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/6ff9131b-5dfc-4051-addf-b5245f06ac3e.png"
-                  alt=""
-              /></a>
-            </li>
-            <li>
-              <a href=""
-                ><img
-                  src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/db9f1d0e-dda4-454d-97ad-b09008a3bb92.png"
-                  alt=""
-              /></a>
-            </li>
-            <li>
-              <a href=""
-                ><img
-                  src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/61f309b8-a240-4afe-b840-97cf6102157d.png"
-                  alt=""
-              /></a>
-            </li>
-            <li>
-              <a href=""
-                ><img
-                  src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/5563c814-6193-4c88-900f-630a485e12b8.png"
-                  alt=""
-              /></a>
-            </li>
-            <li>
-              <a href=""
-                ><img
-                  src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/d22156dd-4933-40f7-a903-69cca2675aa6.png"
-                  alt=""
-              /></a>
-            </li>
-          </ul>
-          <div class="footer-copy">
-            <p>Copyright © 2019 The Bounties Network, All rights reserved.</p>
-            <p>
-              If you want to make changes to your email preferences, you may do
-              so by viewing your
-              <a href="" class="account-settings-link">account settings</a>.
-            </p>
-          </div>
-        </div>
-      </div>
-      <!--End of wrapper-->
-    </div>
+          <!--End of Wrapper-->
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

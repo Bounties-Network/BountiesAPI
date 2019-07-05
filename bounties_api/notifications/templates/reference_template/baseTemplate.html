@@ -16,7 +16,7 @@
       type="text/css"
     />
     <link rel="stylesheet" href="index.css" />
-    <title>Someone applied to your bounty!</title>
+    <title>This is your document title.</title>
   </head>
   <!--[if mso]><body class="mso"><![endif]-->
   <!--[if !mso]><!--><body><!--<![endif]-->
@@ -82,7 +82,7 @@
                         </tr>
                         <tr>
                           <td class="content__subheading">
-                            This is a subheading incase we need to display additional information to the user that the main heading does not
+                            This is a sub-heading incase we need to display additional information to the user that the main heading does not
                             provide.
                           </td>
                         </tr>
@@ -99,8 +99,7 @@
                           <td class="bounty-preview__text">
                             <table>
                               <tr><td class="bounty-preview__text--title">
-                                This is a bounty title that is pretty long to see if
-                                the ellipsis will display correctly.
+                                {{ bounty_title }}
                               </td></tr>
                               <tr>
                                 <tr>
@@ -115,12 +114,12 @@
                             <table>
                               <tr>
                                 <td class="bounty-preview__value--usd">
-                                  $999
+                                  ${{ usd_amount }}
                                 </td>
                               </tr>
                               <tr>
                                 <td class="bounty-preview__value--eth">
-                                  0.005 ETH
+                                  {{ token_amount }} {{ token }}
                                 </td>
                               </tr>
                             </table>
@@ -133,10 +132,10 @@
                             <table>
                               <tr>
                                 <td class="bounty-preview__avatar">
-                                  <a href="#"><img src="http://images.thoughtbot.com/team/corwin.jpg" alt="User Avatar"></a>
+                                  <a href="{{ issuer_address_link }}"><img src="{{ issuer_profile_image }}" alt="User Avatar"></a>
                                 </td>
                                 <td class="bounty-preview__address">
-                                  <a href="">0xh45...234rhj</a>
+                                  <a href="{{ issuer_address_link }}">{{ issuer_address }}</a>
                                 </td>
                               </tr>
                             </table>
@@ -201,7 +200,7 @@
                 >
                   <tr>
                     <td class="social-links__item">
-                      <a href=""
+                      <a href="http://www.twitter.com/ethbounties"
                         ><img
                           width="18"
                           height="18"
@@ -210,7 +209,7 @@
                       /></a>
                     </td>
                     <td class="social-links__item">
-                      <a href=""
+                      <a href="https://medium.com/bounties-network"
                         ><img
                           width="18"
                           height="18"
@@ -219,7 +218,7 @@
                       /></a>
                     </td>
                     <td class="social-links__item">
-                      <a href=""
+                      <a href="https://github.com/bounties-network"
                         ><img
                           width="18"
                           height="18"
@@ -228,7 +227,7 @@
                       /></a>
                     </td>
                     <td class="social-links__item">
-                      <a href=""
+                      <a href="http://www.facebook.com/bounties-network"
                         ><img
                           width="18"
                           height="18"
@@ -237,7 +236,7 @@
                       /></a>
                     </td>
                     <td class="social-links__item">
-                      <a href=""
+                      <a href="http://bounties.network"
                         ><img
                           width="18"
                           height="18"
@@ -269,7 +268,7 @@
                     <td class="footer__email-preferences">
                       If you want to make changes to your email preferences, you
                       may do so by viewing your
-                      <a href="">account settings</a
+                      <a href="{{ preferences_link }}">account settings</a
                       >.
                     </td>
                   </tr>

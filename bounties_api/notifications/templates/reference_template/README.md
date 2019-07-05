@@ -10,6 +10,8 @@ _**Production templates should not use separate `.html` and `.css` files!**_
 
 If you want to duplicate or copy from the reference template, and then want to propagate those changes across the production templates, you must use a [CSS inliner](https://putsmail.com/inliner) to inline all CSS before using the resulting `html` in your production template. _**If you do not first inline all styles, it will likely result in inconsistencies across email clients.**_
 
+To improve readability and decrease the likelihood of conflicting classes, the `css` for these templates uses the [BEM naming convention](https://css-tricks.com/bem-101/).
+
 ### Production Template Construction
 
 `baseTemplate.html` should include most if not all of the elements that you need to construct a variety of notification variations. You may choose to omit elements as required by a particular notification. If you choose to do so, it is wise to also remove the `css` associated with the removed markup so that there is no unused `css`.

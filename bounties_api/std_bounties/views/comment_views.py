@@ -56,7 +56,7 @@ class FulfillmentComments(ListModelMixin, GenericViewSet):
         return Comment.objects.filter(fulfillment__id=self.kwargs['fulfillment_id']).order_by('-created')
 
     @staticmethod
-    def post(request, bounty_id, fulfillment_id):
+    def post(request, fulfillment_id):
         fulfillment = get_object_or_404(Fulfillment, id=fulfillment_id)
 
         serializer = CommentSerializer(

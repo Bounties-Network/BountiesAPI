@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Your application was accepted!</title>
+    <title>Someone just applied to your bounty!</title>
     <style type="text/css">
       @media screen and (min-width: 575px) {
         .content__container {
@@ -43,7 +43,7 @@
           <table style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;padding:0;table-layout:fixed;width:100%;">
             <tr>
               <td class="template__pre-header" style="border-collapse:collapse;color:#5a28c6;font-size:5px;left:-9999px;position:absolute;">
-                You application was accepted!
+                Someone just applied to your bounty!
               </td>
             </tr>
           </table>
@@ -76,13 +76,13 @@
                       <table style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;padding:0;table-layout:fixed;width:100%;">
                         <tr>
                           <td style="border-collapse:collapse;">
-                            <h1 class="content__heading" style="margin:0;padding:0;line-height:1;font-size:20px;text-align:center;font-weight:500;line-height:1.4;">You application was accepted!
+                            <h1 class="content__heading" style="margin:0;padding:0;line-height:1;font-size:20px;text-align:center;font-weight:500;line-height:1.4;">Someone just applied to your bounty!
                             </h1>
                           </td>
                         </tr>
                         <tr>
                           <td class="content__subheading" style="border-collapse:collapse;color:#8d9496;font-size:16px;text-align:center;font-weight:400;line-height:1.4;padding-top:24px;">
-                            The user <a href="{{ from_user_address_link }}" style="color: #4A93FF;">{{ from_user_address }}</a> has approved you to complete their bounty:
+                            The user <a href="{{ from_user_address_link }}" style="color: #4A93FF;">{{ from_user_address }}</a> just applied to work on your bounty:
                           </td>
                         </tr>
                       </table>
@@ -145,13 +145,34 @@
                         </table>
                       </td>
                     </tr>
+                    <!-- Email message -->
+                    <tr>
+                      <td class="message__padding-box" style="border-collapse:collapse;">
+                        <table class="message__wrapper" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;padding:0;table-layout:fixed;width:100%;border-collapse:initial;border-radius:8px;background:#f8f9fb;border:1px solid #f1f1f1;">
+                          <tr class="message__container" style="color:#474b4d;line-height:1.5;">
+                            <td class="message__content" style="border-collapse:collapse;padding:16px;">
+                              <table style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;padding:0;table-layout:fixed;width:100%;">
+                                <tr>
+                                  <td class="message__label" style="border-collapse:collapse;display:block;font-size:12px;color:#8d9496;margin-bottom:8px;">Application message</td>
+                                </tr>
+                                <tr>
+                                  <td style="border-collapse:collapse;">
+                                    {{ application_message }}
+                                </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
                     <!-- Email CTA -->
                     <tr>
                       <td class="cta__padding-box" style="border-collapse:collapse;padding-top:80px;">
                         <table class="email-cta" align="center" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;padding:0;table-layout:fixed;width:100%;">
                           <tr>
                             <td class="cta__primary" style="border-collapse:collapse;background:#4a93ff;text-align:center;color:#fff;border-radius:8px;height:50px;">
-                              <a href="{{ url }}" target="_blank" style="color:#4a93ff;cursor:pointer;display:block;color:#fff;text-decoration:none;line-height:50px;">View bounty</a>
+                              <a href="{{ url }}" target="_blank" style="color:#4a93ff;cursor:pointer;display:block;color:#fff;text-decoration:none;line-height:50px;">View application</a>
                             </td>
                           </tr>
                         </table>

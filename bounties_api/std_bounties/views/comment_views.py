@@ -53,11 +53,11 @@ class FulfillmentComments(ListModelMixin, GenericViewSet):
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
-        return Comment.objects.filter(bounty__id=self.kwargs['bounty_id'], fulfillment__id=self.kwargs['fulfillment_id']).order_by('-created')
+        return Comment.objects.filter(fulfillment__id=self.kwargs['fulfillment_id']).order_by('-created')
 
     @staticmethod
     def post(request, bounty_id, fulfillment_id):
-        fulfillment = get_object_or_404(Fulfillment, bounty_id=bounty_id, fulfillment_id=fulfillment_id)
+        fulfillment = get_object_or_404(Fulfillment, id=fulfillment_id)
 
         serializer = CommentSerializer(
             data=request.data,

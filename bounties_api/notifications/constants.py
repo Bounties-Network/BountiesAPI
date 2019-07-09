@@ -39,8 +39,6 @@ FULFILLMENT_COMMENT_RECEIVED = 37
 FULFILLMENT_COMMENT_RECEIVED_COMMENTER = 38
 FULFILLMENT_COMMENT_RECEIVED_ISSUER = 39
 
-
-
 NOTIFICATION_IDS = (
     (FULFILLMENT_SUBMITTED, 'FulfillmentSubmitted'),
     (FULFILLMENT_SUBMITTED_ISSUER, 'FulfillmentSubmittedIssuer'),
@@ -112,8 +110,10 @@ push_notification_options = {
             FULFILLMENT_COMMENT_RECEIVED,
         ]],
     'both': [
-        id_to_notification[notif] for notif in [RATING_RECEIVED]],
-        FULFILLMENT_COMMENT_RECEIVED_COMMENTER
+        id_to_notification[notif] for notif in [
+            RATING_RECEIVED,
+            FULFILLMENT_COMMENT_RECEIVED_COMMENTER
+        ]]
 }
 
 default_email_options = {

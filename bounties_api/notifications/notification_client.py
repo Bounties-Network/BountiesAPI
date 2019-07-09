@@ -472,6 +472,25 @@ class NotificationClient:
                 comment=comment,
                 is_activity=False
             )
+    def fulfillment_comment_issued(self, bounty_id, fulfillment_id, event_date, uid, **kwargs):
+        bounty = Bounty.objects.get(pk=bounty_id)
+        fulfillment = Fulfillment.objects.get(fulfillment_id)
+        comment = Comment.objects.get(id=uid)
+
+        string_data = notification_templates['FulfillmentCommentReceived'].format(bounty_title=bounty.title)
+
+        create_bounty_notification(
+            bounty=bounty,
+            uid='FulfillmentComment' + str(uid),
+            notification_name=notifications['FulfillmentComment'],
+            user=comment.user,
+            issuer=bounty.user,
+            from_user=comment.user,
+            string_data=string_data,
+            subject='You Commented on a Submission',
+            notification_created=event_date,
+            is_activity=True
+        )
 
     def fulfillment_comment_received(self, bounty_id, fulfillment_id, event_date, uid, **kwargs):
         bounty = Bounty.objects.get(pk=bounty_id)

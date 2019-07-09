@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--[if gte mso 7]><xml>
+      <o:OfficeDocumentSettings>
+      <o:AllowPNG/>
+      <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml><![endif]-->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      href="https://rsms.me/inter/inter.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="index.css" />
+    <title>This is your document title.</title>
+  </head>
+  <!--[if mso]><body class="mso"><![endif]-->
+  <!--[if !mso]><!--><body><!--<![endif]-->
+    <table class="template__bg" cellspacing="0" cellpadding="0">
+      <tr>
+        <td>
+          <!-- Pre-header -->
+          <table>
+            <tr>
+              <td class="template__pre-header">
+                This is your pre-header text.
+              </td>
+            </tr>
+          </table>
+
+          <!-- Template Wrapper -->
+
+          <!--[if mso]>
+          <table cellpadding="0" cellspacing="0" border="0" style="padding:0px;margin:0px;width:100%;">
+            <tr><td colspan="3" style="padding:0px;margin:0px;font-size:20px;height:20px;" height="20">&nbsp;</td></tr>
+            <tr>
+              <td style="padding:0px;margin:0px;">&nbsp;</td>
+              <td style="padding:0px;margin:0px;" width="575">
+          <![endif]-->
+
+          <table
+            class="template__wrapper"
+            align="center"
+            cellspacing="0"
+            cellpadding="0"
+          >
+            <!-- Logo Header -->
+            <tr>
+              <td class="template__logo-container">
+                <a id="template__logo-link" href="">
+                  <img
+                    width="60"
+                    width="60"
+                    class="template__logo"
+                    src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/7cb83b9a-59f7-4a7c-a019-1696a5a3fc88.png"
+                    alt="The Bounties Network"
+                  />
+                </a>
+              </td>
+            </tr>
+
+            <!-- Main Email Content -->
+            <tr>
+              <td class="content__container">
+                <table cellspacing="0" cellpadding="0">
+                  <!-- Email Heading -->
+                  <tr>
+                    <td class="heading__padding-box">
+                      <table>
+                        <tr>
+                          <td>
+                            <h1 class="content__heading">
+                              <a href="https://giphy.com/gifs/girls-beauty-coup-smrAGct3Dx5DO/fullscreen" class="username" target="_blank">Hello
+                                co-founders!</a>
+                              This is an email notification test!
+                            </h1>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="content__subheading">
+                            This is a sub-heading incase we need to display additional information to the user that the main heading does not
+                            provide.
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+
+                  <!-- Bounty Preview -->
+                  <tr>
+                    <td class="bounty-preview__padding-box">
+                      <table class="bounty-preview">
+                        <tr>
+                          <td class="bounty-preview__text">
+                            <table>
+                              <tr><td class="bounty-preview__text--title">
+                                {{ bounty_title }}
+                              </td></tr>
+                              <tr>
+                                <tr>
+                                  <td class="bounty-preview__text--metadata">
+                                    2 days remaining • 2 submissions
+                                  </td>
+                                </tr>
+                              </tr>
+                            </table>
+                          </td>
+                          <td class="bounty-preview__value">
+                            <table>
+                              <tr>
+                                <td class="bounty-preview__value--usd">
+                                  ${{ usd_amount }}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="bounty-preview__value--eth">
+                                  {{ token_amount }} {{ token }}
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                        <!--[if !mso]><!-->
+                        <div class="outlook-hide" style="display:none; max-height:0px; overflow:hidden;">
+                        <tr>
+                          <td>
+                            <table>
+                              <tr>
+                                <td class="bounty-preview__avatar">
+                                  <a href="{{ issuer_address_link }}"><img src="{{ issuer_profile_image }}" alt="User Avatar"></a>
+                                </td>
+                                <td class="bounty-preview__address">
+                                  <a href="{{ issuer_address_link }}">{{ issuer_address }}</a>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                        </div>
+                        <!--<![endif]-->
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- Email message -->
+                  <tr>
+                    <td class="message__padding-box">
+                      <table class="message__wrapper">
+                        <tr class="message__container">
+                          <td class="message__content">
+                            <table>
+                              <tr>
+                                <td class="message__label">Label</td>
+                              </tr>
+                            </table>
+
+                            Greetings! This is a test of our new responsive
+                            notification emails! If you are receiving this,
+                            don't panic. It just to notify you that you are
+                            awesome. If you have any thoughts or feedback around
+                            the email design, let me know! Check it out on both
+                            mobile and desktop to make sure it adapts correctly.
+                            Outlook on Windows still does not want to cooperate,
+                            but I am determined to bend it to my will.
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- Email CTA -->
+                  <tr>
+                    <td class="cta__padding-box">
+                      <table class="email-cta" align="center">
+                        <tr>
+                          <td class="cta__primary">
+                            <a href="" target="_blank">Button</a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Social Links -->
+            <tr>
+              <td class="social-links__padding-box">
+                <table
+                  class="social-links"
+                  align="center"
+                  cellspacing="0"
+                  cellpadding="0"
+                >
+                  <tr>
+                    <td class="social-links__item">
+                      <a href="http://www.twitter.com/ethbounties"
+                        ><img
+                          width="18"
+                          height="18"
+                          src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/6ff9131b-5dfc-4051-addf-b5245f06ac3e.png"
+                          alt="Twitter"
+                      /></a>
+                    </td>
+                    <td class="social-links__item">
+                      <a href="https://medium.com/bounties-network"
+                        ><img
+                          width="18"
+                          height="18"
+                          src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/db9f1d0e-dda4-454d-97ad-b09008a3bb92.png"
+                          alt="Medium"
+                      /></a>
+                    </td>
+                    <td class="social-links__item">
+                      <a href="https://github.com/bounties-network"
+                        ><img
+                          width="18"
+                          height="18"
+                          src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/61f309b8-a240-4afe-b840-97cf6102157d.png"
+                          alt="Github"
+                      /></a>
+                    </td>
+                    <td class="social-links__item">
+                      <a href="http://www.facebook.com/bounties-network"
+                        ><img
+                          width="18"
+                          height="18"
+                          src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/5563c814-6193-4c88-900f-630a485e12b8.png"
+                          alt="Facebook"
+                      /></a>
+                    </td>
+                    <td class="social-links__item">
+                      <a href="http://bounties.network"
+                        ><img
+                          width="18"
+                          height="18"
+                          src="https://gallery.mailchimp.com/03351ad14a86e9637146ada2a/images/d22156dd-4933-40f7-a903-69cca2675aa6.png"
+                          alt="The Bounties Network"
+                      /></a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td class="footer__padding-box">
+                <table
+                  class="template__footer-text"
+                  align="center"
+                  cellspacing="0"
+                  cellpadding="0"
+                >
+                  <tr>
+                    <td class="footer__copyright">
+                      Copyright © 2019 The Bounties Network, All rights
+                      reserved.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="footer__email-preferences">
+                      If you want to make changes to your email preferences, you
+                      may do so by viewing your
+                      <a href="{{ preferences_link }}">account settings</a
+                      >.
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+
+          <!--[if mso]>
+                </td>
+                <td style="padding:0px;margin:0px;">&nbsp;</td>
+              </tr>
+            <tr><td colspan="3" style="padding:0px;margin:0px;font-size:20px;height:20px;" height="20">&nbsp;</td></tr>
+          </table>
+          <![endif]-->
+
+          <!--End of Wrapper-->
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

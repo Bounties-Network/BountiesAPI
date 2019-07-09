@@ -467,7 +467,66 @@ class NotificationClient:
                 issuer=bounty.user,
                 from_user=comment.user,
                 string_data=issuer_string_data,
-                subject='Someone Commented on your Bounty',
+                subject='Someone Commented on Your Bounty',
+                notification_created=event_date,
+                comment=comment,
+                is_activity=False
+            )
+
+    def fulfillment_comment_received(self, bounty_id, fulfillment_id, event_date, uid, **kwargs):
+        bounty = Bounty.objects.get(pk=bounty_id)
+        fulfillment = Fulfillment.objects.get(fulfillment_id)
+        comment = Comment.objects.get(id=uid)
+
+        fulfiller_string_data = notification_templates['FulfillmentCommentReceived'].format(bounty_title=bounty.title)
+        commenter_string_data = notification_templates['FulfillmentCommentReceivedCommenter'].format(bounty_title=bounty.title)
+        issuer_string_data = notification_templates['FulfillmentCommentReceivedIssuer'].format(bounty_title=bounty.title)
+
+        commenters = list(map(lambda c: c.user, fulfillment.comments.all()))
+
+        commenters_final = list(filter(
+            lambda u: u != bounty.user and u != comment.user and u != fulfillment.user,
+            commenters
+        ))
+
+        for user in set(commenters_final):
+            create_bounty_notification(
+                bounty=bounty,
+                uid='{}-{}'.format(uid, user.id),
+                notification_name=notifications['FulfillmentCommentReceivedCommenter'],
+                user=user,
+                issuer=bounty.user,
+                from_user=comment.user,
+                string_data=fulfiller_string_data,
+                subject='Someone Commented on a Submission You Commented On',
+                notification_created=event_date,
+                comment=comment,
+                is_activity=False
+            )
+        if comment.user != bounty.user:
+            create_bounty_notification(
+                bounty=bounty,
+                uid='{}-{}'.format(uid, bounty.user.id),
+                notification_name=notifications['FulfillmentCommentReceivedIssuer'],
+                user=bounty.user,
+                issuer=bounty.user,
+                from_user=comment.user,
+                string_data=issuer_string_data,
+                subject='Someone Commented on a Submission to Your Bounty',
+                notification_created=event_date,
+                comment=comment,
+                is_activity=False
+            )
+        if comment.user != fulfillment.user:
+            create_bounty_notification(
+                bounty=bounty,
+                uid='{}-{}'.format(uid, bounty.user.id),
+                notification_name=notifications['FulfillmentCommentReceived'],
+                user=fulfillment.user,
+                issuer=bounty.user,
+                from_user=comment.user,
+                string_data=issuer_string_data,
+                subject='Someone Commented on Your Submission',
                 notification_created=event_date,
                 comment=comment,
                 is_activity=False

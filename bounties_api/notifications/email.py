@@ -41,6 +41,10 @@ class Email:
         constants.APPLICATION_REJECTED_APPLICANT: 'applicationRejected.html',
         constants.BOUNTY_CHANGED: 'bountyChangedFulfiller.html',
         constants.BOUNTY_CHANGED_APPLICANT: 'bountyChangedApplicant.html',
+        constants.FULFILLMENT_COMMENT_RECEIVED: 'fulfillmentCommentReceived.html',
+        constants.FULFILLMENT_COMMENT_RECEIVED_ISSUER: 'fulfillmentCommentReceivedIssuer.html',
+        constants.FULFILLMENT_COMMENT_RECEIVED_COMMENTER: 'fulfillmentCommentReceivedCommenter.html',
+
     }
 
     max_description_length = 240

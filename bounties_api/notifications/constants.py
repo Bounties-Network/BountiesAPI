@@ -35,6 +35,10 @@ BOUNTY_COMMENT_RECEIVED_ISSUER = 33
 BOUNTY_CHANGED_APPLICANT = 34
 BOUNTY_COMMENT_RECEIVED_COMMENTER = 35
 BOUNTY_CHANGED_ISSUER = 36
+FULFILLMENT_COMMENT_RECEIVED = 37
+FULFILLMENT_COMMENT_RECEIVED_COMMENTER = 38
+FULFILLMENT_COMMENT_RECEIVED_ISSUER = 39
+
 
 
 NOTIFICATION_IDS = (
@@ -75,6 +79,9 @@ NOTIFICATION_IDS = (
     (BOUNTY_COMMENT_RECEIVED_ISSUER, 'BountyCommentReceivedIssuer'),
     (BOUNTY_COMMENT_RECEIVED_COMMENTER, 'BountyCommentReceivedCommenter'),
     (BOUNTY_CHANGED_APPLICANT, 'BountyChangedApplicant'),
+    (FULFILLMENT_COMMENT_RECEIVED, 'FulfillmentCommentReceived'),
+    (FULFILLMENT_COMMENT_RECEIVED_COMMENTER, 'FulfillmentCommentReceivedCommenter'),
+    (FULFILLMENT_COMMENT_RECEIVED_ISSUER, 'FulfillmentCommentReceivedIssuer'),
 )
 
 id_to_notification = dict(NOTIFICATION_IDS)
@@ -91,6 +98,7 @@ push_notification_options = {
             CONTRIBUTION_RECEIVED,
             BOUNTY_COMPLETED,
             APPLICATION_RECEIVED,
+            FULFILLMENT_COMMENT_RECEIVED_ISSUER
         ]],
     'fulfiller': [
         id_to_notification[notif] for notif in [
@@ -101,9 +109,11 @@ push_notification_options = {
             BOUNTY_CHANGED,
             BOUNTY_COMMENT_RECEIVED_COMMENTER,
             BOUNTY_COMMENT_RECEIVED,
+            FULFILLMENT_COMMENT_RECEIVED,
         ]],
     'both': [
         id_to_notification[notif] for notif in [RATING_RECEIVED]],
+        FULFILLMENT_COMMENT_RECEIVED_COMMENTER
 }
 
 default_email_options = {

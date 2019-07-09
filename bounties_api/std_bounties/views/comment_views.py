@@ -71,4 +71,6 @@ class FulfillmentComments(ListModelMixin, GenericViewSet):
 
         fulfillment.comments.add(comment)
 
+        notification_client.fulfillment_comment_issued(fulfillment.bounty_id, fulfillment_id, comment.created, comment.id)
+
         return JsonResponse(serializer.data)

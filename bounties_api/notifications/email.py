@@ -115,6 +115,15 @@ class Email:
                 bounty_id=bounty.id,
                 accepted=False,
             ).all().count()
+        total_submissions = Fulfillment.objects.filter(
+            bounty_id=bounty.id,
+            accepted=False,
+        ).all().count()
+        submissions = ''
+        if total_submissions == 1:
+            submissions = '{} submission'.format(total_submissions)
+        else:
+            submissions = '{} submissions'.format(total_submissions)
 
         remaining_usd = ' unknown'
         if bounty.token_lock_price:
@@ -198,7 +207,8 @@ class Email:
             'average_rating': usd_decimals(average_rating),
             'rating_count': rating_count,
             'rating_link': rating_link,
-            'contribute_url': url + '?contribute=true'
+            'contribute_url': url + '?contribute=true',
+            'submissions': submissions
         })
 
     def render(self):

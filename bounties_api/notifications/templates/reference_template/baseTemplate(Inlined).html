@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>New comment on: {{ bounty_title }}</title>
+    <title>This is your document title.</title>
     <style type="text/css">
       @media screen and (min-width: 575px) {
         .content__container {
@@ -43,7 +43,7 @@
           <table style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;padding:0;table-layout:fixed;width:100%;">
             <tr>
               <td class="template__pre-header" style="border-collapse:collapse;color:#5a28c6;font-size:5px;left:-9999px;position:absolute;">
-                New comment on: {{ bounty_title }}
+                Pre-header text
               </td>
             </tr>
           </table>
@@ -76,13 +76,15 @@
                       <table style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;padding:0;table-layout:fixed;width:100%;">
                         <tr>
                           <td style="border-collapse:collapse;">
-                            <h1 class="content__heading" style="margin:0;padding:0;line-height:1;font-size:20px;text-align:center;font-weight:500;line-height:1.4;">Someone just commented on a bounty you fulfilled.
+                            <h1 class="content__heading" style="margin:0;padding:0;line-height:1;font-size:20px;text-align:center;font-weight:500;line-height:1.4;">Notification heading with a
+                              <a href="https://giphy.com/gifs/girls-beauty-coup-smrAGct3Dx5DO/fullscreen" class="username" target="_blank" style="color:#4a93ff;">
+                                link</a>.
                             </h1>
                           </td>
                         </tr>
                         <tr>
                           <td class="content__subheading" style="border-collapse:collapse;color:#8d9496;font-size:16px;text-align:center;font-weight:400;line-height:1.4;padding-top:24px;">
-                            The user <a href="{{ from_user_address_link }}" style="color: #4A93FF;">{{ from_user_name }}</a> just commented on the following bounty:
+                            Notification sub-heading.
                           </td>
                         </tr>
                       </table>
@@ -153,11 +155,11 @@
                             <td class="message__content" style="border-collapse:collapse;padding:16px;">
                               <table style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;padding:0;table-layout:fixed;width:100%;">
                                 <tr>
-                                  <td class="message__label" style="border-collapse:collapse;display:block;font-size:12px;color:#8d9496;margin-bottom:8px;">Comment</td>
+                                  <td class="message__label" style="border-collapse:collapse;display:block;font-size:12px;color:#8d9496;margin-bottom:8px;">Label</td>
                                 </tr>
                                 <tr>
                                   <td style="border-collapse:collapse;">
-                                    {{ comment }}
+                                    This is placeholder text for an email message.
                                 </td>
                                 </tr>
                               </table>
@@ -172,7 +174,7 @@
                         <table class="email-cta" align="center" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;padding:0;table-layout:fixed;width:100%;">
                           <tr>
                             <td class="cta__primary" style="border-collapse:collapse;background:#4a93ff;text-align:center;color:#fff;border-radius:8px;height:50px;">
-                              <a href="{{ url }}" target="_blank" style="color:#4a93ff;cursor:pointer;display:block;color:#fff;text-decoration:none;line-height:50px;">Reply to comment</a>
+                              <a href="{{ url }}" target="_blank" style="color:#4a93ff;cursor:pointer;display:block;color:#fff;text-decoration:none;line-height:50px;">Email button</a>
                             </td>
                           </tr>
                         </table>

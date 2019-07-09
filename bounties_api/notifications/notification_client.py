@@ -477,12 +477,12 @@ class NotificationClient:
         fulfillment = Fulfillment.objects.get(fulfillment_id)
         comment = Comment.objects.get(id=uid)
 
-        string_data = notification_templates['FulfillmentCommentReceived'].format(bounty_title=bounty.title)
+        string_data = notification_templates['FulfillmentCommentIssued'].format(bounty_title=bounty.title)
 
         create_bounty_notification(
             bounty=bounty,
             uid='FulfillmentComment' + str(uid),
-            notification_name=notifications['FulfillmentComment'],
+            notification_name=notifications['FulfillmentCommentIssued'],
             user=comment.user,
             issuer=bounty.user,
             from_user=comment.user,

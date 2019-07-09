@@ -37,6 +37,7 @@ notification_templates = {
     'FulfillmentCommentReceived': 'A comment was added to your submission for the bounty: {bounty_title}.',
     'FulfillmentCommentReceivedIssuer': 'A comment was added to a submission for the bounty: {bounty_title}.',
     'FulfillmentCommentReceivedCommenter': 'A comment was added for a submission to the bounty: {bounty_title}.',
+    'FulfillmentCommentIssued': 'You wrote a comment on a submission for: {bounty_title}.'
 }
 
 email_templates = {

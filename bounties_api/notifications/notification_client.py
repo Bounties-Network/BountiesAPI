@@ -494,7 +494,7 @@ class NotificationClient:
 
     def fulfillment_comment_received(self, bounty_id, fulfillment_id, event_date, uid, **kwargs):
         bounty = Bounty.objects.get(pk=bounty_id)
-        fulfillment = Fulfillment.objects.get(fulfillment_id)
+        fulfillment = Fulfillment.objects.get(pk=fulfillment_id)
         comment = Comment.objects.get(id=uid)
 
         fulfiller_string_data = notification_templates['FulfillmentCommentReceived'].format(bounty_title=bounty.title)

@@ -51,13 +51,6 @@ class Email:
     max_title_length = 120
 
     @staticmethod
-    def render_categories(categories):
-        def render_category(c):
-            return render_to_string('category.html', context={'category': c})
-
-        return '\n'.join(map(str, map(render_category, categories)))
-
-    @staticmethod
     def rating_color(rating):
         if rating >= 4:
             return '#6FC78D'  # 'brand-green'
@@ -178,7 +171,6 @@ class Email:
             'usd_amount': usd_decimals(bounty.usd_price),
             'token_amount': token_amount,
             'token': bounty.token_symbol,
-            'bounty_categories': Email.render_categories(bounty.data_categories),
             'token_amount_remaining': remaining,
             'usd_amount_remaining': remaining_usd,
             'added_amount': added_amount,

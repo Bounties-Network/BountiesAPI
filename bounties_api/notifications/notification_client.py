@@ -511,7 +511,7 @@ class NotificationClient:
         for user in set(commenters_final):
             create_bounty_notification(
                 bounty=bounty,
-                uid='{}-{}'.format(uid, user.id),
+                uid='FulfillmentCommentReceivedCommenter-{}-{}'.format(uid, user.id),
                 notification_name=notifications['FulfillmentCommentReceivedCommenter'],
                 user=user,
                 issuer=bounty.user,
@@ -525,7 +525,7 @@ class NotificationClient:
         if comment.user != bounty.user:
             create_bounty_notification(
                 bounty=bounty,
-                uid='{}-{}'.format(uid, bounty.user.id),
+                uid='FulfillmentCommentReceivedIssuer-{}-{}'.format(uid, bounty.user.id),
                 notification_name=notifications['FulfillmentCommentReceivedIssuer'],
                 user=bounty.user,
                 issuer=bounty.user,
@@ -540,7 +540,7 @@ class NotificationClient:
             print('about to email fulfiller')
             create_bounty_notification(
                 bounty=bounty,
-                uid='{}-{}'.format(uid, bounty.user.id),
+                uid='FulfillmentCommentReceived-{}-{}'.format(uid, bounty.user.id),
                 notification_name=notifications['FulfillmentCommentReceived'],
                 user=fulfillment.user,
                 issuer=bounty.user,

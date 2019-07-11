@@ -74,6 +74,8 @@ def create_notification(**kwargs):
     if not created:
         return
 
+    print('notification created')
+
     DashboardNotification.objects.create(
         notification=notification,
         string_data=string_data,
@@ -88,14 +90,20 @@ def create_notification(**kwargs):
     if not user.email:
         return
 
+    print('has user email')
+
     email_settings = user.settings.emails
     activity_emails = email_settings['activity']
 
     if is_activity and not activity_emails:
         return
 
+    print('not activity')
+
     if (not is_activity and notification_name not in user.settings.accepted_email_settings()):
         return
+
+    print('allowed to send')
 
     if platform not in settings.PLATFORM_MAPPING:
         return
@@ -103,11 +111,16 @@ def create_notification(**kwargs):
     if notification.email_sent:
         return
 
+    print('has template?')
+
     if notification_name not in Email.templates:
         return
 
+    print('check!')
+
     email = Email(**kwargs)
     email_html = email.render()
+    print('rendered!')
     send_email(user.email, subject, email_html)
     notification.email_sent = True
     notification.save()

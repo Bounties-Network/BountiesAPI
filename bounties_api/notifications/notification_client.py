@@ -536,10 +536,6 @@ class NotificationClient:
                 comment=comment,
                 is_activity=False
             )
-        print('comment user')
-        print(comment.user)
-        print('fulfiller')
-        print(fulfillment.user)
         if comment.user != fulfillment.user:
             print('about to email fulfiller')
             create_bounty_notification(

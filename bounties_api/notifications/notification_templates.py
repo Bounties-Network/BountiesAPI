@@ -34,7 +34,10 @@ notification_templates = {
     'BountyCommentReceivedIssuer': 'A comment was added for your bounty: {bounty_title}.',
     'BountyChangedApplicant': 'The bounty you applied to has been updated: {bounty_title}.',
     'BountyCommentReceivedCommenter': 'A comment was added for the bounty: {bounty_title}.',
-
+    'FulfillmentCommentReceived': 'A comment was added to your submission for the bounty: {bounty_title}.',
+    'FulfillmentCommentReceivedIssuer': 'A comment was added to a submission for the bounty: {bounty_title}.',
+    'FulfillmentCommentReceivedCommenter': 'A comment was added for a submission to the bounty: {bounty_title}.',
+    'FulfillmentCommentIssued': 'You wrote a comment on a submission for: {bounty_title}.'
 }
 
 email_templates = {

@@ -10,6 +10,7 @@ router.register(r'^fulfillment', views.FulfillmentViewSet)
 router.register(r'^category', views.CategoryViewSet)
 router.register(r'^reviews', views.ReviewsViewSet, 'user_reviews')
 router.register(r'^bounty/(?P<bounty_id>\d+)/comment', views.BountyComments, 'bounty_comments')
+router.register(r'^fulfillment/(?P<fulfillment_id>\d+)/comment', views.FulfillmentComments, 'fulfillment_comments')
 router.register(r'^bounty/(?P<bounty_id>\d+)/application', views.FulfillerApplicationViewSet, 'bounty_applications')
 
 urlpatterns = [

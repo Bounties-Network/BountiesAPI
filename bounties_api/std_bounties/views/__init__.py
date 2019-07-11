@@ -1,7 +1,7 @@
 from .bounty_views import BountyViewSet
 from .review_views import ReviewsViewSet
 from .fulfillment_reviews_views import FulfillmentReviews
-from .comment_views import BountyComments
+from .comment_views import BountyComments, FulfillmentComments
 from .draft_bounty_views import DraftBountyWriteViewSet
 from .fulfillment_views import FulfillmentViewSet
 from .category_views import CategoryViewSet

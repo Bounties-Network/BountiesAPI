@@ -21,7 +21,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <title>Bounty transfer</title>
+    <title>New comment</title>
     <style type="text/css">
       @media screen and (min-width: 575px) {
         .content__container {
@@ -66,7 +66,7 @@
                 class="template__pre-header"
                 style="border-collapse:collapse;color:#5a28c6;font-size:5px;left:-9999px;position:absolute;"
               >
-                Someone just transferred a bounty to you!
+                New comment
               </td>
             </tr>
           </table>
@@ -131,7 +131,7 @@
                               class="content__heading"
                               style="margin:0;padding:0;line-height:1;font-size:20px;text-align:center;font-weight:500;line-height:1.4;"
                             >
-                              Someone just transferred a bounty to you.
+                              Someone Else Just Commented on a Submission
                             </h1>
                           </td>
                         </tr>
@@ -146,9 +146,8 @@
                               style="color: #4A93FF;"
                               >{{ from_user_name }}</a
                             >
-                            just transferred their bounty to you. Now can now
-                            accept submissions to this bounty, and perform other
-                            administrative tasks.
+                            has also commented on the submission to the
+                            following bounty:
                           </td>
                         </tr>
                       </table>
@@ -261,6 +260,46 @@
                       </table>
                     </td>
                   </tr>
+                  <!-- Email message -->
+                  <tr>
+                    <td
+                      class="message__padding-box"
+                      style="border-collapse:collapse;"
+                    >
+                      <table
+                        class="message__wrapper"
+                        style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;padding:0;table-layout:fixed;width:100%;border-collapse:initial;border-radius:8px;background:#f8f9fb;border:1px solid #f1f1f1;"
+                      >
+                        <tr
+                          class="message__container"
+                          style="color:#474b4d;line-height:1.5;"
+                        >
+                          <td
+                            class="message__content"
+                            style="border-collapse:collapse;padding:16px;"
+                          >
+                            <table
+                              style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;padding:0;table-layout:fixed;width:100%;"
+                            >
+                              <tr>
+                                <td
+                                  class="message__label"
+                                  style="border-collapse:collapse;display:block;font-size:12px;color:#8d9496;margin-bottom:8px;"
+                                >
+                                  Comment
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style="border-collapse:collapse;">
+                                  {{ comment }}
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
                   <!-- Email CTA -->
                   <tr>
                     <td
@@ -281,7 +320,7 @@
                               href="{{ url }}"
                               target="_blank"
                               style="color:#4a93ff;cursor:pointer;display:block;color:#fff;text-decoration:none;line-height:50px;"
-                              >View bounty</a
+                              >Reply to comment</a
                             >
                           </td>
                         </tr>

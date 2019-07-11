@@ -41,17 +41,14 @@ class Email:
         constants.APPLICATION_REJECTED_APPLICANT: 'applicationRejected.html',
         constants.BOUNTY_CHANGED: 'bountyChangedFulfiller.html',
         constants.BOUNTY_CHANGED_APPLICANT: 'bountyChangedApplicant.html',
+        constants.FULFILLMENT_COMMENT_RECEIVED: 'fulfillmentCommentReceived.html',
+        constants.FULFILLMENT_COMMENT_RECEIVED_ISSUER: 'fulfillmentCommentReceivedIssuer.html',
+        constants.FULFILLMENT_COMMENT_RECEIVED_COMMENTER: 'fulfillmentCommentReceivedCommenter.html',
+
     }
 
     max_description_length = 240
     max_title_length = 120
-
-    @staticmethod
-    def render_categories(categories):
-        def render_category(c):
-            return render_to_string('category.html', context={'category': c})
-
-        return '\n'.join(map(str, map(render_category, categories)))
 
     @staticmethod
     def rating_color(rating):
@@ -111,6 +108,15 @@ class Email:
                 bounty_id=bounty.id,
                 accepted=False,
             ).all().count()
+        total_submissions = Fulfillment.objects.filter(
+            bounty_id=bounty.id,
+            accepted=False,
+        ).all().count()
+        submissions = ''
+        if total_submissions == 1:
+            submissions = '{} submission'.format(total_submissions)
+        else:
+            submissions = '{} submissions'.format(total_submissions)
 
         remaining_usd = ' unknown'
         if bounty.token_lock_price:
@@ -165,7 +171,6 @@ class Email:
             'usd_amount': usd_decimals(bounty.usd_price),
             'token_amount': token_amount,
             'token': bounty.token_symbol,
-            'bounty_categories': Email.render_categories(bounty.data_categories),
             'token_amount_remaining': remaining,
             'usd_amount_remaining': remaining_usd,
             'added_amount': added_amount,
@@ -194,7 +199,8 @@ class Email:
             'average_rating': usd_decimals(average_rating),
             'rating_count': rating_count,
             'rating_link': rating_link,
-            'contribute_url': url + '?contribute=true'
+            'contribute_url': url + '?contribute=true',
+            'submissions': submissions
         })
 
     def render(self):

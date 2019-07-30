@@ -119,7 +119,7 @@ def bounty_fulfilled(bounty_id, contract_version, **kwargs):
 
 
 @export
-def fullfillment_updated(bounty_id, contract_version, **kwargs):
+def fulfillment_updated(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
     @param contract_version

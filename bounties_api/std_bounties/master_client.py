@@ -129,6 +129,7 @@ def fulfillment_updated(bounty_id, contract_version, **kwargs):
     """
 
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
+
     bounty_client.update_fulfillment(bounty, **kwargs)
 
     fulfillment_id = kwargs.get('fulfillment_id')

@@ -129,11 +129,13 @@ class BountyClient:
 
         return fulfillment_serializer.save()
 
-    def update_fulfillment(self, bounty, fulfillment_id, inputs, **kwargs):
+    def update_fulfillment(self, bounty, **kwargs):
+
+        fulfillment_id = kwargs.get('fulfillment_id')
         fulfillment = Fulfillment.objects.get(
             fulfillment_id=fulfillment_id, bounty_id=bounty.bounty_id)
 
-        data_hash = inputs.get('data')
+        data_hash = kwargs.get('data')
         ipfs_data = map_fulfillment_data(
             data_hash, bounty.bounty_id, fulfillment_id)
 

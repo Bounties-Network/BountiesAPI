@@ -140,6 +140,7 @@ class BountyClient:
 
         fulfillment_serializer = FulfillmentSerializer(
             fulfillment, data={**ipfs_data}, partial=True)
+        fulfillment_serializer.is_valid(raise_exception=True)
         instance = fulfillment_serializer.save()
 
         return instance

@@ -153,7 +153,7 @@ class NotificationClient:
             bounty_title=bounty.title)
         create_bounty_notification(
             bounty=bounty,
-            uid=str(uid) + str(notifications['FulfillmentUpdatedIssuer']),
+            uid=str(kwargs.get('uid')) + str(notifications['FulfillmentUpdatedIssuer']),
             notification_name=notifications['FulfillmentUpdatedIssuer'],
             user=bounty.user,
             issuer=bounty.user,
@@ -164,7 +164,7 @@ class NotificationClient:
             is_activity=False)
         create_bounty_notification(
             bounty=bounty,
-            uid=str(uid) +
+            uid=str(kwargs.get('uid')) +
             str(notifications['FulfillmentUpdated']),
             notification_name=notifications['FulfillmentUpdated'],
             user=fulfillment.user,

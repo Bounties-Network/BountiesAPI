@@ -144,8 +144,8 @@ class NotificationClient:
     def fulfillment_updated(
             self,
             bounty,
-            fulfillment_id,
             **kwargs):
+        fulfillment_id = kwargs.get('fulfillment_id')
         fulfillment = Fulfillment.objects.get(bounty=bounty.pk, fulfillment_id=fulfillment_id)
         string_data_issuer = notification_templates['FulfillmentUpdatedIssuer'].format(
             bounty_title=bounty.title)

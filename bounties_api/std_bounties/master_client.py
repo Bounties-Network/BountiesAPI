@@ -133,7 +133,7 @@ def fulfillment_updated(bounty_id, contract_version, **kwargs):
     bounty_client.update_fulfillment(bounty, **kwargs)
 
     fulfillment_id = kwargs.get('fulfillment_id')
-    notification_client.fulfillment_updated(bounty_id, **kwargs)
+    notification_client.fulfillment_updated(bounty, fulfillment_id, **kwargs)
     slack_client.fulfillment_updated(bounty, fulfillment_id)
 
 

@@ -34,7 +34,7 @@ class Email:
         constants.BOUNTY_COMMENT_RECEIVED_COMMENTER: 'commentOnBounty.html',
         constants.BOUNTY_COMMENT_RECEIVED_ISSUER: 'commentOnMyBounty.html',
         constants.FULFILLMENT_UPDATED: 'fulfillmentUpdated.html',
-        constants.FULFILLMENT_UPDATED_ISSUER: 'fulfillmentUpdated.html',
+        constants.FULFILLMENT_UPDATED_ISSUER: 'fulfillmentUpdatedIssuer.html',
         constants.RATING_RECEIVED: 'receivedRating.html',
         constants.BOUNTY_COMPLETED: 'bountyCompleted.html',
         constants.APPLICATION_RECEIVED: 'applicationReceived.html',

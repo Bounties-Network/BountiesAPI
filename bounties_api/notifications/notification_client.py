@@ -161,6 +161,7 @@ class NotificationClient:
             string_data=string_data_issuer,
             subject='Submission was Updated',
             notification_created=kwargs.get('event_date'),
+            fulfillment_description=fulfillment.description,
             is_activity=False)
         create_bounty_notification(
             bounty=bounty,
@@ -172,6 +173,7 @@ class NotificationClient:
             from_user=bounty.user,
             string_data=string_data_fulfiller,
             notification_created=kwargs.get('event_date'),
+            fulfillment_description=fulfillment.description,
             subject='Submission Updated')
 
     def bounty_killed(self, bounty_id, event_date, uid, **kwargs):

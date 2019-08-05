@@ -85,27 +85,34 @@ def create_notification(**kwargs):
     )
 
     # from here on out, all we care about is email
+    print('1')
     if not user.email:
         return
 
     email_settings = user.settings.emails
     activity_emails = email_settings['activity']
+    print('2')
 
     if is_activity and not activity_emails:
         return
 
+    print('3')
     if (not is_activity and notification_name not in user.settings.accepted_email_settings()):
         return
 
+    print('4')
     if platform not in settings.PLATFORM_MAPPING:
         return
+    print('5')
 
     if notification.email_sent:
         return
+    print('6')
 
     if notification_name not in Email.templates:
         return
 
+    print('7')
     email = Email(**kwargs)
     email_html = email.render()
     send_email(user.email, subject, email_html)

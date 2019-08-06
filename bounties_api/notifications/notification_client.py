@@ -143,39 +143,37 @@ class NotificationClient:
 
     def fulfillment_updated(
             self,
-            bounty_id,
-            fulfillment_id,
-            event_date,
-            uid,
+            bounty,
             **kwargs):
-        bounty = Bounty.objects.get(id=bounty_id)
-        fulfillment = Fulfillment.objects.get(
-            bounty_id=bounty, fulfillment_id=fulfillment_id)
+        fulfillment_id = kwargs.get('fulfillment_id')
+        fulfillment = Fulfillment.objects.get(bounty=bounty.pk, fulfillment_id=fulfillment_id)
         string_data_issuer = notification_templates['FulfillmentUpdatedIssuer'].format(
             bounty_title=bounty.title)
         string_data_fulfiller = notification_templates['FulfillmentUpdated'].format(
             bounty_title=bounty.title)
         create_bounty_notification(
             bounty=bounty,
-            uid=str(uid) + str(notifications['FulfillmentUpdatedIssuer']),
+            uid=str(kwargs.get('uid')) + str(notifications['FulfillmentUpdatedIssuer']),
             notification_name=notifications['FulfillmentUpdatedIssuer'],
             user=bounty.user,
             issuer=bounty.user,
             from_user=fulfillment.user,
             string_data=string_data_issuer,
             subject='Submission was Updated',
-            notification_created=event_date,
+            notification_created=kwargs.get('event_date'),
+            fulfillment_description=fulfillment.description,
             is_activity=False)
         create_bounty_notification(
             bounty=bounty,
-            uid=str(uid) +
+            uid=str(kwargs.get('uid')) +
             str(notifications['FulfillmentUpdated']),
             notification_name=notifications['FulfillmentUpdated'],
             user=fulfillment.user,
             issuer=bounty.user,
             from_user=bounty.user,
             string_data=string_data_fulfiller,
-            notification_created=event_date,
+            notification_created=kwargs.get('event_date'),
+            fulfillment_description=fulfillment.description,
             subject='Submission Updated')
 
     def bounty_killed(self, bounty_id, event_date, uid, **kwargs):

@@ -119,7 +119,7 @@ def bounty_fulfilled(bounty_id, contract_version, **kwargs):
 
 
 @export
-def fullfillment_updated(bounty_id, contract_version, **kwargs):
+def fulfillment_updated(bounty_id, contract_version, **kwargs):
     """
     @param bounty_id
     @param contract_version
@@ -129,10 +129,11 @@ def fullfillment_updated(bounty_id, contract_version, **kwargs):
     """
 
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
+
     bounty_client.update_fulfillment(bounty, **kwargs)
 
     fulfillment_id = kwargs.get('fulfillment_id')
-    notification_client.fulfillment_updated(bounty_id, **kwargs)
+    notification_client.fulfillment_updated(bounty, **kwargs)
     slack_client.fulfillment_updated(bounty, fulfillment_id)
 
 

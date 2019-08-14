@@ -29,7 +29,7 @@ class LeaderboardIssuer(APIView):
             sql_param += "\')"
             formatted_query = LEADERBOARD_ISSUER_QUERY_TOKENS.format(sql_param)
         else:
-            formatted_query = LEADERBOARD_ISSUER_QUERY_TOKENS.format(sql_param)
+            formatted_query = LEADERBOARD_ISSUER_QUERY.format(sql_param)
 
         cursor = connection.cursor()
         cursor.execute(formatted_query, platform_in)

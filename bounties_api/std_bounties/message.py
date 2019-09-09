@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 
-from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2
+from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2, STANDARD_BOUNTIES_V2_1
 
 
 def to_serializable(val):

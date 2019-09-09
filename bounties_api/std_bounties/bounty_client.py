@@ -71,7 +71,9 @@ class BountyClient:
 
         if contract_version == STANDARD_BOUNTIES_V1:
             bounty_data.update({'fulfillment_amount': kwargs.get('fulfillment_amount')})
-        else:
+        else if contract_version == STANDARD_BOUNTIES_V2:
+            bounty_data.update({'fulfillment_amount': ipfs_data.get('fulfillmentAmount')})
+        else if contract_version == STANDARD_BOUNTIES_V2_1:
             bounty_data.update({'fulfillment_amount': ipfs_data.get('fulfillmentAmount')})
 
         bounty_serializer = BountySerializer(data={

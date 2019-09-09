@@ -3,7 +3,7 @@ import datetime
 from decimal import Decimal
 from std_bounties.models import Contribution, Fulfillment, DraftBounty
 from std_bounties.serializers import BountySerializer, ContributionSerializer, FulfillmentSerializer
-from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE, STANDARD_BOUNTIES_V1
+from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE, STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2, STANDARD_BOUNTIES_V2_1
 from std_bounties.client_helpers import map_bounty_data, map_token_data, map_fulfillment_data, get_token_pricing, get_historic_pricing
 from user.models import User
 from bounties.utils import getDateTimeFromTimestamp

@@ -38,11 +38,11 @@ class Message:
         event_timestamp = message_attributes['TimeStamp']['StringValue']
 
         version = ''
-        if message_attributes['ContractVersion']['StringValue'] == 'v2'
+        if message_attributes['ContractVersion']['StringValue'] == 'v2':
             version = STANDARD_BOUNTIES_V2
-        else if message_attributes['ContractVersion']['StringValue'] == 'v2.1'
+        elif message_attributes['ContractVersion']['StringValue'] == 'v2.1':
             version = STANDARD_BOUNTIES_V2_1
-        else
+        else:
             version = STANDARD_BOUNTIES_V1
 
         return Message(

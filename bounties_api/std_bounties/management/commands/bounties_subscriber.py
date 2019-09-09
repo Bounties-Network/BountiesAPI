@@ -143,9 +143,9 @@ class Command(BaseCommand):
 
         if message.contract_version == STANDARD_BOUNTIES_V1:
             self.notify_master_client(message)
-        else if message.contract_version == STANDARD_BOUNTIES_V2:
+        elif message.contract_version == STANDARD_BOUNTIES_V2:
             self.notify_master_client_v2(message)
-        else if message.contract_version == STANDARD_BOUNTIES_V2_1:
+        elif message.contract_version == STANDARD_BOUNTIES_V2_1:
             self.notify_master_client_v2_1(message)
 
         bounty = Bounty.objects.get(bounty_id=message.bounty_id, contract_version=message.contract_version)

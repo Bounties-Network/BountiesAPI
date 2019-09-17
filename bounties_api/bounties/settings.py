@@ -254,6 +254,7 @@ PLATFORM_MAPPING = {
     'consensys': 'https://consensys.bounties.network',
     'hiring': 'https://hiring.bounties.network',
     'korea': 'https://korea.bounties.network',
+    'japan': 'https://japan.bounties.network',
     'nyc': 'https://nyc.bounties.network',
     'paris': 'https://paris.bounties.network',
     'prague': 'https://prague.bounties.network',

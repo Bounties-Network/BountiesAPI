@@ -13,7 +13,7 @@ from bounties.sqs_client import sqs_client
 from std_bounties import master_client
 from std_bounties.models import Event
 from std_bounties.message import Message
-from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2
+from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2, STANDARD_BOUNTIES_V2_1
 from notifications.models import Transaction
 
 from std_bounties.bounty_client import BountyClient
@@ -143,8 +143,10 @@ class Command(BaseCommand):
 
         if message.contract_version == STANDARD_BOUNTIES_V1:
             self.notify_master_client(message)
-        else:
+        elif message.contract_version == STANDARD_BOUNTIES_V2:
             self.notify_master_client_v2(message)
+        elif message.contract_version == STANDARD_BOUNTIES_V2_1:
+            self.notify_master_client_v2_1(message)
 
         bounty = Bounty.objects.get(bounty_id=message.bounty_id, contract_version=message.contract_version)
 
@@ -385,6 +387,35 @@ class Command(BaseCommand):
             master_client.client[event](
                 message.bounty_id,
                 contract_version=STANDARD_BOUNTIES_V2,
+                event_date=message.event_date,
+                event_timestamp=message.event_timestamp,
+                uid=message.message_deduplication_id,
+                **{k: v for (k, v) in message.contract_event_data.items() if 'bounty_id' not in k},
+            )
+        except StatusError as e:
+            if e.original.response.status_code == 504:
+                logger.warning('Timeout for bounty id {}'.format(message.bounty_id))
+            raise e
+
+    def notify_master_client_v2_1(self, message):
+        try:
+            # make camel case
+            event = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', message.event)
+            event = re.sub('([a-z0-9])([A-Z])', r'\1_\2', event).lower()
+
+            events_to_skip = [
+                # not relevant for getting stb 2.0 to be compatible with stb 1.0,
+                # and this event may change to `bounty_issuers_changed` instead
+                # 'bounty_issuers_updated',
+                # 'bounty_approvers_updated',
+            ]
+
+            if event in events_to_skip:
+                return
+
+            master_client.client[event](
+                message.bounty_id,
+                contract_version=STANDARD_BOUNTIES_V2_1,
                 event_date=message.event_date,
                 event_timestamp=message.event_timestamp,
                 uid=message.message_deduplication_id,

@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 
-from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2
+from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2, STANDARD_BOUNTIES_V2_1
 
 
 def to_serializable(val):
@@ -37,6 +37,14 @@ class Message:
         message_attributes = event['MessageAttributes']
         event_timestamp = message_attributes['TimeStamp']['StringValue']
 
+        version = ''
+        if message_attributes['ContractVersion']['StringValue'] == 'v2':
+            version = STANDARD_BOUNTIES_V2
+        elif message_attributes['ContractVersion']['StringValue'] == 'v2.1':
+            version = STANDARD_BOUNTIES_V2_1
+        else:
+            version = STANDARD_BOUNTIES_V1
+
         return Message(
             receipt_handle=event['ReceiptHandle'],
             event=message_attributes['Event']['StringValue'],
@@ -49,7 +57,7 @@ class Message:
             event_date=datetime.fromtimestamp(int(event_timestamp)),
             contract_method_inputs=json.loads(message_attributes['ContractMethodInputs']['StringValue']),
             contract_event_data=json.loads(message_attributes['ContractEventData']['StringValue']),
-            contract_version=STANDARD_BOUNTIES_V2 if message_attributes['ContractVersion']['StringValue'] == 'v2' else STANDARD_BOUNTIES_V1
+            contract_version=version
         )
 
     @staticmethod

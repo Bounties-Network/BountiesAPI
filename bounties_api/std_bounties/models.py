@@ -6,7 +6,7 @@ import json
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from user.models import User
-from std_bounties.constants import STAGE_CHOICES, CONTRACT_VERSION_CHOICES, STANDARD_BOUNTIES_V1, DIFFICULTY_CHOICES, \
+from std_bounties.constants import STAGE_CHOICES, DIFFICULTY_CHOICES, \
     DRAFT_STAGE, EXPIRED_STAGE, ACTIVE_STAGE, TOKEN_CHOICES
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
@@ -142,7 +142,7 @@ class Bounty(BountyAbstract):
     # id fields
     bounty_id = models.IntegerField()
     uid = models.CharField(max_length=128, blank=True, null=True)
-    contract_version = models.IntegerField(choices=CONTRACT_VERSION_CHOICES, default=STANDARD_BOUNTIES_V1)
+    contract_version = models.CharField(max_length=64, blank=True)
 
     # other fields
     contract_state = JSONField(null=True)
@@ -254,7 +254,7 @@ class Fulfillment(models.Model):
     fulfillment_id = models.IntegerField()
     user = models.ForeignKey('user.User', null=True)
     bounty = models.ForeignKey(Bounty, related_name='fulfillments')
-    contract_version = models.IntegerField(choices=CONTRACT_VERSION_CHOICES, default=STANDARD_BOUNTIES_V1)
+    contract_version = models.CharField(max_length=64, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     fulfillment_created = models.DateTimeField(null=True)

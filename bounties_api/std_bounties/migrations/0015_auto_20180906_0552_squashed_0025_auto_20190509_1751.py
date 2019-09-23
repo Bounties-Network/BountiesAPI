@@ -287,21 +287,9 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='draftbounty',
-            name='approvers',
-            field=models.ManyToManyField(
-                related_name='std_bounties_draftbounty_relateda', to='user.User'),
-        ),
-        migrations.AddField(
-            model_name='draftbounty',
             name='fulfillment_amount',
             field=models.DecimalField(
                 decimal_places=0, default=0, max_digits=64),
-        ),
-        migrations.AddField(
-            model_name='draftbounty',
-            name='issuers',
-            field=models.ManyToManyField(
-                related_name='std_bounties_draftbounty_related', to='user.User'),
         ),
         migrations.AddField(
             model_name='draftbounty',

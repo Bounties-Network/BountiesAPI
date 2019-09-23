@@ -8,7 +8,7 @@ from user.permissions import AuthenticationPermission, UserIDMatches
 from std_bounties.models import Bounty, Fulfillment
 from django.conf import settings
 from django.db.models import Sum, Avg, Count
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework_filters.backends import DjangoFilterBackend
 from notifications.notification_client import NotificationClient
@@ -48,7 +48,11 @@ class LoginJWT(APIView):
 class Logout(APIView):
     def get(self, request):
         logout(request)
-        return HttpResponse('Success')
+        response = HttpResponseRedirect('/')
+        response.delete_cookie('authorization')
+        response.delete_cookie('uuid')
+        response.delete_cookie('user_id')
+        return response
 
 
 class Nonce(APIView):
@@ -98,8 +102,10 @@ class RequestProfileImageUploadURL(APIView):
         nonce = str(uuid4())[:4]
         bucket = 'assets.bounties.network'
 
-        sm_key = '{}/userimages/{}-sm-{}.png'.format(settings.ENVIRONMENT, current_user.public_address, nonce)
-        lg_key = '{}/userimages/{}-lg-{}.png'.format(settings.ENVIRONMENT, current_user.public_address, nonce)
+        sm_key = '{}/userimages/{}-sm-{}.png'.format(
+            settings.ENVIRONMENT, current_user.public_address, nonce)
+        lg_key = '{}/userimages/{}-lg-{}.png'.format(
+            settings.ENVIRONMENT, current_user.public_address, nonce)
 
         sm_put_url = client.generate_presigned_url(
             'put_object',

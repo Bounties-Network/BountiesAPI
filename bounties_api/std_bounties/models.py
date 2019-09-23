@@ -83,7 +83,6 @@ class BountyAbstract(models.Model):
     # bounty data
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField(blank=True)
-    experience_level = models.IntegerField(choices=DIFFICULTY_CHOICES, null=True)
     revisions = models.IntegerField(null=True)
     categories = models.ManyToManyField(Category)
     deadline = models.DateTimeField()

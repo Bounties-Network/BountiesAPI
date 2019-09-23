@@ -149,6 +149,7 @@ class Bounty(BountyAbstract):
     bounty_created = models.DateTimeField(null=True)
     bounty_stage = models.IntegerField(choices=STAGE_CHOICES, default=DRAFT_STAGE)
     comments = models.ManyToManyField(Comment, related_name='bounty')
+    experience_level = models.IntegerField(choices=DIFFICULTY_CHOICES, null=True)
 
     data = models.CharField(max_length=128)
     old_balance = models.DecimalField(decimal_places=0, max_digits=64, null=True)

@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   sqs:
@@ -54,61 +54,61 @@ services:
       - redis
       - bounties_api
   sql_jobs:
-   # In production, these run an as an hourly cronjob.
-   # Here, we use a local.sh to just run it more often
-   build:
-     context: ./sql_jobs
-     dockerfile: Dockerfile
-   command: bash -c "./local.sh"
-   env_file:
-     - .env
-   volumes:
-     - ./sql_jobs:/usr/src/app
+    # In production, these run an as an hourly cronjob.
+    # Here, we use a local.sh to just run it more often
+    build:
+      context: ./sql_jobs
+      dockerfile: Dockerfile
+    command: bash -c "./local.sh"
+    env_file:
+      - .env
+    volumes:
+      - ./sql_jobs:/usr/src/app
   blacklist:
-   # In production, these run an as an hourly cronjob.
-   # Here, we use a local.sh to just run it more often
-   build:
-     context: ./bounties_api
-     dockerfile: Dockerfile
-   command: bash -c "./localBlacklist.sh"
-   env_file:
-     - .env
-   volumes:
-     - ./bounties_api:/code
-   depends_on:
-     - sqs
-     - db
-     - redis
-     - bounties_api
+    # In production, these run an as an hourly cronjob.
+    # Here, we use a local.sh to just run it more often
+    build:
+      context: ./bounties_api
+      dockerfile: Dockerfile
+    command: bash -c "./localBlacklist.sh"
+    env_file:
+      - .env
+    volumes:
+      - ./bounties_api:/code
+    depends_on:
+      - sqs
+      - db
+      - redis
+      - bounties_api
   track_bounty_expirations:
-   # TODO - just make this a cronjob. It does not need to be a long-running job
-   build:
-     context: ./bounties_api
-     dockerfile: Dockerfile
-   restart: always
-   env_file:
-     - .env
-   command: python3 manage.py track_bounty_expirations
-   volumes:
-     - ./bounties_api:/code
-   depends_on:
-     - db
-     - bounties_api
+    # TODO - just make this a cronjob. It does not need to be a long-running job
+    build:
+      context: ./bounties_api
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    command: python3 manage.py track_bounty_expirations
+    volumes:
+      - ./bounties_api:/code
+    depends_on:
+      - db
+      - bounties_api
   get_token_values:
-   # In production, these run an as an every 5 minute cronjob.
-   # Here, we use a local.sh to just put it in a bash loop
-   build:
-     context: ./bounties_api
-     dockerfile: Dockerfile
-   restart: always
-   env_file:
-     - .env
-   command: bash -c "./local.sh"
-   volumes:
-     - ./bounties_api:/code
-   depends_on:
-     - db
-     - bounties_api
+    # In production, these run an as an every 5 minute cronjob.
+    # Here, we use a local.sh to just put it in a bash loop
+    build:
+      context: ./bounties_api
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    command: bash -c "./local.sh"
+    volumes:
+      - ./bounties_api:/code
+    depends_on:
+      - db
+      - bounties_api
   # contract_subscriber:
   #   build:
   #     context: ./contract_subscriber
@@ -123,20 +123,20 @@ services:
   #     - sqs
   #     - redis
   contract_subscriber_v1:
-   build:
-     context: ./contract_subscriber
-   restart: always
-   env_file:
-     - .env
-   environment:
-       contract_version: v1
-   command: npm start
-   volumes:
-     - ./contract_subscriber:/usr/src/app
-     - /usr/src/app/node_modules
-   depends_on:
-     - sqs
-     - redis
+    build:
+      context: ./contract_subscriber
+    restart: always
+    env_file:
+      - .env
+    environment:
+      contract_version: v1
+    command: npm start
+    volumes:
+      - ./contract_subscriber:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - sqs
+      - redis
   contract_subscriber_v2:
     build:
       context: ./contract_subscriber
@@ -144,7 +144,7 @@ services:
     env_file:
       - .env
     environment:
-        contract_version: v2
+      contract_version: v2
     command: npm start
     volumes:
       - ./contract_subscriber:/usr/src/app
@@ -159,7 +159,7 @@ services:
     env_file:
       - .env
     environment:
-        contract_version: v2.1
+      contract_version: v2.1
     command: npm start
     volumes:
       - ./contract_subscriber:/usr/src/app
@@ -167,6 +167,28 @@ services:
     depends_on:
       - sqs
       - redis
+  graphql-engine:
+    image: hasura/graphql-engine:v1.0.0-beta.6.cli-migrations
+    network_mode: host
+    volumes:
+      - ./graphql/hasura/migrations:/hasura-migrations
+    depends_on:
+      - sqs
+      - db
+      - redis
+      - bounties_api
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@localhost:5432/bounties
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "false" # set to "false" to disable console
+      HASURA_GRAPHQL_CORS_DOMAIN: "*"
+      HASURA_GRAPHQL_ACCESS_KEY: secret
+    ports:
+      - "8080:8080"
+    # env_file:
+    # - event-triggers.env
+    # - remote-schemas.env
+
 volumes:
   psql_bounties:
     external: true

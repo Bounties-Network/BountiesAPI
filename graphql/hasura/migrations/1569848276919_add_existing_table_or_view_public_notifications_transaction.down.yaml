@@ -1,0 +1,5 @@
+- args:
+    table:
+      name: notifications_transaction
+      schema: public
+  type: untrack_table

@@ -1,0 +1,24 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - created
+      - updated
+      - notification_name
+      - notification_created
+      - dashboard
+      - user_id
+      - email_sent
+      - uid
+      - from_user_id
+      - platform
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      limit: null
+    role: user
+    table:
+      name: notifications_notification
+      schema: public
+  type: create_select_permission

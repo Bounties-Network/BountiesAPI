@@ -1,0 +1,35 @@
+- args:
+    permission:
+      columns:
+      - created
+      - dismissed_signup_prompt
+      - dribble
+      - edited
+      - email
+      - ens_domain
+      - github
+      - id
+      - large_profile_image_url
+      - linkedin
+      - name
+      - organization
+      - page_preview
+      - profile_touched_manually
+      - public_address
+      - settings_id
+      - small_profile_image_url
+      - twitter
+      - wants_marketing_emails
+      - website
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: user
+    table:
+      name: user_user
+      schema: public
+  type: create_update_permission

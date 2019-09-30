@@ -1,0 +1,67 @@
+- args:
+    role: user
+    table:
+      name: user_skill
+      schema: public
+  type: drop_select_permission
+- args:
+    role: user
+    table:
+      name: user_user_categories
+      schema: public
+  type: drop_select_permission
+- args:
+    role: user
+    table:
+      name: user_user_languages
+      schema: public
+  type: drop_select_permission
+- args:
+    role: user
+    table:
+      name: user_user_skills
+      schema: public
+  type: drop_select_permission
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - public_address
+      - nonce
+      - name
+      - email
+      - github
+      - linkedin
+      - organization
+      - large_profile_image_url
+      - twitter
+      - website
+      - settings_id
+      - dribble
+      - profile_touched_manually
+      - page_preview
+      - wants_marketing_emails
+      - small_profile_image_url
+      - last_viewed
+      - last_logged_in
+      - created
+      - edited
+      - ens_domain
+      - dismissed_signup_prompt
+      - dismissed_banner_count
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      limit: 1
+    role: user
+    table:
+      name: user_user
+      schema: public
+  type: create_select_permission
+- args:
+    role: user
+    table:
+      name: user_user
+      schema: public
+  type: drop_select_permission

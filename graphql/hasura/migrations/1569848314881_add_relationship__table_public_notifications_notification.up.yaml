@@ -1,0 +1,8 @@
+- args:
+    name: userUserByUserId
+    table:
+      name: notifications_notification
+      schema: public
+    using:
+      foreign_key_constraint_on: user_id
+  type: create_object_relationship

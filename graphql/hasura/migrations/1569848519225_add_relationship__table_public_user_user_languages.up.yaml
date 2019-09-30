@@ -1,0 +1,8 @@
+- args:
+    name: user_language
+    table:
+      name: user_user_languages
+      schema: public
+    using:
+      foreign_key_constraint_on: language_id
+  type: create_object_relationship

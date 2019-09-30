@@ -1,0 +1,17 @@
+- args:
+    permission:
+      columns:
+      - emails
+      filter:
+        user_users:
+          id:
+            _eq: X-Hasura-User-Id
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: user
+    table:
+      name: user_settings
+      schema: public
+  type: create_update_permission

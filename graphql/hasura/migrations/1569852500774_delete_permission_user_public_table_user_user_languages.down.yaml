@@ -1,0 +1,17 @@
+- args:
+    permission:
+      columns:
+      - language_id
+      - user_id
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: user
+    table:
+      name: user_user_languages
+      schema: public
+  type: create_update_permission

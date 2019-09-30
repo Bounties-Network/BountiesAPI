@@ -169,7 +169,6 @@ services:
       - redis
   graphql-engine:
     image: hasura/graphql-engine:v1.0.0-beta.6.cli-migrations
-    network_mode: host
     volumes:
       - ./graphql/hasura/migrations:/hasura-migrations
     depends_on:
@@ -177,14 +176,17 @@ services:
       - db
       - redis
       - bounties_api
-    restart: always
-    environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@localhost:5432/bounties
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "false" # set to "false" to disable console
-      HASURA_GRAPHQL_CORS_DOMAIN: "*"
-      HASURA_GRAPHQL_ACCESS_KEY: secret
+    links:
+      - "db:db"
     ports:
       - "8080:8080"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@db:5432/bounties
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "false" # set to "false" to disable console
+      HASURA_GRAPHQL_CORS_DOMAIN: "*"
+      HASURA_GRAPHQL_ACCESS_KEY: "secret"
+      HASURA_GRAPHQL_JWT_SECRET: '{ "type":"HS256", "key": "dnf5mn4NmYhqO8eaxU5RZy3yC9ogzHSKO4iTWuubqUnJyAzjEbRPzH9KCf2w3p5cu0exQ9TV1LVuXv-yOf8" }'
     # env_file:
     # - event-triggers.env
     # - remote-schemas.env

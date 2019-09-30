@@ -1,0 +1,27 @@
+- args:
+    role: user
+    table:
+      name: notifications_dashboardnotification
+      schema: public
+  type: drop_select_permission
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - created
+      - updated
+      - viewed
+      - string_data
+      - data
+      - notification_id
+      - is_activity
+      filter:
+        notifications_notification:
+          user_id:
+            _eq: X-Hasura-User-Id
+    role: user
+    table:
+      name: notifications_dashboardnotification
+      schema: public
+  type: create_select_permission

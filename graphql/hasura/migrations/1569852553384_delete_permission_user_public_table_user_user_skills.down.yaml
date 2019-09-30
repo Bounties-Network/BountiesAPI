@@ -1,0 +1,16 @@
+- args:
+    permission:
+      columns:
+      - skill_id
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: user
+    table:
+      name: user_user_skills
+      schema: public
+  type: create_update_permission

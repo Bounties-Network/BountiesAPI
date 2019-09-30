@@ -1,0 +1,23 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - created
+      - updated
+      - tx_hash
+      - failed
+      - completed
+      - viewed
+      - data
+      - user_id
+      - platform
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      limit: null
+    role: user
+    table:
+      name: notifications_transaction
+      schema: public
+  type: create_select_permission

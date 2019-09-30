@@ -1,0 +1,6 @@
+- args:
+    relationship: user_user
+    table:
+      name: user_user_categories
+      schema: public
+  type: drop_relationship

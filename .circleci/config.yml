@@ -1,11 +1,34 @@
 version: 2
 jobs:
-  build:
+
+  build_staging:
+    working_directory: ~/project
+    docker:
+      - image: buildpack-deps:xenial
+    environment:
+      DEPLOY_ENVIRONMENT: rinkebystaging
+    steps:
+      - checkout
+      - run:
+          name: Apply migrations
+          command: |
+            echo "Installing hasura-cli"
+            curl -L https://github.com/hasura/graphql-engine/raw/master/cli/get.sh | bash
+            echo "cd into dir"
+            cd graphql/hasura
+            pwd
+            echo "Applying migrations"
+            hasura migrate apply --project hasura --endpoint $HASURA_STAGING_ENDPOINT --access-key $HASURA_STAGING_ACCESS_KEY
+            if [ -f hasura/migrations/metadata.yaml ]; then
+               echo "Applying metadata"
+               hasura metadata apply --project hasura --endpoint $HASURA_STAGING_ENDPOINT --access-key $HASURA_STAGING_ACCESS_KEY
+            fi
+            echo "Finished"
+
+  build_dev:
     machine:
       image: circleci/classic:latest
-
     working_directory: ~/repo
-
     steps:
       - checkout
 
@@ -48,3 +71,16 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
+
+workflows:
+  version: 2
+  full:
+    jobs:
+      - build_dev:
+          filters:
+            branches:
+              only: *
+      - build_staging:
+          filters:
+            branches:
+              only: master

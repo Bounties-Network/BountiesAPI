@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hasura
+spec:
+  selector:
+    matchLabels:
+      app: hasura
+  template:
+    metadata:
+      labels:
+        app: hasura
+    spec:
+      containers:
+        - name: hasura
+          image: hasura/graphql-engine:v1.0.0-beta.6
+          env:
+            - name: HASURA_GRAPHQL_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  key: dburl
+                  name: hasura
+            - name: HASURA_GRAPHQL_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: accessKey
+                  name: hasura
+            - name: HASURA_GRAPHQL_ENABLE_CONSOLE
+              value: "false"
+            - name: HASURA_GRAPHQL_CORS_DOMAIN
+              value: "*"
+            - name: HASURA_GRAPHQL_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: jwtSecret
+                  name: hasura
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hasura
+spec:
+  selector:
+    app: hasura
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 8080

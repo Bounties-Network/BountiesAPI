@@ -1,0 +1,17 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - user_id
+      - language_id
+      filter:
+        user_user:
+          id:
+            _eq: X-Hasura-User-Id
+      limit: null
+    role: user
+    table:
+      name: user_user_languages
+      schema: public
+  type: create_select_permission

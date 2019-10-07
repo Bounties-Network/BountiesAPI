@@ -1,0 +1,12 @@
+- args:
+    name: notifications_dashboardnotifications
+    table:
+      name: notifications_notification
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: notification_id
+        table:
+          name: notifications_dashboardnotification
+          schema: public
+  type: create_array_relationship

@@ -1,0 +1,5 @@
+- args:
+    table:
+      name: notifications_dashboardnotification
+      schema: public
+  type: untrack_table

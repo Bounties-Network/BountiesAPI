@@ -1,0 +1,6 @@
+- args:
+    relationship: user_skill
+    table:
+      name: user_user_skills
+      schema: public
+  type: drop_relationship

@@ -1,0 +1,15 @@
+apiVersion: v1
+appVersion: v0.4.21
+description: A Helm chart for the Interplanetary File System
+home: https://ipfs.io/
+icon: https://raw.githubusercontent.com/ipfs/logo/master/raster-generated/ipfs-logo-128-ice-text.png
+keywords:
+- ipfs
+- distributed-web
+maintainers:
+- email: yuvipanda@gmail.com
+  name: YuviPanda
+name: ipfs
+sources:
+- https://github.com/ipfs/go-ipfs
+version: 0.3.0

@@ -1,0 +1,5 @@
+- args:
+    table:
+      name: user_user_languages
+      schema: public
+  type: untrack_table

@@ -22,7 +22,7 @@ web3 = Web3(HTTPProvider(settings.ETH_NETWORK_URL))
 if settings.ETH_NETWORK in ['rinkeby', 'consensysrinkeby', 'rinkebystaging', 'rinkeby-dev']:
     web3.middleware_stack.inject(geth_poa_middleware, layer=0)
 bounties_json = json.loads(data)
-ipfs = ipfsapi.connect(host='https://ipfs.bounties.network', port='443')
+ipfs = ipfsapi.connect(host='http://ipfs.bounties-network-flow.com', port='5001')
 bounty_v0_data_keys = [
     'uid',
     'description',

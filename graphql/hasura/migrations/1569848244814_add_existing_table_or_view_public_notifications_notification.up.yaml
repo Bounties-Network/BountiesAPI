@@ -1,0 +1,4 @@
+- args:
+    name: notifications_notification
+    schema: public
+  type: add_existing_table_or_view

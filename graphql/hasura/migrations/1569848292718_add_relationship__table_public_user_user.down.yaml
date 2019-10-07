@@ -1,0 +1,6 @@
+- args:
+    relationship: notificationsNotificationsByUserId
+    table:
+      name: user_user
+      schema: public
+  type: drop_relationship

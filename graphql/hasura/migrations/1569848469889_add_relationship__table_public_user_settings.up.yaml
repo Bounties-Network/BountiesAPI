@@ -1,0 +1,12 @@
+- args:
+    name: user_users
+    table:
+      name: user_settings
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: settings_id
+        table:
+          name: user_user
+          schema: public
+  type: create_array_relationship

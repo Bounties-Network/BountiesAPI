@@ -1,0 +1,6 @@
+- args:
+    relationship: notifications_notification
+    table:
+      name: notifications_dashboardnotification
+      schema: public
+  type: drop_relationship

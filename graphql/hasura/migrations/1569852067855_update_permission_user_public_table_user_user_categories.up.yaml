@@ -1,0 +1,17 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - category_id
+      - id
+      - user_id
+      filter:
+        user_user:
+          id:
+            _eq: X-Hasura-User-Id
+      limit: null
+    role: user
+    table:
+      name: user_user_categories
+      schema: public
+  type: create_select_permission

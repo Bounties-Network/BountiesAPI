@@ -1,0 +1,23 @@
+- args:
+    role: user
+    table:
+      name: user_language
+      schema: public
+  type: drop_select_permission
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - name
+      - normalized_name
+      - native_name
+      filter:
+        user_user_languages:
+          user_id:
+            _eq: X-Hasura-User-Id
+    role: user
+    table:
+      name: user_language
+      schema: public
+  type: create_select_permission

@@ -1,0 +1,17 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - skill_id
+      - user_id
+      filter:
+        user_user:
+          id:
+            _eq: X-Hasura-User-Id
+      limit: null
+    role: user
+    table:
+      name: user_user_skills
+      schema: public
+  type: create_select_permission

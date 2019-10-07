@@ -1,0 +1,5 @@
+- args:
+    table:
+      name: user_settings
+      schema: public
+  type: untrack_table

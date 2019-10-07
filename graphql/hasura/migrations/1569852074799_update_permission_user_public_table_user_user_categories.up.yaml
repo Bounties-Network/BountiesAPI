@@ -1,0 +1,18 @@
+- args:
+    permission:
+      columns:
+      - category_id
+      - user_id
+      filter:
+        user_user:
+          id:
+            _eq: X-Hasura-User-Id
+      localPresets:
+      - key: ""
+        value: ""
+      set: {}
+    role: user
+    table:
+      name: user_user_categories
+      schema: public
+  type: create_update_permission

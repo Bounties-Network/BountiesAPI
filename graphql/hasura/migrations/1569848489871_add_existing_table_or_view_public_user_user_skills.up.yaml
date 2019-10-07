@@ -1,0 +1,4 @@
+- args:
+    name: user_user_skills
+    schema: public
+  type: add_existing_table_or_view

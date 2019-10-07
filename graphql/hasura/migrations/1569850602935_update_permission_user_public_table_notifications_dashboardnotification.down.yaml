@@ -1,0 +1,6 @@
+- args:
+    role: user
+    table:
+      name: notifications_dashboardnotification
+      schema: public
+  type: drop_select_permission

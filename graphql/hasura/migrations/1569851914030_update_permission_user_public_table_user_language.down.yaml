@@ -1,0 +1,20 @@
+- args:
+    role: user
+    table:
+      name: user_language
+      schema: public
+  type: drop_select_permission
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - name
+      - normalized_name
+      - native_name
+      filter: {}
+    role: user
+    table:
+      name: user_language
+      schema: public
+  type: create_select_permission

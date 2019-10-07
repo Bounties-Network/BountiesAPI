@@ -1,5 +1,28 @@
 version: 2
 jobs:
+  build_production:
+    working_directory: ~/project
+    docker:
+      - image: buildpack-deps:xenial
+    environment:
+      DEPLOY_ENVIRONMENT: production
+    steps:
+      - checkout
+      - run:
+          name: Apply migrations
+          command: |
+            echo "Installing hasura-cli"
+            curl -L https://github.com/hasura/graphql-engine/raw/master/cli/get.sh | bash
+            echo "cd into dir"
+            cd graphql/hasura
+            pwd
+            echo "Applying migrations"
+            hasura migrate apply --project hasura --endpoint $HASURA_PRODUCTION_ENDPOINT --access-key $HASURA_PRODUCTION_ACCESS_KEY
+            if [ -f hasura/migrations/metadata.yaml ]; then
+               echo "Applying metadata"
+               hasura metadata apply --project hasura --endpoint $HASURA_PRODUCTION_ENDPOINT --access-key $HASURA_PRODUCTION_ACCESS_KEY
+            fi
+            echo "Finished"
   build_staging:
     working_directory: ~/project
     docker:
@@ -69,8 +92,14 @@ workflows:
       - build_dev:
         filters:
           branches:
-            only: /.*/
+            only: master
       - build_staging:
         filters:
           branches:
-            only: feature/graphql-hasura
+            only: feature/graphql-hasura # testing
+      - build_production:
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v.*/

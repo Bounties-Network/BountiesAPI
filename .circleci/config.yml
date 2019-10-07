@@ -93,7 +93,7 @@ workflows:
       - build_dev:
           filters:
             branches:
-              only: master
+              only: /.*/
       - build_staging:
           filters:
             branches:

@@ -94,6 +94,8 @@ workflows:
           filters:
             branches:
               only: /.*/
+            tags:
+              only: /.*/
       - build_staging:
           filters:
             branches:

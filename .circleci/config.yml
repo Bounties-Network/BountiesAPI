@@ -86,20 +86,19 @@ jobs:
           destination: test-reports
 workflows:
   version: 2
-
-  build-deploy:
+  full:
     jobs:
       - build_dev:
-        filters:
-          branches:
-            only: master
+          filters:
+            branches:
+              only: master
       - build_staging:
-        filters:
-          branches:
-            only: feature/graphql-hasura # testing
+          filters:
+            branches:
+              only: /^feature.*$/
       - build_production:
-        filters:
-          branches:
-            ignore: /.*/
-          tags:
-            only: /^v.*/
+          filters:
+            tags:
+              only: /^v.*$/
+            branches:
+              ignore: /.*/

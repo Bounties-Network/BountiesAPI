@@ -1,6 +1,5 @@
-version: 2.1
-
-jobs: 
+version: 2
+jobs:
   build_staging:
     working_directory: ~/project
     docker:
@@ -63,13 +62,15 @@ jobs:
           path: test-reports
           destination: test-reports
 workflows:
-  full:
+  version: 2
+
+  build-deploy:
     jobs:
       - build_dev:
-          filters:
-            branches:
-              only: *
+        filters:
+          branches:
+            only: .*
       - build_staging:
-          filters:
-            branches:
-              only: feature/graphql-hasura
+        filters:
+          branches:
+            only: feature/graphql-hasura

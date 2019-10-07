@@ -1,6 +1,6 @@
-version: 2
-jobs:
+version: 2.1
 
+jobs: 
   build_staging:
     working_directory: ~/project
     docker:
@@ -24,32 +24,26 @@ jobs:
                hasura metadata apply --project hasura --endpoint $HASURA_STAGING_ENDPOINT --access-key $HASURA_STAGING_ACCESS_KEY
             fi
             echo "Finished"
-
   build_dev:
     machine:
       image: circleci/classic:latest
     working_directory: ~/repo
     steps:
       - checkout
-
       - run:
           name: Install flake8 for python linting
           command: |
             pyenv global 3.5.2
             pip3 install flake8==3.5.0
-
       - run:
           name: Lint python code
           command: flake8 --ignore=E501,F405,F401,W191
-
       - run:
           name: Build docker image
           command: docker build ./bounties_api --tag consensysbounties/std_bounties:$CIRCLE_SHA1
-
       - run:
           name: Create docker postgres volume
           command: docker volume create --name psql_bounties
-
       - run:
           name: log in to docker hub and upload docker image
           command: |
@@ -59,21 +53,16 @@ jobs:
             else
               echo "Missing credentials, skipping docker image pushing"
             fi
-
       - run:
           name: Install codecov
           command: pip install codecov==2.0.15
-
       - run:
           name: Run and upload code coverage
           command: bash <(curl -s https://codecov.io/bash)
-
       - store_artifacts:
           path: test-reports
           destination: test-reports
-
 workflows:
-  version: 2
   full:
     jobs:
       - build_dev:

@@ -16,11 +16,12 @@ jobs:
             echo "cd into dir"
             cd graphql/hasura
             pwd
+            ls
             echo "Applying migrations"
-            hasura migrate apply --project hasura --endpoint $HASURA_PRODUCTION_ENDPOINT --access-key $HASURA_PRODUCTION_ACCESS_KEY
+            hasura migrate apply --project hasura --endpoint $HASURA_PRODUCTION_ENDPOINT --admin-secret $HASURA_PRODUCTION_ACCESS_KEY
             if [ -f hasura/migrations/metadata.yaml ]; then
                echo "Applying metadata"
-               hasura metadata apply --project hasura --endpoint $HASURA_PRODUCTION_ENDPOINT --access-key $HASURA_PRODUCTION_ACCESS_KEY
+               hasura metadata apply --project hasura --endpoint $HASURA_PRODUCTION_ENDPOINT --admin-secret $HASURA_PRODUCTION_ACCESS_KEY
             fi
             echo "Finished"
   build_staging:
@@ -39,11 +40,12 @@ jobs:
             echo "cd into dir"
             cd graphql/hasura
             pwd
+            ls
             echo "Applying migrations"
-            hasura migrate apply --project hasura --endpoint $HASURA_STAGING_ENDPOINT --access-key $HASURA_STAGING_ACCESS_KEY
+            hasura migrate apply --project hasura --endpoint $HASURA_STAGING_ENDPOINT --admin-secret $HASURA_STAGING_ACCESS_KEY
             if [ -f hasura/migrations/metadata.yaml ]; then
                echo "Applying metadata"
-               hasura metadata apply --project hasura --endpoint $HASURA_STAGING_ENDPOINT --access-key $HASURA_STAGING_ACCESS_KEY
+               hasura metadata apply --project hasura --endpoint $HASURA_STAGING_ENDPOINT --admin-secret $HASURA_STAGING_ACCESS_KEY
             fi
             echo "Finished"
   build_dev:

@@ -97,7 +97,7 @@ workflows:
       - build_staging:
           filters:
             branches:
-              only: /^feature.*$/
+              only: master
       - build_production:
           filters:
             tags:

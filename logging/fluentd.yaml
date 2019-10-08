@@ -41,10 +41,36 @@ data:
   fluent.conf: |
     @include containers.conf
     @include systemd.conf
+    @include nodejs.conf
 
     <match fluent.**>
       @type null
     </match>
+  nodejs.conf: |
+    <source>
+      @type forward
+      @id nodejs_logs
+      @label @nodejs
+      port 24224
+    </source>
+
+    <label @nodejs>
+      <match **.*>
+        @type cloudwatch_logs
+        @id out_cloudwatch_logs_nodejs
+        region "#{ENV.fetch('REGION')}"
+        log_group_name "/eks/#{ENV.fetch('CLUSTER_NAME')}/containers"
+        log_stream_name_key stream_name
+        remove_log_stream_name_key true
+        auto_create_stream true
+        <buffer>
+          flush_interval 5
+          chunk_limit_size 2m
+          queued_chunks_limit_size 32
+          retry_forever true
+        </buffer>
+      </match>
+    </label>
   containers.conf: |
     <source>
       @type tail

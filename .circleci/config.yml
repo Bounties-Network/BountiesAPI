@@ -63,8 +63,11 @@ jobs:
           name: Lint python code
           command: flake8 --ignore=E501,F405,F401,W191
       - run:
-          name: Build docker image
+          name: Build bounties api docker image
           command: docker build ./bounties_api --tag consensysbounties/std_bounties:$CIRCLE_SHA1
+      - run:
+          name: Build contract subscriber docker image
+          command: docker build ./contract_subscriber --tag consensysbounties/contract_subscriber:$CIRCLE_SHA1
       - run:
           name: Create docker postgres volume
           command: docker volume create --name psql_bounties
@@ -74,6 +77,7 @@ jobs:
             if [ "$DOCKER_HUB_USERNAME" != "" ] && [ "$DOCKER_HUB_PASSWORD" != "" ]; then
               docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
               docker push consensysbounties/std_bounties:$CIRCLE_SHA1
+              docker push consensysbounties/contract_subscriber:$CIRCLE_SHA1
             else
               echo "Missing credentials, skipping docker image pushing"
             fi

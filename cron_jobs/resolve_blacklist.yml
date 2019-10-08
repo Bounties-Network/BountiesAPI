@@ -1,0 +1,107 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: resolveblacklist
+  namespace: production
+spec:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - args:
+                - bash
+                - -c
+                - python3 manage.py bounties_subscriber --blacklist
+              env:
+                - name: redis_location
+                  valueFrom:
+                    secretKeyRef:
+                      key: redis_location
+                      name: cache
+                - name: psql_host
+                  valueFrom:
+                    secretKeyRef:
+                      key: psql_host
+                      name: psql
+                - name: psql_password
+                  valueFrom:
+                    secretKeyRef:
+                      key: psql_password
+                      name: psql
+                - name: psql_port
+                  valueFrom:
+                    secretKeyRef:
+                      key: psql_port
+                      name: psql
+                - name: psql_user
+                  valueFrom:
+                    secretKeyRef:
+                      key: psql_user
+                      name: psql
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      key: AWS_ACCESS_KEY_ID
+                      name: awscreds
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: AWS_SECRET_ACCESS_KEY
+                      name: awscreds
+                - name: django_secret
+                  valueFrom:
+                    secretKeyRef:
+                      key: django_secret
+                      name: djangosecretprod
+                - name: rollbar_token
+                  valueFrom:
+                    secretKeyRef:
+                      key: rollbar_token
+                      name: rollbar
+                - name: queue_url
+                  valueFrom:
+                    secretKeyRef:
+                      key: queue_url
+                      name: sqs
+                - name: eth_network
+                  valueFrom:
+                    secretKeyRef:
+                      key: eth_network
+                      name: network
+                - name: environment
+                  valueFrom:
+                    secretKeyRef:
+                      key: environment
+                      name: environment
+                - name: slack_token
+                  valueFrom:
+                    secretKeyRef:
+                      key: slack_token
+                      name: slack
+                - name: deploy_url
+                  valueFrom:
+                    secretKeyRef:
+                      key: deploy_url
+                      name: deployurl
+                - name: sns_address
+                  valueFrom:
+                    secretKeyRef:
+                      key: sns_address
+                      name: snsaddress
+              image: consensysbounties/std_bounties:2712f7b0add7206209561d4ad5fb07e10c3a6256
+              imagePullPolicy: Always
+              name: usergithubfields
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+          dnsPolicy: ClusterFirst
+          restartPolicy: OnFailure
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+  schedule: "*/5 * * * *"
+  successfulJobsHistoryLimit: 5
+  suspend: false

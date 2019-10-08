@@ -102,6 +102,6 @@ spec:
           schedulerName: default-scheduler
           securityContext: {}
           terminationGracePeriodSeconds: 30
-  schedule: "*/5 * * * *"
+  schedule: "*/10 * * * *"
   successfulJobsHistoryLimit: 5
   suspend: false

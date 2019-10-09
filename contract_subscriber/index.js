@@ -2,7 +2,7 @@
 
 const delay = require("delay");
 const rollbar = require("./rollbar");
-const fluentd = require("./fluentd");
+const fluentd = require("./logger");
 const { StandardBounties, getBlock } = require("./web3_config");
 const { getAsync, writeAsync } = require("./redis_config");
 const { sendEvents } = require("./eventsRetriever");
@@ -26,16 +26,10 @@ async function handler() {
 
       while (fromBlock < latestBlock) {
         let events = await StandardBounties.getPastEvents({ fromBlock, toBlock: fromBlock + 100000 });
-        fluentd.log({
-          level: "info",
-          message: JSON.stringify({ fromBlock, currentBlock, CONTRACT_VERSION })
-        });
+        fluentd.log(JSON.stringify({ fromBlock, currentBlock, CONTRACT_VERSION }));
         eventBlock = await sendEvents(events);
         if (eventBlock) {
-          fluentd.log({
-            level: "info",
-            message: JSON.stringify({ eventBlock, fromBlock, currentBlock, CONTRACT_VERSION })
-          });
+          fluentd.info(JSON.stringify({ eventBlock, fromBlock, currentBlock, CONTRACT_VERSION }));
           break;
         }
         fromBlock += 100000;
@@ -49,16 +43,13 @@ async function handler() {
       await delay(1000);
     } catch (err) {
       rollbar.error(err);
-      fluentd.log({
-        level: "info",
-        message: JSON.stringify({ eventBlock, fromBlock, currentBlock, CONTRACT_VERSION })
-      });
+      fluentd.info(JSON.stringify({ eventBlock, fromBlock, currentBlock, CONTRACT_VERSION }));
       fluentd.error(err);
       // console.log(err);
       // ignore constant RPC response error from Infura temporarily
       if (err.message !== 'Invalid JSON RPC response: ""') {
         //  exit with error so kubernettes will automatically restart the job
-        fluentd.warn(err);
+        fluentd.warn(JSON.stringify(err));
         process.exit(1);
       } else {
         // try again in a little while
@@ -70,6 +61,7 @@ async function handler() {
 
 handler();
 process.on("unhandledRejection", err => {
-  fluentd.error(err);
+  console.error(err);
+  fluentd.error(JSON.stringify(err));
   process.exit(-1);
 });

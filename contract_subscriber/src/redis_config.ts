@@ -8,7 +8,7 @@ redis.on("error", error => {
 });
 
 redis.on("connect", () => {
-  logger.info("Redis connected to: ", process.env["redis_location"]);
+  logger.info("Redis connected to: ", { redis_location: process.env["redis_location"] });
 });
 
 export default redis;

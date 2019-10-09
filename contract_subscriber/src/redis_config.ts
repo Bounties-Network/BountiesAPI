@@ -1,10 +1,14 @@
-import redis from "redis";
-import { promisify } from "util";
+import Redis from "ioredis";
+import logger from "./logger";
 
-const client = redis.createClient({ url: process.env["redis_location"] });
+const redis = new Redis(process.env["redis_location"]);
+redis.on("error", error => {
+  logger.error("Error while trying to connect to Redis", error);
+  process.exit(1);
+});
 
-const getAsync = promisify(client.get).bind(client);
+redis.on("connect", () => {
+  logger.info("Redis connected to: ", process.env["redis_location"]);
+});
 
-const writeAsync = promisify(client.set).bind(client);
-
-export { getAsync, writeAsync };
+export default redis;

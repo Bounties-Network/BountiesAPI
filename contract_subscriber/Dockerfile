@@ -1,8 +1,5 @@
 
-FROM mhart/alpine-node:9.6.1
-
-ARG auto_build="true"
-ENV auto_build=$auto_build
+FROM node:10.6.0
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -12,16 +9,7 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
-RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh
-
-run apk --no-cache add --virtual native-deps \
-  g++ gcc libgcc libstdc++ linux-headers make python && \
-  npm install --quiet node-gyp -g &&\
-  npm install --quiet && \
-  apk del native-deps
-
-RUN npm install
+RUN yarn 
 
 COPY . .
 

@@ -16,11 +16,11 @@ export default async function handler() {
 
       // StandardBounties latest events
       const currentStoredBlock = await redis.get(`currentBlock_${CONTRACT_VERSION}`);
-      logger.info("Current stored block", { currentStoredBlock });
+      // logger.info("Current stored block", { currentStoredBlock });
       let fromBlock = parseInt(currentStoredBlock || "0");
       const latestStoredBlockData = await getBlock("latest");
-      logger.info("Latest stored block", { latestStoredBlockData });
       const latestBlock = latestStoredBlockData.number;
+      logger.info("Current and Latest stored blocks: ", { latestBlock, currentStoredBlock });
       let eventBlock;
 
       while (fromBlock < latestBlock) {

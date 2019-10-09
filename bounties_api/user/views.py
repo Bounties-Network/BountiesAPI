@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework import viewsets
-from datetime import datetime
+import datetime
+from datetime import timezone
 from user.backend import authenticate, login, logout, setLastViewed, loginJWT
 from user.serializers import LanguageSerializer, UserSerializer, UserInfoSerializer, UserProfileSerializer, SettingsSerializer, RankedSkillSerializer
 from user.models import Language, User, RankedSkill
@@ -18,6 +19,7 @@ import boto3
 
 notification_client = NotificationClient()
 seo_client = SEOClient()
+max_age = 365 * 24 * 60 * 60 * 100
 
 
 class Login(APIView):
@@ -27,8 +29,19 @@ class Login(APIView):
         user = authenticate(public_address=public_address, signature=signature)
         if not user:
             return HttpResponse('Unauthorized', status=401)
+        jwt_token = loginJWT(request, user)
+        expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age)
+        response = JsonResponse(UserSerializer(user).data)
+        cookie_value = 'Bearer {}'.format(
+            jwt_token.decode('utf-8')).lstrip('\"').rstrip('\"')
+        response.set_cookie(
+            'Authorization',
+            value=cookie_value,
+            secure=False, httponly=False, expires=expires
+        )
+
         login(request, user)
-        return JsonResponse(UserSerializer(user).data)
+        return response
 
 
 class LoginJWT(APIView):
@@ -39,17 +52,19 @@ class LoginJWT(APIView):
         if not user:
             return HttpResponse('Unauthorized', status=401)
         jwt_token = loginJWT(request, user)
-        return JsonResponse({
+        response = JsonResponse({
             'user': UserSerializer(user).data,
             'token': jwt_token.decode('utf-8')
         })
+
+        return response
 
 
 class Logout(APIView):
     def get(self, request):
         logout(request)
         response = HttpResponseRedirect('/')
-        response.delete_cookie('authorization')
+        response.delete_cookie('Authorization')
         response.delete_cookie('uuid')
         response.delete_cookie('user_id')
         return response
@@ -68,7 +83,7 @@ class DismissSignup(APIView):
 
     def get(self, request, public_address=''):
         user = User.objects.get(public_address=public_address.lower())
-        user.dismissed_signup_prompt = datetime.utcnow()
+        user.dismissed_signup_prompt = datetime.datetime.utcnow()
         user.save()
         return JsonResponse(UserSerializer(request.current_user).data)
 

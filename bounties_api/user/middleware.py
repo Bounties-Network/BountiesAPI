@@ -35,7 +35,6 @@ class AuthenticationMiddleware(MiddlewareMixin):
     def process_response(self, request, response):
         uuid_cookie = request.COOKIES.get('uuid')
         user_id_cookie = request.COOKIES.get('user_id')
-        graphql_authorization_cookie = request.COOKIES.get('authorization')
 
         if not uuid_cookie:
             expires = datetime.datetime.strftime(
@@ -62,17 +61,4 @@ class AuthenticationMiddleware(MiddlewareMixin):
                 secure=False,
                 httponly=True,
                 expires=expires)
-        if not graphql_authorization_cookie and request.current_user:
-            expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age)
-            response.set_cookie(
-                'authorization',
-                value=jwt.encode({
-                    'https://hasura.io/jwt/claims': {
-                        'x-hasura-allowed-roles': ['user'],
-                        'x-hasura-default-role': 'user',
-                        'x-hasura-user-id': str(request.current_user.id)
-                    },
-                    'exp': expires}, settings.SECRET_KEY, algorithm="HS256"),
-                secure=False, httponly=True, expires=expires
-            )
         return response

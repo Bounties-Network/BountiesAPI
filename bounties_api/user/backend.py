@@ -1,6 +1,7 @@
 import uuid
 from datetime import timezone
 from user.models import User
+from django.conf import settings
 # Best approach for now with defunct until other forms are more stable
 from eth_account.messages import defunct_hash_message
 from web3.auto import w3
@@ -11,6 +12,7 @@ import logging
 
 
 logger = logging.getLogger('django')
+max_age = 365 * 24 * 60 * 60 * 100
 
 
 def authenticate(public_address='', signature=''):
@@ -39,8 +41,13 @@ def login(request, user):
 
 
 def loginJWT(request, user):
-    expiration = datetime.datetime.utcnow() + datetime.timedelta(weeks=2)
+    expiration = datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age)
     return jwt.encode({'public_address': user.public_address,
+                       'https://hasura.io/jwt/claims': {
+                           'x-hasura-allowed-roles': ['user'],
+                           'x-hasura-default-role': 'user',
+                           'x-hasura-user-id': user.id
+                       },
                        'exp': expiration}, settings.SECRET_KEY, algorithm="HS256")
 
 

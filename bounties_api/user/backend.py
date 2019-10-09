@@ -46,7 +46,7 @@ def loginJWT(request, user):
                        'https://hasura.io/jwt/claims': {
                            'x-hasura-allowed-roles': ['user'],
                            'x-hasura-default-role': 'user',
-                           'x-hasura-user-id': user.id
+                           'x-hasura-user-id': str(user.id)
                        },
                        'exp': expiration}, settings.SECRET_KEY, algorithm="HS256")
 

@@ -2,6 +2,7 @@
 
 const delay = require("delay");
 const rollbar = require("./rollbar");
+const logger = require("./logger");
 const { StandardBounties, getBlock } = require("./web3_config");
 const { getAsync, writeAsync } = require("./redis_config");
 const { sendEvents } = require("./eventsRetriever");
@@ -19,21 +20,22 @@ async function handler() {
       fromBlock = parseInt(fromBlock);
       const latestBlockData = await getBlock("latest");
       const latestBlock = latestBlockData.number;
-      console.log("fromBlock: ", fromBlock);
-      console.log("latestBlock: ", latestBlock);
+      // console.log('fromBlock: ', fromBlock);
+      // console.log('latestBlock: ', latestBlock)
       let eventBlock;
 
       while (fromBlock < latestBlock) {
         let events = await StandardBounties.getPastEvents({ fromBlock, toBlock: fromBlock + 100000 });
-        console.log("currentCheck: ", fromBlock);
+        logger.info(`currently checking: `, JSON.stringify({ fromBlock, currentBlock, CONTRACT_VERSION }));
         eventBlock = await sendEvents(events);
         if (eventBlock) {
+          logger.info("event block: ", JSON.stringify({ eventBlock, fromBlock, currentBlock, CONTRACT_VERSION }));
           break;
         }
         fromBlock += 100000;
       }
 
-      console.log("eventBlock: ", eventBlock);
+      // console.log('eventBlock: ', eventBlock);
       if (eventBlock) {
         await writeAsync(`currentBlock_${CONTRACT_VERSION}`, eventBlock);
       }
@@ -41,10 +43,13 @@ async function handler() {
       await delay(1000);
     } catch (err) {
       rollbar.error(err);
-      console.log(err);
+      logger.info("error occured: ", JSON.stringify({ eventBlock, fromBlock, currentBlock, CONTRACT_VERSION }));
+      logger.error("error occured: ", err);
+      // console.log(err);
       // ignore constant RPC response error from Infura temporarily
       if (err.message !== 'Invalid JSON RPC response: ""') {
         // exit with error so kubernettes will automatically restart the job
+        logger.warn("Invalid JSON RPC response, exiting for pod restart", JSON.stringify(err));
         process.exit(1);
       } else {
         // try again in a little while

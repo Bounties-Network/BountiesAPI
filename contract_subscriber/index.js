@@ -69,3 +69,7 @@ async function handler() {
 }
 
 handler();
+process.on("unhandledRejection", err => {
+  logger.error(err);
+  process.exit(-1);
+});

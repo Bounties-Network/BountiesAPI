@@ -1,5 +1,5 @@
 import delay from "delay";
-// import rollbar from "./rollbar";
+import rollbar from "./rollbar";
 // import logger from "./logger";
 import { StandardBounties, getBlock } from "./web3_config";
 import { getAsync, writeAsync } from "./redis_config";

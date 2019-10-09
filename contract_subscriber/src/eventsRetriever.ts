@@ -82,7 +82,7 @@ async function sendEvents(events: any) {
 
       // retries incase the first call failed
       while (!blockData) {
-        logger.warn("Retrying blockdata: ", blockNumber);
+        logger.warn("Retrying blockdata: ", { blockNumber });
         blockData = await getBlock(blockNumber);
       }
 

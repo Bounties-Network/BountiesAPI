@@ -2,7 +2,7 @@ import delay from "delay";
 import rollbar from "./rollbar";
 import logger from "./logger";
 import { StandardBounties, getBlock } from "./web3_config";
-import { getAsync, writeAsync } from "./redis_config";
+import redis from "./redis_config";
 import { sendEvents } from "./eventsRetriever";
 import { CONTRACT_VERSION } from "./constants";
 
@@ -15,11 +15,12 @@ export default async function handler() {
       // are essentially accomplishing the same thing
 
       // StandardBounties latest events
-      let fromBlock = parseInt((await getAsync(`currentBlock_${CONTRACT_VERSION}`)) || "0");
-      const latestBlockData = await getBlock("latest");
-      const latestBlock = latestBlockData.number;
-      // console.log("fromBlock: ", fromBlock);
-      // console.log("latestBlock: ", latestBlock);
+      const currentStoredBlock = await redis.get(`currentBlock_${CONTRACT_VERSION}`);
+      logger.info("Current stored block", { currentStoredBlock });
+      let fromBlock = parseInt(currentStoredBlock || "0");
+      const latestStoredBlockData = await getBlock("latest");
+      logger.info("Latest stored block", { latestStoredBlockData });
+      const latestBlock = latestStoredBlockData.number;
       let eventBlock;
 
       while (fromBlock < latestBlock) {
@@ -34,7 +35,7 @@ export default async function handler() {
 
       if (eventBlock) {
         logger.info("Event block written: ", { eventBlock, fromBlock, latestBlock, CONTRACT_VERSION });
-        await writeAsync(`currentBlock_${CONTRACT_VERSION}`, eventBlock);
+        await redis.set(`currentBlock_${CONTRACT_VERSION}`, eventBlock);
       }
 
       await delay(1000);

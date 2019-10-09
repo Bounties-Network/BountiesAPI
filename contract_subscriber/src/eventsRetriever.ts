@@ -1,5 +1,5 @@
 import { cloneDeep, chain } from "lodash";
-import { getAsync } from "./redis_config";
+import redis from "./redis_config";
 import { CONTRACT_VERSION, SQS_PARAMS } from "./constants";
 import { abiDecoder, getTransaction, getBlock } from "./web3_config";
 import sqs from "./sqs_config";
@@ -35,7 +35,7 @@ async function sendEvents(events: any) {
         messageParams;
 
       const messageDeduplicationId = transactionHash + eventName;
-      const existingHash = await getAsync(messageDeduplicationId);
+      const existingHash = await redis.get(messageDeduplicationId);
 
       // this means we already synced this hash
       // I do it this way since we keep subscribing to the same block. SQS provides de-duping, but

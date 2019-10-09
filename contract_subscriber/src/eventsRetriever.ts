@@ -110,6 +110,7 @@ async function sendEvents(events: any) {
       messageParams.MessageDeduplicationId = messageDeduplicationId;
 
       await sqs.sendMessage(messageParams).promise();
+      logger.info("Sent SQS message: ", { messageParams, highestBlock });
       highestBlock = blockNumber;
     }
 

@@ -1,4 +1,4 @@
-{
+const contract: { version: { [key: string]: any } } = {
 	"version": {
 		"v1": {
 			"mainNet":  "0x2af47a65da8CD66729b4209C22017d6A5C2d2400",
@@ -30,3 +30,5 @@
 		}
 	}
 }
+
+export default contract

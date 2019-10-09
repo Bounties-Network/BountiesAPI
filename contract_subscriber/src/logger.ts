@@ -1,9 +1,9 @@
 import { createLogger, format, transports } from "winston";
-const { combine, timestamp, label, prettyPrint } = format;
+const { combine, timestamp, label, simple } = format;
 
 const logger = createLogger({
-  format: combine(label({ label: "contract_subscriber" }), timestamp(), prettyPrint()),
+  format: combine(label({ label: "contract_subscriber" }), timestamp(), simple()),
   transports: [new transports.Console({ handleExceptions: true })]
 });
 
-module.exports = logger;
+export default logger;

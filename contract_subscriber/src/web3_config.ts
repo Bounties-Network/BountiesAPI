@@ -1,7 +1,7 @@
 import json from "./contract";
 import Web3 from "web3";
 import abiDecoder from "abi-decoder";
-const { CONTRACT_VERSION, ETH_NETWORK, ETH_NETWORK_URL } = require("./constants");
+import { CONTRACT_VERSION, ETH_NETWORK, ETH_NETWORK_URL } from "./constants";
 
 const web3 = new Web3(ETH_NETWORK_URL);
 

@@ -4,6 +4,7 @@ import { CONTRACT_VERSION, SQS_PARAMS } from "./constants";
 import { abiDecoder, getTransaction, getBlock } from "./web3_config";
 import sqs from "./sqs_config";
 import rollbar from "./rollbar";
+import logger from "./logger";
 
 const camelToUnderscore = (key: string) => {
   return key.replace(/([A-Z])/g, "_$1").toLowerCase();
@@ -45,13 +46,13 @@ async function sendEvents(events: any) {
 
       bountyId = bountyId === "-1" ? _bountyId : bountyId;
 
-      console.log({ transactionHash });
+      logger.info("Event transaction hash: ", { transactionHash });
 
       let rawTransaction = await getTransaction(transactionHash);
 
       // retries incase the first call failed
       while (!rawTransaction) {
-        console.log("retrying transaction:", transactionHash);
+        logger.warn("Retrying transaction: ", { transactionHash });
         rawTransaction = await getTransaction(transactionHash);
       }
       const transactionFrom = rawTransaction.from;
@@ -66,6 +67,7 @@ async function sendEvents(events: any) {
         // or whatever contract made the internal call to bounties
         if (!rawContractMethodInputs) {
           rollbar.error(`Unable to decode transaction input using ABI: ${transactionHash}`);
+          logger.error(`Unable to decode transaction input using ABI: `, { transactionHash });
           continue;
         }
 
@@ -80,7 +82,7 @@ async function sendEvents(events: any) {
 
       // retries incase the first call failed
       while (!blockData) {
-        console.log("retrying blockdata:", blockNumber);
+        logger.warn("Retrying blockdata: ", blockNumber);
         blockData = await getBlock(blockNumber);
       }
 

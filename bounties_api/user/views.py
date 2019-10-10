@@ -33,13 +33,11 @@ class Login(APIView):
         expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age)
         response = JsonResponse(UserSerializer(user).data)
         cookie_value = 'Bearer {}'.format(
-            jwt_token.decode('utf-8')).lstrip('\"').rstrip('\"')
+            jwt_token.decode('utf-8'))
 
-        is_localhost = True if 'localhost' in request.get_host() else False
         response.set_cookie(
             'Authorization',
             value=cookie_value,
-            domain='.localhost' if is_localhost else None,
             secure=False, httponly=False, expires=expires
         )
 
@@ -55,9 +53,12 @@ class LoginJWT(APIView):
         if not user:
             return HttpResponse('Unauthorized', status=401)
         jwt_token = loginJWT(request, user)
+        cookie_value = 'Bearer {}'.format(
+            jwt_token.decode('utf-8'))
+
         response = JsonResponse({
             'user': UserSerializer(user).data,
-            'token': jwt_token.decode('utf-8')
+            'token': cookie_value
         })
 
         return response

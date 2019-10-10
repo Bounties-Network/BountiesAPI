@@ -34,9 +34,12 @@ class Login(APIView):
         response = JsonResponse(UserSerializer(user).data)
         cookie_value = 'Bearer {}'.format(
             jwt_token.decode('utf-8')).lstrip('\"').rstrip('\"')
+
+        is_not_localhost = request.get_host().find('localhost') != -1
         response.set_cookie(
             'Authorization',
             value=cookie_value,
+            domain=None if is_not_localhost else 'localhost',
             secure=False, httponly=False, expires=expires
         )
 

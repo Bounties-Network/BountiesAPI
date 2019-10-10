@@ -61,6 +61,7 @@ class LoginJWT(APIView):
             'token': cookie_value
         })
 
+        login(request, user)
         return response
 
 

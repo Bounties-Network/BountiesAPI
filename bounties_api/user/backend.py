@@ -1,7 +1,6 @@
 import uuid
 from datetime import timezone
 from user.models import User
-from django.conf import settings
 # Best approach for now with defunct until other forms are more stable
 from eth_account.messages import defunct_hash_message
 from web3.auto import w3

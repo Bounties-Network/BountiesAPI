@@ -12,12 +12,14 @@ swarm:
   # externalIP: ""
   ## Further config for service of type NodePort
   ## Default config with empty string "" will assign a dynamic nodePort
-  nodePort: ''
+  nodePort: ""
   ## If static nodePort configuration is required it can be enabled as below
   ## Configure ports in allowable range (eg. 30000 - 32767 on minikube)
   # nodePort: 34001
 
 resources: {}
+
+sslCertARN: ""
 
 persistence:
   enabled: true
@@ -29,6 +31,6 @@ persistence:
   ##   GKE, AWS & OpenStack)
   ##
   # storageClass: "-"
-  size: '8Gi'
+  size: "8Gi"
   accessModes:
     - ReadWriteOnce

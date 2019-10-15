@@ -22,7 +22,8 @@ web3 = Web3(HTTPProvider(settings.ETH_NETWORK_URL))
 if settings.ETH_NETWORK in ['rinkeby', 'consensysrinkeby', 'rinkebystaging', 'rinkeby-dev']:
     web3.middleware_stack.inject(geth_poa_middleware, layer=0)
 bounties_json = json.loads(data)
-ipfs = ipfsapi.connect(host='http://ipfs.bounties-network-flow.com', port='5001')
+ipfs = ipfsapi.connect(
+    host='https://ipfs.bounties-network-flow.com', port='5001')
 bounty_v0_data_keys = [
     'uid',
     'description',
@@ -56,12 +57,15 @@ def map_bounty_data(ipfs_hash, bounty_id):
 
         metadata = data.get('metadata', {})
 
-        experienceLevel = metadata.get('experienceLevel') or data.get('difficulty') or ''
+        experienceLevel = metadata.get(
+            'experienceLevel') or data.get('difficulty') or ''
         experienceLevel = 'Advanced' if experienceLevel == 'Expert' else experienceLevel
 
-        formattedExperienceLevel = str(experienceLevel).lower().strip().capitalize()
+        formattedExperienceLevel = str(
+            experienceLevel).lower().strip().capitalize()
 
-        metadata.update({'experience_level': rev_mapped_difficulties.get(formattedExperienceLevel, BEGINNER)})
+        metadata.update({'experience_level': rev_mapped_difficulties.get(
+            formattedExperienceLevel, BEGINNER)})
 
         data_issuer = data.get('issuer', {})
         if isinstance(data_issuer, str):
@@ -94,7 +98,8 @@ def map_bounty_data(ipfs_hash, bounty_id):
 
         # if 'platform' is gitcoin, also return deadline
         if meta.get('platform', '') == 'gitcoin' and 'expire_date' in data:
-            bounty.update({'deadline': datetime.utcfromtimestamp(int(data.get('expire_date')))})
+            bounty.update({'deadline': datetime.utcfromtimestamp(
+                int(data.get('expire_date')))})
         if meta.get('platform', '') == 'gitcoin':
             bounty.update({'private_fulfillments': False})
     elif schema_version == '1.0':
@@ -211,7 +216,8 @@ def get_historic_pricing(token_symbol, token_decimals, value, timestamp):
     coin_data = r.json()
 
     if coin_data.get('Response', None) == 'Error':
-        usd_price, token_model = get_token_pricing(token_symbol, token_decimals, value)
+        usd_price, token_model = get_token_pricing(
+            token_symbol, token_decimals, value)
         token_price = token_model.price_usd if token_model else 0
         return usd_price, token_price
 

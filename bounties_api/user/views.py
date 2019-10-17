@@ -61,6 +61,13 @@ class LoginJWT(APIView):
             'token': cookie_value
         })
 
+        expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age)
+        response.set_cookie(
+            'Authorization',
+            value=cookie_value,
+            secure=False, httponly=False, expires=expires
+        )
+
         login(request, user)
         return response
 

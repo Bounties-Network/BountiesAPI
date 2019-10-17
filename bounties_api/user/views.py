@@ -61,6 +61,12 @@ class LoginJWT(APIView):
             'token': cookie_value
         })
 
+        response.set_cookie(
+            'Authorization',
+            value=cookie_value,
+            secure=False, httponly=False, expires=expires
+        )
+
         login(request, user)
         return response
 

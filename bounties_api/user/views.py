@@ -79,6 +79,8 @@ class Logout(APIView):
         logout(request)
         response = HttpResponseRedirect('/')
         response.delete_cookie('Authorization')
+        response.set_cookie(
+            'Authorization', domain=settings.SESSION_COOKIE_DOMAIN, max_age_seconds=1)
         response.delete_cookie('uuid')
         response.delete_cookie('user_id')
         return response

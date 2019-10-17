@@ -95,7 +95,8 @@ class BountyAbstract(models.Model):
 
     # attached data
     attached_filename = models.CharField(max_length=256, blank=True, null=True)
-    attached_data_hash = models.CharField(max_length=256, blank=True, null=True)
+    attached_data_hash = models.CharField(
+        max_length=256, blank=True, null=True)
     attached_url = models.CharField(max_length=256, blank=True, null=True)
 
     # token info
@@ -103,11 +104,13 @@ class BountyAbstract(models.Model):
     token_symbol = models.CharField(max_length=128, default='ETH')
     token_decimals = models.IntegerField(default=18)
     token_version = models.IntegerField(choices=TOKEN_CHOICES, null=True)
-    token_contract = models.CharField(max_length=128, default='0x0000000000000000000000000000000000000000')
+    token_contract = models.CharField(
+        max_length=128, default='0x0000000000000000000000000000000000000000')
 
     # payout info
     usd_price = models.FloatField(default=0)
-    fulfillment_amount = models.DecimalField(decimal_places=0, max_digits=64, default=0)
+    fulfillment_amount = models.DecimalField(
+        decimal_places=0, max_digits=64, default=0)
     calculated_fulfillment_amount = models.DecimalField(
         decimal_places=30,
         max_digits=70,
@@ -124,7 +127,8 @@ class BountyAbstract(models.Model):
     modified = models.DateTimeField(auto_now=True)
     schema_version = models.CharField(max_length=64, blank=True)
     schema_name = models.CharField(max_length=128, null=True)
-    platform = models.CharField(max_length=128, blank=True, default="bounties-network")
+    platform = models.CharField(
+        max_length=128, blank=True, default="bounties-network")
 
     class Meta:
         abstract = True
@@ -135,8 +139,10 @@ class Bounty(BountyAbstract):
     issuer = models.CharField(max_length=128)
 
     # role-based access controls
-    issuers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_related", )
-    approvers = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_relateda", )
+    issuers = models.ManyToManyField(
+        User, related_name="%(app_label)s_%(class)s_related", )
+    approvers = models.ManyToManyField(
+        User, related_name="%(app_label)s_%(class)s_relateda", )
 
     # id fields
     bounty_id = models.IntegerField()
@@ -146,12 +152,15 @@ class Bounty(BountyAbstract):
     # other fields
     contract_state = JSONField(null=True)
     bounty_created = models.DateTimeField(null=True)
-    bounty_stage = models.IntegerField(choices=STAGE_CHOICES, default=DRAFT_STAGE)
+    bounty_stage = models.IntegerField(
+        choices=STAGE_CHOICES, default=DRAFT_STAGE)
     comments = models.ManyToManyField(Comment, related_name='bounty')
-    experience_level = models.IntegerField(choices=DIFFICULTY_CHOICES, null=True)
+    experience_level = models.IntegerField(
+        choices=DIFFICULTY_CHOICES, null=True)
 
     data = models.CharField(max_length=128)
-    old_balance = models.DecimalField(decimal_places=0, max_digits=64, null=True)
+    old_balance = models.DecimalField(
+        decimal_places=0, max_digits=64, null=True)
 
     token_lock_price = models.FloatField(null=True, blank=True)
 
@@ -179,14 +188,17 @@ class Bounty(BountyAbstract):
     def save(self, *args, **kwargs):
         fulfillment_amount = self.fulfillment_amount
         balance = self.balance
+        usd_price = self.usd_price
         decimals = self.token_decimals
         self.calculated_balance = calculate_token_value(balance, decimals)
-        self.calculated_fulfillment_amount = calculate_token_value(fulfillment_amount, decimals)
+        self.calculated_fulfillment_amount = calculate_token_value(
+            fulfillment_amount, decimals)
 
         issuers = json.loads(self.contract_state or '{}').get('issuers', None)
 
         if issuers:
-            issuer = next((address for address, index in issuers.items() if index == 0), None)
+            issuer = next(
+                (address for address, index in issuers.items() if index == 0), None)
             user, created = User.objects.get_or_create(
                 public_address=issuer.lower(),
                 defaults={
@@ -232,7 +244,8 @@ class DraftBounty(BountyAbstract):
     data = models.CharField(max_length=128, null=True, blank=True)
     issuer = models.CharField(max_length=128, null=True, blank=True)
     on_chain = models.BooleanField(default=False)
-    experience_level = models.IntegerField(choices=DIFFICULTY_CHOICES, null=True)
+    experience_level = models.IntegerField(
+        choices=DIFFICULTY_CHOICES, null=True)
     platform = models.CharField(max_length=128, blank=True)
     data_categories = None
     data_issuer = None
@@ -259,8 +272,10 @@ class Fulfillment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     fulfillment_created = models.DateTimeField(null=True)
-    fulfiller_review = models.ForeignKey(Review, related_name='fulfillment_review', null=True)
-    issuer_review = models.ForeignKey(Review, related_name='issuer_review', null=True)
+    fulfiller_review = models.ForeignKey(
+        Review, related_name='fulfillment_review', null=True)
+    issuer_review = models.ForeignKey(
+        Review, related_name='issuer_review', null=True)
     data = models.CharField(max_length=128)
     accepted = models.BooleanField()
     accepted_date = models.DateTimeField(null=True)
@@ -331,10 +346,12 @@ class Contribution(models.Model):
     contribution_id = models.IntegerField()
 
     amount = models.DecimalField(decimal_places=0, max_digits=64)
-    calculated_amount = models.DecimalField(decimal_places=30, max_digits=70, null=True, default=0)
+    calculated_amount = models.DecimalField(
+        decimal_places=30, max_digits=70, null=True, default=0)
     usd_amount = models.FloatField(default=0)
 
-    platform = models.CharField(max_length=128, blank=True, default='bounties-network')
+    platform = models.CharField(
+        max_length=128, blank=True, default='bounties-network')
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -363,6 +380,7 @@ class FulfillerApplication(models.Model):
     bounty = models.ForeignKey(Bounty, blank=False, null=False)
     applicant = models.ForeignKey('user.User')
     message = models.TextField()
-    state = models.CharField(max_length=1, choices=APPLICATION_STATES, default=PENDING)
+    state = models.CharField(
+        max_length=1, choices=APPLICATION_STATES, default=PENDING)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now_add=True)

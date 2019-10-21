@@ -1,0 +1,60 @@
+- args:
+    name: std_bounties_comment
+    table:
+      name: std_bounties_bounty_comments
+      schema: public
+    using:
+      foreign_key_constraint_on: comment_id
+  type: create_object_relationship
+- args:
+    name: user_user
+    table:
+      name: std_bounties_comment
+      schema: public
+    using:
+      foreign_key_constraint_on: user_id
+  type: create_object_relationship
+- args:
+    name: std_bounties_bounty_comments
+    table:
+      name: std_bounties_comment
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: comment_id
+        table:
+          name: std_bounties_bounty_comments
+          schema: public
+  type: create_array_relationship
+- args:
+    name: std_bounties_fulfillment_comments
+    table:
+      name: std_bounties_comment
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: comment_id
+        table:
+          name: std_bounties_fulfillment_comments
+          schema: public
+  type: create_array_relationship
+- args:
+    name: std_bounties_comment
+    table:
+      name: std_bounties_fulfillment_comments
+      schema: public
+    using:
+      foreign_key_constraint_on: comment_id
+  type: create_object_relationship
+- args:
+    name: std_bounties_comments
+    table:
+      name: user_user
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: std_bounties_comment
+          schema: public
+  type: create_array_relationship

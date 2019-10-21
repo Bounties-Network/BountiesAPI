@@ -1,0 +1,180 @@
+- args:
+    relationship: std_bounties_token
+    table:
+      name: std_bounties_bounty
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bountystates
+    table:
+      name: std_bounties_bounty
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_events
+    table:
+      name: std_bounties_bounty
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_fulfillerapplications
+    table:
+      name: std_bounties_bounty
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_category
+    table:
+      name: std_bounties_bounty_categories
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bounty
+    table:
+      name: std_bounties_bountystate
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: user_user_categories
+    table:
+      name: std_bounties_category
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bounty_categories
+    table:
+      name: std_bounties_category
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_draftbounty_categories
+    table:
+      name: std_bounties_category
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: user_user
+    table:
+      name: std_bounties_draftbounty
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_token
+    table:
+      name: std_bounties_draftbounty
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_draftbounty_categories
+    table:
+      name: std_bounties_draftbounty
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_category
+    table:
+      name: std_bounties_draftbounty_categories
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_draftbounty
+    table:
+      name: std_bounties_draftbounty_categories
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bounty
+    table:
+      name: std_bounties_event
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: user_user
+    table:
+      name: std_bounties_fulfillerapplication
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bounty
+    table:
+      name: std_bounties_fulfillerapplication
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_review
+    table:
+      name: std_bounties_fulfillment
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: stdBountiesReviewByIssuerReviewId
+    table:
+      name: std_bounties_fulfillment
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: user_user
+    table:
+      name: std_bounties_review
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: userUserByReviewerId
+    table:
+      name: std_bounties_review
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_fulfillments
+    table:
+      name: std_bounties_review
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: stdBountiesFulfillmentsByIssuerReviewId
+    table:
+      name: std_bounties_review
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bounties
+    table:
+      name: std_bounties_token
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_draftbounties
+    table:
+      name: std_bounties_token
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_draftbounties
+    table:
+      name: user_user
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_reviews
+    table:
+      name: user_user
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: stdBountiesReviewsByReviewerId
+    table:
+      name: user_user
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_fulfillerapplications
+    table:
+      name: user_user
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_category
+    table:
+      name: user_user_categories
+      schema: public
+  type: drop_relationship

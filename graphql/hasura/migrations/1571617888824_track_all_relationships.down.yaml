@@ -1,0 +1,60 @@
+- args:
+    relationship: std_bounties_bounty_approvers
+    table:
+      name: std_bounties_bounty
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bounty_issuers
+    table:
+      name: std_bounties_bounty
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: user_user
+    table:
+      name: std_bounties_bounty_approvers
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bounty
+    table:
+      name: std_bounties_bounty_approvers
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: user_user
+    table:
+      name: std_bounties_bounty_issuers
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bounty
+    table:
+      name: std_bounties_bounty_issuers
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_fulfillment_comments
+    table:
+      name: std_bounties_fulfillment
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_fulfillment
+    table:
+      name: std_bounties_fulfillment_comments
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bounty_approvers
+    table:
+      name: user_user
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bounty_issuers
+    table:
+      name: user_user
+      schema: public
+  type: drop_relationship

@@ -1,0 +1,24 @@
+- args:
+    relationship: std_bounties_contributions
+    table:
+      name: std_bounties_bounty
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: user_user
+    table:
+      name: std_bounties_contribution
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bounty
+    table:
+      name: std_bounties_contribution
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_contributions
+    table:
+      name: user_user
+      schema: public
+  type: drop_relationship

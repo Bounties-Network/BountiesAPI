@@ -1,0 +1,18 @@
+- args:
+    relationship: std_bounties_bounty_comments
+    table:
+      name: std_bounties_bounty
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bounty_categories
+    table:
+      name: std_bounties_bounty
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bounty
+    table:
+      name: std_bounties_bounty_categories
+      schema: public
+  type: drop_relationship

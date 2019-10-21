@@ -1,0 +1,5 @@
+- args:
+    table:
+      name: skill_ranks
+      schema: public
+  type: untrack_table

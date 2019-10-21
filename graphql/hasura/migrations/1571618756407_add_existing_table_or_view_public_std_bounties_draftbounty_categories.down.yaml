@@ -1,0 +1,5 @@
+- args:
+    table:
+      name: std_bounties_draftbounty_categories
+      schema: public
+  type: untrack_table

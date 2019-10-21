@@ -1,0 +1,6 @@
+- args:
+    relationship: std_bounties_bounty
+    table:
+      name: std_bounties_bounty_comments
+      schema: public
+  type: drop_relationship

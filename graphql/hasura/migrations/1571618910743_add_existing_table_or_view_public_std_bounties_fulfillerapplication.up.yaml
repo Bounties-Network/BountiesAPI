@@ -1,0 +1,4 @@
+- args:
+    name: std_bounties_fulfillerapplication
+    schema: public
+  type: add_existing_table_or_view

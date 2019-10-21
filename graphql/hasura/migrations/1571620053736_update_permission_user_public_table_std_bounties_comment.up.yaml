@@ -1,0 +1,16 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - created
+      - modified
+      - text
+      - user_id
+      filter: {}
+      limit: null
+    role: user
+    table:
+      name: std_bounties_comment
+      schema: public
+  type: create_select_permission

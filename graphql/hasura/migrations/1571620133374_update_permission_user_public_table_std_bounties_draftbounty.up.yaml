@@ -1,0 +1,46 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - created
+      - modified
+      - deadline
+      - calculated_fulfillment_amount
+      - experience_level
+      - revisions
+      - title
+      - description
+      - token_symbol
+      - token_decimals
+      - token_contract
+      - usd_price
+      - attached_filename
+      - attached_data_hash
+      - attached_url
+      - platform
+      - schema_version
+      - schema_name
+      - uid
+      - data
+      - issuer
+      - on_chain
+      - token_id
+      - user_id
+      - private_fulfillments
+      - fulfillers_need_approval
+      - fulfillment_amount
+      - token_version
+      - issuer_address
+      - issuer_email
+      - issuer_githubUsername
+      - issuer_name
+      - sourceDirectoryHash
+      - sourceFileName
+      filter: {}
+      limit: null
+    role: user
+    table:
+      name: std_bounties_draftbounty
+      schema: public
+  type: create_select_permission

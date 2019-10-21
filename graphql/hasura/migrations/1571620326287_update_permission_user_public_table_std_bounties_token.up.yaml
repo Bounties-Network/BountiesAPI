@@ -1,0 +1,21 @@
+- args:
+    role: user
+    table:
+      name: std_bounties_token
+      schema: public
+  type: drop_select_permission
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - normalized_name
+      - name
+      - symbol
+      - price_usd
+      filter: {}
+    role: user
+    table:
+      name: std_bounties_token
+      schema: public
+  type: create_select_permission

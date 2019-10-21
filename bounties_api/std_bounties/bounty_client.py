@@ -29,10 +29,13 @@ class BountyClient:
 
     @transaction.atomic
     def issue_bounty(self, bounty_id, contract_version, **kwargs):
-        event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))
+        event_date = datetime.datetime.fromtimestamp(
+            int(kwargs.get('event_timestamp')))
 
-        ipfs_data = map_bounty_data(kwargs.get('data', ''), bounty_id)
-        token_data = map_token_data(kwargs.get('token_version'), kwargs.get('token'), 0)
+        ipfs_data = map_bounty_data(kwargs.get(
+            'data', ''), bounty_id, contract_version)
+        token_data = map_token_data(kwargs.get(
+            'token_version'), kwargs.get('token'), 0)
 
         # TODO what happens if issuers or approvers is actually blank?
         contract_state = {'issuers': {}, 'approvers': {}}
@@ -44,7 +47,8 @@ class BountyClient:
 
         approvers = []
         for index, approver in enumerate(kwargs.get('approvers', [])):
-            user = User.objects.get_or_create(public_address=approver.lower())[0]
+            user = User.objects.get_or_create(
+                public_address=approver.lower())[0]
             approvers.append(user.pk)
             contract_state['approvers'].update({approver.lower(): index})
 
@@ -70,11 +74,14 @@ class BountyClient:
         print(ipfs_data.get('fulfillmentAmount'))
 
         if contract_version == STANDARD_BOUNTIES_V1:
-            bounty_data.update({'fulfillment_amount': kwargs.get('fulfillment_amount')})
+            bounty_data.update(
+                {'fulfillment_amount': kwargs.get('fulfillment_amount')})
         elif contract_version == STANDARD_BOUNTIES_V2:
-            bounty_data.update({'fulfillment_amount': ipfs_data.get('fulfillmentAmount')})
+            bounty_data.update(
+                {'fulfillment_amount': ipfs_data.get('fulfillmentAmount')})
         elif contract_version == STANDARD_BOUNTIES_V2_1:
-            bounty_data.update({'fulfillment_amount': ipfs_data.get('fulfillmentAmount')})
+            bounty_data.update(
+                {'fulfillment_amount': ipfs_data.get('fulfillmentAmount')})
 
         bounty_serializer = BountySerializer(data={
             **bounty_data,
@@ -85,7 +92,8 @@ class BountyClient:
         bounty_serializer.is_valid(raise_exception=True)
 
         saved_bounty = bounty_serializer.save()
-        saved_bounty.save_and_clear_categories(ipfs_data.get('data_categories'))
+        saved_bounty.save_and_clear_categories(
+            ipfs_data.get('data_categories'))
         saved_bounty.bounty_stage = ACTIVE_STAGE
         saved_bounty.record_bounty_state(event_date)
 
@@ -98,9 +106,11 @@ class BountyClient:
 
     def activate_bounty(self, bounty, **kwargs):
         if bounty.bounty_stage == ACTIVE_STAGE:
-            print('Activating a bounty that is already active')  # maybe this should be an error
+            # maybe this should be an error
+            print('Activating a bounty that is already active')
 
-        event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))
+        event_date = datetime.datetime.fromtimestamp(
+            int(kwargs.get('event_timestamp')))
         bounty.bounty_stage = ACTIVE_STAGE
         bounty.record_bounty_state(event_date)
         bounty.save()
@@ -111,7 +121,8 @@ class BountyClient:
         fulfillment_id = kwargs.get('fulfillment_id')
 
         data_hash = kwargs.get('data')
-        ipfs_data = map_fulfillment_data(data_hash, bounty.bounty_id, fulfillment_id)
+        ipfs_data = map_fulfillment_data(
+            data_hash, bounty.bounty_id, fulfillment_id, bounty.contract_version,)
         fulfillment_data = {
             'contract_version': bounty.contract_version,
             'fulfillment_id': fulfillment_id,
@@ -134,11 +145,12 @@ class BountyClient:
     def update_fulfillment(self, bounty, **kwargs):
 
         fulfillment_id = kwargs.get('fulfillment_id')
-        fulfillment = Fulfillment.objects.get(bounty=bounty.pk, fulfillment_id=fulfillment_id)
+        fulfillment = Fulfillment.objects.get(
+            bounty=bounty.pk, fulfillment_id=fulfillment_id)
 
         data_hash = kwargs.get('data')
         ipfs_data = map_fulfillment_data(
-            data_hash, bounty.bounty_id, fulfillment_id)
+            data_hash, bounty.bounty_id, fulfillment_id, bounty.contract_version)
 
         fulfillment_serializer = FulfillmentSerializer(
             fulfillment, data={**ipfs_data}, partial=True)
@@ -149,7 +161,8 @@ class BountyClient:
 
     @transaction.atomic
     def accept_fulfillment(self, bounty, **kwargs):
-        event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))
+        event_date = datetime.datetime.fromtimestamp(
+            int(kwargs.get('event_timestamp')))
         bounty.balance = bounty.balance - bounty.fulfillment_amount
 
         usd_price, token_price = get_historic_pricing(
@@ -167,16 +180,19 @@ class BountyClient:
 
         bounty.save()
 
-        fulfillment = Fulfillment.objects.get(bounty=bounty.pk, fulfillment_id=kwargs.get('fulfillment_id'))
+        fulfillment = Fulfillment.objects.get(
+            bounty=bounty.pk, fulfillment_id=kwargs.get('fulfillment_id'))
         fulfillment.accepted = True
         fulfillment.usd_price = usd_price
-        fulfillment.accepted_date = getDateTimeFromTimestamp(kwargs.get('event_timestamp'))
+        fulfillment.accepted_date = getDateTimeFromTimestamp(
+            kwargs.get('event_timestamp'))
         fulfillment.save()
 
         return fulfillment
 
     def kill_bounty(self, bounty, **kwargs):
-        event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))
+        event_date = datetime.datetime.fromtimestamp(
+            int(kwargs.get('event_timestamp')))
 
         bounty.old_balance = bounty.balance
         bounty.balance = 0
@@ -188,7 +204,8 @@ class BountyClient:
             kwargs.get('event_timestamp')
         )
 
-        has_accepted_fulfillments = bounty.fulfillments.filter(accepted=True).exists()
+        has_accepted_fulfillments = bounty.fulfillments.filter(
+            accepted=True).exists()
 
         if has_accepted_fulfillments:
             bounty.bounty_stage = COMPLETED_STAGE
@@ -203,8 +220,10 @@ class BountyClient:
         return bounty
 
     def add_contribution(self, bounty, **kwargs):
-        event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))
-        bounty.balance = Decimal(bounty.balance) + Decimal(kwargs.get('value', kwargs.get('amount')))
+        event_date = datetime.datetime.fromtimestamp(
+            int(kwargs.get('event_timestamp')))
+        bounty.balance = Decimal(
+            bounty.balance) + Decimal(kwargs.get('value', kwargs.get('amount')))
 
         # not sure about this ... what if the bounty expired because the deadline passed?
         if bounty.balance >= bounty.fulfillment_amount and bounty.bounty_stage == EXPIRED_STAGE:
@@ -236,7 +255,8 @@ class BountyClient:
         return contribution
 
     def refund_contribution(self, bounty, **kwargs):
-        contribution = Contribution.objects.get(bounty=bounty.pk, contribution_id=kwargs.get('contribution_id'))
+        contribution = Contribution.objects.get(
+            bounty=bounty.pk, contribution_id=kwargs.get('contribution_id'))
         contribution.refunded = True
 
         bounty.balance = Decimal(bounty.balance) - Decimal(contribution.amount)
@@ -250,7 +270,8 @@ class BountyClient:
         return contribution.save()
 
     def change_deadline(self, bounty, **kwargs):
-        event_date = datetime.datetime.fromtimestamp(int(kwargs.get('event_timestamp')))
+        event_date = datetime.datetime.fromtimestamp(
+            int(kwargs.get('event_timestamp')))
         bounty.deadline = getDateTimeFromTimestamp(kwargs.get('deadline'))
 
         if bounty.deadline > datetime.datetime.now() and bounty.bounty_stage == EXPIRED_STAGE:
@@ -269,11 +290,13 @@ class BountyClient:
 
         updated_data = map_bounty_data(kwargs.get('data'), bounty.bounty_id)
 
-        bounty_serializer = BountySerializer(bounty, data=updated_data, partial=True)
+        bounty_serializer = BountySerializer(
+            bounty, data=updated_data, partial=True)
         bounty_serializer.is_valid(raise_exception=True)
         saved_bounty = bounty_serializer.save()
 
-        saved_bounty.save_and_clear_categories(updated_data.get('data_categories'))
+        saved_bounty.save_and_clear_categories(
+            updated_data.get('data_categories'))
 
         return saved_bounty
 
@@ -283,7 +306,8 @@ class BountyClient:
         issuers = kwargs.get('issuers')
         issuers_state = {}
         for (index, issuer) in enumerate(issuers):
-            bounty.issuers.add(User.objects.get_or_create(public_address=issuer.lower())[0].pk)
+            bounty.issuers.add(User.objects.get_or_create(
+                public_address=issuer.lower())[0].pk)
             issuers_state.update({issuer.lower(): index})
 
         contract_state = json.loads(bounty.contract_state)
@@ -300,7 +324,8 @@ class BountyClient:
         approvers = kwargs.get('approvers')
         approvers_state = {}
         for (index, approver) in enumerate(approvers):
-            bounty.approvers.add(User.objects.get_or_create(public_address=approver.lower())[0].pk)
+            bounty.approvers.add(User.objects.get_or_create(
+                public_address=approver.lower())[0].pk)
             approvers_state.update({approver.lower(): index})
 
         contract_state = json.loads(bounty.contract_state)

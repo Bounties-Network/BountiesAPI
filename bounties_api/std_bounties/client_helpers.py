@@ -1,3 +1,9 @@
+import logging
+import ipfsapi
+from django.conf import settings
+from utils.functional_tools import pluck
+from std_bounties.models import Token
+from std_bounties.contract import data
 import json
 import requests
 from decimal import Decimal
@@ -6,14 +12,7 @@ from datetime import datetime
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from web3.middleware import geth_poa_middleware
-from std_bounties.constants import rev_mapped_difficulties, BEGINNER, INTERMEDIATE, ADVANCED
-from std_bounties.contract import data
-from std_bounties.models import Token
-from utils.functional_tools import pluck
-
-from django.conf import settings
-import ipfsapi
-import logging
+from std_bounties.constants import rev_mapped_difficulties, BEGINNER, INTERMEDIATE, ADVANCED, STANDARD_BOUNTIES_V2_1
 
 
 logger = logging.getLogger('django')
@@ -39,12 +38,17 @@ fulfillment_data_keys = [
 ]
 
 
-def map_bounty_data(ipfs_hash, bounty_id):
+def map_bounty_data(ipfs_hash, bounty_id, contract_version):
     if len(ipfs_hash) != 46 or not ipfs_hash.startswith('Qm'):
         logger.error('Data Hash Incorrect for bounty: {:d}'.format(bounty_id))
         return {}
 
     raw_ipfs_data = ipfs.cat(ipfs_hash)
+
+    if contract_version != STANDARD_BOUNTIES_V2_1:
+        old_ipfs = ipfsapi.connect(
+            host='https://ipfs.bounties.network', port='443')
+        raw_ipfs_data = old_ipfs.cat(ipfs_hash)
 
     data = json.loads(raw_ipfs_data)
     meta = data.get('meta', {})
@@ -150,7 +154,7 @@ def map_bounty_data(ipfs_hash, bounty_id):
     return bounty
 
 
-def map_fulfillment_data(data_hash, bounty_id, fulfillment_id):
+def map_fulfillment_data(data_hash, bounty_id, fulfillment_id, contract_version):
     ipfs_hash = data_hash
     if len(ipfs_hash) != 46 or not ipfs_hash.startswith('Qm'):
         logger.error(
@@ -158,7 +162,12 @@ def map_fulfillment_data(data_hash, bounty_id, fulfillment_id):
                 bounty_id, fulfillment_id))
         data_JSON = "{}"
     else:
-        data_JSON = ipfs.cat(ipfs_hash)
+        if contract_version != STANDARD_BOUNTIES_V2_1:
+            old_ipfs = ipfsapi.connect(
+                host='https://ipfs.bounties.network', port='443')
+            data_JSON = old_ipfs.cat(ipfs_hash)
+        else:
+            data_JSON = ipfs.cat(ipfs_hash)
     if len(ipfs_hash) == 0:
         ipfs_hash = 'invalid'
 

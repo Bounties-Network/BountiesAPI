@@ -1,5 +1,6 @@
 import logging
 import ipfsapi
+from ipfsapi.exceptions import StatusError
 from django.conf import settings
 from utils.functional_tools import pluck
 from std_bounties.models import Token
@@ -43,12 +44,17 @@ def map_bounty_data(ipfs_hash, bounty_id, contract_version):
         logger.error('Data Hash Incorrect for bounty: {:d}'.format(bounty_id))
         return {}
 
-    raw_ipfs_data = ipfs.cat(ipfs_hash)
-
-    if contract_version != STANDARD_BOUNTIES_V2_1:
-        old_ipfs = ipfsapi.connect(
-            host='https://ipfs.bounties.network', port='443')
-        raw_ipfs_data = old_ipfs.cat(ipfs_hash)
+    try:
+        raw_ipfs_data = ipfs.cat(ipfs_hash)
+    except StatusError as e:
+        if e.original.response.status_code == 504:
+            logger.warning(
+                'Timeout for bounty id {}, trying old IPFS Node'.format(bounty_id))
+            old_ipfs = ipfsapi.connect(
+                host='https://ipfs.bounties.network', port='443')
+            raw_ipfs_data = old_ipfs.cat(ipfs_hash)
+        else:
+            raise e
 
     data = json.loads(raw_ipfs_data)
     meta = data.get('meta', {})
@@ -162,12 +168,18 @@ def map_fulfillment_data(data_hash, bounty_id, fulfillment_id, contract_version)
                 bounty_id, fulfillment_id))
         data_JSON = "{}"
     else:
-        if contract_version != STANDARD_BOUNTIES_V2_1:
-            old_ipfs = ipfsapi.connect(
-                host='https://ipfs.bounties.network', port='443')
-            data_JSON = old_ipfs.cat(ipfs_hash)
-        else:
+        try:
             data_JSON = ipfs.cat(ipfs_hash)
+        except StatusError as e:
+            if e.original.response.status_code == 504:
+                logger.warning(
+                    'Timeout for bounty id {}, trying old IPFS Node'.format(bounty_id))
+                old_ipfs = ipfsapi.connect(
+                    host='https://ipfs.bounties.network', port='443')
+                data_JSON = old_ipfs.cat(ipfs_hash)
+            else:
+                raise e
+
     if len(ipfs_hash) == 0:
         ipfs_hash = 'invalid'
 

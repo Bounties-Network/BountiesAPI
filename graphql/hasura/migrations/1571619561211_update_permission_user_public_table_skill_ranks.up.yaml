@@ -1,0 +1,15 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - total_count
+      - name
+      - normalized_name
+      filter: {}
+      limit: null
+    role: user
+    table:
+      name: skill_ranks
+      schema: public
+  type: create_select_permission

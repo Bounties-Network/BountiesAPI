@@ -1,0 +1,19 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - created
+      - modified
+      - rating
+      - review
+      - reviewee_id
+      - reviewer_id
+      - platform
+      filter: {}
+      limit: null
+    role: user
+    table:
+      name: std_bounties_review
+      schema: public
+  type: create_select_permission

@@ -1,0 +1,19 @@
+- args:
+    role: user
+    table:
+      name: std_bounties_bounty_approvers
+      schema: public
+  type: drop_select_permission
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - bounty_id
+      - user_id
+      filter: {}
+    role: user
+    table:
+      name: std_bounties_bounty_approvers
+      schema: public
+  type: create_select_permission

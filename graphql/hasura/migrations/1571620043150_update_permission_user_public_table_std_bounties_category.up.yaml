@@ -1,0 +1,14 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - name
+      - normalized_name
+      filter: {}
+      limit: null
+    role: user
+    table:
+      name: std_bounties_category
+      schema: public
+  type: create_select_permission

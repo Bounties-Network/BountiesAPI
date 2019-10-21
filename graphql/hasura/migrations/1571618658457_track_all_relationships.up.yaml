@@ -1,0 +1,40 @@
+- args:
+    name: std_bounties_contributions
+    table:
+      name: std_bounties_bounty
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: bounty_id
+        table:
+          name: std_bounties_contribution
+          schema: public
+  type: create_array_relationship
+- args:
+    name: user_user
+    table:
+      name: std_bounties_contribution
+      schema: public
+    using:
+      foreign_key_constraint_on: contributor_id
+  type: create_object_relationship
+- args:
+    name: std_bounties_bounty
+    table:
+      name: std_bounties_contribution
+      schema: public
+    using:
+      foreign_key_constraint_on: bounty_id
+  type: create_object_relationship
+- args:
+    name: std_bounties_contributions
+    table:
+      name: user_user
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: contributor_id
+        table:
+          name: std_bounties_contribution
+          schema: public
+  type: create_array_relationship

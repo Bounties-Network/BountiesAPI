@@ -288,7 +288,8 @@ class BountyClient:
     def change_data(self, bounty, **kwargs):
         updated_data = {}
 
-        updated_data = map_bounty_data(kwargs.get('data'), bounty.bounty_id)
+        updated_data = map_bounty_data(kwargs.get(
+            'data'), bounty.bounty_id, bounty.contract_version)
 
         bounty_serializer = BountySerializer(
             bounty, data=updated_data, partial=True)

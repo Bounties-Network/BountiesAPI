@@ -13,7 +13,7 @@ from datetime import datetime
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from web3.middleware import geth_poa_middleware
-from std_bounties.constants import rev_mapped_difficulties, BEGINNER, INTERMEDIATE, ADVANCED, STANDARD_BOUNTIES_V2_1
+from std_bounties.constants import rev_mapped_difficulties, BEGINNER, INTERMEDIATE, ADVANCED, STANDARD_BOUNTIES_V2_1, STANDARD_BOUNTIES_V2_2
 
 
 logger = logging.getLogger('django')

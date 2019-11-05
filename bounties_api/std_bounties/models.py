@@ -192,11 +192,6 @@ class Bounty(BountyAbstract):
         self.calculated_balance = calculate_token_value(balance, decimals)
         self.calculated_fulfillment_amount = calculate_token_value(
             fulfillment_amount, decimals)
-        self.usd_price = get_token_pricing(
-            self.token_symbol,
-            decimals,
-            fulfillment_amount
-        )[0]
         issuers = json.loads(self.contract_state or '{}').get('issuers', None)
 
         if issuers:

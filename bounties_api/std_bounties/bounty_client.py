@@ -298,9 +298,15 @@ class BountyClient:
             bounty, data=updated_data, partial=True)
         bounty_serializer.is_valid(raise_exception=True)
         saved_bounty = bounty_serializer.save()
-
         saved_bounty.save_and_clear_categories(
             updated_data.get('data_categories'))
+
+        saved_bounty.usd_price = get_token_pricing(
+            saved_bounty.token_symbol,
+            saved_bounty.token_decimals,
+            saved_bounty.fulfillment_amount
+        )[0]
+        saved_bounty.save()
 
         return saved_bounty
 

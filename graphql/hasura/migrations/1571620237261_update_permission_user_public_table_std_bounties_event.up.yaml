@@ -1,0 +1,20 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - event
+      - fulfillment_id
+      - transaction_hash
+      - transaction_from
+      - contract_inputs
+      - event_date
+      - bounty_id
+      - contract_event_data
+      filter: {}
+      limit: null
+    role: user
+    table:
+      name: std_bounties_event
+      schema: public
+  type: create_select_permission

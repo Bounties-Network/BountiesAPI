@@ -1,0 +1,36 @@
+- args:
+    relationship: std_bounties_comment
+    table:
+      name: std_bounties_bounty_comments
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: user_user
+    table:
+      name: std_bounties_comment
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_bounty_comments
+    table:
+      name: std_bounties_comment
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_fulfillment_comments
+    table:
+      name: std_bounties_comment
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_comment
+    table:
+      name: std_bounties_fulfillment_comments
+      schema: public
+  type: drop_relationship
+- args:
+    relationship: std_bounties_comments
+    table:
+      name: user_user
+      schema: public
+  type: drop_relationship

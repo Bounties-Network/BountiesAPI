@@ -1,0 +1,300 @@
+- args:
+    name: std_bounties_token
+    table:
+      name: std_bounties_bounty
+      schema: public
+    using:
+      foreign_key_constraint_on: token_id
+  type: create_object_relationship
+- args:
+    name: std_bounties_bountystates
+    table:
+      name: std_bounties_bounty
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: bounty_id
+        table:
+          name: std_bounties_bountystate
+          schema: public
+  type: create_array_relationship
+- args:
+    name: std_bounties_events
+    table:
+      name: std_bounties_bounty
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: bounty_id
+        table:
+          name: std_bounties_event
+          schema: public
+  type: create_array_relationship
+- args:
+    name: std_bounties_fulfillerapplications
+    table:
+      name: std_bounties_bounty
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: bounty_id
+        table:
+          name: std_bounties_fulfillerapplication
+          schema: public
+  type: create_array_relationship
+- args:
+    name: std_bounties_category
+    table:
+      name: std_bounties_bounty_categories
+      schema: public
+    using:
+      foreign_key_constraint_on: category_id
+  type: create_object_relationship
+- args:
+    name: std_bounties_bounty
+    table:
+      name: std_bounties_bountystate
+      schema: public
+    using:
+      foreign_key_constraint_on: bounty_id
+  type: create_object_relationship
+- args:
+    name: user_user_categories
+    table:
+      name: std_bounties_category
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: category_id
+        table:
+          name: user_user_categories
+          schema: public
+  type: create_array_relationship
+- args:
+    name: std_bounties_bounty_categories
+    table:
+      name: std_bounties_category
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: category_id
+        table:
+          name: std_bounties_bounty_categories
+          schema: public
+  type: create_array_relationship
+- args:
+    name: std_bounties_draftbounty_categories
+    table:
+      name: std_bounties_category
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: category_id
+        table:
+          name: std_bounties_draftbounty_categories
+          schema: public
+  type: create_array_relationship
+- args:
+    name: user_user
+    table:
+      name: std_bounties_draftbounty
+      schema: public
+    using:
+      foreign_key_constraint_on: user_id
+  type: create_object_relationship
+- args:
+    name: std_bounties_token
+    table:
+      name: std_bounties_draftbounty
+      schema: public
+    using:
+      foreign_key_constraint_on: token_id
+  type: create_object_relationship
+- args:
+    name: std_bounties_draftbounty_categories
+    table:
+      name: std_bounties_draftbounty
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: draftbounty_id
+        table:
+          name: std_bounties_draftbounty_categories
+          schema: public
+  type: create_array_relationship
+- args:
+    name: std_bounties_category
+    table:
+      name: std_bounties_draftbounty_categories
+      schema: public
+    using:
+      foreign_key_constraint_on: category_id
+  type: create_object_relationship
+- args:
+    name: std_bounties_draftbounty
+    table:
+      name: std_bounties_draftbounty_categories
+      schema: public
+    using:
+      foreign_key_constraint_on: draftbounty_id
+  type: create_object_relationship
+- args:
+    name: std_bounties_bounty
+    table:
+      name: std_bounties_event
+      schema: public
+    using:
+      foreign_key_constraint_on: bounty_id
+  type: create_object_relationship
+- args:
+    name: user_user
+    table:
+      name: std_bounties_fulfillerapplication
+      schema: public
+    using:
+      foreign_key_constraint_on: applicant_id
+  type: create_object_relationship
+- args:
+    name: std_bounties_bounty
+    table:
+      name: std_bounties_fulfillerapplication
+      schema: public
+    using:
+      foreign_key_constraint_on: bounty_id
+  type: create_object_relationship
+- args:
+    name: std_bounties_review
+    table:
+      name: std_bounties_fulfillment
+      schema: public
+    using:
+      foreign_key_constraint_on: fulfiller_review_id
+  type: create_object_relationship
+- args:
+    name: stdBountiesReviewByIssuerReviewId
+    table:
+      name: std_bounties_fulfillment
+      schema: public
+    using:
+      foreign_key_constraint_on: issuer_review_id
+  type: create_object_relationship
+- args:
+    name: user_user
+    table:
+      name: std_bounties_review
+      schema: public
+    using:
+      foreign_key_constraint_on: reviewee_id
+  type: create_object_relationship
+- args:
+    name: userUserByReviewerId
+    table:
+      name: std_bounties_review
+      schema: public
+    using:
+      foreign_key_constraint_on: reviewer_id
+  type: create_object_relationship
+- args:
+    name: std_bounties_fulfillments
+    table:
+      name: std_bounties_review
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: fulfiller_review_id
+        table:
+          name: std_bounties_fulfillment
+          schema: public
+  type: create_array_relationship
+- args:
+    name: stdBountiesFulfillmentsByIssuerReviewId
+    table:
+      name: std_bounties_review
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: issuer_review_id
+        table:
+          name: std_bounties_fulfillment
+          schema: public
+  type: create_array_relationship
+- args:
+    name: std_bounties_bounties
+    table:
+      name: std_bounties_token
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: token_id
+        table:
+          name: std_bounties_bounty
+          schema: public
+  type: create_array_relationship
+- args:
+    name: std_bounties_draftbounties
+    table:
+      name: std_bounties_token
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: token_id
+        table:
+          name: std_bounties_draftbounty
+          schema: public
+  type: create_array_relationship
+- args:
+    name: std_bounties_draftbounties
+    table:
+      name: user_user
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: std_bounties_draftbounty
+          schema: public
+  type: create_array_relationship
+- args:
+    name: std_bounties_reviews
+    table:
+      name: user_user
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: reviewee_id
+        table:
+          name: std_bounties_review
+          schema: public
+  type: create_array_relationship
+- args:
+    name: stdBountiesReviewsByReviewerId
+    table:
+      name: user_user
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: reviewer_id
+        table:
+          name: std_bounties_review
+          schema: public
+  type: create_array_relationship
+- args:
+    name: std_bounties_fulfillerapplications
+    table:
+      name: user_user
+      schema: public
+    using:
+      foreign_key_constraint_on:
+        column: applicant_id
+        table:
+          name: std_bounties_fulfillerapplication
+          schema: public
+  type: create_array_relationship
+- args:
+    name: std_bounties_category
+    table:
+      name: user_user_categories
+      schema: public
+    using:
+      foreign_key_constraint_on: category_id
+  type: create_object_relationship

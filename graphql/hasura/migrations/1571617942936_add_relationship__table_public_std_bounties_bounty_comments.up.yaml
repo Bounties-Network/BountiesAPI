@@ -1,0 +1,8 @@
+- args:
+    name: std_bounties_bounty
+    table:
+      name: std_bounties_bounty_comments
+      schema: public
+    using:
+      foreign_key_constraint_on: bounty_id
+  type: create_object_relationship

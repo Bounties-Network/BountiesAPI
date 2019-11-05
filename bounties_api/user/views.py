@@ -37,6 +37,7 @@ class Login(APIView):
 
         response.set_cookie(
             'Authorization',
+            domain=settings.SESSION_COOKIE_DOMAIN,
             value=cookie_value,
             secure=False, httponly=False, expires=expires
         )
@@ -53,6 +54,7 @@ class LoginJWT(APIView):
         if not user:
             return HttpResponse('Unauthorized', status=401)
         jwt_token = loginJWT(request, user)
+        expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age)
         cookie_value = 'Bearer {}'.format(
             jwt_token.decode('utf-8'))
 
@@ -60,6 +62,13 @@ class LoginJWT(APIView):
             'user': UserSerializer(user).data,
             'token': cookie_value
         })
+
+        response.set_cookie(
+            'Authorization',
+            domain=settings.SESSION_COOKIE_DOMAIN,
+            value=cookie_value,
+            secure=False, httponly=False, expires=expires
+        )
 
         login(request, user)
         return response
@@ -70,6 +79,9 @@ class Logout(APIView):
         logout(request)
         response = HttpResponseRedirect('/')
         response.delete_cookie('Authorization')
+        expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=1)
+        response.set_cookie(
+            'Authorization', domain=settings.SESSION_COOKIE_DOMAIN, expires=expires)
         response.delete_cookie('uuid')
         response.delete_cookie('user_id')
         return response

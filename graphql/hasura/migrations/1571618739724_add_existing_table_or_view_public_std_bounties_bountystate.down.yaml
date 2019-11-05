@@ -1,0 +1,5 @@
+- args:
+    table:
+      name: std_bounties_bountystate
+      schema: public
+  type: untrack_table

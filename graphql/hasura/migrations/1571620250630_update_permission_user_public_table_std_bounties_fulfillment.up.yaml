@@ -1,0 +1,46 @@
+- args:
+    role: user
+    table:
+      name: std_bounties_fulfillment
+      schema: public
+  type: drop_select_permission
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - fulfillment_id
+      - created
+      - modified
+      - fulfillment_created
+      - data
+      - accepted
+      - fulfiller
+      - fulfiller_name
+      - fulfiller_email
+      - fulfiller_githubUsername
+      - fulfiller_address
+      - description
+      - sourceFileName
+      - sourceFileHash
+      - sourceDirectoryHash
+      - platform
+      - schemaVersion
+      - schemaName
+      - data_fulfiller
+      - data_json
+      - bounty_id
+      - accepted_date
+      - usd_price
+      - user_id
+      - fulfiller_review_id
+      - issuer_review_id
+      - url
+      - contract_version
+      - fulfillers
+      filter: {}
+    role: user
+    table:
+      name: std_bounties_fulfillment
+      schema: public
+  type: create_select_permission

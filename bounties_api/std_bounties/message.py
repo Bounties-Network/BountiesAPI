@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 
-from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2, STANDARD_BOUNTIES_V2_1
+from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2, STANDARD_BOUNTIES_V2_1, STANDARD_BOUNTIES_V2_2
 
 
 def to_serializable(val):
@@ -42,6 +42,8 @@ class Message:
             version = STANDARD_BOUNTIES_V2
         elif message_attributes['ContractVersion']['StringValue'] == 'v2.1':
             version = STANDARD_BOUNTIES_V2_1
+        elif message_attributes['ContractVersion']['StringValue'] == 'v2.2':
+            version = STANDARD_BOUNTIES_V2_2
         else:
             version = STANDARD_BOUNTIES_V1
 

@@ -1,0 +1,14 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - draftbounty_id
+      - category_id
+      filter: {}
+      limit: null
+    role: user
+    table:
+      name: std_bounties_draftbounty_categories
+      schema: public
+  type: create_select_permission

@@ -1,0 +1,11 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns: []
+      filter: {}
+      limit: null
+    role: user
+    table:
+      name: std_bounties_bountystate
+      schema: public
+  type: create_select_permission

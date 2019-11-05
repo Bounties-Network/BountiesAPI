@@ -3,7 +3,7 @@ import datetime
 from decimal import Decimal
 from std_bounties.models import Contribution, Fulfillment, DraftBounty
 from std_bounties.serializers import BountySerializer, ContributionSerializer, FulfillmentSerializer
-from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE, STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2, STANDARD_BOUNTIES_V2_1
+from std_bounties.constants import DRAFT_STAGE, ACTIVE_STAGE, DEAD_STAGE, COMPLETED_STAGE, EXPIRED_STAGE, STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2, STANDARD_BOUNTIES_V2_1, STANDARD_BOUNTIES_V2_2
 from std_bounties.client_helpers import map_bounty_data, map_token_data, map_fulfillment_data, get_token_pricing, get_historic_pricing
 from user.models import User
 from bounties.utils import getDateTimeFromTimestamp
@@ -32,7 +32,8 @@ class BountyClient:
         event_date = datetime.datetime.fromtimestamp(
             int(kwargs.get('event_timestamp')))
 
-        ipfs_data = map_bounty_data(kwargs.get('data', ''), bounty_id)
+        ipfs_data = map_bounty_data(kwargs.get(
+            'data', ''), bounty_id, contract_version)
         token_data = map_token_data(kwargs.get(
             'token_version'), kwargs.get('token'), 0)
 
@@ -81,6 +82,9 @@ class BountyClient:
         elif contract_version == STANDARD_BOUNTIES_V2_1:
             bounty_data.update(
                 {'fulfillment_amount': ipfs_data.get('fulfillmentAmount')})
+        elif contract_version == STANDARD_BOUNTIES_V2_2:
+            bounty_data.update(
+                {'fulfillment_amount': ipfs_data.get('fulfillmentAmount')})
 
         bounty_serializer = BountySerializer(data={
             **bounty_data,
@@ -121,7 +125,7 @@ class BountyClient:
 
         data_hash = kwargs.get('data')
         ipfs_data = map_fulfillment_data(
-            data_hash, bounty.bounty_id, fulfillment_id)
+            data_hash, bounty.bounty_id, fulfillment_id, bounty.contract_version,)
         fulfillment_data = {
             'contract_version': bounty.contract_version,
             'fulfillment_id': fulfillment_id,
@@ -149,7 +153,7 @@ class BountyClient:
 
         data_hash = kwargs.get('data')
         ipfs_data = map_fulfillment_data(
-            data_hash, bounty.bounty_id, fulfillment_id)
+            data_hash, bounty.bounty_id, fulfillment_id, bounty.contract_version)
 
         fulfillment_serializer = FulfillmentSerializer(
             fulfillment, data={**ipfs_data}, partial=True)
@@ -287,7 +291,8 @@ class BountyClient:
     def change_data(self, bounty, **kwargs):
         updated_data = {}
 
-        updated_data = map_bounty_data(kwargs.get('data'), bounty.bounty_id)
+        updated_data = map_bounty_data(kwargs.get(
+            'data'), bounty.bounty_id, bounty.contract_version)
 
         bounty_serializer = BountySerializer(
             bounty, data=updated_data, partial=True)

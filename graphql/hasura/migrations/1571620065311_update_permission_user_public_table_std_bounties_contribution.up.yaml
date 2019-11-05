@@ -1,0 +1,23 @@
+- args:
+    permission:
+      allow_aggregations: false
+      columns:
+      - id
+      - refunded
+      - contribution_id
+      - amount
+      - calculated_amount
+      - usd_amount
+      - platform
+      - created
+      - modified
+      - raw_event_data
+      - bounty_id
+      - contributor_id
+      filter: {}
+      limit: null
+    role: user
+    table:
+      name: std_bounties_contribution
+      schema: public
+  type: create_select_permission

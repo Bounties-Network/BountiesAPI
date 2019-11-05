@@ -292,8 +292,6 @@ class BountyClient:
         bounty_serializer = BountySerializer(
             bounty, data=updated_data, partial=True)
         bounty_serializer.is_valid(raise_exception=True)
-        bounty_serializer.usd_price = (
-            bounty_serializer.fulfillment_amount / Decimal(pow(10, bounty_serializer.token_decimals))) * Decimal(bounty_serializer.token.price_usd)
         saved_bounty = bounty_serializer.save()
         saved_bounty.save_and_clear_categories(
             updated_data.get('data_categories'))

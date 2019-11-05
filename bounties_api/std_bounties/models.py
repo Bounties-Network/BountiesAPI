@@ -11,7 +11,6 @@ from std_bounties.constants import STAGE_CHOICES, DIFFICULTY_CHOICES, \
 from django.core.exceptions import ObjectDoesNotExist
 from bounties.utils import calculate_token_value
 from django.contrib.postgres.fields import JSONField, ArrayField
-from std_bounties.client_helpers import get_token_pricing
 
 
 class Review(models.Model):

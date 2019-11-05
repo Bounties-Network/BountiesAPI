@@ -296,6 +296,14 @@ class BountyClient:
         saved_bounty.save_and_clear_categories(
             updated_data.get('data_categories'))
 
+        saved_bounty.usd_price = get_token_pricing(
+            saved_bounty.token_symbol,
+            saved_bounty.token_decimals,
+            saved_bounty.fulfillment_amount
+        )[0]
+
+        saved_bounty.save()
+
         return saved_bounty
 
     def update_bounty_issuers(self, bounty, **kwargs):

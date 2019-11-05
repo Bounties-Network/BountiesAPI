@@ -301,7 +301,8 @@ class BountyClient:
             saved_bounty.token_decimals,
             saved_bounty.fulfillment_amount
         )[0]
-
+        print(saved_bounty.fulfillment_amount)
+        print(saved_bounty.usd_price)
         saved_bounty.save()
 
         return saved_bounty

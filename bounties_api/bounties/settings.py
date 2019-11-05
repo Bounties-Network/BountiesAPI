@@ -266,6 +266,7 @@ PLATFORM_MAPPING = {
     'sa': 'https://sa.bounties.network',
     'sf': 'https://sf.bounties.network',
     'surge': 'https://surge.bounties.network',
+    'waterloo': 'https://waterloo.bounties.network',
 }
 
 if not DEBUG:

@@ -74,7 +74,7 @@ class Command(BaseCommand):
                 # If someone uploads a data hash that is faulty, then we want to blacklist all events around that
                 # bounty id. It can either be a permanent blacklist, typically added manually, or a pending blacklist.
                 # All the events in the pending blacklist will retry later.
-                permanent_blacklist = redis_client.get('blacklist:{}-{}'.format(message.bounty_id, message.contract_version))
+                permanent_blacklist = redis_client.exists('blacklist:{}-{}'.format(message.bounty_id, message.contract_version))
                 pending_blacklist = redis_client.exists('pending_blacklist:{}-{}'.format(message.bounty_id, message.contract_version))
 
                 if permanent_blacklist or pending_blacklist:
@@ -117,7 +117,7 @@ class Command(BaseCommand):
                                'existed'.format(message.bounty_id))
                 return
 
-        redis_client.rpush('pending_blacklist:{}'.format(message.bounty_id), message_string)
+        redis_client.rpush('pending_blacklist:{}-{}'.format(message.bounty_id, message.contract_version), message_string)
         logger.warning('Added to {} to pending_blacklist'.format(message.bounty_id))
 
     def resolve_blacklist(self):

@@ -13,7 +13,7 @@ from bounties.sqs_client import sqs_client
 from std_bounties import master_client
 from std_bounties.models import Event
 from std_bounties.message import Message
-from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2, STANDARD_BOUNTIES_V2_1, STANDARD_BOUNTIES_V2_2
+from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2, STANDARD_BOUNTIES_V2_1, STANDARD_BOUNTIES_V2_2, STANDARD_BOUNTIES_V2_3
 from notifications.models import Transaction
 
 from std_bounties.bounty_client import BountyClient
@@ -74,8 +74,8 @@ class Command(BaseCommand):
                 # If someone uploads a data hash that is faulty, then we want to blacklist all events around that
                 # bounty id. It can either be a permanent blacklist, typically added manually, or a pending blacklist.
                 # All the events in the pending blacklist will retry later.
-                permanent_blacklist = redis_client.get('blacklist:{}'.format(message.bounty_id))
-                pending_blacklist = redis_client.exists('pending_blacklist:{}'.format(message.bounty_id))
+                permanent_blacklist = redis_client.exists('blacklist:{}-{}'.format(message.bounty_id, message.contract_version))
+                pending_blacklist = redis_client.exists('pending_blacklist:{}-{}'.format(message.bounty_id, message.contract_version))
 
                 if permanent_blacklist or pending_blacklist:
                     self.remove_from_queue(message)
@@ -108,7 +108,7 @@ class Command(BaseCommand):
             logger.warning('SQS delete_message hit an error: '.format(e.response['Error']['Message']))
 
     def add_to_blacklist(self, message):
-        existing = redis_client.lrange('pending_blacklist:{}'.format(message.bounty_id), 0, -1)
+        existing = redis_client.lrange('pending_blacklist:{}-{}'.format(message.bounty_id, message.contract_version), 0, -1)
         message_string = str(message)
 
         for key in existing:
@@ -117,7 +117,7 @@ class Command(BaseCommand):
                                'existed'.format(message.bounty_id))
                 return
 
-        redis_client.rpush('pending_blacklist:{}'.format(message.bounty_id), message_string)
+        redis_client.rpush('pending_blacklist:{}-{}'.format(message.bounty_id, message.contract_version), message_string)
         logger.warning('Added to {} to pending_blacklist'.format(message.bounty_id))
 
     def resolve_blacklist(self):
@@ -143,12 +143,8 @@ class Command(BaseCommand):
 
         if message.contract_version == STANDARD_BOUNTIES_V1:
             self.notify_master_client(message)
-        elif message.contract_version == STANDARD_BOUNTIES_V2:
+        else:
             self.notify_master_client_v2(message)
-        elif message.contract_version == STANDARD_BOUNTIES_V2_1:
-            self.notify_master_client_v2_1(message)
-        elif message.contract_version == STANDARD_BOUNTIES_V2_2:
-            self.notify_master_client_v2_2(message)
 
         bounty = Bounty.objects.get(bounty_id=message.bounty_id, contract_version=message.contract_version)
 
@@ -388,65 +384,7 @@ class Command(BaseCommand):
 
             master_client.client[event](
                 message.bounty_id,
-                contract_version=STANDARD_BOUNTIES_V2,
-                event_date=message.event_date,
-                event_timestamp=message.event_timestamp,
-                uid=message.message_deduplication_id,
-                **{k: v for (k, v) in message.contract_event_data.items() if 'bounty_id' not in k},
-            )
-        except StatusError as e:
-            if e.original.response.status_code == 504:
-                logger.warning('Timeout for bounty id {}'.format(message.bounty_id))
-            raise e
-
-    def notify_master_client_v2_1(self, message):
-        try:
-            # make camel case
-            event = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', message.event)
-            event = re.sub('([a-z0-9])([A-Z])', r'\1_\2', event).lower()
-
-            events_to_skip = [
-                # not relevant for getting stb 2.0 to be compatible with stb 1.0,
-                # and this event may change to `bounty_issuers_changed` instead
-                # 'bounty_issuers_updated',
-                # 'bounty_approvers_updated',
-            ]
-
-            if event in events_to_skip:
-                return
-
-            master_client.client[event](
-                message.bounty_id,
-                contract_version=STANDARD_BOUNTIES_V2_1,
-                event_date=message.event_date,
-                event_timestamp=message.event_timestamp,
-                uid=message.message_deduplication_id,
-                **{k: v for (k, v) in message.contract_event_data.items() if 'bounty_id' not in k},
-            )
-        except StatusError as e:
-            if e.original.response.status_code == 504:
-                logger.warning('Timeout for bounty id {}'.format(message.bounty_id))
-            raise e
-
-    def notify_master_client_v2_2(self, message):
-        try:
-            # make camel case
-            event = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', message.event)
-            event = re.sub('([a-z0-9])([A-Z])', r'\1_\2', event).lower()
-
-            events_to_skip = [
-                # not relevant for getting stb 2.0 to be compatible with stb 1.0,
-                # and this event may change to `bounty_issuers_changed` instead
-                # 'bounty_issuers_updated',
-                # 'bounty_approvers_updated',
-            ]
-
-            if event in events_to_skip:
-                return
-
-            master_client.client[event](
-                message.bounty_id,
-                contract_version=STANDARD_BOUNTIES_V2_2,
+                contract_version=message.contract_version,
                 event_date=message.event_date,
                 event_timestamp=message.event_timestamp,
                 uid=message.message_deduplication_id,

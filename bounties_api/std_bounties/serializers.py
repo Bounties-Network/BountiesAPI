@@ -14,6 +14,7 @@ from std_bounties.models import (
     DraftBounty,
     Comment,
     Review,
+    View,
 )
 from std_bounties.client_helpers import map_token_data
 from std_bounties.constants import STAGE_CHOICES
@@ -63,6 +64,13 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = '__all__'
 
+class ViewSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    bounty = BountySerializer(read_only=True)
+
+    class Meta:
+        model = Review
+        fields = '__all__'
 
 class CommentSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)

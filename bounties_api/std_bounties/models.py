@@ -34,20 +34,23 @@ class Category(models.Model):
         self.normalized_name = self.name.lower().strip()
         super(Category, self).save(*args, **kwargs)
 
-
 class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     user = models.ForeignKey('user.User')
     text = models.TextField()
 
+class View(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey('user.User', null=True)
+    bounty_id = models.ForeignKey(Bounty)
 
 class Token(models.Model):
     normalized_name = models.CharField(max_length=128)
     name = models.CharField(max_length=128)
     symbol = models.CharField(max_length=128)
     price_usd = models.FloatField(default=0, null=True)
-
 
 class BountyState(models.Model):
     bounty = models.ForeignKey('Bounty')
@@ -184,6 +187,7 @@ class Bounty(BountyAbstract):
 
     raw_ipfs_data = JSONField(null=True)
     raw_event_data = JSONField(null=True)
+    view_count = models.IntegerField(null=True)
 
     def save(self, *args, **kwargs):
         fulfillment_amount = self.fulfillment_amount

@@ -64,14 +64,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = '__all__'
 
-class ViewSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    bounty = BountySerializer(read_only=True)
-
-    class Meta:
-        model = Review
-        fields = '__all__'
-
 class CommentSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
 
@@ -302,4 +294,13 @@ class FulfillerApplicationSerializer(serializers.ModelSerializer):
 class FulfillerApplicantSerializer(serializers.ModelSerializer):
     class Meta:
         model = FulfillerApplication
+        fields = '__all__'
+
+
+class ViewSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    bounty = BountySerializer(read_only=True)
+
+    class Meta:
+        model = Review
         fields = '__all__'

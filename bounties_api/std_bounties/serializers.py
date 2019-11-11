@@ -299,9 +299,6 @@ class FulfillerApplicantSerializer(serializers.ModelSerializer):
 
 
 class ViewSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    bounty = BountySerializer(read_only=True)
-
     class Meta:
-        model = Review
+        model = View
         fields = '__all__'

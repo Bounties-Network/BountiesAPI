@@ -12,7 +12,6 @@ router.register(r'^reviews', views.ReviewsViewSet, 'user_reviews')
 router.register(r'^bounty/(?P<bounty_id>\d+)/comment', views.BountyComments, 'bounty_comments')
 router.register(r'^fulfillment/(?P<fulfillment_id>\d+)/comment', views.FulfillmentComments, 'fulfillment_comments')
 router.register(r'^bounty/(?P<bounty_id>\d+)/application', views.FulfillerApplicationViewSet, 'bounty_applications')
-router.register(r'^bounty/(?P<bounty_id>\d+)/view', views.BountyViews, 'bounty_views')
 
 
 urlpatterns = [
@@ -21,5 +20,6 @@ urlpatterns = [
     url(r'^token/$', views.Tokens.as_view()),
     url(r'^bounty/(?P<bounty_id>\d+)/fulfillment/(?P<fulfillment_id>\d+)/review/$', views.FulfillmentReviews.as_view()),
     url(r'^application/(?P<pk>\d+)/$', views.FulfillerApplicationApplicantView.as_view()),
+    url(r'^bounty/(?P<bounty_id>\d+)/view', views.BountyViews.as_view()),
     url(r'^', include(router.urls))
 ]

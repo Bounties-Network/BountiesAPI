@@ -184,7 +184,7 @@ class Bounty(BountyAbstract):
 
     raw_ipfs_data = JSONField(null=True)
     raw_event_data = JSONField(null=True)
-    view_count = models.IntegerField(null=True)
+    view_count = models.IntegerField(default=0, null=True)
 
     def save(self, *args, **kwargs):
         fulfillment_amount = self.fulfillment_amount

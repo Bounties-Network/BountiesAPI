@@ -17,11 +17,17 @@ class BountyViews(APIView):
         print('got bounty')
         current_user = request.current_user
         print('got user')
-        serializer = ViewSerializer(data=request.data)
+        serializer = ViewSerializer(
+            data={
+            **request.data,
+            'user': current_user.pk,
+            'bounty': bounty.pk
+            }
+        )
         print('1')
         serializer.is_valid(raise_exception=True)
         print('2')
-        serializer.save(user=current_user, bounty=bounty)
+        serializer.save()
         print('3')
         bounty.view_count += 1
         print('4')

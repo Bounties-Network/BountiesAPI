@@ -11,6 +11,8 @@ notification_client = NotificationClient()
 class BountyViews(APIView):
     @staticmethod
     def post(request, bounty_id):
+        print('viewing bounty')
+        print(bounty_id)
         bounty = get_object_or_404(Bounty, id=bounty_id)
         current_user = request.current_user
 

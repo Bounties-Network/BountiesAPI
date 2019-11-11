@@ -16,7 +16,7 @@ class BountyViews(APIView):
 
         serializer = ViewSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        review = serializer.save(user=current_user, bounty=bounty)
+        serializer.save(user=current_user, bounty=bounty)
 
         bounty.view_count += 1
         bounty.save()

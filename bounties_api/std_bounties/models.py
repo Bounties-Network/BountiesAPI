@@ -34,17 +34,20 @@ class Category(models.Model):
         self.normalized_name = self.name.lower().strip()
         super(Category, self).save(*args, **kwargs)
 
+
 class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     user = models.ForeignKey('user.User')
     text = models.TextField()
 
+
 class Token(models.Model):
     normalized_name = models.CharField(max_length=128)
     name = models.CharField(max_length=128)
     symbol = models.CharField(max_length=128)
     price_usd = models.FloatField(default=0, null=True)
+
 
 class BountyState(models.Model):
     bounty = models.ForeignKey('Bounty')

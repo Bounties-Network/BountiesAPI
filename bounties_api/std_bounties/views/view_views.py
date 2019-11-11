@@ -19,9 +19,9 @@ class BountyViews(APIView):
         print('got user')
         serializer = ViewSerializer(
             data={
-            **request.data,
-            'user': current_user.pk,
-            'bounty': bounty.pk
+                **request.data,
+                'user': current_user.pk,
+                'bounty': bounty.pk
             }
         )
         print('1')

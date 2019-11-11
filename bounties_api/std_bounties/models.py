@@ -41,10 +41,10 @@ class Comment(models.Model):
     text = models.TextField()
 
 class View(models.Model):
+    bounty = models.ForeignKey(Bounty)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     user = models.ForeignKey('user.User', null=True)
-    bounty_id = models.ForeignKey(Bounty)
 
 class Token(models.Model):
     normalized_name = models.CharField(max_length=128)

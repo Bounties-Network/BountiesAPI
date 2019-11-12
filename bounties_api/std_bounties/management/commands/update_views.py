@@ -17,7 +17,9 @@ class Command(BaseCommand):
             all_bounties = Bounty.objects.filter()
             for bounty in all_bounties:
                 fulfillment_count = Fulfillment.objects.filter(bounty_id=bounty.id).count()
-                if (bounty.view_count < fulfillment_count):
+                if (bounty.view_count == None):
+                    bounty.view_count = fulfillment_count
+                elif (bounty.view_count < fulfillment_count):
                     bounty.view_count += fulfillment_count
 
         except Exception as e:

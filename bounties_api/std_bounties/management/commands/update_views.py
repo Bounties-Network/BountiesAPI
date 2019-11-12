@@ -14,11 +14,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            all_bounties = Bounty.objects;
+            all_bounties = Bounty.objects
             for bounty in all_bounties:
-                fulfillment_count = Fulfillment.objects.filter(bounty_id=bounty.id).count();
+                fulfillment_count = Fulfillment.objects.filter(bounty_id=bounty.id).count()
                 if (bounty.view_count < fulfillment_count):
-                    bounty.view_count += fulfillment_count;
+                    bounty.view_count += fulfillment_count
 
         except Exception as e:
             # goes to rollbar

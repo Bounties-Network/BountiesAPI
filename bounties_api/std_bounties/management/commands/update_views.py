@@ -16,19 +16,12 @@ class Command(BaseCommand):
         try:
             all_bounties = Bounty.objects.all()
             for bounty in all_bounties:
-                print('got bounty')
                 fulfillment_count = Fulfillment.objects.filter(bounty_id=bounty.id).count()
-                print('got fulfillments')
-                print(fulfillment_count)
-                print('got view count')
-                print(bounty.view_count)
                 if bounty.view_count is None:
-                    print('none views')
                     bounty.view_count = fulfillment_count
                 elif (bounty.view_count < fulfillment_count):
-                    print('small views')
                     bounty.view_count += fulfillment_count
-
+                bounty.save()
         except Exception as e:
             # goes to rollbar
             logger.exception(e)

@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            all_bounties = Bounty.objects.filter()
+            all_bounties = Bounty.objects.all()
             for bounty in all_bounties:
                 fulfillment_count = Fulfillment.objects.filter(bounty_id=bounty.id).count()
                 if bounty.view_count is None:

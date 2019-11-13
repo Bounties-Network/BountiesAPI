@@ -12,14 +12,22 @@ class BountyViews(APIView):
     @staticmethod
     def post(request, bounty_id):
         bounty = get_object_or_404(Bounty, id=bounty_id)
-        current_user = request.current_user
-        serializer = ViewSerializer(
-            data={
-                **request.data,
-                'user': current_user.pk,
-                'bounty': bounty.pk
-            }
-        )
+        if request.current_user is None:
+            serializer = ViewSerializer(
+                data={
+                    **request.data,
+                    'bounty': bounty.pk
+                }
+            )
+        else:
+            current_user = request.current_user
+            serializer = ViewSerializer(
+                data={
+                    **request.data,
+                    'user': current_user.pk,
+                    'bounty': bounty.pk
+                }
+            )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         bounty.view_count += 1

@@ -184,6 +184,7 @@ class Bounty(BountyAbstract):
 
     raw_ipfs_data = JSONField(null=True)
     raw_event_data = JSONField(null=True)
+    view_count = models.IntegerField(default=0, null=True)
 
     def save(self, *args, **kwargs):
         fulfillment_amount = self.fulfillment_amount
@@ -382,3 +383,10 @@ class FulfillerApplication(models.Model):
         max_length=1, choices=APPLICATION_STATES, default=PENDING)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now_add=True)
+
+
+class View(models.Model):
+    bounty = models.ForeignKey(Bounty)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey('user.User', null=True)

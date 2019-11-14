@@ -278,13 +278,20 @@ class FulfillerApplicationSerializer(serializers.ModelSerializer):
             if value.bounty.user == self.context['request'].current_user:
                 return all_data
 
-            if (value.applicant == self.context['request'].current_user and value.state == 'R') or (value.state == 'A'):
+            if (value.applicant == self.context['request'].current_user):
                 return {
                     'applicationId': value.id,
                     'applicant': UserSerializer(value.applicant).data,
-                    'state': value.state
+                    'state': value.state,
+                    'message': value.message,
+                    'issuer_reply': value.issuer_reply,
+                    'created': value.created
                 }
-
+            if (value.state == 'R' or value.state == 'A'):
+                return {
+                    'applicationId': value.id,
+                    'applicant': UserSerializer(value.applicant).data,
+                    'state': value.state                }
             return {
                 'applicationId': value.id,
                 'applicant': UserSerializer(value.applicant).data,

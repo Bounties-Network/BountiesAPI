@@ -270,7 +270,8 @@ class FulfillerApplicationSerializer(serializers.ModelSerializer):
             'message': value.message,
             'created': value.created,
             'modified': value.modified,
-            'state': value.state
+            'state': value.state,
+            'issuer_reply': value.issuer_reply
         }
 
         if 'request' in self.context:

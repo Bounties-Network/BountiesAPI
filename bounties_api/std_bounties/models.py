@@ -385,6 +385,7 @@ class FulfillerApplication(models.Model):
     modified = models.DateTimeField(auto_now_add=True)
     issuer_reply = models.TextField(default='')
 
+
 class View(models.Model):
     bounty = models.ForeignKey(Bounty)
     created = models.DateTimeField(auto_now_add=True)

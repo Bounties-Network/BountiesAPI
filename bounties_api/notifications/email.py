@@ -72,6 +72,7 @@ class Email:
         description = kwargs.get('fulfillment_description', '')
         preview_text = kwargs.get('string_data', '')
         application_message = kwargs.get('application_message', '')
+        rejection_message = kwargs.get('rejection_message', '')
 
         if notification_name.__class__ != int:
             raise TypeError('notification_name must be of type int')
@@ -201,7 +202,8 @@ class Email:
             'rating_count': rating_count,
             'rating_link': rating_link,
             'contribute_url': url + '?contribute=true',
-            'submissions': submissions
+            'submissions': submissions,
+            'rejection_message': rejection_message
         })
 
     def render(self):

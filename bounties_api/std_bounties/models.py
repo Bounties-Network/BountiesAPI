@@ -383,7 +383,7 @@ class FulfillerApplication(models.Model):
         max_length=1, choices=APPLICATION_STATES, default=PENDING)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now_add=True)
-
+    issuer_reply = models.TextField()
 
 class View(models.Model):
     bounty = models.ForeignKey(Bounty)

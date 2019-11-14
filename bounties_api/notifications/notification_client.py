@@ -721,7 +721,8 @@ class NotificationClient:
             string_data=string_data,
             subject='Your Application Was Rejected',
             application_message=application.message,
-            is_activity=False
+            is_activity=False,
+            rejection_message=application.issuer_reply
         )
 
     def application_rejected_issuer(self, bounty, application):
@@ -740,5 +741,6 @@ class NotificationClient:
             string_data=string_data,
             subject='You Rejected an Application',
             application_message=application.message,
-            is_activity=True
+            is_activity=True,
+            rejection_message=application.issuer_reply
         )

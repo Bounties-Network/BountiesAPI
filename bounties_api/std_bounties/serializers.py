@@ -291,7 +291,8 @@ class FulfillerApplicationSerializer(serializers.ModelSerializer):
                 return {
                     'applicationId': value.id,
                     'applicant': UserSerializer(value.applicant).data,
-                    'state': value.state                }
+                    'state': value.state
+                }
             return {
                 'applicationId': value.id,
                 'applicant': UserSerializer(value.applicant).data,

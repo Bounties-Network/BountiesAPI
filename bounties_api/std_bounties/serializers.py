@@ -313,6 +313,7 @@ class ViewSerializer(serializers.ModelSerializer):
         model = View
         fields = '__all__'
 
+
 class ContractSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contract

@@ -1,5 +1,5 @@
 import rest_framework_filters as filters
-from std_bounties.models import Bounty, Category, DraftBounty, Fulfillment, RankedCategory, Review
+from std_bounties.models import Bounty, Category, DraftBounty, Fulfillment, RankedCategory, Review, Contract
 
 
 class CategoriesFilter(filters.FilterSet):
@@ -76,4 +76,14 @@ class BountiesFilter(filters.FilterSet):
             'deadline': ['lt', 'gt', 'exact'],
             'bounty_id': ['exact'],
             'contract_version': ['exact']
+        }
+
+
+class ContractFilter(filters.FilterSet):
+    class Meta:
+        model = Contract
+        fields = {
+            'contract_type': ['exact'],
+            'contract_version': ['exact'],
+            'contract_address': ['exact']
         }

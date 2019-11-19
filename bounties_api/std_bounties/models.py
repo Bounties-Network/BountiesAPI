@@ -391,3 +391,9 @@ class View(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     user = models.ForeignKey('user.User', null=True)
+
+
+class Contract(models.Model):
+    contract_type = models.CharField(max_length=64, blank=True)
+    contract_version = models.CharField(max_length=64, blank=True)
+    contract_address = models.CharField(max_length=128, blank=True)

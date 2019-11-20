@@ -397,3 +397,4 @@ class Contract(models.Model):
     contract_type = models.CharField(max_length=64, blank=True)
     contract_version = models.CharField(max_length=64, blank=True)
     contract_address = models.CharField(max_length=128, blank=True)
+    abi = JSONField(null=True)

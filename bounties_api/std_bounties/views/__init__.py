@@ -12,3 +12,4 @@ from .tokens_views import Tokens
 from .fulfiller_application_views import FulfillerApplicationViewSet
 from .fulfiller_application_applicant_views import FulfillerApplicationApplicantView
 from .view_views import BountyViews
+from .contract_views import ContractViewSet

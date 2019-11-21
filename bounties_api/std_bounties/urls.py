@@ -6,6 +6,7 @@ router = DefaultRouter()
 
 router.register(r'^bounty/draft', views.DraftBountyWriteViewSet)
 router.register(r'^bounty', views.BountyViewSet)
+router.register(r'^contract', views.ContractViewSet)
 router.register(r'^fulfillment', views.FulfillmentViewSet)
 router.register(r'^category', views.CategoryViewSet)
 router.register(r'^reviews', views.ReviewsViewSet, 'user_reviews')

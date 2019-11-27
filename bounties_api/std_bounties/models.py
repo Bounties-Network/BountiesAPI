@@ -42,6 +42,19 @@ class Comment(models.Model):
     text = models.TextField()
 
 
+class Community(models.Model):
+    community_id = models.CharField(max_length=128, blank=True)
+    community_name = models.CharField(max_length=128, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    total_members = models.IntegerField()
+    small_profile_image_url = models.CharField(max_length=256, blank=True)
+    large_profile_image_url = models.CharField(max_length=256, blank=True)
+    public = models.BooleanField(default=True)
+    admin_user = models.ForeignKey(User)
+    password = models.CharField(max_length=256, blank=True)
+
+
 class Token(models.Model):
     normalized_name = models.CharField(max_length=128)
     name = models.CharField(max_length=128)
@@ -129,6 +142,7 @@ class BountyAbstract(models.Model):
     schema_name = models.CharField(max_length=128, null=True)
     platform = models.CharField(
         max_length=128, blank=True, default="bounties-network")
+    community = models.ForeignKey(Community, null=True)
 
     class Meta:
         abstract = True
@@ -296,6 +310,7 @@ class Fulfillment(models.Model):
     data_json = JSONField(null=True)
     fulfillers = ArrayField(models.CharField(max_length=128), null=True)
     comments = models.ManyToManyField(Comment, related_name='fulfillment')
+    community = models.ForeignKey(Community, null=True)
 
     def save(self, *args, **kwargs):
         user, created = User.objects.get_or_create(
@@ -398,3 +413,11 @@ class Contract(models.Model):
     contract_version = models.CharField(max_length=64, blank=True)
     contract_address = models.CharField(max_length=128, blank=True)
     abi = JSONField(null=True)
+
+
+class Activity(models.Model):
+    event_type = models.CharField(max_length=128)
+    bounty_id = models.ForeignKey(Bounty, null=True)
+    fulfillment_id = models.ForeignKey(Fulfillment, null=True)
+    comment_id = models.ForeignKey(Comment, null=True)
+    user = models.ForeignKey(User)

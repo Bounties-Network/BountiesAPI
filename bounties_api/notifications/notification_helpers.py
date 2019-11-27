@@ -97,6 +97,9 @@ def create_notification(**kwargs):
     if (not is_activity and notification_name not in user.settings.accepted_email_settings()):
         return
 
+    if settings.SEND_EMAILS != 'true':
+        return
+
     if platform not in settings.PLATFORM_MAPPING:
         return
 

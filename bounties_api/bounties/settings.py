@@ -230,6 +230,7 @@ ETH_NETWORK = os.environ.get('eth_network', 'mainNet')
 DEPLOY_URL = os.environ.get('deploy_url', 'http://127.0.0.1')
 GITHUB_TOKEN = os.environ.get('github_token', '')
 SNS_ADDRESS = os.environ.get('sns_address', '')
+SEND_EMAILS = os.environ.get('send_emails', 'true')
 
 NETWORKS = {
     'mainNet': 'https://mainnet.infura.io/v3/5eb45628ce2c4ecebcce7f201f352792',

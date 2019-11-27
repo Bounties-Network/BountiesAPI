@@ -53,6 +53,7 @@ class Community(models.Model):
     public = models.BooleanField(default=True)
     admin_user = models.ForeignKey(User)
     password = models.CharField(max_length=256, blank=True)
+    network = models.CharField(max_length=256, default='mainNet')
 
 
 class Token(models.Model):
@@ -143,6 +144,7 @@ class BountyAbstract(models.Model):
     platform = models.CharField(
         max_length=128, blank=True, default="bounties-network")
     community = models.ForeignKey(Community, null=True)
+    network = models.CharField(max_length=256, default='mainNet')
 
     class Meta:
         abstract = True
@@ -311,6 +313,7 @@ class Fulfillment(models.Model):
     fulfillers = ArrayField(models.CharField(max_length=128), null=True)
     comments = models.ManyToManyField(Comment, related_name='fulfillment')
     community = models.ForeignKey(Community, null=True)
+    network = models.CharField(max_length=256, default='mainNet')
 
     def save(self, *args, **kwargs):
         user, created = User.objects.get_or_create(
@@ -350,6 +353,7 @@ class Event(models.Model):
     contract_inputs = JSONField(null=True)
     contract_event_data = JSONField(null=True)
     event_date = models.DateTimeField()
+    network = models.CharField(max_length=256, default='mainNet')
 
 
 class Contribution(models.Model):
@@ -413,6 +417,7 @@ class Contract(models.Model):
     contract_version = models.CharField(max_length=64, blank=True)
     contract_address = models.CharField(max_length=128, blank=True)
     abi = JSONField(null=True)
+    network = models.CharField(max_length=256, default='mainNet')
 
 
 class Activity(models.Model):
@@ -421,3 +426,4 @@ class Activity(models.Model):
     fulfillment_id = models.ForeignKey(Fulfillment, null=True)
     comment_id = models.ForeignKey(Comment, null=True)
     user = models.ForeignKey(User)
+    community = models.ForeignKey(Community, null=True)

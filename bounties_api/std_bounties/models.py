@@ -422,8 +422,8 @@ class Contract(models.Model):
 
 class Activity(models.Model):
     event_type = models.CharField(max_length=128)
-    bounty_id = models.ForeignKey(Bounty, null=True)
-    fulfillment_id = models.ForeignKey(Fulfillment, null=True)
-    comment_id = models.ForeignKey(Comment, null=True)
+    bounty = models.ForeignKey(Bounty, null=True)
+    fulfillment = models.ForeignKey(Fulfillment, null=True)
+    comment = models.ForeignKey(Comment, null=True)
     user = models.ForeignKey(User)
     community = models.ForeignKey(Community, null=True)

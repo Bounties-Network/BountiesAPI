@@ -17,11 +17,11 @@ class Command(BaseCommand):
             all_bounties = Bounty.objects.all()
             for bounty in all_bounties:
                 platform = bounty.platform
-                community, created  = Community.objects.get_or_create(
+                community, created = Community.objects.get_or_create(
                     community_id=str(platform),
                     defaults={
-                        'community_id': notification_name,
-                        'community_name': user,
+                        'community_id': platform,
+                        'community_name': platform,
                         'created': bounty.created,
                         'modified': bounty.created,
                         'total_members': 0,
@@ -35,11 +35,11 @@ class Command(BaseCommand):
             all_fulfillments = Bounty.objects.all()
             for fulfillment in all_fulfillments:
                 platform = fulfillment.platform
-                community, created  = Community.objects.get_or_create(
+                community, created = Community.objects.get_or_create(
                     community_id=str(platform),
                     defaults={
-                        'community_id': notification_name,
-                        'community_name': user,
+                        'community_id': platform,
+                        'community_name': platform,
                         'created': fulfillment.created,
                         'modified': fulfillment.created,
                         'total_members': 0,

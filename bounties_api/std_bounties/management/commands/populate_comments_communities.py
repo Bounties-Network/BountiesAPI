@@ -19,13 +19,13 @@ class Command(BaseCommand):
                 try:
                     bounty = Bounty.objects.get(comments__in=[comment]).first()
                     comment.community_id = bounty.community_id
-                except Bounty.ObjectDoesNotExist:
+                except Bounty.DoesNotExist:
                     pass
 
                 try:
                     fulfillment = Fulfillment.objects.filter(comments__in=[comment]).first()
                     comment.community_id = fulfillment.community_id
-                except Bounty.ObjectDoesNotExist:
+                except Bounty.DoesNotExist:
                     pass
                 comment.save()
 

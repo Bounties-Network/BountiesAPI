@@ -16,8 +16,8 @@ class Command(BaseCommand):
         try:
             all_comments = Comment.objects.all()
             for comment in all_comments:
-                bounty = Bounty.objects.get(comments__in=[comment])
-                fulfillment = Fulfillment.objects.get(comments__in=[comment])
+                bounty = Bounty.objects.filter(comments__in=[comment]).first()
+                fulfillment = Fulfillment.objects.filter(comments__in=[comment]).first()
                 if bounty:
                     comment.community_id = bounty.community_id
                 elif fulfillment:

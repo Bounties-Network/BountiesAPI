@@ -18,7 +18,7 @@ class Command(BaseCommand):
             for event in all_events:
                 user = User.objects.get(public_address=event.transaction_from.lower())
                 bounty = Bounty.objects.get(id=event.bounty_id)
-                activity = Activity.objects.create(
+                Activity.objects.create(
                     event_type=event.event,
                     bounty_id=event.bounty_id,
                     fulfillment_id=event.fulfillment_id,

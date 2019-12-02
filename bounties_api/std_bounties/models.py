@@ -35,13 +35,6 @@ class Category(models.Model):
         super(Category, self).save(*args, **kwargs)
 
 
-class Comment(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey('user.User')
-    text = models.TextField()
-
-
 class Community(models.Model):
     community_id = models.CharField(max_length=128, blank=True)
     community_name = models.CharField(max_length=128, blank=True)
@@ -53,6 +46,14 @@ class Community(models.Model):
     admin_user = models.ForeignKey(User)
     password = models.CharField(max_length=256, blank=True)
     network = models.CharField(max_length=256, default='mainNet')
+
+
+class Comment(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey('user.User')
+    text = models.TextField()
+    community = models.ForeignKey(Community, null=True)
 
 
 class Token(models.Model):

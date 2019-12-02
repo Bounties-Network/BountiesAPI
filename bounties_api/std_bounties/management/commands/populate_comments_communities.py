@@ -18,14 +18,11 @@ class Command(BaseCommand):
             for comment in all_comments:
                 bounty = Bounty.objects.get(comments__in=[comment])
                 fulfillment = Fulfillment.objects.get(comments__in=[comment])
-                Activity.objects.create(
-                    event_type='Comment',
-                    bounty_id=bounty.id,
-                    fulfillment_id=fulfillment.id,
-                    comment_id=comment.id,
-                    date=comment.created,
-                    user_id=comment.user_id,
-                    community_id=comment.community_id)
+                if bounty:
+                    comment.community_id = bounty.community_id
+                elif fulfillment:
+                    comment.community_id = fulfillment.community_id
+                comment.save()
 
         except Exception as e:
             # goes to rollbar

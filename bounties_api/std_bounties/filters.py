@@ -41,6 +41,7 @@ class FulfillmentsFilter(filters.FilterSet):
             'bounty': ['exact'],
             'bounty__user__public_address': ['exact'],
             'platform': ['exact', 'in'],
+            'community_id': ['exact']
         }
 
 
@@ -75,7 +76,8 @@ class BountiesFilter(filters.FilterSet):
             'bounty_created': ['lt', 'gt', 'exact'],
             'deadline': ['lt', 'gt', 'exact'],
             'bounty_id': ['exact'],
-            'contract_version': ['exact']
+            'contract_version': ['exact'],
+            'community_id': ['exact']
         }
 
 

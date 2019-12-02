@@ -24,7 +24,6 @@ class Command(BaseCommand):
                         'community_name': platform,
                         'created': bounty.created,
                         'modified': bounty.created,
-                        'total_members': 0,
                         'public': True,
                         'network': bounty.network,
                         'admin_user_id': 1
@@ -42,7 +41,6 @@ class Command(BaseCommand):
                         'community_name': platform,
                         'created': fulfillment.created,
                         'modified': fulfillment.created,
-                        'total_members': 0,
                         'public': True,
                         'network': fulfillment.network,
                         'admin_user_id': 1

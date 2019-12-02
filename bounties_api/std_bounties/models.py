@@ -47,7 +47,6 @@ class Community(models.Model):
     community_name = models.CharField(max_length=128, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    total_members = models.IntegerField()
     small_profile_image_url = models.CharField(max_length=256, blank=True)
     large_profile_image_url = models.CharField(max_length=256, blank=True)
     public = models.BooleanField(default=True)
@@ -427,3 +426,5 @@ class Activity(models.Model):
     comment = models.ForeignKey(Comment, null=True)
     user = models.ForeignKey(User)
     community = models.ForeignKey(Community, null=True)
+    transaction_hash = models.CharField(max_length=256, blank=True)
+    date = models.DateTimeField(auto_now_add=True, null=True)

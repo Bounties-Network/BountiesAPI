@@ -16,8 +16,8 @@ class Command(BaseCommand):
         try:
             all_comments = Comment.objects.all()
             for comment in all_comments:
-                bounty = Bounty.objects.filter(comment=comment)
-                fulfillment = Fulfillment.objects.filter(comment=comment)
+                bounty = Bounty.objects.filter(bounty_comments__id=comment.id)
+                fulfillment = Fulfillment.objects.filter(fulfillment_comments__id=comment.id)
                 print('got bounty')
                 print(bounty)
                 print('got ful')

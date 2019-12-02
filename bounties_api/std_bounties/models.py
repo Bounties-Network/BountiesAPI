@@ -169,7 +169,7 @@ class Bounty(BountyAbstract):
     bounty_created = models.DateTimeField(null=True)
     bounty_stage = models.IntegerField(
         choices=STAGE_CHOICES, default=DRAFT_STAGE)
-    comments = models.ManyToManyField(Comment, related_name='bounty')
+    comments = models.ManyToManyField(Comment, related_name='bounty_comments')
     experience_level = models.IntegerField(
         choices=DIFFICULTY_CHOICES, null=True)
 
@@ -310,7 +310,7 @@ class Fulfillment(models.Model):
     data_fulfiller = JSONField(null=True)
     data_json = JSONField(null=True)
     fulfillers = ArrayField(models.CharField(max_length=128), null=True)
-    comments = models.ManyToManyField(Comment, related_name='fulfillment')
+    comments = models.ManyToManyField(Comment, related_name='fulfillment_comments')
     community = models.ForeignKey(Community, null=True)
     network = models.CharField(max_length=256, default='mainNet')
 

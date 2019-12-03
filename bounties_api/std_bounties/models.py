@@ -34,6 +34,7 @@ class Category(models.Model):
         self.normalized_name = self.name.lower().strip()
         super(Category, self).save(*args, **kwargs)
 
+
 class Community(models.Model):
     community_id = models.CharField(max_length=128, blank=True)
     community_name = models.CharField(max_length=128, blank=True)

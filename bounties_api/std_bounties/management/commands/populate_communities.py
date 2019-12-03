@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 )
                 bounty.community = community
                 bounty.save()
-            all_fulfillments = Bounty.objects.all()
+            all_fulfillments = Fulfillment.objects.all()
             for fulfillment in all_fulfillments:
                 platform = fulfillment.platform
                 community, created = Community.objects.get_or_create(

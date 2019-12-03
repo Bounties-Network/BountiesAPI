@@ -428,4 +428,4 @@ class Activity(models.Model):
     user = models.ForeignKey(User)
     community = models.ForeignKey(Community, null=True)
     transaction_hash = models.CharField(max_length=256, blank=True)
-    date = models.DateTimeField(auto_now_add=True, null=True)
+    date = models.DateTimeField(null=True)

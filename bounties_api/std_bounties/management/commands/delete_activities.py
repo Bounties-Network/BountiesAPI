@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            all_activities = Activity.objects.all().delete()
+            Activity.objects.all().delete()
         except Exception as e:
             # goes to rollbar
             logger.exception(e)

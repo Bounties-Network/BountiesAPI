@@ -41,7 +41,6 @@ class Command(BaseCommand):
                 except User.DoesNotExist:
                     pass
 
-
         except Exception as e:
             # goes to rollbar
             logger.exception(e)

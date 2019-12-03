@@ -34,7 +34,6 @@ class Category(models.Model):
         self.normalized_name = self.name.lower().strip()
         super(Category, self).save(*args, **kwargs)
 
-
 class Community(models.Model):
     community_id = models.CharField(max_length=128, blank=True)
     community_name = models.CharField(max_length=128, blank=True)
@@ -46,6 +45,14 @@ class Community(models.Model):
     admin_user = models.ForeignKey(User)
     password = models.CharField(max_length=256, blank=True)
     network = models.CharField(max_length=256, default='mainNet')
+
+
+class Membership(models.Model):
+    community = models.ForeignKey(Community, null=False)
+    user = models.ForeignKey(User)
+    joined_date = models.DateTimeField(null=True)
+    left_date = models.DateTimeField(null=True)
+    active_member = models.BooleanField(default=True)
 
 
 class Comment(models.Model):

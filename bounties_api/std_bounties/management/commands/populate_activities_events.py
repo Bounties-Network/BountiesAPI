@@ -2,7 +2,7 @@ import requests
 from math import pow
 from decimal import Decimal
 from django.core.management.base import BaseCommand
-from std_bounties.models import User, Activity, Community, Bounty, Event, Comment, FulfillerApplication
+from std_bounties.models import User, Activity, Community, Bounty, Fulfillment, Event, Comment, FulfillerApplication
 import logging
 import sys
 

@@ -17,15 +17,15 @@ class Command(BaseCommand):
             all_comments = Comment.objects.all()
             for comment in all_comments:
                 try:
-                    bounty = Bounty.objects.get(comments__in=[comment]).first()
+                    bounty = Bounty.objects.get(comments__in=[comment])
                     comment.community_id = bounty.community_id
                 except Bounty.DoesNotExist:
                     pass
 
                 try:
-                    fulfillment = Fulfillment.objects.filter(comments__in=[comment]).first()
+                    fulfillment = Fulfillment.objects.get(comments__in=[comment])
                     comment.community_id = fulfillment.community_id
-                except Bounty.DoesNotExist:
+                except Fulfillment.DoesNotExist:
                     pass
                 comment.save()
 

@@ -2,7 +2,7 @@ from std_bounties.bounty_client import BountyClient
 from notifications.notification_client import NotificationClient
 from std_bounties.slack_client import SlackMessageClient
 from std_bounties.seo_client import SEOClient
-from std_bounties.models import Bounty, Fulfillment, Activity
+from std_bounties.models import Bounty, Fulfillment, Activity, User
 from std_bounties.constants import STANDARD_BOUNTIES_V1
 
 
@@ -53,7 +53,7 @@ def bounty_issued(bounty_id, contract_version, **kwargs):
             'bounty_id': created_bounty.id,
             'user_id': created_bounty.user_id,
             'community_id': created_bounty.community_id,
-            'transaction_hash': transaction_hash,
+            'transaction_hash': kwargs.get('transaction_hash'),
             'date': created_bounty.created
         }
     )
@@ -88,7 +88,7 @@ def contribution_added(bounty_id, contract_version, **kwargs):
                 'bounty_id': bounty.id,
                 'user_id': contribution.contributor_id,
                 'community_id': bounty.community_id,
-                'transaction_hash': transaction_hash,
+                'transaction_hash': kwargs.get('transaction_hash'),
                 'date': bounty.created
             }
         )
@@ -155,7 +155,7 @@ def bounty_fulfilled(bounty_id, contract_version, **kwargs):
             'fulfillment_id': fulfillment.id,
             'user_id': fulfillment.user_id,
             'community_id': fulfillment.community_id,
-            'transaction_hash': transaction_hash,
+            'transaction_hash': kwargs.get('transaction_hash'),
             'date': fulfillment.fulfillment_created
         }
     )
@@ -188,7 +188,7 @@ def fulfillment_updated(bounty_id, contract_version, **kwargs):
             'fulfillment_id': fulfillment.id,
             'user_id': fulfillment.user_id,
             'community_id': fulfillment.community_id,
-            'transaction_hash': transaction_hash,
+            'transaction_hash': kwargs.get('transaction_hash'),
             'date': fulfillment.fulfillment_created
         }
     )
@@ -225,7 +225,7 @@ def fulfillment_accepted(bounty_id, contract_version, **kwargs):
             'fulfillment_id': fulfillment.id,
             'user_id': bounty.user_id,
             'community_id': fulfillment.community_id,
-            'transaction_hash': transaction_hash,
+            'transaction_hash': kwargs.get('transaction_hash'),
             'date': fulfillment.fulfillment_created
         }
     )
@@ -262,7 +262,7 @@ def bounty_changed(bounty_id, contract_version, **kwargs):
             'bounty_id': bounty.id,
             'user_id': bounty.user_id,
             'community_id': bounty.community_id,
-            'transaction_hash': transaction_hash,
+            'transaction_hash': kwargs.get('transaction_hash'),
             'date': bounty.modified
         }
     )
@@ -292,7 +292,7 @@ def bounty_data_changed(bounty_id, contract_version, **kwargs):
             'bounty_id': bounty.id,
             'user_id': bounty.user_id,
             'community_id': bounty.community_id,
-            'transaction_hash': transaction_hash,
+            'transaction_hash': kwargs.get('transaction_hash'),
             'date': bounty.modified
         }
     )
@@ -313,7 +313,7 @@ def bounty_issuers_updated(bounty_id, contract_version, **kwargs):
 
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty = bounty_client.update_bounty_issuers(bounty, **kwargs)
-    changer = User.objects.get(public_address=changer)
+    changer = User.objects.get(public_address=kwargs.get('transaction_hash'))
     Activity.objects.get_or_create(
         bounty_id=bounty.id,
         event_type='BountyIssuersUpdated',
@@ -323,7 +323,7 @@ def bounty_issuers_updated(bounty_id, contract_version, **kwargs):
             'bounty_id': bounty.id,
             'user_id': changer.user_id,
             'community_id': bounty.community_id,
-            'transaction_hash': transaction_hash,
+            'transaction_hash': kwargs.get('transaction_hash'),
             'date': bounty.modified
         }
     )
@@ -341,7 +341,7 @@ def bounty_approvers_updated(bounty_id, contract_version, **kwargs):
     """
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty_client.update_bounty_approvers(bounty, **kwargs)
-    changer = User.objects.get(public_address=changer)
+    changer = User.objects.get(public_address=kwargs.get('transaction_hash'))
     Activity.objects.get_or_create(
         bounty_id=bounty.id,
         event_type='BountyApproversUpdated',
@@ -351,7 +351,7 @@ def bounty_approvers_updated(bounty_id, contract_version, **kwargs):
             'bounty_id': bounty.id,
             'user_id': changer.user_id,
             'community_id': bounty.community_id,
-            'transaction_hash': transaction_hash,
+            'transaction_hash': kwargs.get('transaction_hash'),
             'date': bounty.modified
         }
     )
@@ -371,7 +371,7 @@ def bounty_deadline_changed(bounty_id, contract_version, **kwargs):
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
     bounty_client.change_deadline(bounty, **kwargs)
 
-    changer = User.objects.get(public_address=changer)
+    changer = User.objects.get(public_address=kwargs.get('transaction_hash'))
     Activity.objects.get_or_create(
         bounty_id=bounty.id,
         event_type='BountyDeadlineChanged',
@@ -381,7 +381,7 @@ def bounty_deadline_changed(bounty_id, contract_version, **kwargs):
             'bounty_id': bounty.id,
             'user_id': changer.user_id,
             'community_id': bounty.community_id,
-            'transaction_hash': transaction_hash,
+            'transaction_hash': kwargs.get('transaction_hash'),
             'date': bounty.modified
         }
     )
@@ -432,7 +432,7 @@ def bounty_killed(bounty_id, contract_version, **kwargs):
             'bounty_id': bounty.id,
             'user_id': bounty.user_id,
             'community_id': bounty.community_id,
-            'transaction_hash': transaction_hash,
+            'transaction_hash': kwargs.get('transaction_hash'),
             'date': bounty.modified
         }
     )
@@ -462,7 +462,7 @@ def bounty_drained(bounty_id, contract_version, **kwargs):
             'bounty_id': bounty.id,
             'user_id': bounty.user_id,
             'community_id': bounty.community_id,
-            'transaction_hash': transaction_hash,
+            'transaction_hash': kwargs.get('transaction_hash'),
             'date': bounty.modified
         }
     )

@@ -18,10 +18,21 @@ class Command(BaseCommand):
             for event in all_events:
                 user = User.objects.get(public_address=event.transaction_from.lower())
                 bounty = Bounty.objects.get(id=event.bounty_id)
+                try:
+                    fulfillment = Fulfillment.objects.get(bounty_id=bounty.id, fulfillment_id=event.fulfillment_id)
+                    Activity.objects.create(
+                        event_type=event.event,
+                        bounty_id=event.bounty_id,
+                        fulfillment_id=fulfillment.id,
+                        date=event.event_date,
+                        transaction_hash=event.transaction_hash,
+                        user_id=user.id,
+                        community_id=bounty.community_id)
+                except Fulfillment.DoesNotExist:
+                    pass
                 Activity.objects.create(
                     event_type=event.event,
                     bounty_id=event.bounty_id,
-                    fulfillment_id=event.fulfillment_id,
                     date=event.event_date,
                     transaction_hash=event.transaction_hash,
                     user_id=user.id,

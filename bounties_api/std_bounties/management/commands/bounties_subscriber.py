@@ -155,6 +155,7 @@ class Command(BaseCommand):
             'contract_inputs': message.contract_method_inputs,
             'contract_event_data': message.contract_event_data,
             'event_date': message.event_date,
+            'transaction_hash': message.transaction_hash
         }
 
         # logger.info('For bounty id {}, running get_or_create with defaults'.format(message.bounty_id))
@@ -229,6 +230,7 @@ class Command(BaseCommand):
                 'event_date': message.event_date,
                 'event_timestamp': message.event_timestamp,
                 'uid': message.message_deduplication_id,
+                'transaction_hash': message.transaction_hash
             }
 
             if event == 'BountyIssued':

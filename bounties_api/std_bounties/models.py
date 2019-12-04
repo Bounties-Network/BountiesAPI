@@ -409,7 +409,7 @@ class FulfillerApplication(models.Model):
     state = models.CharField(
         max_length=1, choices=APPLICATION_STATES, default=PENDING)
     created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     issuer_reply = models.TextField(default='')
 
 

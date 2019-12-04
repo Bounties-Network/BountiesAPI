@@ -36,7 +36,20 @@ class BountyComments(ListModelMixin, GenericViewSet):
         comment = serializer.save()
 
         bounty.comments.add(comment)
-
+        Activity.objects.get_or_create(
+            bounty_id=bounty.id,
+            event_type='Comment',
+            user_id=comment.user_id,
+            comment_id=comment.id,
+            defaults={
+                'event_type': 'Comment',
+                'bounty_id': bounty.id,
+                'user_id': comment.user_id,
+                'community_id': comment.community_id,
+                'comment_id': comment.id,
+                'date': comment.created
+            }
+        )
         notification_client.comment_issued(bounty.pk, comment.created, comment.id)
         notification_client.comment_received(bounty.pk, comment.created, comment.id)
 
@@ -70,7 +83,22 @@ class FulfillmentComments(ListModelMixin, GenericViewSet):
         comment = serializer.save()
 
         fulfillment.comments.add(comment)
-
+        Activity.objects.get_or_create(
+            bounty_id=bounty.id,
+            fulfillment_id=fulfillment.id,
+            event_type='Comment',
+            user_id=comment.user_id,
+            comment_id=comment.id,
+            defaults={
+                'event_type': 'Comment',
+                'bounty_id': fulfillment.bounty_id,
+                'fulfillment_id': fulfillment.id,
+                'comment_id': comment.id,
+                'user_id': comment.user_id,
+                'community_id': comment.community_id,
+                'date': comment.created
+            }
+        )
         notification_client.fulfillment_comment_issued(fulfillment.bounty_id, fulfillment_id, comment.created, comment.id)
         notification_client.fulfillment_comment_received(fulfillment.bounty_id, fulfillment_id, comment.created, comment.id)
 

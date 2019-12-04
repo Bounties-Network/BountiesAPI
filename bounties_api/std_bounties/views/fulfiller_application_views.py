@@ -40,6 +40,18 @@ class FulfillerApplicationViewSet(ListModelMixin, GenericViewSet):
 
         serializer.is_valid(raise_exception=True)
         application = serializer.save()
+        Activity.objects.get_or_create(
+            bounty_id=application.bounty_id,
+            event_type='ApplicationCreated',
+            user_id=application.applicant_id,
+            defaults={
+                'event_type': 'ApplicationCreated',
+                'bounty_id': application.bounty_id,
+                'user_id': application.applicant_id,
+                'community_id': bounty.community_id,
+                'date': application.created
+            }
+        )
 
         notification_client.application_created(bounty, application)
         notification_client.application_received(bounty, application)

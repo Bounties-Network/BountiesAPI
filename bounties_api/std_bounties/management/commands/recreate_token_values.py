@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            all_bounties = Bounties.objects.all()
+            all_bounties = Bounty.objects.all()
             for bounty in all_bounties:
                 if bounty.token_id is None:
                     token = Token.objects.create(

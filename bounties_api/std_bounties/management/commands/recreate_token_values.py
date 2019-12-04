@@ -21,11 +21,11 @@ class Command(BaseCommand):
                     token = Token.objects.get_or_create(
                         address=bounty.token_contract,
                         default={
-                        'address': bounty.token_contract,
-                        'name': bounty.token_symbol,
-                        'symbol': bounty.token_symbol,
-                        'price_usd': 0,
-                        'decimals': bounty.token_decimals
+                            'address': bounty.token_contract,
+                            'name': bounty.token_symbol,
+                            'symbol': bounty.token_symbol,
+                            'price_usd': 0,
+                            'decimals': bounty.token_decimals
                         }
                     )
                     r = requests.get('https://api.coingecko.com/api/v3/coins/ethereum/contract/' + token.address)

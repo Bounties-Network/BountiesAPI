@@ -2,7 +2,7 @@ from rest_framework.mixins import ListModelMixin
 from rest_framework.viewsets import GenericViewSet
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-from std_bounties.models import Comment, Bounty, Fulfillment, Application
+from std_bounties.models import Comment, Bounty, Fulfillment, Activity
 from std_bounties.serializers import CommentSerializer
 from user.permissions import AuthenticationPermission
 from notifications.notification_client import NotificationClient

@@ -26,7 +26,7 @@ class Command(BaseCommand):
                         decimals=bounty.token_decimals
                     )
                     r = requests.get('https://api.coingecko.com/api/v3/coins/ethereum/contract/' + token.address)
-                    if r.status_code != 404:
+                    if r.status_code == 200:
                         response = r.json()
                         token.name = response['name']
                         token.symbol = response['symbol'].upper()
@@ -38,7 +38,7 @@ class Command(BaseCommand):
                     token.address = bounty.token_contract
                     token.decimals = bounty.token_decimals
                     r = requests.get('https://api.coingecko.com/api/v3/coins/ethereum/contract/' + bounty.token_contract)
-                    if r.status_code != 404:
+                    if r.status_code == 200:
                         response = r.json()
                         token.name = response['name']
                         token.symbol = response['symbol'].upper()

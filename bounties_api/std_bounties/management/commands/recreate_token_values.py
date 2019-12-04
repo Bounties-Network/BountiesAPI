@@ -30,6 +30,8 @@ class Command(BaseCommand):
                     )
                     r = requests.get('https://api.coingecko.com/api/v3/coins/ethereum/contract/' + bounty.token_contract)
                     if r.status_code == 200:
+                        print('response')
+                        print(r.json())
                         response = r.json()
                         token.name = response["name"]
                         token.symbol = response["symbol"].upper()
@@ -42,6 +44,8 @@ class Command(BaseCommand):
                     token.decimals = bounty.token_decimals
                     r = requests.get('https://api.coingecko.com/api/v3/coins/ethereum/contract/' + bounty.token_contract)
                     if r.status_code == 200:
+                        print('response')
+                        print(r.json())
                         response = r.json()
                         token.name = response["name"]
                         token.symbol = response["symbol"].upper()

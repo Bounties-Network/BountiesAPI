@@ -65,10 +65,11 @@ class Comment(models.Model):
 
 
 class Token(models.Model):
-    normalized_name = models.CharField(max_length=128)
-    name = models.CharField(max_length=128)
-    symbol = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, null=True)
+    symbol = models.CharField(max_length=128, null=True)
     price_usd = models.FloatField(default=0, null=True)
+    address = models.CharField(max_length=128, null=True)
+    decimals = models.IntegerField(default=0)
 
 
 class BountyState(models.Model):

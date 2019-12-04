@@ -24,7 +24,6 @@ class Command(BaseCommand):
                 symbol = coin['symbol']
                 price_usd = coin['price_usd']
                 coin_data = {
-                    'normalized_name': coin['id'],
                     'name': coin['name'],
                     'symbol': symbol,
                 }

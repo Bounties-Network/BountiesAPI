@@ -20,7 +20,7 @@ class Command(BaseCommand):
                 if bounty.token_id is None:
                     token = Token.objects.get_or_create(
                         address=bounty.token_contract,
-                        default={
+                        defaults={
                             'address': bounty.token_contract,
                             'name': bounty.token_symbol,
                             'symbol': bounty.token_symbol,

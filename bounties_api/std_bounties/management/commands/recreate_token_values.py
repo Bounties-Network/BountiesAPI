@@ -18,7 +18,7 @@ class Command(BaseCommand):
             all_bounties = Bounty.objects.all()
             for bounty in all_bounties:
                 if bounty.token_id is None:
-                    token = Token.objects.get_or_create(
+                    token, created = Token.objects.get_or_create(
                         address=bounty.token_contract,
                         defaults={
                             'address': bounty.token_contract,
@@ -30,8 +30,6 @@ class Command(BaseCommand):
                     )
                     r = requests.get('https://api.coingecko.com/api/v3/coins/ethereum/contract/' + bounty.token_contract)
                     if r.status_code == 200:
-                        print('response')
-                        print(r.json())
                         response = r.json()
                         token.name = response["name"]
                         token.symbol = response["symbol"].upper()

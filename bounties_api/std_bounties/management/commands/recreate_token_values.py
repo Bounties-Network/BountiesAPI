@@ -31,9 +31,9 @@ class Command(BaseCommand):
                     r = requests.get('https://api.coingecko.com/api/v3/coins/ethereum/contract/' + bounty.token_contract)
                     if r.status_code == 200:
                         response = r.json()
-                        token.name = response['name']
-                        token.symbol = response['symbol'].upper()
-                        token.price_usd = response['market_data']['current_price']['usd']
+                        token.name = response["name"]
+                        token.symbol = response["symbol"].upper()
+                        token.price_usd = response["market_data"]["current_price"]["usd"]
                         token.save()
                 else:
                     token = Token.objects.get(id=bounty.token_id)
@@ -43,9 +43,9 @@ class Command(BaseCommand):
                     r = requests.get('https://api.coingecko.com/api/v3/coins/ethereum/contract/' + bounty.token_contract)
                     if r.status_code == 200:
                         response = r.json()
-                        token.name = response['name']
-                        token.symbol = response['symbol'].upper()
-                        token.price_usd = response['market_data']['current_price']['usd']
+                        token.name = response["name"]
+                        token.symbol = response["symbol"].upper()
+                        token.price_usd = response["market_data"]["current_price"]["usd"]
                     token.save()
             all_tokens = Token.objects.all()
             for token in all_tokens:

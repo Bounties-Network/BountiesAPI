@@ -109,7 +109,7 @@ def contribution_refunded(bounty_id, contract_version, **kwargs):
     """
 
     bounty = Bounty.objects.get(bounty_id=bounty_id, contract_version=contract_version)
-    contribution = bounty_client.refund_contribution(bounty, **kwargs)
+    bounty_client.refund_contribution(bounty, **kwargs)
 
 
 @export

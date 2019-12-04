@@ -18,12 +18,15 @@ class Command(BaseCommand):
             all_bounties = Bounty.objects.all()
             for bounty in all_bounties:
                 if bounty.token_id is None:
-                    token = Token.objects.create(
-                        name=bounty.token_symbol,
-                        symbol=bounty.token_symbol,
-                        price_usd=0,
+                    token = Token.objects.get_or_create(
                         address=bounty.token_contract,
-                        decimals=bounty.token_decimals
+                        default={
+                        'address': bounty.token_contract,
+                        'name': bounty.token_symbol,
+                        'symbol': bounty.token_symbol,
+                        'price_usd': 0,
+                        'decimals': bounty.token_decimals
+                        }
                     )
                     r = requests.get('https://api.coingecko.com/api/v3/coins/ethereum/contract/' + token.address)
                     if r.status_code == 200:
@@ -44,6 +47,10 @@ class Command(BaseCommand):
                         token.symbol = response['symbol'].upper()
                         token.price_usd = response['market_data']['current_price']['usd']
                     token.save()
+            all_tokens = Token.objects.all()
+            for token in all_tokens:
+                if token.address is None:
+                    token.delete()
         except Exception as e:
             # goes to rollbar
             logger.exception(e)

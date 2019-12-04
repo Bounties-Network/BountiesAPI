@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import ListModelMixin
 from user.permissions import AuthenticationPermission
-from std_bounties.models import FulfillerApplication, Bounty
+from std_bounties.models import FulfillerApplication, Bounty, Activity
 from std_bounties.serializers import FulfillerApplicationSerializer
 from notifications.notification_client import NotificationClient
 notification_client = NotificationClient()

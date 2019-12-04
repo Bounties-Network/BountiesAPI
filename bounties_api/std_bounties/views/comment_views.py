@@ -2,7 +2,7 @@ from rest_framework.mixins import ListModelMixin
 from rest_framework.viewsets import GenericViewSet
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-from std_bounties.models import Comment, Bounty, Fulfillment
+from std_bounties.models import Comment, Bounty, Fulfillment, Application
 from std_bounties.serializers import CommentSerializer
 from user.permissions import AuthenticationPermission
 from notifications.notification_client import NotificationClient
@@ -84,7 +84,7 @@ class FulfillmentComments(ListModelMixin, GenericViewSet):
 
         fulfillment.comments.add(comment)
         Activity.objects.get_or_create(
-            bounty_id=bounty.id,
+            bounty_id=fulfillment.bounty_id,
             fulfillment_id=fulfillment.id,
             event_type='Comment',
             user_id=comment.user_id,

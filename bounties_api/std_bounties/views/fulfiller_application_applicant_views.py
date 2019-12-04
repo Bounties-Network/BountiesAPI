@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import UpdateModelMixin
 from user.permissions import AuthenticationPermission, ApplicantPermissions
-from std_bounties.models import FulfillerApplication, Bounty
+from std_bounties.models import FulfillerApplication, Bounty, Activity
 from std_bounties.serializers import FulfillerApplicantSerializer
 from notifications.notification_client import NotificationClient
 notification_client = NotificationClient()

@@ -11,49 +11,37 @@ logger = logging.getLogger('django')
 
 
 class Command(BaseCommand):
-    help = 'recreate all token values'
+    help = 'recreate all tokens'
 
     def handle(self, *args, **options):
         try:
-            all_tokens = Token.objects.all()
-            for token in all_tokens:
-                token.address = token.address.lower()
-                token.save()
             all_bounties = Bounty.objects.all()
             for bounty in all_bounties:
-                if bounty.token_id is None:
-                    token, created = Token.objects.get_or_create(
-                        address=bounty.token_contract,
-                        defaults={
-                            'address': bounty.token_contract,
-                            'name': bounty.token_symbol,
-                            'symbol': bounty.token_symbol,
-                            'price_usd': 0,
-                            'decimals': bounty.token_decimals
-                        }
-                    )
-                    r = requests.get('https://api.coingecko.com/api/v3/coins/ethereum/contract/' + bounty.token_contract)
-                    if r.status_code == 200:
-                        response = r.json()
-                        token.name = response["name"]
-                        token.symbol = response["symbol"].upper()
-                        token.price_usd = response["market_data"]["current_price"]["usd"]
+                try:
+                    token = Token.objects.get(address=bounty.token_contract.lower())
+                    bounty.token_id = token.id
+                    bounty.token_contract = bounty.token_contract.lower()
+                    bounty.save() # existing token with that address was created and saved, use that one
+                except Token.DoesNotExist: # no existing token exists with that address
+                    if bounty.token_id is not None: # bounty has a token, just hasn't had its details populated
+                        token = Token.objects.get(id=bounty.token_id)
+                        token.address = bounty.token_contract.lower()
+                        token.decimals = bounty.token_decimals
                         token.save()
-                else:
-                    token = Token.objects.get(id=bounty.token_id)
-                    token.symbol = bounty.token_symbol
-                    token.address = bounty.token_contract
-                    token.decimals = bounty.token_decimals
-                    r = requests.get('https://api.coingecko.com/api/v3/coins/ethereum/contract/' + bounty.token_contract)
-                    if r.status_code == 200:
-                        response = r.json()
-                        token.name = response["name"]
-                        token.symbol = response["symbol"].upper()
-                        token.price_usd = response["market_data"]["current_price"]["usd"]
-                    token.save()
+                    else: # bounty has token and address, but no token with that address exists yet
+                        token = Token.objects.create(
+                            address=bounty.token_contract.lower(),
+                            name=bounty.token_symbol,
+                            symbol=bounty.token_symbol,
+                            price_usd=0,
+                            decimals=bounty.token_decimals
+                        )
+                        bounty.token_id = token.id
+                        bounty.token_contract = token.address
             all_tokens = Token.objects.all()
             for token in all_tokens:
-                if token.address is None:
+                bounties_with_token = Bounty.objects.filter(token_id=token.id).count()
+                if bounties_with_token == 0:
                     token.delete()
         except Exception as e:
             # goes to rollbar

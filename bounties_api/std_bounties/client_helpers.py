@@ -3,7 +3,7 @@ import ipfsapi
 from ipfsapi.exceptions import StatusError
 from django.conf import settings
 from utils.functional_tools import pluck
-from std_bounties.models import Token
+from std_bounties.models import Token, Bounty, Fulfillment, Community
 from std_bounties.contract import data
 import json
 import requests

@@ -35,6 +35,14 @@ class Category(models.Model):
         super(Category, self).save(*args, **kwargs)
 
 
+class Token(models.Model):
+    name = models.CharField(max_length=128, null=True)
+    symbol = models.CharField(max_length=128, null=True)
+    price_usd = models.FloatField(default=0, null=True)
+    address = models.CharField(max_length=128, null=True)
+    decimals = models.IntegerField(default=0)
+
+
 class Community(models.Model):
     community_id = models.CharField(max_length=128, blank=True)
     community_name = models.CharField(max_length=128, blank=True)
@@ -46,6 +54,7 @@ class Community(models.Model):
     admin_user = models.ForeignKey(User)
     password = models.CharField(max_length=256, blank=True)
     network = models.CharField(max_length=256, default='mainNet')
+    token = models.ForeignKey(Token, null=True)
 
 
 class Membership(models.Model):
@@ -62,14 +71,6 @@ class Comment(models.Model):
     user = models.ForeignKey('user.User')
     text = models.TextField()
     community = models.ForeignKey(Community, null=True)
-
-
-class Token(models.Model):
-    name = models.CharField(max_length=128, null=True)
-    symbol = models.CharField(max_length=128, null=True)
-    price_usd = models.FloatField(default=0, null=True)
-    address = models.CharField(max_length=128, null=True)
-    decimals = models.IntegerField(default=0)
 
 
 class BountyState(models.Model):

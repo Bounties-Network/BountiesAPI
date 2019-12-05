@@ -21,14 +21,14 @@ class Command(BaseCommand):
                     token = Token.objects.get(address=bounty.token_contract.lower())
                     bounty.token_id = token.id
                     bounty.token_contract = bounty.token_contract.lower()
-                    bounty.save() # existing token with that address was created and saved, use that one
-                except Token.DoesNotExist: # no existing token exists with that address
-                    if bounty.token_id is not None: # bounty has a token, just hasn't had its details populated
+                    bounty.save()       # existing token with that address was created and saved, use that one
+                except Token.DoesNotExist:       # no existing token exists with that address
+                    if bounty.token_id is not None:       # bounty has a token, just hasn't had its details populated
                         token = Token.objects.get(id=bounty.token_id)
                         token.address = bounty.token_contract.lower()
                         token.decimals = bounty.token_decimals
                         token.save()
-                    else: # bounty has token and address, but no token with that address exists yet
+                    else:       # bounty has token and address, but no token with that address exists yet
                         token = Token.objects.create(
                             address=bounty.token_contract.lower(),
                             name=bounty.token_symbol,

@@ -38,6 +38,7 @@ class Command(BaseCommand):
                         )
                         bounty.token_id = token.id
                         bounty.token_contract = token.address
+                        bounty.save()
             all_tokens = Token.objects.all()
             for token in all_tokens:
                 bounties_with_token = Bounty.objects.filter(token_id=token.id).count()

@@ -5,7 +5,8 @@ import { ManagedPolicy } from '@aws-cdk/aws-iam';
 const resourcePolicies = [
   'AmazonSQSFullAccess',
   'AmazonSESFullAccess',
-  'AmazonSNSFullAccess'
+  'AmazonSNSFullAccess',
+  'AmazonS3FullAccess'
 ]
 
 export default (scope: cdk.Construct) => {

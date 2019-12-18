@@ -94,6 +94,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
     'user.middleware.AuthenticationMiddleware',
+    'std_bounties.middleware.SanitizeDescriptionMiddleware',
 ]
 
 ROOT_URLCONF = 'bounties.urls'

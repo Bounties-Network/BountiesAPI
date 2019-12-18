@@ -11,6 +11,6 @@ class SanitizeDescriptionMiddleware(MiddlewareMixin):
             content = json.loads(response.content.decode('utf-8'))
             description = content.get('description')
             if description:
-                response.content = response.content.replace(b"description", clean(description))
+                response.content = response.content.replace(b"description", clean(description).encode())
 
         return response

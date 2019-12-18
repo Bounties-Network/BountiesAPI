@@ -7,6 +7,7 @@ import logging
 
 logger = logging.getLogger('django')
 
+
 class SanitizeDescriptionMiddleware(MiddlewareMixin):
     def process_response(self, request, response):
         if "bounty" in request.path:

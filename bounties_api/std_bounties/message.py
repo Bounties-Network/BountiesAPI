@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 
-from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2, STANDARD_BOUNTIES_V2_1, STANDARD_BOUNTIES_V2_2, STANDARD_BOUNTIES_V2_3
+from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2, STANDARD_BOUNTIES_V2_1, STANDARD_BOUNTIES_V2_2, STANDARD_BOUNTIES_V2_3, STANDARD_BOUNTIES_V2_4
 
 
 def to_serializable(val):
@@ -46,6 +46,8 @@ class Message:
             version = STANDARD_BOUNTIES_V2_2
         elif message_attributes['ContractVersion']['StringValue'] == 'v2.3':
             version = STANDARD_BOUNTIES_V2_3
+        elif message_attributes['ContractVersion']['StringValue'] == 'v2.4':
+            version = STANDARD_BOUNTIES_V2_4
         else:
             version = STANDARD_BOUNTIES_V1
 
@@ -53,14 +55,17 @@ class Message:
             receipt_handle=event['ReceiptHandle'],
             event=message_attributes['Event']['StringValue'],
             bounty_id=int(message_attributes['BountyId']['StringValue']),
-            fulfillment_id=int(message_attributes['FulfillmentId']['StringValue']),
+            fulfillment_id=int(
+                message_attributes['FulfillmentId']['StringValue']),
             message_deduplication_id=message_attributes['MessageDeduplicationId']['StringValue'],
             transaction_from=message_attributes['TransactionFrom']['StringValue'],
             transaction_hash=message_attributes['TransactionHash']['StringValue'],
             event_timestamp=event_timestamp,
             event_date=datetime.fromtimestamp(int(event_timestamp)),
-            contract_method_inputs=json.loads(message_attributes['ContractMethodInputs']['StringValue']),
-            contract_event_data=json.loads(message_attributes['ContractEventData']['StringValue']),
+            contract_method_inputs=json.loads(
+                message_attributes['ContractMethodInputs']['StringValue']),
+            contract_event_data=json.loads(
+                message_attributes['ContractEventData']['StringValue']),
             contract_version=version
         )
 

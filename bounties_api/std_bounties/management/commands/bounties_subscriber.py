@@ -13,7 +13,7 @@ from bounties.sqs_client import sqs_client
 from std_bounties import master_client
 from std_bounties.models import Event
 from std_bounties.message import Message
-from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2, STANDARD_BOUNTIES_V2_1, STANDARD_BOUNTIES_V2_2, STANDARD_BOUNTIES_V2_3
+from std_bounties.constants import STANDARD_BOUNTIES_V1, STANDARD_BOUNTIES_V2, STANDARD_BOUNTIES_V2_1, STANDARD_BOUNTIES_V2_2, STANDARD_BOUNTIES_V2_3, STANDARD_BOUNTIES_V2_4
 from notifications.models import Transaction
 
 from std_bounties.bounty_client import BountyClient

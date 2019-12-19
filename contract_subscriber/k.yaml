@@ -92,7 +92,7 @@ spec:
                 secretKeyRef:
                   key: environment
                   name: environment
-          image: consensysbounties/contract_subscriber:4c0b38f00a234f9445f0170d3ed56249f083541e
+          image: consensysbounties/contract_subscriber:4c2745261591a03399f0b4ddb1ed0ae840538305
           imagePullPolicy: Always
           name: contract-subscriber-v2-4
           ports:

@@ -14,6 +14,7 @@ from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
 from web3.middleware import geth_poa_middleware
 from std_bounties.constants import rev_mapped_difficulties, BEGINNER, INTERMEDIATE, ADVANCED, STANDARD_BOUNTIES_V2_1, STANDARD_BOUNTIES_V2_2
+from std_bounties.queries import LEADERBOARD_FULFILLER_QUERY, LEADERBOARD_FULFILLER_QUERY_TOKENS
 
 
 logger = logging.getLogger('django')
@@ -224,6 +225,14 @@ def get_token_pricing(token_symbol, token_decimals, value):
         usd_price = 0
 
     return usd_price, token_model
+
+
+def get_leaderboard_position(community_id, user_id):
+    community = Community.objects.get(id=community_id)
+    if community.token_id is not None:
+        # community has a token
+
+
 
 
 def get_historic_pricing(token_symbol, token_decimals, value, timestamp):

@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: contract-subscriber-v2
+  name: contract-subscriber-v2-4
   namespace: rinkebystaging
 spec:
   progressDeadlineSeconds: 600
@@ -9,7 +9,7 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      component: contract-subscriber-v2
+      component: contract-subscriber-v2-4
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -18,88 +18,88 @@ spec:
   template:
     metadata:
       labels:
-        component: contract-subscriber-v2
+        component: contract-subscriber-v2-4
     spec:
       containers:
-      - args:
-        - npm
-        - start
-        env:
-        - name: contract_version
-          value: "v2"
-        - name: redis_location
-          valueFrom:
-            secretKeyRef:
-              key: redis_location
-              name: cache
-        - name: psql_host
-          valueFrom:
-            secretKeyRef:
-              key: psql_host
-              name: psql
-        - name: psql_password
-          valueFrom:
-            secretKeyRef:
-              key: psql_password
-              name: psql
-        - name: psql_port
-          valueFrom:
-            secretKeyRef:
-              key: psql_port
-              name: psql
-        - name: psql_user
-          valueFrom:
-            secretKeyRef:
-              key: psql_user
-              name: psql
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              key: AWS_ACCESS_KEY_ID
-              name: awscreds
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              key: AWS_SECRET_ACCESS_KEY
-              name: awscreds
-        - name: django_secret
-          valueFrom:
-            secretKeyRef:
-              key: django_secret
-              name: djangosecretprod
-        - name: rollbar_token
-          valueFrom:
-            secretKeyRef:
-              key: rollbar_token
-              name: rollbar
-        - name: queue_url
-          valueFrom:
-            secretKeyRef:
-              key: queue_url
-              name: sqs
-        - name: eth_network
-          valueFrom:
-            secretKeyRef:
-              key: eth_network
-              name: network
-        - name: slack_token
-          valueFrom:
-            secretKeyRef:
-              key: slack_token
-              name: slack
-        - name: environment
-          valueFrom:
-            secretKeyRef:
-              key: environment
-              name: environment
-        image: consensysbounties/contract_subscriber:4e3a95f
-        imagePullPolicy: Always
-        name: contract-subscriber-v2
-        ports:
-        - containerPort: 8989
-          protocol: TCP
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
+        - args:
+            - npm
+            - start
+          env:
+            - name: contract_version
+              value: "v2.4"
+            - name: redis_location
+              valueFrom:
+                secretKeyRef:
+                  key: redis_location
+                  name: cache
+            - name: psql_host
+              valueFrom:
+                secretKeyRef:
+                  key: psql_host
+                  name: psql
+            - name: psql_password
+              valueFrom:
+                secretKeyRef:
+                  key: psql_password
+                  name: psql
+            - name: psql_port
+              valueFrom:
+                secretKeyRef:
+                  key: psql_port
+                  name: psql
+            - name: psql_user
+              valueFrom:
+                secretKeyRef:
+                  key: psql_user
+                  name: psql
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_ACCESS_KEY_ID
+                  name: awscreds
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_SECRET_ACCESS_KEY
+                  name: awscreds
+            - name: django_secret
+              valueFrom:
+                secretKeyRef:
+                  key: django_secret
+                  name: djangosecretprod
+            - name: rollbar_token
+              valueFrom:
+                secretKeyRef:
+                  key: rollbar_token
+                  name: rollbar
+            - name: queue_url
+              valueFrom:
+                secretKeyRef:
+                  key: queue_url
+                  name: sqs
+            - name: eth_network
+              valueFrom:
+                secretKeyRef:
+                  key: eth_network
+                  name: network
+            - name: slack_token
+              valueFrom:
+                secretKeyRef:
+                  key: slack_token
+                  name: slack
+            - name: environment
+              valueFrom:
+                secretKeyRef:
+                  key: environment
+                  name: environment
+          image: consensysbounties/contract_subscriber:4c2745261591a03399f0b4ddb1ed0ae840538305
+          imagePullPolicy: Always
+          name: contract-subscriber-v2-4
+          ports:
+            - containerPort: 8989
+              protocol: TCP
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler

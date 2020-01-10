@@ -47,11 +47,13 @@ const SQS_PARAMS = {
   MessageGroupId: "Event_Subscriber"
 };
 
+const infuraKey = process.env["infura"];
+
 const networks: { [key: string]: string } = {
-  mainNet: "https://mainnet.infura.io/v3/5eb45628ce2c4ecebcce7f201f352792",
-  rinkeby: "https://rinkeby.infura.io/v3/5eb45628ce2c4ecebcce7f201f352792",
-  consensysrinkeby: "https://rinkeby.infura.io/v3/5eb45628ce2c4ecebcce7f201f352792",
-  rinkebystaging: "https://rinkeby.infura.io/v3/5eb45628ce2c4ecebcce7f201f352792",
+  mainNet: "https://mainnet.infura.io/v3/" + infuraKey,
+  rinkeby: "https://rinkeby.infura.io/v3/" + infuraKey,
+  consensysrinkeby: "https://rinkeby.infura.io/v3/" + infuraKey,
+  rinkebystaging: "https://rinkeby.infura.io/v3/" + infuraKey,
   localhost: "localhost:8545"
 };
 

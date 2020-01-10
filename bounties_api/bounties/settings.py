@@ -230,13 +230,14 @@ ETH_NETWORK = os.environ.get('eth_network', 'mainNet')
 DEPLOY_URL = os.environ.get('deploy_url', 'http://127.0.0.1')
 GITHUB_TOKEN = os.environ.get('github_token', '')
 SNS_ADDRESS = os.environ.get('sns_address', '')
+INFURA = os.environ.get('infura')
 
 NETWORKS = {
-    'mainNet': 'https://mainnet.infura.io/v3/5eb45628ce2c4ecebcce7f201f352792',
-    'rinkeby': 'https://rinkeby.infura.io/v3/5eb45628ce2c4ecebcce7f201f352792',
-    'consensysrinkeby': 'https://rinkeby.infura.io/v3/5eb45628ce2c4ecebcce7f201f352792',
-    'rinkebystaging': 'https://rinkeby.infura.io/v3/5eb45628ce2c4ecebcce7f201f352792',
-    'localhost': 'localhost:8545',
+    'mainNet': 'https://mainnet.infura.io/v3/' + INFURA,
+    'rinkeby': 'https://rinkeby.infura.io/v3/' + INFURA,
+    'consensysrinkeby': 'https://rinkeby.infura.io/v3/' + INFURA,
+    'rinkebystaging': 'https://rinkeby.infura.io/v3/' + INFURA,
+    'localhost': 'localhost:8545' + INFURA,
 }
 
 ETH_NETWORK_URL = NETWORKS[ETH_NETWORK]

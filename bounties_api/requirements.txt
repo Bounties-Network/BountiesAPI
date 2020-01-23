@@ -6,7 +6,6 @@
  web3==4.3.0
  ipfsapi==0.4.2
  boto3==1.5.35
- rollbar==0.13.18
  slackclient==1.1.2
  djangorestframework-filters==0.10.2
  django-cors-headers==2.2.0

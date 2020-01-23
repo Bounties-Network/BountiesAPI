@@ -3,7 +3,6 @@ import redis from "./redis_config";
 import { CONTRACT_VERSION, SQS_PARAMS } from "./constants";
 import { abiDecoder, getTransaction, getBlock } from "./web3_config";
 import sqs from "./sqs_config";
-import rollbar from "./rollbar";
 import logger from "./logger";
 
 const camelToUnderscore = (key: string) => {
@@ -66,7 +65,6 @@ async function sendEvents(events: any) {
         // transactions, that tx input is the original input to a smart contract wallet
         // or whatever contract made the internal call to bounties
         if (!rawContractMethodInputs) {
-          rollbar.error(`Unable to decode transaction input using ABI: ${transactionHash}`);
           logger.error(`Unable to decode transaction input using ABI: `, { transactionHash });
           continue;
         }

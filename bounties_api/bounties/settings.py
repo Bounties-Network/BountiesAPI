@@ -92,7 +92,6 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
     'user.middleware.AuthenticationMiddleware',
 ]
 
@@ -152,26 +151,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CACHE_MIDDLEWARE_SECONDS = 10000
 
-rollbar_token = os.environ.get('rollbar_token', None)
-
-ROLLBAR = {
-    'access_token': rollbar_token,
-    'environment': ENVIRONMENT,
-    'root': os.getcwd(),
-    'enabled': True if rollbar_token else False,
-}
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'rollbar': {
-            'access_token': rollbar_token,
-            'environment': ENVIRONMENT,
-            'enabled': True if rollbar_token else False,
-            'class': 'rollbar.logger.RollbarHandler',
-            'level': 'WARNING',
-        },
         'console': {
             'class': 'logging.StreamHandler',
             'stream': sys.stdout,
@@ -180,14 +163,13 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['rollbar', 'console'],
+            'handlers': ['console'],
             'propagate': True,
         },
     },
 }
 
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'rollbar.contrib.django_rest_framework.post_exception_handler',
     'DEFAULT_FILTER_BACKENDS': (
         'rest_framework_filters.backends.DjangoFilterBackend',
     ),

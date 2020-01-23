@@ -1,5 +1,4 @@
 import delay from "delay";
-import rollbar from "./rollbar";
 import logger from "./logger";
 import { StandardBounties, getBlock } from "./web3_config";
 import redis from "./redis_config";
@@ -40,7 +39,6 @@ export default async function handler() {
 
       await delay(1000);
     } catch (err) {
-      rollbar.error(err);
       // ignore constant RPC response error from Infura temporarily
       logger.error("Error occured: ", err);
       if (err.message !== 'Invalid JSON RPC response: ""') {

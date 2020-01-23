@@ -56,11 +56,6 @@ spec:
                     secretKeyRef:
                       key: django_secret
                       name: djangosecretprod
-                - name: rollbar_token
-                  valueFrom:
-                    secretKeyRef:
-                      key: rollbar_token
-                      name: rollbar
                 - name: queue_url
                   valueFrom:
                     secretKeyRef:

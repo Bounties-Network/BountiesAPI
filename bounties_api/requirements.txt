@@ -19,3 +19,4 @@
  djangorestframework-queryfields==1.0.0
  pillow
  pyjwt==1.6.4
+ bleach==3.1.0

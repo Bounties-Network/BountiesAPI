@@ -2,7 +2,7 @@
  django-filter==1.1.0
  psycopg2
  redis==2.10.6
- djangorestframework==3.7.7
+ djangorestframework==3.11.2
  web3==4.3.0
  ipfsapi==0.4.2
  boto3==1.5.35

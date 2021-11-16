@@ -27,7 +27,7 @@
     "@babel/register": "^7.6.2",
     "@babel/runtime": "^7.6.3",
     "abi-decoder": "^1.0.9",
-    "aws-sdk": "^2.201.0",
+    "aws-sdk": "^2.814.0",
     "delay": "^2.0.0",
     "express": "^4.16.2",
     "fluent-logger": "^3.3.1",

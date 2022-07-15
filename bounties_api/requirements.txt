@@ -13,7 +13,7 @@
  requests==2.18.4
  uwsgi==2.0.17
  coverage==4.5.1
- codecov==2.0.15
+ codecov==2.0.16
  Faker==0.8.13
  arrow==0.12.1
  djangorestframework-queryfields==1.0.0
